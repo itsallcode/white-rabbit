@@ -1,0 +1,25 @@
+language: java
+sudo: false
+jdk:
+  - openjdk10
+
+addons:
+  sonarcloud:
+    organization: "itsallcode"
+    token:
+      secure: "1kNT9/1ZByrRaOlyY+ngAyUGuBiTLdSxKAyiqV5eBs/c+T3ozTjEBXOBVAbCd4ze45v8dtJVsqsjSDv241omeMCw2sgdPb09IonD8V3OFvLRONBPD3s3wB6GMwXWUm+sv44Mp0X2ws5t0d44KTdjxZYHDIDRk9JalQSzAeJPtl3T5EnDq/TA/Y/z+JCoZ9fJ0OhTA9jp+HVqaAOb4GpJ4T/B/o2IKKrutXvpeGIjAp0p9Jsg1JUPw+EJoBwR9rNCddCBPtWBOliz9p32DYC6vsY5QfRnyquzuBP5SDv9FS1RSvvFiqXosNvtqb7i5tqF25oxQ+VdK8B/bBfwnrqrV2ibxRRJFoXqj0Ht72VeUSxMrqrh7LSZvIXr3sD9zsJNVcCACQk6sUDJRwNUKwRcMtyat/Sn+nqW7aXie936+y2pbumPD8llAukITBeZKvh7bCijaZeWf8pSoZ5eRB+LqmL1x1xW61xzoO4DEZDYMLTRmIlHu4fjLFiMCYaZFrBiWHcA5zADtUWi7qOsgCQSgL10E+rwUReFLZsp6rPmmTaa+SSXSI7bMLMxDqUhapw2T1lg4N7FCMv4um9dxxTeNfnpuoDo88TxmcumC5OKpZqkHmI4DmGQQGYTvGXNk9+MJE8TLe7XVVJg/gn3piD3WBnB34BKQtqFL3PiQa4psOs="
+
+script:
+  - ./gradlew clean check sonarqube --info --stacktrace
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.sonar/cache/
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+after_success:
+  - ./gradlew jacocoTestReport --info --stacktrace
+  - bash <(curl -s https://codecov.io/bash)
