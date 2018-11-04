@@ -5,6 +5,7 @@ plugins {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
     ext {
         junitVersion = '5.3.1'
         log4jVersion = '2.11.1'
@@ -28,7 +29,11 @@ subprojects {
     test {
         useJUnitPlatform()
     }
-    
+
+    jacoco {
+        toolVersion = "0.8.2"
+    }
+
     repositories {
         jcenter()
     }
