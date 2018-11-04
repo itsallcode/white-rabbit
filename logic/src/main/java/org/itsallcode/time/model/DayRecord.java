@@ -20,8 +20,8 @@ public class DayRecord {
 		if (!isWorkingDay()) {
 			return Duration.ZERO;
 		}
-		final Duration totalWorkingTime = getWorkingTime();
-		if (totalWorkingTime.compareTo(Duration.ofHours(6)) > 0) {
+		final Duration workingTime = getRawWorkingTime();
+		if (workingTime.compareTo(Duration.ofHours(6)) > 0) {
 			return BASIC_BREAK;
 		}
 		return Duration.ZERO;
@@ -39,7 +39,7 @@ public class DayRecord {
 		}
 	}
 
-	public Duration getWorkingTime() {
+	private Duration getRawWorkingTime() {
 		if (getBegin() == null && getEnd() == null) {
 			return Duration.ZERO;
 		}
@@ -49,11 +49,15 @@ public class DayRecord {
 		return Duration.between(getBegin(), getEnd());
 	}
 
-	public Duration getOvertime() {
-		return getWorkingTime() //
-				.minus(getMandatoryWorkingTime()) //
+	public Duration getWorkingTime() {
+		return getRawWorkingTime() //
 				.minus(getMandatoryBreak()) //
 				.minus(getInterruption());
+	}
+
+	public Duration getOvertime() {
+		return getWorkingTime() //
+				.minus(getMandatoryWorkingTime());
 	}
 
 	public LocalDate getDate() {

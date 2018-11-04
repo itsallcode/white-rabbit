@@ -1,1 +1,4 @@
-rootProject.name = 'time-recording'
+rootProject.name = 'white-rabbit'
+
+include 'logic'
+include 'textui'

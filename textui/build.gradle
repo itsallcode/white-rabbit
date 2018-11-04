@@ -1,0 +1,12 @@
+apply plugin: 'application'
+
+mainClassName = 'App'
+
+dependencies {
+    compile project(':logic')
+}
+
+// Avoid gradle deprecation warning
+compileJava {
+    options.compilerArgs += '-proc:none'
+}
