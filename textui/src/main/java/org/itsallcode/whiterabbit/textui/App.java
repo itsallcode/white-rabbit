@@ -1,11 +1,12 @@
-package org.itsallcode.time;
+package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 
-import org.itsallcode.time.service.AppService;
-import org.itsallcode.time.service.ClockService;
-import org.itsallcode.time.storage.DateToFileMapper;
-import org.itsallcode.time.storage.Storage;
+import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.ClockService;
+import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
+import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class App {
 

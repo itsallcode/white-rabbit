@@ -1,13 +1,13 @@
-package org.itsallcode.time.service;
+package org.itsallcode.whiterabbit.logic.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.time.model.DayRecord;
-import org.itsallcode.time.model.MonthIndex;
-import org.itsallcode.time.storage.Storage;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class AppService {
 	private static final Logger LOG = LogManager.getLogger(AppService.class);

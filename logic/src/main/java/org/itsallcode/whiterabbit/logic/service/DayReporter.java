@@ -1,4 +1,4 @@
-package org.itsallcode.time.service;
+package org.itsallcode.whiterabbit.logic.service;
 
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.time.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public class DayReporter {
 	private static final Logger LOG = LogManager.getLogger(DayReporter.class);

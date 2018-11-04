@@ -1,6 +1,6 @@
 apply plugin: 'application'
 
-mainClassName = 'App'
+mainClassName = 'org.itsallcode.whiterabbit.textui.App'
 
 dependencies {
     compile project(':logic')

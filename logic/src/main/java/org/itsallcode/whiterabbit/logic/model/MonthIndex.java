@@ -1,4 +1,4 @@
-package org.itsallcode.time.model;
+package org.itsallcode.whiterabbit.logic.model;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.itsallcode.time.model.json.JsonDay;
-import org.itsallcode.time.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 
 public class MonthIndex {
 	private final JsonMonth record;

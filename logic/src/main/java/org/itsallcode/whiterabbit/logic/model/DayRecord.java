@@ -1,11 +1,11 @@
-package org.itsallcode.time.model;
+package org.itsallcode.whiterabbit.logic.model;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.itsallcode.time.model.json.DayType;
-import org.itsallcode.time.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 
 public class DayRecord {
 	private static final Duration BASIC_BREAK = Duration.ofMinutes(30);

@@ -6,7 +6,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.itsallcode.time.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

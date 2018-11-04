@@ -1,4 +1,4 @@
-package org.itsallcode.time.model.json;
+package org.itsallcode.whiterabbit.logic.model.json;
 
 import java.time.Duration;
 import java.time.LocalDate;

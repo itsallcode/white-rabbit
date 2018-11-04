@@ -1,4 +1,4 @@
-package org.itsallcode.time.service;
+package org.itsallcode.whiterabbit.logic.service;
 
 import java.time.Clock;
 import java.time.LocalDate;

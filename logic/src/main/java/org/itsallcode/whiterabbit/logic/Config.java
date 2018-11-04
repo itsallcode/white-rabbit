@@ -1,4 +1,4 @@
-package org.itsallcode.time;
+package org.itsallcode.whiterabbit.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
