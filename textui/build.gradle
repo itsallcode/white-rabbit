@@ -1,6 +1,20 @@
-apply plugin: 'application'
+plugins {
+  id 'com.github.johnrengelman.shadow' version '4.0.2'
+}
 
-mainClassName = 'org.itsallcode.whiterabbit.textui.App'
+shadowJar {
+   baseName = 'textui'
+   classifier = null
+   version = null
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.itsallcode.whiterabbit.textui.App'
+    }
+}
+
+build.dependsOn shadowJar
 
 dependencies {
     compile project(':logic')
