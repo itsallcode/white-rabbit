@@ -18,6 +18,7 @@ build.dependsOn shadowJar
 
 dependencies {
     compile project(':logic')
+    compile 'org.jline:jline-terminal-jansi:3.9.0'
 }
 
 // Avoid gradle deprecation warning
