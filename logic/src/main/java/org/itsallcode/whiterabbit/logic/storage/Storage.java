@@ -57,9 +57,9 @@ public class Storage {
 
 	private void writeToFile(MonthIndex month) {
 		final Path file = dateToFileMapper.getPathForDate(month);
+		LOG.debug("Write month {} to file {}", month.getFirstDayOfMonth(), file);
 		createDirectory(file.getParent());
-		try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
-				StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			jsonb.toJson(month.getMonthRecord(), stream);
 		} catch (final IOException e) {
 			throw new IllegalStateException("Error writing file " + file, e);

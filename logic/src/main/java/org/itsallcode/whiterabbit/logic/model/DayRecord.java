@@ -31,6 +31,10 @@ public class DayRecord {
 		return day.getInterruption() == null ? Duration.ZERO : day.getInterruption();
 	}
 
+	public void setInterruption(Duration interruption) {
+		day.setInterruption(interruption);
+	}
+
 	public Duration getMandatoryWorkingTime() {
 		if (isWorkingDay()) {
 			return Duration.ofHours(8);

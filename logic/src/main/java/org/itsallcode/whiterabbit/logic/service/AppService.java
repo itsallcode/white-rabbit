@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,7 +21,7 @@ public class AppService {
 		this.clock = clock;
 	}
 
-	public void update() {
+	public DayRecord update() {
 		final LocalDate today = clock.getCurrentDate();
 		final MonthIndex month = storage.loadMonth(today);
 		final DayRecord day = month.getDay(today);
@@ -44,6 +45,21 @@ public class AppService {
 		} else {
 			LOG.info("Today {} is a {}, no update required", today, day.getType());
 		}
+		return day;
+	}
+
+	public void incrementInterruption(Duration additionalInterruption) {
+		if (additionalInterruption.isZero()) {
+			LOG.info("Interruption is zero: ignore.");
+			return;
+		}
+		final LocalDate today = clock.getCurrentDate();
+		final MonthIndex month = storage.loadMonth(today);
+		final DayRecord day = month.getDay(today);
+		final Duration totalInterruption = day.getInterruption().plus(additionalInterruption);
+		LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption, today, totalInterruption);
+		day.setInterruption(totalInterruption);
+		storage.storeMonth(month);
 	}
 
 	public void report() {
@@ -51,5 +67,9 @@ public class AppService {
 		final DayReporter reporter = new DayReporter();
 		storage.loadAll().getDays().forEach(reporter::add);
 		reporter.finish();
+	}
+
+	public Interruption startInterruption() {
+		return new Interruption(clock, this::incrementInterruption);
 	}
 }

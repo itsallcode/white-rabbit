@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -22,5 +23,9 @@ public class ClockService {
 
 	public LocalTime getCurrentTime() {
 		return LocalTime.now(clock).truncatedTo(ChronoUnit.MINUTES);
+	}
+
+	public Instant instant() {
+		return clock.instant();
 	}
 }

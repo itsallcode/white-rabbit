@@ -1,22 +1,30 @@
 package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
+import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class App {
+	private static final Logger LOG = LogManager.getLogger(App.class);
 
 	private static final char COMMAND_REPORT = 'r';
 	private static final char COMMAND_UPDATE = 'u';
+	private static final char COMMAND_TOGGLE_INTERRUPT = 'i';
 	static final char COMMAND_QUIT = 'q';
 
 	private final AppService appService;
 	private final UiTerminal terminal;
+	private Interruption interruption;
 
 	public App(AppService appService, UiTerminal terminal) {
 		this.appService = appService;
@@ -37,7 +45,8 @@ public class App {
 			if (!command.isPresent()) {
 				continue;
 			}
-			final char commandChar = command.get().charValue();
+			final char c = command.get().charValue();
+			final char commandChar = Character.toLowerCase(c);
 			if (commandChar == COMMAND_QUIT) {
 				return;
 			}
@@ -51,7 +60,10 @@ public class App {
 	private void executeCommand(final char command) {
 		switch (command) {
 		case COMMAND_UPDATE:
-			appService.update();
+			update();
+			break;
+		case COMMAND_TOGGLE_INTERRUPT:
+			toggleInterrupt();
 			break;
 		case COMMAND_REPORT:
 			appService.report();
@@ -62,8 +74,32 @@ public class App {
 		}
 	}
 
+	private void toggleInterrupt() {
+		if (interruption == null) {
+			this.interruption = appService.startInterruption();
+		} else {
+			this.interruption.end();
+			this.interruption = null;
+		}
+	}
+
+	private void update() {
+		final DayRecord updatedRecord = appService.update();
+		LOG.info("Day: {} ({}), working time {}, overtime {}", updatedRecord.getDate(), updatedRecord.getType(), updatedRecord.getWorkingTime(),
+				updatedRecord.getOvertime());
+	}
+
 	private Optional<Character> promptUser() {
-		System.out.println("Press key. u = update, r = report, q = quit");
+		System.out.println(getPrompt());
 		return terminal.getNextCommand();
+	}
+
+	private String getPrompt() {
+		String prompt = MessageFormat.format("Press command key: {0}=update, {1}=begin/end interruption, {2}=report, {3}=quit", COMMAND_UPDATE,
+				COMMAND_TOGGLE_INTERRUPT, COMMAND_REPORT, COMMAND_QUIT);
+		if (interruption != null) {
+			prompt += " (interruption " + interruption.currentDuration() + ")";
+		}
+		return prompt;
 	}
 }
