@@ -27,14 +27,6 @@ public class DayRecord {
 		return Duration.ZERO;
 	}
 
-	public Duration getInterruption() {
-		return day.getInterruption() == null ? Duration.ZERO : day.getInterruption();
-	}
-
-	public void setInterruption(Duration interruption) {
-		day.setInterruption(interruption);
-	}
-
 	public Duration getMandatoryWorkingTime() {
 		if (isWorkingDay()) {
 			return Duration.ofHours(8);
@@ -68,26 +60,6 @@ public class DayRecord {
 		return day.getDate();
 	}
 
-	public JsonDay getJsonDay() {
-		return day;
-	}
-
-	public LocalTime getBegin() {
-		return day.getBegin();
-	}
-
-	public LocalTime getEnd() {
-		return day.getEnd();
-	}
-
-	public void setBegin(LocalTime begin) {
-		day.setBegin(begin);
-	}
-
-	public void setEnd(LocalTime end) {
-		day.setEnd(end);
-	}
-
 	public DayType getType() {
 		if (day.getType() != null) {
 			return day.getType();
@@ -100,6 +72,34 @@ public class DayRecord {
 
 	public boolean isWorkingDay() {
 		return getType().isWorkDay();
+	}
+
+	public LocalTime getBegin() {
+		return day.getBegin();
+	}
+
+	public void setBegin(LocalTime begin) {
+		day.setBegin(begin);
+	}
+
+	public LocalTime getEnd() {
+		return day.getEnd();
+	}
+
+	public void setEnd(LocalTime end) {
+		day.setEnd(end);
+	}
+
+	public Duration getInterruption() {
+		return day.getInterruption() == null ? Duration.ZERO : day.getInterruption();
+	}
+
+	public void setInterruption(Duration interruption) {
+		day.setInterruption(interruption);
+	}
+
+	public JsonDay getJsonDay() {
+		return day;
 	}
 
 	private boolean isWeekend() {
