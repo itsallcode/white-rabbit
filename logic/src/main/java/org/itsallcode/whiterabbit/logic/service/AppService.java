@@ -81,7 +81,8 @@ public class AppService {
 	}
 
 	public Interruption startInterruption() {
-		return new Interruption(clock, this::incrementInterruption);
+		return Interruption.start(clock, this::incrementInterruption);
+	}
 
 	public void shutdown() {
 		LOG.debug("Shutting down...");

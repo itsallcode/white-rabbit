@@ -16,12 +16,17 @@ public class Interruption {
 	private final Instant start;
 	private Duration duration;
 
-	Interruption(ClockService clock, Consumer<Duration> callback) {
+	private Interruption(ClockService clock, Instant start, Consumer<Duration> callback) {
 		this.clock = clock;
+		this.start = start;
 		this.callback = callback;
-		this.start = clock.instant();
-		LOG.info("Interruption started at {}", start);
 		this.duration = null;
+	}
+
+	public static Interruption start(ClockService clock, Consumer<Duration> callback) {
+		final Instant start = clock.instant();
+		LOG.debug("Interruption started at {}", start);
+		return new Interruption(clock, start, callback);
 	}
 
 	public void end() {
@@ -29,7 +34,7 @@ public class Interruption {
 			throw new IllegalStateException("Interruption is already finished");
 		}
 		this.duration = currentDuration();
-		LOG.info("Interruption ended after {}", duration);
+		LOG.debug("Interruption ended after {}", duration);
 		callback.accept(duration);
 	}
 
