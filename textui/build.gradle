@@ -8,13 +8,21 @@ shadowJar {
    version = null
 }
 
+ext.mainClass = 'org.itsallcode.whiterabbit.textui.App'
+
 jar {
     manifest {
-        attributes 'Main-Class': 'org.itsallcode.whiterabbit.textui.App'
+        attributes 'Main-Class': mainClass 
     }
 }
 
 build.dependsOn shadowJar
+
+task runTextui(type: JavaExec, dependsOn: shadowJar) {
+   classpath = shadowJar.outputs.files
+   main = mainClass
+   workingDir = rootProject.projectDir
+}
 
 dependencies {
     compile project(':logic')
