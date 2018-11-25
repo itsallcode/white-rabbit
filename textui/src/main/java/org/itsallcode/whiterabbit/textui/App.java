@@ -10,13 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
-import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
-import org.itsallcode.whiterabbit.logic.service.SchedulingService;
 import org.itsallcode.whiterabbit.logic.service.SchedulingService.ScheduledTaskFuture;
-import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
-import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class App {
 	private static final Logger LOG = LogManager.getLogger(App.class);
@@ -29,11 +25,11 @@ public class App {
 
 	private final AppService appService;
 	private final UiTerminal terminal;
-	private Interruption interruption;
-
 	private final FormatterService formatterService;
 
+	private Interruption interruption;
 	private ScheduledTaskFuture autoUpdateFuture;
+	private boolean running = true;
 
 	public App(AppService appService, FormatterService formatterService, UiTerminal terminal) {
 		this.appService = appService;
@@ -42,36 +38,29 @@ public class App {
 	}
 
 	public static void main(String[] args) {
-		final Config config = Config.read(Paths.get("time.properties"));
-		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
 		final FormatterService formatterService = new FormatterService(Locale.US);
-		final ClockService clockService = new ClockService();
-		final SchedulingService schedulingService = new SchedulingService(clockService);
-		final AppService appService = new AppService(storage, formatterService, clockService, schedulingService);
+		final Config config = Config.read(Paths.get("time.properties"));
+		final AppService appService = AppService.create(config, formatterService);
 		final UiTerminal terminal = UiTerminal.create();
 		new App(appService, formatterService, terminal).run();
 	}
 
 	private void run() {
-		while (true) {
+		while (running) {
 			final Optional<Character> command = promptUser();
 			if (!command.isPresent()) {
 				continue;
 			}
 			final char c = command.get().charValue();
 			final char commandChar = Character.toLowerCase(c);
-			if (commandChar == COMMAND_QUIT) {
-				this.appService.shutdown();
-				return;
-			}
-			if (Character.isWhitespace(commandChar)) {
-				continue;
-			}
 			executeCommand(commandChar);
 		}
 	}
 
 	private void executeCommand(final char command) {
+		if (Character.isWhitespace(command)) {
+			return;
+		}
 		switch (command) {
 		case COMMAND_UPDATE:
 			update();
@@ -85,10 +74,19 @@ public class App {
 		case COMMAND_AUTO_UPDATE:
 			toggleAutoUpdate();
 			break;
+		case COMMAND_QUIT:
+			shutdown();
+			break;
 		default:
 			LOG.error("Unknown command '" + command + "'");
+			printPrompt();
 			break;
 		}
+	}
+
+	private void shutdown() {
+		this.appService.shutdown();
+		this.running = false;
 	}
 
 	private void toggleAutoUpdate() {

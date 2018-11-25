@@ -7,9 +7,11 @@ import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.SchedulingService.ScheduledTaskFuture;
+import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class AppService {
@@ -26,6 +28,13 @@ public class AppService {
 		this.formatterService = formatterService;
 		this.clock = clock;
 		this.schedulingService = schedulingService;
+	}
+
+	public static AppService create(final Config config, final FormatterService formatterService) {
+		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
+		final ClockService clockService = new ClockService();
+		final SchedulingService schedulingService = new SchedulingService(clockService);
+		return new AppService(storage, formatterService, clockService, schedulingService);
 	}
 
 	public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener) {
