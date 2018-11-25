@@ -15,9 +15,11 @@ public class AppService {
 
 	private final Storage storage;
 	private final ClockService clock;
+	private final DayFormatter dayFormatter;
 
-	public AppService(Storage storage, ClockService clock) {
+	public AppService(Storage storage, DayFormatter dayFormatter, ClockService clock) {
 		this.storage = storage;
+		this.dayFormatter = dayFormatter;
 		this.clock = clock;
 	}
 
@@ -37,13 +39,13 @@ public class AppService {
 				updated = true;
 			}
 			if (updated) {
-				LOG.info("Updating day {} for time {}", today, now);
+				LOG.info("Updating day {} for time {}\n{}", today, now, dayFormatter.format(day));
 				storage.storeMonth(month);
 			} else {
-				LOG.info("No update for {} at {}", today, now);
+				LOG.info("No update for {} at {}\n{}", today, now, dayFormatter.format(day));
 			}
 		} else {
-			LOG.info("Today {} is a {}, no update required", today, day.getType());
+			LOG.info("Today {} is a {}, no update required\n{}", today, day.getType(), dayFormatter.format(day));
 		}
 		return day;
 	}
@@ -57,14 +59,14 @@ public class AppService {
 		final MonthIndex month = storage.loadMonth(today);
 		final DayRecord day = month.getDay(today);
 		final Duration totalInterruption = day.getInterruption().plus(additionalInterruption);
-		LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption, today, totalInterruption);
+		LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, today, totalInterruption, dayFormatter.format(day));
 		day.setInterruption(totalInterruption);
 		storage.storeMonth(month);
 	}
 
 	public void report() {
 		LOG.info("Reporting...");
-		final DayReporter reporter = new DayReporter();
+		final DayReporter reporter = new DayReporter(dayFormatter);
 		storage.loadAll().getDays().forEach(reporter::add);
 		reporter.finish();
 	}

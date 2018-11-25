@@ -67,7 +67,7 @@ public class DayRecord {
 		if (isWeekend()) {
 			return DayType.WEEKEND;
 		}
-		return DayType.WORK;
+		return DayType.WORKING;
 	}
 
 	public boolean isWorkingDay() {

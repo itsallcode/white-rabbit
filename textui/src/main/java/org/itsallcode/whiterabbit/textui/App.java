@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
+import org.itsallcode.whiterabbit.logic.service.DayFormatter;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
@@ -26,17 +28,21 @@ public class App {
 	private final UiTerminal terminal;
 	private Interruption interruption;
 
-	public App(AppService appService, UiTerminal terminal) {
+	private final DayFormatter dayFormatter;
+
+	public App(AppService appService, DayFormatter dayFormatter, UiTerminal terminal) {
 		this.appService = appService;
+		this.dayFormatter = dayFormatter;
 		this.terminal = terminal;
 	}
 
 	public static void main(String[] args) {
 		final Config config = Config.read(Paths.get("time.properties"));
 		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
-		final AppService appService = new AppService(storage, new ClockService());
+		final DayFormatter dayFormatter = new DayFormatter(Locale.US);
+		final AppService appService = new AppService(storage, dayFormatter, new ClockService());
 		final UiTerminal terminal = UiTerminal.create();
-		new App(appService, terminal).run();
+		new App(appService, dayFormatter, terminal).run();
 	}
 
 	private void run() {
@@ -85,8 +91,7 @@ public class App {
 
 	private void update() {
 		final DayRecord updatedRecord = appService.update();
-		LOG.info("Day: {} ({}), working time {}, overtime {}", updatedRecord.getDate(), updatedRecord.getType(), updatedRecord.getWorkingTime(),
-				updatedRecord.getOvertime());
+		LOG.info("Day:\n{}", dayFormatter.format(updatedRecord));
 	}
 
 	private Optional<Character> promptUser() {
