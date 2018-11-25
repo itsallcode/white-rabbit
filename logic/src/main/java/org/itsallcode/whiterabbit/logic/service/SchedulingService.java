@@ -31,6 +31,10 @@ public class SchedulingService {
 		return schedule(command, initialDelay, period);
 	}
 
+	public void shutdown() {
+		this.executorService.shutdown();
+	}
+
 	private ScheduledTaskFuture schedule(Runnable command, Duration initialDelay, Duration period) {
 		final ScheduledFuture<?> future = executorService.scheduleAtFixedRate(command, initialDelay.toMillis(), period.toMillis(), TimeUnit.MILLISECONDS);
 		return new ScheduledTaskFuture(future);

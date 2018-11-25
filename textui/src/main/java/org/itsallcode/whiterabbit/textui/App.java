@@ -61,6 +61,7 @@ public class App {
 			final char c = command.get().charValue();
 			final char commandChar = Character.toLowerCase(c);
 			if (commandChar == COMMAND_QUIT) {
+				this.appService.shutdown();
 				return;
 			}
 			if (Character.isWhitespace(commandChar)) {
