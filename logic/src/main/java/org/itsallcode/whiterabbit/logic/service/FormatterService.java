@@ -34,7 +34,10 @@ public class FormatterService {
 	}
 
 	public String format(Duration duration) {
-		return format("{0,number}:{1,number,00}", duration.toHours(), duration.toMinutesPart());
+		final String sign = duration.isNegative() ? "-" : "";
+		final long hours = Math.abs(duration.toHours());
+		final int minutes = Math.abs(duration.toMinutesPart());
+		return format("{0}{1,number,00}:{2,number,00}", sign, hours, minutes);
 	}
 
 	private String format(String pattern, final Object... arguments) {

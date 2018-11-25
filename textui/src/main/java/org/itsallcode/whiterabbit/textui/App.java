@@ -46,6 +46,7 @@ public class App {
 	}
 
 	private void run() {
+		this.toggleAutoUpdate();
 		while (running) {
 			final Optional<Character> command = promptUser();
 			if (!command.isPresent()) {

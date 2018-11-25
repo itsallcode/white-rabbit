@@ -22,7 +22,10 @@ public class DayReporter {
 	public void add(DayRecord day) {
 		this.overtime = overtime.plus(day.getOvertime());
 		final String line = formatterService.format(day);
-		report.append(line).append(", Acc. overtime: ").append(overtime).append(NEWLINE);
+		report.append(line) //
+				.append(", Acc. overtime: ") //
+				.append(formatterService.format(overtime)) //
+				.append(NEWLINE);
 	}
 
 	public void finish() {

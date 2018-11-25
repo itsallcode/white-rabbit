@@ -57,40 +57,41 @@ public class AppService {
 				updated = true;
 			}
 			if (updated) {
-				LOG.info("Updating day {} for time {}\n{}", today, now, formatterService.format(day));
+				LOG.info("Updating day {} for time {}\n{}", day.getDate(), now, formatterService.format(day));
 				storage.storeMonth(month);
 			} else {
-				LOG.info("No update for {} at {}\n{}", today, now, formatterService.format(day));
+				LOG.trace("No update for {} at {}\n{}", day.getDate(), now);
 			}
 		} else {
-			LOG.info("Today {} is a {}, no update required\n{}", today, day.getType(), formatterService.format(day));
+			LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
 		}
 		return day;
 	}
 
-	public void incrementInterruption(Duration additionalInterruption) {
-		if (additionalInterruption.isZero()) {
-			LOG.info("Interruption is zero: ignore.");
-			return;
-		}
-		final LocalDate today = clock.getCurrentDate();
-		final MonthIndex month = storage.loadMonth(today);
-		final DayRecord day = month.getDay(today);
-		final Duration totalInterruption = day.getInterruption().plus(additionalInterruption);
-		LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, today, totalInterruption, formatterService.format(day));
-		day.setInterruption(totalInterruption);
-		storage.storeMonth(month);
-	}
-
 	public void report() {
-		LOG.info("Reporting...");
+		LOG.debug("Reporting...");
 		final DayReporter reporter = new DayReporter(formatterService);
 		storage.loadAll().getDays().forEach(reporter::add);
 		reporter.finish();
 	}
 
 	public Interruption startInterruption() {
-		return Interruption.start(clock, this::incrementInterruption);
+		return Interruption.start(clock, this::addToInterruption);
+	}
+
+	private void addToInterruption(Duration additionalInterruption) {
+		if (additionalInterruption.isZero()) {
+			LOG.debug("Interruption is zero: ignore.");
+			return;
+		}
+		final LocalDate today = clock.getCurrentDate();
+		final MonthIndex month = storage.loadMonth(today);
+		final DayRecord day = month.getDay(today);
+		final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
+		LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, day.getDate(), updatedInterruption,
+				formatterService.format(day));
+		day.setInterruption(updatedInterruption);
+		storage.storeMonth(month);
 	}
 
 	public void shutdown() {
