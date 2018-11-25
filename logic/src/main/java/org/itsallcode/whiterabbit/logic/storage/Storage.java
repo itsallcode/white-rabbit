@@ -57,7 +57,7 @@ public class Storage {
 
 	private void writeToFile(MonthIndex month) {
 		final Path file = dateToFileMapper.getPathForDate(month);
-		LOG.debug("Write month {} to file {}", month.getFirstDayOfMonth(), file);
+		LOG.trace("Write month {} to file {}", month.getFirstDayOfMonth(), file);
 		createDirectory(file.getParent());
 		try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			jsonb.toJson(month.getMonthRecord(), stream);
@@ -94,7 +94,7 @@ public class Storage {
 	}
 
 	private JsonMonth loadFromFile(Path file) {
-		LOG.debug("Reading file {}", file);
+		LOG.trace("Reading file {}", file);
 		try (InputStream stream = Files.newInputStream(file)) {
 			return jsonb.fromJson(stream, JsonMonth.class);
 		} catch (final IOException e) {

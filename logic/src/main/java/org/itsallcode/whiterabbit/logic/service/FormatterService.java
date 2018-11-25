@@ -1,12 +1,17 @@
 package org.itsallcode.whiterabbit.logic.service;
 
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.format.TextStyle;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 public class FormatterService {
+
+	private static final int MAX_DAY_TYPE_LENGTH = getMaxDayTypeLength();
 
 	private final Locale locale;
 
@@ -16,9 +21,31 @@ public class FormatterService {
 
 	public String format(DayRecord day) {
 		final String dayOfWeek = day.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, locale);
-		final String date = MessageFormat.format("{0} {1} {2}", day.getDate(), dayOfWeek, day.getType());
-		final String time = day.getBegin() != null ? MessageFormat.format("{0} - {1}", day.getBegin(), day.getEnd()) : "             ";
-		return MessageFormat.format("{0} {1} break: {2}, interr.: {3}, working time: {4}, overtime: {5}", date, time, day.getMandatoryBreak(),
-				day.getInterruption(), day.getWorkingTime(), day.getOvertime());
+		final String dayType = formatDayType(day.getType());
+		final String date = format("{0} {1} {2}", day.getDate(), dayOfWeek, dayType);
+		final String time = day.getBegin() != null ? format("{0} - {1}", day.getBegin(), day.getEnd()) : "             ";
+		return format("{0} {1} break: {2}, interr.: {3}, working time: {4}, overtime: {5}", date, time, format(day.getMandatoryBreak()),
+				format(day.getInterruption()), format(day.getWorkingTime()), format(day.getOvertime()));
+	}
+
+	private String formatDayType(DayType type) {
+		final String formatPattern = "%1$-" + MAX_DAY_TYPE_LENGTH + "s";
+		return String.format(locale, formatPattern, type);
+	}
+
+	public String format(Duration duration) {
+		return format("{0,number}:{1,number,00}", duration.toHours(), duration.toMinutesPart());
+	}
+
+	private String format(String pattern, final Object... arguments) {
+		final MessageFormat temp = new MessageFormat(pattern, locale);
+		return temp.format(arguments);
+	}
+
+	private static int getMaxDayTypeLength() {
+		return Arrays.stream(DayType.values()) //
+				.map(DayType::toString) //
+				.mapToInt(String::length) //
+				.max().getAsInt();
 	}
 }

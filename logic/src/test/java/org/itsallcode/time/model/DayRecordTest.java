@@ -79,7 +79,7 @@ class DayRecordTest {
 
 	@Test
 	void testMondayIsWorkdayType() {
-		assertType(LocalDate.of(2018, 10, 1), DayType.WORKING);
+		assertType(LocalDate.of(2018, 10, 1), DayType.WORK);
 	}
 
 	@Test
