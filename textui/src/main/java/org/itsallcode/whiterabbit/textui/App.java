@@ -11,7 +11,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
-import org.itsallcode.whiterabbit.logic.service.DayFormatter;
+import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.service.SchedulingService;
 import org.itsallcode.whiterabbit.logic.service.SchedulingService.ScheduledTaskFuture;
@@ -31,25 +31,25 @@ public class App {
 	private final UiTerminal terminal;
 	private Interruption interruption;
 
-	private final DayFormatter dayFormatter;
+	private final FormatterService formatterService;
 
 	private ScheduledTaskFuture autoUpdateFuture;
 
-	public App(AppService appService, DayFormatter dayFormatter, UiTerminal terminal) {
+	public App(AppService appService, FormatterService formatterService, UiTerminal terminal) {
 		this.appService = appService;
-		this.dayFormatter = dayFormatter;
+		this.formatterService = formatterService;
 		this.terminal = terminal;
 	}
 
 	public static void main(String[] args) {
 		final Config config = Config.read(Paths.get("time.properties"));
 		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
-		final DayFormatter dayFormatter = new DayFormatter(Locale.US);
+		final FormatterService formatterService = new FormatterService(Locale.US);
 		final ClockService clockService = new ClockService();
 		final SchedulingService schedulingService = new SchedulingService(clockService);
-		final AppService appService = new AppService(storage, dayFormatter, clockService, schedulingService);
+		final AppService appService = new AppService(storage, formatterService, clockService, schedulingService);
 		final UiTerminal terminal = UiTerminal.create();
-		new App(appService, dayFormatter, terminal).run();
+		new App(appService, formatterService, terminal).run();
 	}
 
 	private void run() {
@@ -92,7 +92,7 @@ public class App {
 
 	private void toggleAutoUpdate() {
 		if (autoUpdateFuture == null) {
-			autoUpdateFuture = appService.startAutoUpdate(day -> LOG.info("Scheduled update: {}", dayFormatter.format(day)));
+			autoUpdateFuture = appService.startAutoUpdate(day -> LOG.info("Scheduled update: {}", formatterService.format(day)));
 		} else {
 			autoUpdateFuture.cancel();
 			autoUpdateFuture = null;
@@ -110,7 +110,7 @@ public class App {
 
 	private void update() {
 		final DayRecord updatedRecord = appService.updateNow();
-		LOG.info("Day:\n{}", dayFormatter.format(updatedRecord));
+		LOG.info("Day:\n{}", formatterService.format(updatedRecord));
 	}
 
 	private Optional<Character> promptUser() {

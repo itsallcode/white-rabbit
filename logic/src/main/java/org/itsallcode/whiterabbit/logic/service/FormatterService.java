@@ -6,11 +6,11 @@ import java.util.Locale;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
-public class DayFormatter {
+public class FormatterService {
 
 	private final Locale locale;
 
-	public DayFormatter(Locale locale) {
+	public FormatterService(Locale locale) {
 		this.locale = locale;
 	}
 

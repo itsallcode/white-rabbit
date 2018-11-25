@@ -17,13 +17,13 @@ public class AppService {
 
 	private final Storage storage;
 	private final ClockService clock;
-	private final DayFormatter dayFormatter;
+	private final FormatterService formatterService;
 
 	private final SchedulingService schedulingService;
 
-	public AppService(Storage storage, DayFormatter dayFormatter, ClockService clock, SchedulingService schedulingService) {
+	public AppService(Storage storage, FormatterService formatterService, ClockService clock, SchedulingService schedulingService) {
 		this.storage = storage;
-		this.dayFormatter = dayFormatter;
+		this.formatterService = formatterService;
 		this.clock = clock;
 		this.schedulingService = schedulingService;
 	}
@@ -48,13 +48,13 @@ public class AppService {
 				updated = true;
 			}
 			if (updated) {
-				LOG.info("Updating day {} for time {}\n{}", today, now, dayFormatter.format(day));
+				LOG.info("Updating day {} for time {}\n{}", today, now, formatterService.format(day));
 				storage.storeMonth(month);
 			} else {
-				LOG.info("No update for {} at {}\n{}", today, now, dayFormatter.format(day));
+				LOG.info("No update for {} at {}\n{}", today, now, formatterService.format(day));
 			}
 		} else {
-			LOG.info("Today {} is a {}, no update required\n{}", today, day.getType(), dayFormatter.format(day));
+			LOG.info("Today {} is a {}, no update required\n{}", today, day.getType(), formatterService.format(day));
 		}
 		return day;
 	}
@@ -68,14 +68,14 @@ public class AppService {
 		final MonthIndex month = storage.loadMonth(today);
 		final DayRecord day = month.getDay(today);
 		final Duration totalInterruption = day.getInterruption().plus(additionalInterruption);
-		LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, today, totalInterruption, dayFormatter.format(day));
+		LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, today, totalInterruption, formatterService.format(day));
 		day.setInterruption(totalInterruption);
 		storage.storeMonth(month);
 	}
 
 	public void report() {
 		LOG.info("Reporting...");
-		final DayReporter reporter = new DayReporter(dayFormatter);
+		final DayReporter reporter = new DayReporter(formatterService);
 		storage.loadAll().getDays().forEach(reporter::add);
 		reporter.finish();
 	}
