@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,7 +23,17 @@ public class ClockService {
 	}
 
 	public LocalTime getCurrentTime() {
-		return LocalTime.now(clock).truncatedTo(ChronoUnit.MINUTES);
+		return getExactCurrentTime().truncatedTo(ChronoUnit.MINUTES);
+	}
+
+	private LocalTime getExactCurrentTime() {
+		return LocalTime.now(clock);
+	}
+
+	public Duration getDurationUntilNextFullMinute() {
+		final LocalTime now = getExactCurrentTime();
+		final LocalTime nextFullMinute = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+		return Duration.between(now, nextFullMinute);
 	}
 
 	public Instant instant() {

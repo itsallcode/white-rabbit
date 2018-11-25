@@ -3,11 +3,13 @@ package org.itsallcode.whiterabbit.logic.service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.SchedulingService.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class AppService {
@@ -17,13 +19,20 @@ public class AppService {
 	private final ClockService clock;
 	private final DayFormatter dayFormatter;
 
-	public AppService(Storage storage, DayFormatter dayFormatter, ClockService clock) {
+	private final SchedulingService schedulingService;
+
+	public AppService(Storage storage, DayFormatter dayFormatter, ClockService clock, SchedulingService schedulingService) {
 		this.storage = storage;
 		this.dayFormatter = dayFormatter;
 		this.clock = clock;
+		this.schedulingService = schedulingService;
 	}
 
-	public DayRecord update() {
+	public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener) {
+		return this.schedulingService.schedule(new DayUpdateExecutor(this, listener));
+	}
+
+	public DayRecord updateNow() {
 		final LocalDate today = clock.getCurrentDate();
 		final MonthIndex month = storage.loadMonth(today);
 		final DayRecord day = month.getDay(today);

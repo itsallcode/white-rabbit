@@ -13,12 +13,15 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.DayFormatter;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
+import org.itsallcode.whiterabbit.logic.service.SchedulingService;
+import org.itsallcode.whiterabbit.logic.service.SchedulingService.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class App {
 	private static final Logger LOG = LogManager.getLogger(App.class);
 
+	private static final char COMMAND_AUTO_UPDATE = 'a';
 	private static final char COMMAND_REPORT = 'r';
 	private static final char COMMAND_UPDATE = 'u';
 	private static final char COMMAND_TOGGLE_INTERRUPT = 'i';
@@ -30,6 +33,8 @@ public class App {
 
 	private final DayFormatter dayFormatter;
 
+	private ScheduledTaskFuture autoUpdateFuture;
+
 	public App(AppService appService, DayFormatter dayFormatter, UiTerminal terminal) {
 		this.appService = appService;
 		this.dayFormatter = dayFormatter;
@@ -40,7 +45,9 @@ public class App {
 		final Config config = Config.read(Paths.get("time.properties"));
 		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
 		final DayFormatter dayFormatter = new DayFormatter(Locale.US);
-		final AppService appService = new AppService(storage, dayFormatter, new ClockService());
+		final ClockService clockService = new ClockService();
+		final SchedulingService schedulingService = new SchedulingService(clockService);
+		final AppService appService = new AppService(storage, dayFormatter, clockService, schedulingService);
 		final UiTerminal terminal = UiTerminal.create();
 		new App(appService, dayFormatter, terminal).run();
 	}
@@ -74,9 +81,21 @@ public class App {
 		case COMMAND_REPORT:
 			appService.report();
 			break;
-		default:
-			System.err.println("Unknown command '" + command + "'");
+		case COMMAND_AUTO_UPDATE:
+			toggleAutoUpdate();
 			break;
+		default:
+			LOG.error("Unknown command '" + command + "'");
+			break;
+		}
+	}
+
+	private void toggleAutoUpdate() {
+		if (autoUpdateFuture == null) {
+			autoUpdateFuture = appService.startAutoUpdate(day -> LOG.info("Scheduled update: {}", dayFormatter.format(day)));
+		} else {
+			autoUpdateFuture.cancel();
+			autoUpdateFuture = null;
 		}
 	}
 
@@ -90,7 +109,7 @@ public class App {
 	}
 
 	private void update() {
-		final DayRecord updatedRecord = appService.update();
+		final DayRecord updatedRecord = appService.updateNow();
 		LOG.info("Day:\n{}", dayFormatter.format(updatedRecord));
 	}
 
@@ -100,10 +119,13 @@ public class App {
 	}
 
 	private String getPrompt() {
-		String prompt = MessageFormat.format("Press command key: {0}=update, {1}=begin/end interruption, {2}=report, {3}=quit", COMMAND_UPDATE,
-				COMMAND_TOGGLE_INTERRUPT, COMMAND_REPORT, COMMAND_QUIT);
+		String prompt = MessageFormat.format("Press command key: {0}=update now, {1}=begin/end interruption, {2}=toggle auto-update, {3}=report, {4}=quit",
+				COMMAND_UPDATE, COMMAND_TOGGLE_INTERRUPT, COMMAND_AUTO_UPDATE, COMMAND_REPORT, COMMAND_QUIT);
 		if (interruption != null) {
 			prompt += " (interruption " + interruption.currentDuration() + ")";
+		}
+		if (autoUpdateFuture != null) {
+			prompt += " (auto-update on)";
 		}
 		return prompt;
 	}
