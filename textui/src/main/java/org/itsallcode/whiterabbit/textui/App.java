@@ -93,7 +93,10 @@ public class App {
 
 	private void toggleAutoUpdate() {
 		if (autoUpdateFuture == null) {
-			autoUpdateFuture = appService.startAutoUpdate(day -> LOG.info("Scheduled update: {}", formatterService.format(day)));
+			autoUpdateFuture = appService.startAutoUpdate(day -> {
+				LOG.info("Scheduled update: {}", formatterService.format(day));
+				printPrompt();
+			});
 		} else {
 			autoUpdateFuture.cancel();
 			autoUpdateFuture = null;
@@ -115,15 +118,19 @@ public class App {
 	}
 
 	private Optional<Character> promptUser() {
-		System.out.println(getPrompt());
+		printPrompt();
 		return terminal.getNextCommand();
+	}
+
+	private void printPrompt() {
+		System.out.println(getPrompt());
 	}
 
 	private String getPrompt() {
 		String prompt = MessageFormat.format("Press command key: {0}=update now, {1}=begin/end interruption, {2}=toggle auto-update, {3}=report, {4}=quit",
 				COMMAND_UPDATE, COMMAND_TOGGLE_INTERRUPT, COMMAND_AUTO_UPDATE, COMMAND_REPORT, COMMAND_QUIT);
 		if (interruption != null) {
-			prompt += " (interruption " + interruption.currentDuration() + ")";
+			prompt += " (interruption " + formatterService.format(interruption.currentDuration()) + ")";
 		}
 		if (autoUpdateFuture != null) {
 			prompt += " (auto-update on)";
