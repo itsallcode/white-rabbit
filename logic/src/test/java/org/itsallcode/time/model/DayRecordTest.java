@@ -30,8 +30,8 @@ class DayRecordTest {
 	}
 
 	@Test
-	void testOnWorkingDay30minMandatoryBreakLongerThan6hours() {
-		assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(14, 1), Duration.ofMinutes(30));
+	void testOnWorkingDay45minMandatoryBreakLongerThan6hours() {
+		assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(14, 1), Duration.ofMinutes(45));
 	}
 
 	@Test
@@ -104,12 +104,12 @@ class DayRecordTest {
 
 	@Test
 	void testZeroOvertimeOnWorkingDay() {
-		assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 30), Duration.ZERO);
+		assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 30), Duration.ofMinutes(-15));
 	}
 
 	@Test
 	void testPositiveOvertimeOnWorkingDay() {
-		assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(17, 0), Duration.ofMinutes(30));
+		assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(17, 0), Duration.ofMinutes(15));
 	}
 
 	@Test

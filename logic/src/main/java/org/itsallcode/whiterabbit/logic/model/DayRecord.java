@@ -8,7 +8,7 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 
 public class DayRecord {
-	private static final Duration BASIC_BREAK = Duration.ofMinutes(30);
+	private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
 	private final JsonDay day;
 
