@@ -1,11 +1,11 @@
-package org.itsallcode.time.model;
+package org.itsallcode.whiterabbit.logic.model;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.itsallcode.time.model.json.DayType;
-import org.itsallcode.time.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 
 public class DayRecord {
 	private static final Duration BASIC_BREAK = Duration.ofMinutes(30);
@@ -25,10 +25,6 @@ public class DayRecord {
 			return BASIC_BREAK;
 		}
 		return Duration.ZERO;
-	}
-
-	public Duration getInterruption() {
-		return day.getInterruption() == null ? Duration.ZERO : day.getInterruption();
 	}
 
 	public Duration getMandatoryWorkingTime() {
@@ -64,26 +60,6 @@ public class DayRecord {
 		return day.getDate();
 	}
 
-	public JsonDay getJsonDay() {
-		return day;
-	}
-
-	public LocalTime getBegin() {
-		return day.getBegin();
-	}
-
-	public LocalTime getEnd() {
-		return day.getEnd();
-	}
-
-	public void setBegin(LocalTime begin) {
-		day.setBegin(begin);
-	}
-
-	public void setEnd(LocalTime end) {
-		day.setEnd(end);
-	}
-
 	public DayType getType() {
 		if (day.getType() != null) {
 			return day.getType();
@@ -96,6 +72,34 @@ public class DayRecord {
 
 	public boolean isWorkingDay() {
 		return getType().isWorkDay();
+	}
+
+	public LocalTime getBegin() {
+		return day.getBegin();
+	}
+
+	public void setBegin(LocalTime begin) {
+		day.setBegin(begin);
+	}
+
+	public LocalTime getEnd() {
+		return day.getEnd();
+	}
+
+	public void setEnd(LocalTime end) {
+		day.setEnd(end);
+	}
+
+	public Duration getInterruption() {
+		return day.getInterruption() == null ? Duration.ZERO : day.getInterruption();
+	}
+
+	public void setInterruption(Duration interruption) {
+		day.setInterruption(interruption);
+	}
+
+	public JsonDay getJsonDay() {
+		return day;
 	}
 
 	private boolean isWeekend() {

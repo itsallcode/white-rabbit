@@ -1,4 +1,4 @@
-package org.itsallcode.time.storage;
+package org.itsallcode.whiterabbit.logic.storage;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,9 +19,9 @@ import javax.json.bind.JsonbConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.time.model.MonthIndex;
-import org.itsallcode.time.model.MultiMonthIndex;
-import org.itsallcode.time.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
+import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 
 public class Storage {
 	private static final Logger LOG = LogManager.getLogger(Storage.class);
@@ -57,9 +57,9 @@ public class Storage {
 
 	private void writeToFile(MonthIndex month) {
 		final Path file = dateToFileMapper.getPathForDate(month);
+		LOG.trace("Write month {} to file {}", month.getFirstDayOfMonth(), file);
 		createDirectory(file.getParent());
-		try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
-				StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			jsonb.toJson(month.getMonthRecord(), stream);
 		} catch (final IOException e) {
 			throw new IllegalStateException("Error writing file " + file, e);
@@ -94,7 +94,7 @@ public class Storage {
 	}
 
 	private JsonMonth loadFromFile(Path file) {
-		LOG.debug("Reading file {}", file);
+		LOG.trace("Reading file {}", file);
 		try (InputStream stream = Files.newInputStream(file)) {
 			return jsonb.fromJson(stream, JsonMonth.class);
 		} catch (final IOException e) {

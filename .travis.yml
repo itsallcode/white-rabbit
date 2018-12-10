@@ -1,0 +1,19 @@
+language: java
+sudo: false
+jdk:
+  - openjdk11
+
+script:
+  - ./gradlew clean check --info --stacktrace
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.sonar/cache/
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+after_success:
+  - ./gradlew jacocoTestReport --info --stacktrace
+  - bash <(curl -s https://codecov.io/bash)

@@ -1,14 +1,21 @@
 
+plugins {
+  id "org.sonarqube" version "2.6.2"
+  id 'com.github.hierynomus.license' version '0.14.0'
+}
+
+version = '0.0.1'
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
     ext {
         junitVersion = '5.3.1'
         log4jVersion = '2.11.1'
     }
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     dependencies {
         compile "javax.json.bind:javax.json.bind-api:1.0"
@@ -25,7 +32,11 @@ subprojects {
     test {
         useJUnitPlatform()
     }
-    
+
+    jacoco {
+        toolVersion = "0.8.2"
+    }
+
     repositories {
         jcenter()
     }

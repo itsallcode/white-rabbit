@@ -1,9 +1,32 @@
-apply plugin: 'application'
+plugins {
+  id 'com.github.johnrengelman.shadow' version '4.0.2'
+}
 
-mainClassName = 'App'
+shadowJar {
+   baseName = 'textui'
+   classifier = null
+   version = null
+}
+
+ext.mainClass = 'org.itsallcode.whiterabbit.textui.App'
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass 
+    }
+}
+
+build.dependsOn shadowJar
+
+task runTextui(type: JavaExec, dependsOn: shadowJar) {
+   classpath = shadowJar.outputs.files
+   main = mainClass
+   workingDir = rootProject.projectDir
+}
 
 dependencies {
     compile project(':logic')
+    compile 'org.jline:jline-terminal-jansi:3.9.0'
 }
 
 // Avoid gradle deprecation warning

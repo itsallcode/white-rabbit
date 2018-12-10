@@ -1,4 +1,4 @@
-package org.itsallcode.time.model;
+package org.itsallcode.whiterabbit.logic.model;
 
 import java.util.List;
 import java.util.stream.Stream;
