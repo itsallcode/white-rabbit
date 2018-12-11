@@ -25,6 +25,6 @@ task runTextui(type: JavaExec, dependsOn: shadowJar) {
 }
 
 dependencies {
-    compile project(':logic')
-    compile 'org.jline:jline-terminal-jansi:3.9.0'
+    implementation project(':logic')
+    implementation 'org.jline:jline-terminal-jansi:3.9.0'
 }

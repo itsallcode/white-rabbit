@@ -1,0 +1,12 @@
+
+ext.javaFxVersion = '11.0.1'
+ext.platform = 'win'
+
+dependencies {
+    compile project(':logic')
+    //compile "org.openjfx:javafx:$javaFxVersion"
+    compile "org.openjfx:javafx-base:$javaFxVersion:$platform"
+    compile "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
+    compile "org.openjfx:javafx-controls:$javaFxVersion:$platform"
+}
+

@@ -2,3 +2,4 @@ rootProject.name = 'white-rabbit'
 
 include 'logic'
 include 'textui'
+include 'jfxui'

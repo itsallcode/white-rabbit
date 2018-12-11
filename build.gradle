@@ -9,26 +9,37 @@ version = '0.0.1'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'eclipse'
+    
     ext {
         junitVersion = '5.3.1'
         log4jVersion = '2.11.1'
+        moduleName = project.name
     }
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 10
+    targetCompatibility = 10
 
     dependencies {
-        compile "javax.json.bind:javax.json.bind-api:1.0"
-        compile "org.eclipse:yasson:1.0"
-        compile "org.glassfish:javax.json:1.1"
         compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
-        runtime "org.apache.logging.log4j:log4j-core:$log4jVersion"
-    
+        compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+
+  
         testCompile "org.assertj:assertj-core:3.11.1"
         testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
     
+    compileJava {
+        inputs.property("moduleName", moduleName)
+        doFirst {
+            options.compilerArgs = [
+                '--module-path', classpath.asPath,
+            ]
+            classpath = files()  
+        }
+    }
+
     test {
         useJUnitPlatform()
     }
