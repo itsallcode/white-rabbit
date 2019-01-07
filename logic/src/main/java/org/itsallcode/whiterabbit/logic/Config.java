@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +26,7 @@ public class Config {
 			props.load(stream);
 			return props;
 		} catch (final IOException e) {
-			throw new IllegalStateException("Error reading " + configFile, e);
+			throw new UncheckedIOException("Error reading " + configFile, e);
 		}
 	}
 
