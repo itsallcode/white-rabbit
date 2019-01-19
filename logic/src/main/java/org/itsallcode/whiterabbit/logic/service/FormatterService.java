@@ -24,8 +24,9 @@ public class FormatterService {
 		final String dayType = formatDayType(day.getType());
 		final String date = format("{0} {1} {2}", day.getDate(), dayOfWeek, dayType);
 		final String time = day.getBegin() != null ? format("{0} - {1}", day.getBegin(), day.getEnd()) : "             ";
-		return format("{0} {1} break: {2}, interr.: {3}, working time: {4}, overtime: {5}", date, time, format(day.getMandatoryBreak()),
-				format(day.getInterruption()), format(day.getWorkingTime()), format(day.getOvertime()));
+		final String interruption = day.getInterruption().isZero() ? "" : "interr.: " + format(day.getInterruption()) + ", ";
+		return format("{0} {1} break: {2}, {3}working time: {4}, overtime: {5}", date, time, format(day.getMandatoryBreak()), interruption,
+				format(day.getWorkingTime()), format(day.getOvertime()));
 	}
 
 	private String formatDayType(DayType type) {
