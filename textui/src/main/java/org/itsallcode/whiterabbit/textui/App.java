@@ -12,7 +12,7 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
-import org.itsallcode.whiterabbit.logic.service.SchedulingService.ScheduledTaskFuture;
+import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 
 public class App {
 	private static final Logger LOG = LogManager.getLogger(App.class);
