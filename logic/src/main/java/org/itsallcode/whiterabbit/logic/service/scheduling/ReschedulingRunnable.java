@@ -10,11 +10,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
-import org.itsallcode.whiterabbit.logic.service.SchedulingService;
 
 public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements ScheduledTaskFuture {
 
-	private static final Logger LOG = LogManager.getLogger(SchedulingService.class);
+	private static final Logger LOG = LogManager.getLogger(ReschedulingRunnable.class);
 
 	private final Trigger trigger;
 	private final ScheduledExecutorService executorService;
@@ -40,7 +39,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
 			}
 
 			final Duration initialDelay = Duration.between(clock.instant(), this.scheduledExecutionTime);
-			LOG.debug("Schedule next execution at {} in {}", this.scheduledExecutionTime, initialDelay);
+			LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime, initialDelay);
 			this.currentFuture = this.executorService.schedule(this, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
 			return this;
 		}

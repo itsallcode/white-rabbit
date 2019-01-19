@@ -93,8 +93,7 @@ public class App {
 	private void toggleAutoUpdate() {
 		if (autoUpdateFuture == null) {
 			autoUpdateFuture = appService.startAutoUpdate(day -> {
-				LOG.info("Scheduled update: {}", formatterService.format(day));
-				printPrompt();
+				println("Update: " + formatterService.format(day));
 			});
 		} else {
 			autoUpdateFuture.cancel();
@@ -122,7 +121,11 @@ public class App {
 	}
 
 	private void printPrompt() {
-		System.out.println(getPrompt());
+		println(getPrompt());
+	}
+
+	private void println(String message) {
+		System.out.println(message);
 	}
 
 	private String getPrompt() {

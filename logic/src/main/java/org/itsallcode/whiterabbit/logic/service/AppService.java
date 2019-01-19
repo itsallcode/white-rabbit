@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.scheduling.FullMinuteTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
+import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
@@ -33,7 +35,8 @@ public class AppService {
 	public static AppService create(final Config config, final FormatterService formatterService) {
 		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
 		final ClockService clockService = new ClockService();
-		final SchedulingService schedulingService = new SchedulingService(clockService);
+		final Trigger trigger = new FullMinuteTrigger(clockService);
+		final SchedulingService schedulingService = new SchedulingService(clockService, trigger);
 		return new AppService(storage, formatterService, clockService, schedulingService);
 	}
 
