@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.time.LocalTime;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -92,13 +93,19 @@ public class App {
 
 	private void toggleAutoUpdate() {
 		if (autoUpdateFuture == null) {
-			autoUpdateFuture = appService.startAutoUpdate(day -> {
-				println("Update: " + formatterService.format(day));
-			});
+			autoUpdateFuture = appService.startAutoUpdate(this::dayRecordUpdated, this::shouldCreateInterruption);
 		} else {
 			autoUpdateFuture.cancel();
 			autoUpdateFuture = null;
 		}
+	}
+
+	private void dayRecordUpdated(DayRecord day) {
+		println("Update: " + formatterService.format(day));
+	}
+
+	private boolean shouldCreateInterruption(LocalTime beginOfInterruption) {
+		return true;
 	}
 
 	private void toggleInterrupt() {
