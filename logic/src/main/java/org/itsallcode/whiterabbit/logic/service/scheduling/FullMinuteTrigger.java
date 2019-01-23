@@ -15,10 +15,10 @@ public class FullMinuteTrigger implements Trigger {
 
 	@Override
 	public Instant nextExecutionTime(TriggerContext context) {
-		if (context.lastScheduledExecutionTime() == null) {
+		if (context.lastActualExecutionTime() == null) {
 			return clockService.instant();
 		}
-		return nextFullMinute(context.lastScheduledExecutionTime());
+		return nextFullMinute(context.lastActualExecutionTime());
 	}
 
 	private Instant nextFullMinute(Instant lastScheduledExecutionTime) {
