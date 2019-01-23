@@ -26,16 +26,14 @@ public class AppService {
 	private final ClockService clock;
 	private final FormatterService formatterService;
 	private final SchedulingService schedulingService;
-	private final Config config;
 
 	private AutoInterruptionStrategy autoInterruptionStrategy = (b) -> false;
 
-	public AppService(Storage storage, FormatterService formatterService, ClockService clock, SchedulingService schedulingService, Config config) {
+	public AppService(Storage storage, FormatterService formatterService, ClockService clock, SchedulingService schedulingService) {
 		this.storage = storage;
 		this.formatterService = formatterService;
 		this.clock = clock;
 		this.schedulingService = schedulingService;
-		this.config = config;
 	}
 
 	public static AppService create(final Config config, final FormatterService formatterService) {
@@ -43,7 +41,7 @@ public class AppService {
 		final ClockService clockService = new ClockService();
 		final Trigger trigger = new FullMinuteTrigger(clockService);
 		final SchedulingService schedulingService = new SchedulingService(clockService, trigger);
-		return new AppService(storage, formatterService, clockService, schedulingService, config);
+		return new AppService(storage, formatterService, clockService, schedulingService);
 	}
 
 	public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener, AutoInterruptionStrategy autoInterruptionStrategy) {
