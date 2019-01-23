@@ -35,6 +35,6 @@ public class SchedulingService {
 	}
 
 	public void shutdown() {
-		this.executorService.shutdown();
+		this.executorService.shutdownNow();
 	}
 }
