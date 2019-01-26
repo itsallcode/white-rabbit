@@ -27,8 +27,6 @@ public class AppService {
 	private final FormatterService formatterService;
 	private final SchedulingService schedulingService;
 
-	private AutoInterruptionStrategy autoInterruptionStrategy = (b) -> false;
-
 	public AppService(Storage storage, FormatterService formatterService, ClockService clock, SchedulingService schedulingService) {
 		this.storage = storage;
 		this.formatterService = formatterService;
@@ -45,11 +43,10 @@ public class AppService {
 	}
 
 	public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener, AutoInterruptionStrategy autoInterruptionStrategy) {
-		this.autoInterruptionStrategy = autoInterruptionStrategy;
-		return this.schedulingService.schedule(new DayUpdateExecutor(this, listener));
+		return this.schedulingService.schedule(new DayUpdateExecutor(this, listener, autoInterruptionStrategy));
 	}
 
-	public DayRecord updateNow() {
+	public DayRecord updateNow(AutoInterruptionStrategy autoInterruptionStrategy) {
 		final LocalDate today = clock.getCurrentDate();
 		final MonthIndex month = storage.loadMonth(today);
 		final DayRecord day = month.getDay(today);
@@ -60,12 +57,12 @@ public class AppService {
 				day.setBegin(now);
 				updated = true;
 			}
-			if (shouldUpdateEnd(day, now)) {
+			if (shouldUpdateEnd(day, now, autoInterruptionStrategy)) {
 				day.setEnd(now);
 				updated = true;
 			}
 			if (updated) {
-				LOG.info("Updating day {} for time {}\n{}", day.getDate(), now, formatterService.format(day));
+				LOG.trace("Updating day {} for time {}\n{}", day.getDate(), now, formatterService.format(day));
 				storage.storeMonth(month);
 			} else {
 				LOG.trace("No update for {} at {}\n{}", day.getDate(), now);
@@ -80,7 +77,7 @@ public class AppService {
 		return day.getBegin() == null || day.getBegin().isAfter(now);
 	}
 
-	private boolean shouldUpdateEnd(final DayRecord day, final LocalTime now) {
+	private boolean shouldUpdateEnd(final DayRecord day, final LocalTime now, AutoInterruptionStrategy autoInterruptionStrategy) {
 		if (day.getEnd() == null) {
 			return true;
 		}
@@ -99,7 +96,6 @@ public class AppService {
 	}
 
 	public void report() {
-		LOG.debug("Reporting...");
 		final DayReporter reporter = new DayReporter(formatterService);
 		storage.loadAll().getDays().forEach(reporter::add);
 		reporter.finish();

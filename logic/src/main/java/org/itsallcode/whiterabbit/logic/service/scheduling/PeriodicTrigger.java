@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic.service.scheduling;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 
@@ -16,10 +17,10 @@ public class PeriodicTrigger implements Trigger {
 	}
 
 	@Override
-	public Instant nextExecutionTime(TriggerContext context) {
-		if (context.lastScheduledExecutionTime() == null) {
+	public Instant nextExecutionTime(Optional<TriggerContext> context) {
+		if (!context.isPresent()) {
 			return clockService.instant();
 		}
-		return context.lastScheduledExecutionTime().plus(delay);
+		return context.get().lastScheduledExecutionTime().plus(delay);
 	}
 }

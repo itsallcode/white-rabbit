@@ -3,12 +3,9 @@ package org.itsallcode.whiterabbit.logic.service.scheduling;
 import java.time.Instant;
 
 public class TriggerContext {
-	private Instant lastScheduledExecutionTime;
-	private Instant lastActualExecutionTime;
-	private Instant lastCompletionTime;
-
-	public TriggerContext() {
-	}
+	private final Instant lastScheduledExecutionTime;
+	private final Instant lastActualExecutionTime;
+	private final Instant lastCompletionTime;
 
 	public TriggerContext(Instant lastScheduledExecutionTime, Instant lastActualExecutionTime, Instant lastCompletionTime) {
 		this.lastScheduledExecutionTime = lastScheduledExecutionTime;
@@ -26,11 +23,5 @@ public class TriggerContext {
 
 	public Instant lastActualExecutionTime() {
 		return lastActualExecutionTime;
-	}
-
-	public void update(Instant scheduledExecutionTime, Instant actualExecutionTime, Instant completionTime) {
-		this.lastScheduledExecutionTime = scheduledExecutionTime;
-		this.lastActualExecutionTime = actualExecutionTime;
-		this.lastCompletionTime = completionTime;
 	}
 }

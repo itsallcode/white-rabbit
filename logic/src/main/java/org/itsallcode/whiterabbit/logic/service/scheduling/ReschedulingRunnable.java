@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service.scheduling;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
 
 	private final Object triggerContextMonitor = new Object();
 	private Instant scheduledExecutionTime;
-	private final TriggerContext triggerContext = new TriggerContext();
+	private Optional<TriggerContext> triggerContext = Optional.empty();
 	private final ClockService clock;
 	private ScheduledFuture<?> currentFuture;
 
@@ -52,7 +53,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
 		final Instant completionTime = clock.instant();
 		synchronized (this.triggerContextMonitor) {
 			Objects.requireNonNull(this.scheduledExecutionTime, "No scheduled execution");
-			this.triggerContext.update(this.scheduledExecutionTime, actualExecutionTime, completionTime);
+			this.triggerContext = Optional.of(new TriggerContext(this.scheduledExecutionTime, actualExecutionTime, completionTime));
 			if (!obtainCurrentFuture().isCancelled()) {
 				schedule();
 			}

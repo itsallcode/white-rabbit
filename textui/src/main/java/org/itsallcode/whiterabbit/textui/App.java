@@ -2,7 +2,9 @@ package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -101,11 +103,9 @@ public class App {
 	}
 
 	private void dayRecordUpdated(DayRecord day) {
-		println("Update: " + formatterService.format(day));
-	}
-
-	private boolean shouldCreateInterruption(LocalTime beginOfInterruption) {
-		return true;
+		final Instant now = appService.getClock().instant();
+		final Instant displayTime = now.truncatedTo(ChronoUnit.SECONDS);
+		println(displayTime + " Update: " + formatterService.format(day));
 	}
 
 	private void toggleInterrupt() {
@@ -118,8 +118,12 @@ public class App {
 	}
 
 	private void update() {
-		final DayRecord updatedRecord = appService.updateNow();
+		final DayRecord updatedRecord = appService.updateNow(this::shouldCreateInterruption);
 		LOG.info("Day:\n{}", formatterService.format(updatedRecord));
+	}
+
+	private boolean shouldCreateInterruption(LocalTime beginOfInterruption) {
+		return true;
 	}
 
 	private Optional<Character> promptUser() {
