@@ -111,4 +111,8 @@ public class DayRecord {
 			return false;
 		}
 	}
+
+	public String getComment() {
+		return day.getComment();
+	}
 }

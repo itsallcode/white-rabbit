@@ -43,6 +43,10 @@ public class JsonDay {
 		return interruption;
 	}
 
+	public String getComment() {
+		return comment;
+	}
+
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
@@ -57,6 +61,10 @@ public class JsonDay {
 
 	public void setEnd(LocalTime end) {
 		this.end = end;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public void setInterruption(Duration interruption) {

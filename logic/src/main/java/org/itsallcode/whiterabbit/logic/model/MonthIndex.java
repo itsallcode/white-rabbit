@@ -45,13 +45,15 @@ public class MonthIndex {
 		return JsonMonth.create(record, getSortedJsonDays());
 	}
 
+	private List<JsonDay> getSortedJsonDays() {
+		return getSortedDays() //
+				.map(DayRecord::getJsonDay) //
+				.collect(toList());
+	}
+
 	public Stream<DayRecord> getSortedDays() {
 		return days.values().stream() //
 				.sorted(Comparator.comparing(DayRecord::getDate));
-	}
-
-	public List<JsonDay> getSortedJsonDays() {
-		return getSortedDays().map(DayRecord::getJsonDay).collect(toList());
 	}
 
 	private DayRecord createDay(LocalDate date) {

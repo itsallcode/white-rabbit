@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -62,7 +63,7 @@ public class Storage {
 		try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			jsonb.toJson(month.getMonthRecord(), stream);
 		} catch (final IOException e) {
-			throw new IllegalStateException("Error writing file " + file, e);
+			throw new UncheckedIOException("Error writing file " + file, e);
 		}
 	}
 
@@ -73,7 +74,7 @@ public class Storage {
 		try {
 			Files.createDirectories(dir);
 		} catch (final IOException e) {
-			throw new IllegalStateException("Error creating dir " + dir, e);
+			throw new UncheckedIOException("Error creating dir " + dir, e);
 		}
 	}
 
@@ -98,7 +99,7 @@ public class Storage {
 		try (InputStream stream = Files.newInputStream(file)) {
 			return jsonb.fromJson(stream, JsonMonth.class);
 		} catch (final IOException e) {
-			throw new IllegalStateException("Error reading file " + file, e);
+			throw new UncheckedIOException("Error reading file " + file, e);
 		}
 	}
 }

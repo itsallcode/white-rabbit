@@ -25,6 +25,7 @@ public class DayReporter {
 		report.append(line) //
 				.append(", Acc. overtime: ") //
 				.append(formatterService.format(overtime)) //
+				.append(day.getComment() != null ? ", " + day.getComment() : "")
 				.append(NEWLINE);
 	}
 
