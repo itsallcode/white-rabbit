@@ -6,7 +6,17 @@
         {
             "label": "Run text ui",
             "type": "shell",
-            "command": "\"$JAVA11_HOME/bin/java\" -jar textui/build/libs/textui.jar"
+            "command": "\"$JAVA11_HOME/bin/java\" -jar textui/build/libs/textui.jar",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "JAVA_HOME=$JAVA11_HOME ./gradlew.bat build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
