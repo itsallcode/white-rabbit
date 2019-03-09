@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,7 @@ public class AppService {
     private final ClockService clock;
     private final FormatterService formatterService;
     private final SchedulingService schedulingService;
+    private final AtomicReference<Interruption> currentInterruption = new AtomicReference<>();
 
     public AppService(Storage storage, FormatterService formatterService, ClockService clock,
 	    SchedulingService schedulingService) {
@@ -91,7 +93,7 @@ public class AppService {
 	if (interruption.minus(AUTO_INTERRUPTION_THRESHOLD).isNegative()) {
 	    return true;
 	}
-	if (autoInterruptionStrategy.shouldCreateInterruption(day.getEnd())) {
+	if (!isInterruptionActive() && autoInterruptionStrategy.shouldCreateInterruption(day.getEnd())) {
 	    final Duration interruptionToAdd = Duration.between(day.getEnd(), clock.getCurrentTime());
 	    addToInterruption(day, interruptionToAdd);
 	}
@@ -105,7 +107,16 @@ public class AppService {
     }
 
     public Interruption startInterruption() {
-	return Interruption.start(clock, this::addToInterruption);
+	final Interruption newInterruption = Interruption.start(clock, this::addToInterruption);
+	if (currentInterruption.compareAndSet(null, newInterruption)) {
+	    return newInterruption;
+	} else {
+	    throw new IllegalStateException("An interruption was already started: " + currentInterruption.get());
+	}
+    }
+
+    private boolean isInterruptionActive() {
+	return currentInterruption.get() != null;
     }
 
     private void addToInterruption(Duration additionalInterruption) {
