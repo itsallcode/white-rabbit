@@ -12,12 +12,11 @@ A time recording tool
 * Manual interruptions: press `i` to start and stop interruptions
 * Supports weekend, public holiday, vacation, flex time and sickness (see json example)
 * Reporting of total overtime: press `r`
-* Custom comments
 * Automatic update in the background (press `u` to update manually): just keep it running and it will record your working time
-  * Start of work detected via
+  * Start of work is detected via
     * Program start
     * Computer resumes from sleep in the morning
-  * End of work detected via
+  * End of work is detected via
     * Program shutdown
     * Computer sleeps for the rest of the day
   * Interruptions detected when computer sleeps for more than 2 minutes
@@ -87,6 +86,11 @@ A time recording tool
 Total overtime: PT-7H-20M
 ```
 
+### Notes
+
+* Won't work on weekends. To force working on a weekend, manually create an entry with `"type" = "WORK"`.
+
+
 ## Usage
 
 ### Requirements
@@ -104,8 +108,10 @@ data = <path-to-data-dir> # e.g.: ../time-recording-data/
 ### Launching
 
 ```bash
+mkdir time-recording-data
+git clone https://github.com/itsallcode/white-rabbit.git
 cd white-rabbit
+echo "data = ../time-recording-data/" > time.properties
 ./gradlew build
 java -jar textui/build/libs/textui.jar
 ```
-
