@@ -1,6 +1,8 @@
 # white-rabbit
 A time recording tool
 
+[![Build Status](https://travis-ci.org/itsallcode/white-rabbit.svg?branch=develop)](https://travis-ci.org/itsallcode/white-rabbit)
+
 ## Usage
 
 ### Requirements
