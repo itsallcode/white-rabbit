@@ -135,6 +135,8 @@ public class App {
 	println(getPrompt());
     }
 
+    // Using System.out intentionally
+    @SuppressWarnings("squid:S106")
     private void println(String message) {
 	System.out.println(message);
     }
