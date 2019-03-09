@@ -5,5 +5,5 @@ import java.util.Optional;
 
 @FunctionalInterface
 public interface Trigger {
-	Instant nextExecutionTime(Optional<TriggerContext> context);
+    Instant nextExecutionTime(Optional<TriggerContext> context);
 }

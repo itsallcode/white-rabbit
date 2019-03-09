@@ -10,35 +10,37 @@ import java.util.Properties;
 
 public class Config {
 
-	private final Properties properties;
+    private final Properties properties;
+    private final Path configFile;
 
-	private Config(Properties properties) {
-		this.properties = properties;
-	}
+    private Config(Properties properties, Path configFile) {
+	this.properties = properties;
+	this.configFile = configFile;
+    }
 
-	public static Config read(Path configFile) {
-		return new Config(loadProperties(configFile));
-	}
+    public static Config read(Path configFile) {
+	return new Config(loadProperties(configFile), configFile);
+    }
 
-	private static Properties loadProperties(Path configFile) {
-		try (InputStream stream = Files.newInputStream(configFile)) {
-			final Properties props = new Properties();
-			props.load(stream);
-			return props;
-		} catch (final IOException e) {
-			throw new UncheckedIOException("Error reading " + configFile, e);
-		}
+    private static Properties loadProperties(Path configFile) {
+	try (InputStream stream = Files.newInputStream(configFile)) {
+	    final Properties props = new Properties();
+	    props.load(stream);
+	    return props;
+	} catch (final IOException e) {
+	    throw new UncheckedIOException("Error reading " + configFile, e);
 	}
+    }
 
-	public Path getDataDir() {
-		return Paths.get(getMandatoryValue("data"));
-	}
+    public Path getDataDir() {
+	return Paths.get(getMandatoryValue("data"));
+    }
 
-	private String getMandatoryValue(String param) {
-		final String value = this.properties.getProperty(param);
-		if (value == null) {
-			throw new IllegalStateException("Property " + param + " not found in config file");
-		}
-		return value;
+    private String getMandatoryValue(String param) {
+	final String value = this.properties.getProperty(param);
+	if (value == null) {
+	    throw new IllegalStateException("Property '" + param + "' not found in config file " + configFile);
 	}
+	return value;
+    }
 }

@@ -1,9 +1,9 @@
 package org.itsallcode.whiterabbit.logic.service.scheduling;
 
 public interface ScheduledTaskFuture {
-	void cancel();
+    void cancel();
 
-	boolean isDone();
+    boolean isDone();
 
-	boolean isCancelled();
+    boolean isCancelled();
 }

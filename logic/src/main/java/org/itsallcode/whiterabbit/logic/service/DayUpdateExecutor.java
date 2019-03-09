@@ -7,19 +7,20 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 class DayUpdateExecutor implements Runnable {
 
-	private final AppService appService;
-	private final Consumer<DayRecord> listener;
-	private final AutoInterruptionStrategy autoInterruptionStrategy;
+    private final AppService appService;
+    private final Consumer<DayRecord> listener;
+    private final AutoInterruptionStrategy autoInterruptionStrategy;
 
-	DayUpdateExecutor(AppService appService, Consumer<DayRecord> listener, AutoInterruptionStrategy autoInterruptionStrategy) {
-		this.appService = appService;
-		this.listener = listener;
-		this.autoInterruptionStrategy = autoInterruptionStrategy;
-	}
+    DayUpdateExecutor(AppService appService, Consumer<DayRecord> listener,
+	    AutoInterruptionStrategy autoInterruptionStrategy) {
+	this.appService = appService;
+	this.listener = listener;
+	this.autoInterruptionStrategy = autoInterruptionStrategy;
+    }
 
-	@Override
-	public void run() {
-		final DayRecord day = appService.updateNow(autoInterruptionStrategy);
-		listener.accept(day);
-	}
+    @Override
+    public void run() {
+	final DayRecord day = appService.updateNow(autoInterruptionStrategy);
+	listener.accept(day);
+    }
 }

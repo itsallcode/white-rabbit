@@ -4,5 +4,5 @@ import java.time.LocalTime;
 
 @FunctionalInterface
 public interface AutoInterruptionStrategy {
-	boolean shouldCreateInterruption(LocalTime beginOfInterruption);
+    boolean shouldCreateInterruption(LocalTime beginOfInterruption);
 }

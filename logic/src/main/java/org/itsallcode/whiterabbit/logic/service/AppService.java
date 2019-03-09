@@ -18,118 +18,121 @@ import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class AppService {
-	private static final Duration AUTO_INTERRUPTION_THRESHOLD = Duration.ofMinutes(2);
+    private static final Duration AUTO_INTERRUPTION_THRESHOLD = Duration.ofMinutes(2);
 
-	private static final Logger LOG = LogManager.getLogger(AppService.class);
+    private static final Logger LOG = LogManager.getLogger(AppService.class);
 
-	private final Storage storage;
-	private final ClockService clock;
-	private final FormatterService formatterService;
-	private final SchedulingService schedulingService;
+    private final Storage storage;
+    private final ClockService clock;
+    private final FormatterService formatterService;
+    private final SchedulingService schedulingService;
 
-	public AppService(Storage storage, FormatterService formatterService, ClockService clock, SchedulingService schedulingService) {
-		this.storage = storage;
-		this.formatterService = formatterService;
-		this.clock = clock;
-		this.schedulingService = schedulingService;
-	}
+    public AppService(Storage storage, FormatterService formatterService, ClockService clock,
+	    SchedulingService schedulingService) {
+	this.storage = storage;
+	this.formatterService = formatterService;
+	this.clock = clock;
+	this.schedulingService = schedulingService;
+    }
 
-	public static AppService create(final Config config, final FormatterService formatterService) {
-		final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
-		final ClockService clockService = new ClockService();
-		final Trigger trigger = new FullMinuteTrigger(clockService);
-		final SchedulingService schedulingService = new SchedulingService(clockService, trigger);
-		return new AppService(storage, formatterService, clockService, schedulingService);
-	}
+    public static AppService create(final Config config, final FormatterService formatterService) {
+	final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
+	final ClockService clockService = new ClockService();
+	final Trigger trigger = new FullMinuteTrigger(clockService);
+	final SchedulingService schedulingService = new SchedulingService(clockService, trigger);
+	return new AppService(storage, formatterService, clockService, schedulingService);
+    }
 
-	public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener, AutoInterruptionStrategy autoInterruptionStrategy) {
-		return this.schedulingService.schedule(new DayUpdateExecutor(this, listener, autoInterruptionStrategy));
-	}
+    public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener,
+	    AutoInterruptionStrategy autoInterruptionStrategy) {
+	return this.schedulingService.schedule(new DayUpdateExecutor(this, listener, autoInterruptionStrategy));
+    }
 
-	public DayRecord updateNow(AutoInterruptionStrategy autoInterruptionStrategy) {
-		final LocalDate today = clock.getCurrentDate();
-		final MonthIndex month = storage.loadMonth(today);
-		final DayRecord day = month.getDay(today);
-		final LocalTime now = clock.getCurrentTime();
-		if (day.isWorkingDay()) {
-			boolean updated = false;
-			if (shouldUpdateBegin(day, now)) {
-				day.setBegin(now);
-				updated = true;
-			}
-			if (shouldUpdateEnd(day, now, autoInterruptionStrategy)) {
-				day.setEnd(now);
-				updated = true;
-			}
-			if (updated) {
-				LOG.trace("Updating day {} for time {}\n{}", day.getDate(), now, formatterService.format(day));
-				storage.storeMonth(month);
-			} else {
-				LOG.trace("No update for {} at {}\n{}", day.getDate(), now);
-			}
-		} else {
-			LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
-		}
-		return day;
-	}
-
-	private boolean shouldUpdateBegin(final DayRecord day, final LocalTime now) {
-		return day.getBegin() == null || day.getBegin().isAfter(now);
-	}
-
-	private boolean shouldUpdateEnd(final DayRecord day, final LocalTime now, AutoInterruptionStrategy autoInterruptionStrategy) {
-		if (day.getEnd() == null) {
-			return true;
-		}
-		if (day.getEnd().isAfter(now)) {
-			return false;
-		}
-		final Duration interruption = Duration.between(day.getEnd(), now);
-		if (interruption.minus(AUTO_INTERRUPTION_THRESHOLD).isNegative()) {
-			return true;
-		}
-		if (autoInterruptionStrategy.shouldCreateInterruption(day.getEnd())) {
-			final Duration interruptionToAdd = Duration.between(day.getEnd(), clock.getCurrentTime());
-			addToInterruption(day, interruptionToAdd);
-		}
-		return true;
-	}
-
-	public void report() {
-		final DayReporter reporter = new DayReporter(formatterService);
-		storage.loadAll().getDays().forEach(reporter::add);
-		reporter.finish();
-	}
-
-	public Interruption startInterruption() {
-		return Interruption.start(clock, this::addToInterruption);
-	}
-
-	private void addToInterruption(Duration additionalInterruption) {
-		if (additionalInterruption.isZero()) {
-			LOG.debug("Interruption is zero: ignore.");
-			return;
-		}
-		final LocalDate today = clock.getCurrentDate();
-		final MonthIndex month = storage.loadMonth(today);
-		final DayRecord day = month.getDay(today);
-		addToInterruption(day, additionalInterruption);
+    public DayRecord updateNow(AutoInterruptionStrategy autoInterruptionStrategy) {
+	final LocalDate today = clock.getCurrentDate();
+	final MonthIndex month = storage.loadMonth(today);
+	final DayRecord day = month.getDay(today);
+	final LocalTime now = clock.getCurrentTime();
+	if (day.isWorkingDay()) {
+	    boolean updated = false;
+	    if (shouldUpdateBegin(day, now)) {
+		day.setBegin(now);
+		updated = true;
+	    }
+	    if (shouldUpdateEnd(day, now, autoInterruptionStrategy)) {
+		day.setEnd(now);
+		updated = true;
+	    }
+	    if (updated) {
+		LOG.trace("Updating day {} for time {}\n{}", day.getDate(), now, formatterService.format(day));
 		storage.storeMonth(month);
+	    } else {
+		LOG.trace("No update for {} at {}\n{}", day.getDate(), now);
+	    }
+	} else {
+	    LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
 	}
+	return day;
+    }
 
-	private void addToInterruption(final DayRecord day, Duration additionalInterruption) {
-		final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
-		LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, day.getDate(), updatedInterruption,
-				formatterService.format(day));
-		day.setInterruption(updatedInterruption);
-	}
+    private boolean shouldUpdateBegin(final DayRecord day, final LocalTime now) {
+	return day.getBegin() == null || day.getBegin().isAfter(now);
+    }
 
-	public void shutdown() {
-		LOG.debug("Shutting down...");
-		this.schedulingService.shutdown();
+    private boolean shouldUpdateEnd(final DayRecord day, final LocalTime now,
+	    AutoInterruptionStrategy autoInterruptionStrategy) {
+	if (day.getEnd() == null) {
+	    return true;
 	}
+	if (day.getEnd().isAfter(now)) {
+	    return false;
+	}
+	final Duration interruption = Duration.between(day.getEnd(), now);
+	if (interruption.minus(AUTO_INTERRUPTION_THRESHOLD).isNegative()) {
+	    return true;
+	}
+	if (autoInterruptionStrategy.shouldCreateInterruption(day.getEnd())) {
+	    final Duration interruptionToAdd = Duration.between(day.getEnd(), clock.getCurrentTime());
+	    addToInterruption(day, interruptionToAdd);
+	}
+	return true;
+    }
 
-	public ClockService getClock() {
-		return clock;
+    public void report() {
+	final DayReporter reporter = new DayReporter(formatterService);
+	storage.loadAll().getDays().forEach(reporter::add);
+	reporter.finish();
+    }
+
+    public Interruption startInterruption() {
+	return Interruption.start(clock, this::addToInterruption);
+    }
+
+    private void addToInterruption(Duration additionalInterruption) {
+	if (additionalInterruption.isZero()) {
+	    LOG.debug("Interruption is zero: ignore.");
+	    return;
 	}
+	final LocalDate today = clock.getCurrentDate();
+	final MonthIndex month = storage.loadMonth(today);
+	final DayRecord day = month.getDay(today);
+	addToInterruption(day, additionalInterruption);
+	storage.storeMonth(month);
+    }
+
+    private void addToInterruption(final DayRecord day, Duration additionalInterruption) {
+	final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
+	LOG.info("Add interruption {} for {}, total interruption: {}\n{}", additionalInterruption, day.getDate(),
+		updatedInterruption, formatterService.format(day));
+	day.setInterruption(updatedInterruption);
+    }
+
+    public void shutdown() {
+	LOG.debug("Shutting down...");
+	this.schedulingService.shutdown();
+    }
+
+    public ClockService getClock() {
+	return clock;
+    }
 }
