@@ -6,21 +6,25 @@ import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 
-public class PeriodicTrigger implements Trigger {
+public class PeriodicTrigger implements Trigger
+{
 
     private final ClockService clockService;
     private final Duration delay;
 
-    public PeriodicTrigger(ClockService clockService, Duration delay) {
-	this.clockService = clockService;
-	this.delay = delay;
+    public PeriodicTrigger(ClockService clockService, Duration delay)
+    {
+        this.clockService = clockService;
+        this.delay = delay;
     }
 
     @Override
-    public Instant nextExecutionTime(Optional<TriggerContext> context) {
-	if (!context.isPresent()) {
-	    return clockService.instant();
-	}
-	return context.get().lastScheduledExecutionTime().plus(delay);
+    public Instant nextExecutionTime(Optional<TriggerContext> context)
+    {
+        if (!context.isPresent())
+        {
+            return clockService.instant();
+        }
+        return context.get().lastScheduledExecutionTime().plus(delay);
     }
 }

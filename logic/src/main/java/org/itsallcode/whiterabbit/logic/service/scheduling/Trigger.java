@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface Trigger {
+public interface Trigger
+{
     Instant nextExecutionTime(Optional<TriggerContext> context);
 }

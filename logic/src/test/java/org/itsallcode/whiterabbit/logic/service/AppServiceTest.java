@@ -24,7 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AppServiceTest {
+class AppServiceTest
+{
 
     @Mock
     private Storage storageMock;
@@ -42,210 +43,229 @@ class AppServiceTest {
     private AppService appService;
 
     @BeforeEach
-    void setUp() {
-	appService = new AppService(storageMock, formatterServiceMock, clockMock, schedulingServiceMock);
-	lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any())).thenReturn(true);
+    void setUp()
+    {
+        appService = new AppService(storageMock, formatterServiceMock, clockMock,
+                schedulingServiceMock);
+        lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any()))
+                .thenReturn(true);
     }
 
     @Test
-    void testNoUpdateWhenNotWorkingDay() {
-	final LocalTime now = LocalTime.of(14, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 9);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
+    void testNoUpdateWhenNotWorkingDay()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 9);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isNull();
-	assertThat(day.getEnd()).isNull();
+        assertThat(day.getBegin()).isNull();
+        assertThat(day.getEnd()).isNull();
     }
 
     @Test
-    void testUpdateNewDayOnWorkingDay() {
-	final LocalTime now = LocalTime.of(8, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
+    void testUpdateNewDayOnWorkingDay()
+    {
+        final LocalTime now = LocalTime.of(8, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(now);
-	assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getBegin()).isEqualTo(now);
+        assertThat(day.getEnd()).isEqualTo(now);
     }
 
     @Test
-    void testUpdateExistingDayAfter1Min() {
-	final LocalTime begin = LocalTime.of(8, 0);
-	final LocalTime now = LocalTime.of(8, 1);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(begin);
-	day.setEnd(begin);
+    void testUpdateExistingDayAfter1Min()
+    {
+        final LocalTime begin = LocalTime.of(8, 0);
+        final LocalTime now = LocalTime.of(8, 1);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(begin);
+        day.setEnd(begin);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(begin);
-	assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(now);
     }
 
     @Test
-    void testUpdateExistingDayAfter2Min() {
-	final LocalTime begin = LocalTime.of(8, 0);
-	final LocalTime now = LocalTime.of(8, 2);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(begin);
-	day.setEnd(begin);
+    void testUpdateExistingDayAfter2Min()
+    {
+        final LocalTime begin = LocalTime.of(8, 0);
+        final LocalTime now = LocalTime.of(8, 2);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(begin);
+        day.setEnd(begin);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(begin);
-	assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(now);
     }
 
     @Test
-    void testNoUpdateIfEndAfterNow() {
-	final LocalTime begin = LocalTime.of(8, 0);
-	final LocalTime end = LocalTime.of(16, 0);
-	final LocalTime now = LocalTime.of(9, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(begin);
-	day.setEnd(end);
+    void testNoUpdateIfEndAfterNow()
+    {
+        final LocalTime begin = LocalTime.of(8, 0);
+        final LocalTime end = LocalTime.of(16, 0);
+        final LocalTime now = LocalTime.of(9, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(begin);
+        day.setEnd(end);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(begin);
-	assertThat(day.getEnd()).isEqualTo(end);
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(end);
     }
 
     @Test
-    void testUpdateExistingDayAfter3Min() {
-	final LocalTime begin = LocalTime.of(8, 0);
-	final LocalTime now = LocalTime.of(8, 3);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(begin);
-	day.setEnd(begin);
+    void testUpdateExistingDayAfter3Min()
+    {
+        final LocalTime begin = LocalTime.of(8, 0);
+        final LocalTime now = LocalTime.of(8, 3);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(begin);
+        day.setEnd(begin);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(begin);
-	assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(now);
     }
 
     @Test
-    void testUpdateNowAddsInterruption() {
-	final LocalTime now = LocalTime.of(14, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(LocalTime.of(8, 0));
-	day.setEnd(LocalTime.of(13, 0));
+    void testUpdateNowAddsInterruption()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(LocalTime.of(13, 0));
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getInterruption()).isEqualTo(Duration.ofHours(1));
+        assertThat(day.getInterruption()).isEqualTo(Duration.ofHours(1));
     }
 
     @Test
-    void testUpdateDoesNotUpdateBeginIfInThePast() {
-	final LocalTime now = LocalTime.of(9, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	final LocalTime begin = LocalTime.of(8, 0);
-	day.setBegin(begin);
-	day.setEnd(null);
+    void testUpdateDoesNotUpdateBeginIfInThePast()
+    {
+        final LocalTime now = LocalTime.of(9, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        final LocalTime begin = LocalTime.of(8, 0);
+        day.setBegin(begin);
+        day.setEnd(null);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(begin);
-	assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(now);
     }
 
     @Test
-    void testUpdateDoesUpdateBeginIfInTheFuture() {
-	final LocalTime now = LocalTime.of(9, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	final LocalTime begin = LocalTime.of(10, 0);
-	day.setBegin(begin);
-	day.setEnd(null);
+    void testUpdateDoesUpdateBeginIfInTheFuture()
+    {
+        final LocalTime now = LocalTime.of(9, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        final LocalTime begin = LocalTime.of(10, 0);
+        day.setBegin(begin);
+        day.setEnd(null);
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getBegin()).isEqualTo(now);
-	assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getBegin()).isEqualTo(now);
+        assertThat(day.getEnd()).isEqualTo(now);
     }
 
     @Test
-    void testUpdateNowAddsNoInterruptionWhenStrategySaysNo() {
-	final LocalTime now = LocalTime.of(14, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(LocalTime.of(8, 0));
-	day.setEnd(LocalTime.of(13, 0));
+    void testUpdateNowAddsNoInterruptionWhenStrategySaysNo()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(LocalTime.of(13, 0));
 
-	lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any())).thenReturn(false);
-	updateNow(now, day);
+        lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any()))
+                .thenReturn(false);
+        updateNow(now, day);
 
-	assertThat(day.getInterruption()).isEqualTo(null);
+        assertThat(day.getInterruption()).isEqualTo(null);
     }
 
     @Test
-    void testUpdateNowDoesNotAddInterruptionIfAlreadyRunning() {
-	final LocalTime now = LocalTime.of(14, 0);
-	final LocalDate today = LocalDate.of(2019, 3, 8);
-	final JsonDay day = new JsonDay();
-	day.setDate(today);
-	day.setBegin(LocalTime.of(8, 0));
-	day.setEnd(LocalTime.of(13, 0));
+    void testUpdateNowDoesNotAddInterruptionIfAlreadyRunning()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(LocalTime.of(13, 0));
 
-	appService.startInterruption();
+        appService.startInterruption();
 
-	updateNow(now, day);
+        updateNow(now, day);
 
-	assertThat(day.getInterruption()).isNull();
+        assertThat(day.getInterruption()).isNull();
     }
 
     @Test
-    void testStartingInterruptionTwiceThrowsException() {
-	appService.startInterruption();
+    void testStartingInterruptionTwiceThrowsException()
+    {
+        appService.startInterruption();
 
-	assertThrows(IllegalStateException.class, () -> appService.startInterruption());
+        assertThrows(IllegalStateException.class, () -> appService.startInterruption());
     }
 
     @Test
-    void testGetClock() {
-	assertThat(appService.getClock()).isSameAs(clockMock);
+    void testGetClock()
+    {
+        assertThat(appService.getClock()).isSameAs(clockMock);
     }
 
     @Test
-    void testShutdown() {
-	appService.shutdown();
-	verify(schedulingServiceMock).shutdown();
+    void testShutdown()
+    {
+        appService.shutdown();
+        verify(schedulingServiceMock).shutdown();
     }
 
     @Test
-    void testStartAutoUpdate() {
-	appService.startAutoUpdate(day -> {
-	}, autoInterruptionStrategyMock);
-	verify(schedulingServiceMock).schedule(ArgumentMatchers.any(DayUpdateExecutor.class));
+    void testStartAutoUpdate()
+    {
+        appService.startAutoUpdate(day -> {}, autoInterruptionStrategyMock);
+        verify(schedulingServiceMock).schedule(ArgumentMatchers.any(DayUpdateExecutor.class));
     }
 
-    private void updateNow(final LocalTime now, final JsonDay day) {
-	when(clockMock.getCurrentDate()).thenReturn(day.getDate());
-	when(clockMock.getCurrentTime()).thenReturn(now);
-	when(storageMock.loadMonth(day.getDate())).thenReturn(monthIndexMock);
-	when(monthIndexMock.getDay(day.getDate())).thenReturn(new DayRecord(day));
+    private void updateNow(final LocalTime now, final JsonDay day)
+    {
+        when(clockMock.getCurrentDate()).thenReturn(day.getDate());
+        when(clockMock.getCurrentTime()).thenReturn(now);
+        when(storageMock.loadMonth(day.getDate())).thenReturn(monthIndexMock);
+        when(monthIndexMock.getDay(day.getDate())).thenReturn(new DayRecord(day));
 
-	appService.updateNow(autoInterruptionStrategyMock);
+        appService.updateNow(autoInterruptionStrategyMock);
     }
 }
