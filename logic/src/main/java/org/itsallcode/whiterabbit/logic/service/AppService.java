@@ -43,7 +43,7 @@ public class AppService
     {
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
         final ClockService clockService = new ClockService();
-        final Trigger trigger = new FullMinuteTrigger(clockService);
+        final Trigger trigger = new FullMinuteTrigger();
         final SchedulingService schedulingService = new SchedulingService(clockService, trigger);
         return new AppService(storage, formatterService, clockService, schedulingService);
     }

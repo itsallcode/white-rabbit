@@ -40,17 +40,21 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
     {
         synchronized (this.triggerContextMonitor)
         {
-            this.scheduledExecutionTime = this.trigger.nextExecutionTime(this.triggerContext);
+            final Instant now = clock.instant();
+            this.scheduledExecutionTime = this.trigger.nextExecutionTime(now, this.triggerContext);
             if (this.scheduledExecutionTime == null)
             {
                 return null;
             }
 
-            final Duration initialDelay = Duration.between(clock.instant(),
-                    this.scheduledExecutionTime);
-            LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime,
-                    initialDelay);
-            this.currentFuture = this.executorService.schedule(this, initialDelay.toMillis(),
+            final Duration delay = Duration.between(now, this.scheduledExecutionTime);
+            if (delay.isNegative())
+            {
+                throw new IllegalStateException("Next executiontion time from trigger " + trigger
+                        + " is " + delay + " in the past");
+            }
+            LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime, delay);
+            this.currentFuture = this.executorService.schedule(this, delay.toMillis(),
                     TimeUnit.MILLISECONDS);
             return this;
         }

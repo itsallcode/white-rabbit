@@ -11,7 +11,6 @@ import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 
 public class SchedulingService
 {
-
     private final ScheduledExecutorService executorService;
     private final ClockService clockService;
     private final Trigger trigger;

@@ -4,31 +4,21 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import org.itsallcode.whiterabbit.logic.service.ClockService;
-
 public class FullMinuteTrigger implements Trigger
 {
-
-    private final ClockService clockService;
-
-    public FullMinuteTrigger(ClockService clockService)
-    {
-        this.clockService = clockService;
-    }
-
     @Override
-    public Instant nextExecutionTime(Optional<TriggerContext> context)
+    public Instant nextExecutionTime(Instant now, Optional<TriggerContext> context)
     {
         if (!context.isPresent())
         {
-            return clockService.instant();
+            return now;
         }
-        return nextFullMinute(context.get().lastActualExecutionTime());
+        return nextFullMinute(now);
     }
 
-    private Instant nextFullMinute(Instant lastScheduledExecutionTime)
+    private Instant nextFullMinute(Instant instant)
     {
-        return lastScheduledExecutionTime.plus(1, ChronoUnit.MINUTES) //
+        return instant.plus(1, ChronoUnit.MINUTES) //
                 .truncatedTo(ChronoUnit.MINUTES);
     }
 }
