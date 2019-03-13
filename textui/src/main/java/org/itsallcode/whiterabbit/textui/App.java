@@ -121,7 +121,9 @@ public class App
     {
         final Instant now = appService.getClock().instant();
         final Instant displayTime = now.truncatedTo(ChronoUnit.SECONDS);
-        println(displayTime + " Update: " + formatterService.format(day));
+        final String message = "Update: " + formatterService.format(day);
+        LOG.trace(message);
+        println(displayTime + " " + message);
     }
 
     private void toggleInterrupt()
@@ -140,7 +142,9 @@ public class App
     private void update()
     {
         final DayRecord updatedRecord = appService.updateNow(this::shouldCreateInterruption);
-        LOG.info("Day:\n{}", formatterService.format(updatedRecord));
+        final String message = "Day: " + formatterService.format(updatedRecord);
+        println(message);
+        LOG.trace(message);
     }
 
     private boolean shouldCreateInterruption(LocalTime beginOfInterruption)
