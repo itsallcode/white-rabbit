@@ -3,11 +3,17 @@ sudo: false
 jdk:
   - openjdk11
 
+before_script:
+  # Required for sonar to provide blame information
+  - git fetch --unshallow
+
 script:
   - ./gradlew clean check sonarqube jacocoTestReport --info --stacktrace
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
     - $HOME/.sonar/cache/
