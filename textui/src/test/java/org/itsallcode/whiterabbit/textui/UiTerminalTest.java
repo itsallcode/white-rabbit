@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import org.itsallcode.io.Capturable;
+import org.itsallcode.junit.sysextensions.SystemOutGuard;
 import org.jline.terminal.Terminal;
 import org.jline.utils.NonBlockingReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.OngoingStubbing;
 
 @ExtendWith(MockitoExtension.class)
+@ExtendWith(SystemOutGuard.class)
 class UiTerminalTest
 {
     @Mock
@@ -38,9 +41,11 @@ class UiTerminalTest
     }
 
     @Test
-    void testPrintln()
+    void testPrintln(Capturable stream)
     {
+        stream.capture();
         term.println("message");
+        assertThat(stream.getCapturedData()).isEqualTo("message" + System.lineSeparator());
     }
 
     @Test

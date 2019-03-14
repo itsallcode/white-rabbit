@@ -147,6 +147,8 @@ public class App
         LOG.trace(message);
     }
 
+    // Argument required by interface AutoInterruptionStrategy
+    @SuppressWarnings("squid:S1172")
     private boolean shouldCreateInterruption(LocalTime beginOfInterruption)
     {
         return true;
