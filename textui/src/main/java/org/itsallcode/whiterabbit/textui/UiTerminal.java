@@ -58,7 +58,7 @@ public class UiTerminal
 
     private int readNonWhitespaceCharFromTerminal()
     {
-        char c = readCharFromTerminal();
+        int c = readCharFromTerminal();
         while (Character.isWhitespace(c))
         {
             c = readCharFromTerminal();
@@ -66,15 +66,22 @@ public class UiTerminal
         return c;
     }
 
-    private char readCharFromTerminal()
+    private int readCharFromTerminal()
     {
         try
         {
-            return (char) terminal.reader().read();
+            return terminal.reader().read();
         }
         catch (final IOException e)
         {
             throw new AppException("Error reading from terminal", e);
         }
+    }
+
+    // Using System.out intentionally
+    @SuppressWarnings("squid:S106")
+    public void println(String message)
+    {
+        System.out.println(message);
     }
 }

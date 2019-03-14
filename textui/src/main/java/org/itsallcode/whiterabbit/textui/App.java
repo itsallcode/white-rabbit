@@ -51,7 +51,7 @@ public class App
         new App(appService, formatterService, terminal).run();
     }
 
-    private void run()
+    void run()
     {
         this.toggleAutoUpdate();
         while (running)
@@ -163,11 +163,9 @@ public class App
         println(getPrompt());
     }
 
-    // Using System.out intentionally
-    @SuppressWarnings("squid:S106")
     private void println(String message)
     {
-        System.out.println(message);
+        terminal.println(message);
     }
 
     private String getPrompt()

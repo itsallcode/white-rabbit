@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.itsallcode.whiterabbit.logic.AutoInterruptionStrategy;
+import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
@@ -39,6 +40,8 @@ class AppServiceTest
     private AutoInterruptionStrategy autoInterruptionStrategyMock;
     @Mock
     private MonthIndex monthIndexMock;
+    @Mock
+    private Config configMock;
 
     private AppService appService;
 
@@ -49,6 +52,12 @@ class AppServiceTest
                 schedulingServiceMock);
         lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any()))
                 .thenReturn(true);
+    }
+
+    @Test
+    void testCreate()
+    {
+        assertThat(AppService.create(configMock, formatterServiceMock)).isNotNull();
     }
 
     @Test
