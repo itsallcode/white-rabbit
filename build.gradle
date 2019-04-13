@@ -10,9 +10,9 @@ subprojects {
     apply plugin: 'jacoco'
     
     ext {
-        junitVersion = '5.3.1'
-        log4jVersion = '2.11.1'
-        mockitoVersion = '2.25.0'
+        junitVersion = '5.4.2'
+        log4jVersion = '2.11.2'
+        mockitoVersion = '2.27.0'
     }
 
     sourceCompatibility = 11
@@ -25,20 +25,15 @@ subprojects {
         compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
         runtime "org.apache.logging.log4j:log4j-core:$log4jVersion"
     
-        testCompile "org.assertj:assertj-core:3.11.1"
+        testCompile "org.assertj:assertj-core:3.12.2"
         testCompile "org.mockito:mockito-core:$mockitoVersion"
         testCompile "org.mockito:mockito-junit-jupiter:$mockitoVersion"
         testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        testRuntime "org.junit.platform:junit-platform-launcher:1.4.0"
     }
     
     test {
         useJUnitPlatform()
-    }
-
-    jacoco {
-        toolVersion = "0.8.2"
     }
 
     repositories {
