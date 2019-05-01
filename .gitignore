@@ -5,6 +5,5 @@
 **/bin/
 **/build/
 /time.properties
-/white-rabbit.log
-/textui/white-rabbit.log
-/white-rabbit-*.log.gz
+**/logs/white-rabbit.log
+**/logs/white-rabbit-*.log.gz
