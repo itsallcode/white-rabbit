@@ -13,10 +13,11 @@ subprojects {
         junitVersion = '5.4.2'
         log4jVersion = '2.11.2'
         mockitoVersion = '2.27.0'
+        moduleName = project.name
     }
 
-    sourceCompatibility = 10
-    targetCompatibility = 10
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     dependencies {
         compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
