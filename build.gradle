@@ -8,6 +8,7 @@ version = '0.0.1'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'eclipse'
     
     ext {
         junitVersion = '5.4.2'
@@ -46,6 +47,12 @@ subprojects {
 
     repositories {
         jcenter()
+    }
+    
+    eclipse.classpath.file {
+        whenMerged {
+            entries.findAll { ['lib', 'src'].contains(it.kind) }.each { it.entryAttributes['module'] = 'true' }
+        }
     }
 }
 
