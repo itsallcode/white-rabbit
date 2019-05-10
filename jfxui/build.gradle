@@ -1,12 +1,35 @@
+plugins {
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
 
-ext.javaFxVersion = '11.0.1'
+shadowJar {
+   baseName = 'jfxui'
+   classifier = null
+   version = null
+}
+
+ext.mainClass = 'org.itsallcode.whiterabbit.jfxui.App'
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass 
+    }
+}
+
+build.dependsOn shadowJar
+
+task runJfxui(type: JavaExec, dependsOn: shadowJar) {
+   classpath = shadowJar.outputs.files
+   main = mainClass
+   workingDir = rootProject.projectDir
+}
+
+ext.javaFxVersion = '11.0.2'
 ext.platform = 'win'
 
 dependencies {
-    compile project(':logic')
-    //compile "org.openjfx:javafx:$javaFxVersion"
-    compile "org.openjfx:javafx-base:$javaFxVersion:$platform"
-    compile "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
-    compile "org.openjfx:javafx-controls:$javaFxVersion:$platform"
+    implementation project(':logic')
+    implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
+    implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
+    implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
 }
-
