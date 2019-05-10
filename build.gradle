@@ -51,7 +51,8 @@ subprojects {
     
     eclipse.classpath.file {
         whenMerged {
-            entries.findAll { ['lib', 'src'].contains(it.kind) }.each { it.entryAttributes['module'] = 'true' }
+            entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
+            entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.ProjectDependency }.each { println it; it.entryAttributes['module'] = 'true' }
         }
     }
 }
