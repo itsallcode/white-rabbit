@@ -1,0 +1,22 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run text ui",
+            "type": "shell",
+            "command": "\"$JAVA11_HOME/bin/java\" -jar textui/build/libs/textui.jar",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "JAVA_HOME=$JAVA11_HOME ./gradlew.bat build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

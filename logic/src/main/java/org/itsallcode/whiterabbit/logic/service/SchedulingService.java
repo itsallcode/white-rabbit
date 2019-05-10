@@ -1,62 +1,47 @@
 package org.itsallcode.whiterabbit.logic.service;
 
-import java.time.Duration;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.logic.service.scheduling.DefaultErrorHandler;
+import org.itsallcode.whiterabbit.logic.service.scheduling.ErrorHandler;
+import org.itsallcode.whiterabbit.logic.service.scheduling.ReschedulingRunnable;
+import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
+import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 
-public class SchedulingService {
-	private static final Logger LOG = LogManager.getLogger(SchedulingService.class);
+public class SchedulingService
+{
+    private final ScheduledExecutorService executorService;
+    private final ClockService clockService;
+    private final Trigger trigger;
 
-	private final ScheduledExecutorService executorService;
-	private final ClockService clockService;
+    public SchedulingService(ClockService clockService, Trigger trigger)
+    {
+        this(clockService, new ScheduledThreadPoolExecutor(1), trigger);
+    }
 
-	public SchedulingService(ClockService clockService) {
-		this(clockService, new ScheduledThreadPoolExecutor(1));
-	}
+    SchedulingService(ClockService clockService, ScheduledExecutorService executorService,
+            Trigger trigger)
+    {
+        this.clockService = clockService;
+        this.executorService = executorService;
+        this.trigger = trigger;
+    }
 
-	SchedulingService(ClockService clockService, ScheduledExecutorService executorService) {
-		this.clockService = clockService;
-		this.executorService = executorService;
-	}
+    public ScheduledTaskFuture schedule(Runnable command)
+    {
+        return schedule(command, trigger);
+    }
 
-	public ScheduledTaskFuture schedule(Runnable command) {
-		final Duration initialDelay = clockService.getDurationUntilNextFullMinute();
-		final Duration period = Duration.ofMinutes(1);
-		LOG.info("Scheduling task with initial delay {} and period {}", initialDelay, period);
-		return schedule(command, initialDelay, period);
-	}
+    private ScheduledTaskFuture schedule(Runnable command, Trigger trigger)
+    {
+        final ErrorHandler errorHandler = new DefaultErrorHandler();
+        return new ReschedulingRunnable(command, trigger, executorService, clockService,
+                errorHandler).schedule();
+    }
 
-	public void shutdown() {
-		this.executorService.shutdown();
-	}
-
-	private ScheduledTaskFuture schedule(Runnable command, Duration initialDelay, Duration period) {
-		final ScheduledFuture<?> future = executorService.scheduleAtFixedRate(command, initialDelay.toMillis(), period.toMillis(), TimeUnit.MILLISECONDS);
-		return new ScheduledTaskFuture(future);
-	}
-
-	public static class ScheduledTaskFuture {
-		private final ScheduledFuture<?> future;
-
-		public ScheduledTaskFuture(ScheduledFuture<?> future) {
-			this.future = future;
-		}
-
-		public void cancel() {
-			LOG.info("Cancelling scheduled task");
-			final boolean success = this.future.cancel(false);
-			if (!success) {
-				LOG.warn("Error cancelling the task");
-			}
-		}
-
-		public boolean isDone() {
-			return this.future.isDone();
-		}
-	}
+    public void shutdown()
+    {
+        this.executorService.shutdownNow();
+    }
 }

@@ -2,7 +2,8 @@
 **/.classpath
 **/.project
 **/.settings/org.eclipse.buildship.core.prefs
-**/.settings/org.eclipse.jdt.core.prefs
 **/bin/
 **/build/
 /time.properties
+**/logs/white-rabbit.log
+**/logs/white-rabbit-*.log.gz

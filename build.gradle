@@ -1,7 +1,6 @@
 
 plugins {
-  id "org.sonarqube" version "2.6.2"
-  id 'com.github.hierynomus.license' version '0.14.0'
+  id "org.sonarqube" version "2.7"
 }
 
 version = '0.0.1'
@@ -9,12 +8,11 @@ version = '0.0.1'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
-    apply plugin: 'eclipse'
     
     ext {
-        junitVersion = '5.3.1'
-        log4jVersion = '2.11.1'
-        moduleName = project.name
+        junitVersion = '5.4.2'
+        log4jVersion = '2.11.2'
+        mockitoVersion = '2.27.0'
     }
 
     sourceCompatibility = 10
@@ -22,10 +20,11 @@ subprojects {
 
     dependencies {
         compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
-        compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
-
-  
-        testCompile "org.assertj:assertj-core:3.11.1"
+        runtime "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    
+        testCompile "org.assertj:assertj-core:3.12.2"
+        testCompile "org.mockito:mockito-core:$mockitoVersion"
+        testCompile "org.mockito:mockito-junit-jupiter:$mockitoVersion"
         testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
@@ -44,14 +43,8 @@ subprojects {
         useJUnitPlatform()
     }
 
-    jacoco {
-        toolVersion = "0.8.2"
-    }
-
     repositories {
         jcenter()
     }
 }
-
-
 

@@ -8,58 +8,79 @@ import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "comment" })
-public class JsonDay {
+public class JsonDay
+{
 
-	@JsonbProperty("date")
-	private LocalDate date;
-	@JsonbProperty("type")
-	private DayType type;
-	@JsonbProperty("begin")
-	private LocalTime begin;
-	@JsonbProperty("end")
-	private LocalTime end;
-	@JsonbProperty("interruption")
-	private Duration interruption;
-	@JsonbProperty("comment")
-	private String comment;
+    @JsonbProperty("date")
+    private LocalDate date;
+    @JsonbProperty("type")
+    private DayType type;
+    @JsonbProperty("begin")
+    private LocalTime begin;
+    @JsonbProperty("end")
+    private LocalTime end;
+    @JsonbProperty("interruption")
+    private Duration interruption;
+    @JsonbProperty("comment")
+    private String comment;
 
-	public LocalDate getDate() {
-		return date;
-	}
+    public LocalDate getDate()
+    {
+        return date;
+    }
 
-	public DayType getType() {
-		return type;
-	}
+    public DayType getType()
+    {
+        return type;
+    }
 
-	public LocalTime getBegin() {
-		return begin;
-	}
+    public LocalTime getBegin()
+    {
+        return begin;
+    }
 
-	public LocalTime getEnd() {
-		return end;
-	}
+    public LocalTime getEnd()
+    {
+        return end;
+    }
 
-	public Duration getInterruption() {
-		return interruption;
-	}
+    public Duration getInterruption()
+    {
+        return interruption;
+    }
 
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
+    public String getComment()
+    {
+        return comment;
+    }
 
-	public void setType(DayType type) {
-		this.type = type;
-	}
+    public void setDate(LocalDate date)
+    {
+        this.date = date;
+    }
 
-	public void setBegin(LocalTime begin) {
-		this.begin = begin;
-	}
+    public void setType(DayType type)
+    {
+        this.type = type;
+    }
 
-	public void setEnd(LocalTime end) {
-		this.end = end;
-	}
+    public void setBegin(LocalTime begin)
+    {
+        this.begin = begin;
+    }
 
-	public void setInterruption(Duration interruption) {
-		this.interruption = interruption;
-	}
+    public void setEnd(LocalTime end)
+    {
+        this.end = end;
+    }
+
+    public void setComment(String comment)
+    {
+        this.comment = comment;
+    }
+
+    public void setInterruption(Duration interruption)
+    {
+        this.interruption = interruption;
+    }
 }

@@ -1,19 +1,26 @@
+dist: xenial
 language: java
 sudo: false
-jdk:
-  - openjdk11
+
+before_script:
+  # Required for sonar to provide blame information
+  - git fetch --unshallow
 
 script:
-  - ./gradlew clean check --info --stacktrace
+  - ./gradlew clean check sonarqube jacocoTestReport --info --stacktrace
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
     - $HOME/.sonar/cache/
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-after_success:
-  - ./gradlew jacocoTestReport --info --stacktrace
-  - bash <(curl -s https://codecov.io/bash)
+addons:
+  sonarcloud:
+    organization: "itsallcode"
+    token:
+      secure: "YZg+UuRmAZ08qPH9f5Q3+wux4ClhY5JBra7e+4NrovNToQhAEqBz8U81AVll64yjb2A2KapYHfsMIctV9YQrNnzOLcIEnwmSORoQZo7MgjGz/JvvKkR8QllcZmYnjdXoFhZaPpJFglmQFU2LEoGCKrvXGp3hdSEIO2tlW/jSOvQjcllgfajcUNNCE88RS7OreTD5Ww5F9NaMNf+znN20Vcj3cEfgzkCCmU/nXx1h7B7JFEKbCJk3NZH/Ljv0h57Bt1jIQTDwsJ5pVFHBXKVjiNUH+6gwgUTfgTSP7SqiltHzz9ECYYH/zKF9q9Hd/l7VbeP+Tjc9sbC6EZHC0PVDQhcLPdTbvir3sLEyK4Ywph3b06GtX5ZRgxG29N7rhPiKlmiYd6L9v3hE6aeO8blh5gSm7fU59/CLHo0czp5/UwLE4mTCtj8OTvm0Wd/ezv4CdCZzWIxvBMkkp9ooYsIaGsoncG/e6GdFJC1Ah9ujtE0ilHu4lsghfcKuNclr9c09cc074YWdrYUILDDBctO85IY/8yZiSOvrkJ8rPReg/G7yjH9/TIgZXJKGKOv/0yUVW8rEAWXWKiYMErXxnKDs3k1OwSuQFGrNChzz1U89gwXD2ZZuElPlos6iyrJKgdBE27vTI/uCinHB+EJITvt+QrKOGy5tVPbPWRrgNfsqbvM="
