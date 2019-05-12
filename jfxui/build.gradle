@@ -24,8 +24,11 @@ task runJfxui(type: JavaExec, dependsOn: shadowJar) {
    workingDir = rootProject.projectDir
 }
 
-ext.javaFxVersion = '11.0.2'
-ext.platform = 'win'
+ext {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    ext.platform = os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
+    ext.javaFxVersion = '11.0.2'
+}
 
 dependencies {
     implementation project(':logic')
