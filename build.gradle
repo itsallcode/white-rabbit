@@ -8,20 +8,18 @@ version = '0.0.1'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
-    apply plugin: 'eclipse'
     
     ext {
         junitVersion = '5.4.2'
         log4jVersion = '2.11.2'
         mockitoVersion = '2.27.0'
-        moduleName = project.name
     }
 
     sourceCompatibility = 11
     targetCompatibility = 11
 
     dependencies {
-        compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
+        implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
         runtime "org.apache.logging.log4j:log4j-core:$log4jVersion"
     
         testCompile "org.assertj:assertj-core:3.12.2"
@@ -31,29 +29,12 @@ subprojects {
         testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
     
-    compileJava {
-        inputs.property("moduleName", moduleName)
-        doFirst {
-            options.compilerArgs = [
-                '--module-path', classpath.asPath,
-            ]
-            classpath = files()  
-        }
-    }
-
     test {
         useJUnitPlatform()
     }
 
     repositories {
         jcenter()
-    }
-    
-    eclipse.classpath.file {
-        whenMerged {
-            entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
-            entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.ProjectDependency }.each { println it; it.entryAttributes['module'] = 'true' }
-        }
     }
 }
 
