@@ -30,11 +30,6 @@ public class SchedulingService
 
     public ScheduledTaskFuture schedule(Runnable command)
     {
-        return schedule(command, trigger);
-    }
-
-    private ScheduledTaskFuture schedule(Runnable command, Trigger trigger)
-    {
         final ErrorHandler errorHandler = new DefaultErrorHandler();
         return new ReschedulingRunnable(command, trigger, executorService, clockService,
                 errorHandler).schedule();

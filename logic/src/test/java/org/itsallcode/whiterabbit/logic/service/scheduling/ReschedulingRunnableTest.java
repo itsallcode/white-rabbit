@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service.scheduling;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +59,8 @@ class ReschedulingRunnableTest
     void testScheduleDoesNothingForNullNextExecutionTime()
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(null);
-        assertThat(reschedulingRunnable.schedule()).isNull();
+        assertThatThrownBy(() -> reschedulingRunnable.schedule())
+                .isInstanceOf(IllegalStateException.class);
         verifyZeroInteractions(commandMock, executorServiceMock);
     }
 
@@ -91,7 +93,7 @@ class ReschedulingRunnableTest
     @Test
     void testRunStartsCommand()
     {
-        when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NEXT_EXECUTION);
+        when(triggerMock.nextExecutionTime(eq(NOW), any())).thenReturn(NEXT_EXECUTION);
 
         doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class),
                 anyLong(), any());

@@ -44,7 +44,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
             this.scheduledExecutionTime = this.trigger.nextExecutionTime(now, this.triggerContext);
             if (this.scheduledExecutionTime == null)
             {
-                return null;
+                throw new IllegalStateException("No next execution time");
             }
 
             final Duration delay = Duration.between(now, this.scheduledExecutionTime);
