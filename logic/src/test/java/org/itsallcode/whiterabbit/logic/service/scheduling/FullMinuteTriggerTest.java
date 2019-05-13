@@ -29,8 +29,8 @@ class FullMinuteTriggerTest
     @Test
     void testContextReturnsNextMinute()
     {
-        assertThat(
-                trigger.nextExecutionTime(NOW, Optional.of(new TriggerContext(null, null, null))))
+        assertThat(trigger.nextExecutionTime(NOW,
+                Optional.of(new TriggerContext(null, null, NOW.minusSeconds(60)))))
                         .isEqualTo(NOW.plusSeconds(30));
     }
 }
