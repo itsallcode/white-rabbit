@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.AutoInterruptionStrategy;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -48,14 +47,12 @@ public class AppService
         return new AppService(storage, formatterService, clockService, schedulingService);
     }
 
-    public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener,
-            AutoInterruptionStrategy autoInterruptionStrategy)
+    public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener)
     {
-        return this.schedulingService
-                .schedule(new DayUpdateExecutor(this, listener, autoInterruptionStrategy));
+        return this.schedulingService.schedule(new DayUpdateExecutor(this, listener));
     }
 
-    public DayRecord updateNow(AutoInterruptionStrategy autoInterruptionStrategy)
+    public DayRecord updateNow()
     {
         final LocalDate today = clock.getCurrentDate();
         final MonthIndex month = storage.loadMonth(today);
@@ -69,7 +66,7 @@ public class AppService
                 day.setBegin(now);
                 updated = true;
             }
-            if (shouldUpdateEnd(day, now, autoInterruptionStrategy))
+            if (shouldUpdateEnd(day, now))
             {
                 day.setEnd(now);
                 updated = true;
@@ -97,8 +94,7 @@ public class AppService
         return day.getBegin() == null || day.getBegin().isAfter(now);
     }
 
-    private boolean shouldUpdateEnd(final DayRecord day, final LocalTime now,
-            AutoInterruptionStrategy autoInterruptionStrategy)
+    private boolean shouldUpdateEnd(final DayRecord day, final LocalTime now)
     {
         if (day.getEnd() == null)
         {
@@ -113,8 +109,7 @@ public class AppService
         {
             return true;
         }
-        if (!isInterruptionActive()
-                && autoInterruptionStrategy.shouldCreateInterruption(day.getEnd()))
+        if (!isInterruptionActive())
         {
             final Duration interruptionToAdd = Duration.between(day.getEnd(),
                     clock.getCurrentTime());

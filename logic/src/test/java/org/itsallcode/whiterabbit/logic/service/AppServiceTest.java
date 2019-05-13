@@ -2,8 +2,6 @@ package org.itsallcode.whiterabbit.logic.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +9,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.itsallcode.whiterabbit.logic.AutoInterruptionStrategy;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -37,8 +34,6 @@ class AppServiceTest
     @Mock
     private SchedulingService schedulingServiceMock;
     @Mock
-    private AutoInterruptionStrategy autoInterruptionStrategyMock;
-    @Mock
     private MonthIndex monthIndexMock;
     @Mock
     private Config configMock;
@@ -50,8 +45,6 @@ class AppServiceTest
     {
         appService = new AppService(storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock);
-        lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any()))
-                .thenReturn(true);
     }
 
     @Test
@@ -207,23 +200,6 @@ class AppServiceTest
     }
 
     @Test
-    void testUpdateNowAddsNoInterruptionWhenStrategySaysNo()
-    {
-        final LocalTime now = LocalTime.of(14, 0);
-        final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
-        day.setDate(today);
-        day.setBegin(LocalTime.of(8, 0));
-        day.setEnd(LocalTime.of(13, 0));
-
-        lenient().when(autoInterruptionStrategyMock.shouldCreateInterruption(any()))
-                .thenReturn(false);
-        updateNow(now, day);
-
-        assertThat(day.getInterruption()).isEqualTo(null);
-    }
-
-    @Test
     void testUpdateNowDoesNotAddInterruptionIfAlreadyRunning()
     {
         final LocalTime now = LocalTime.of(14, 0);
@@ -264,7 +240,7 @@ class AppServiceTest
     @Test
     void testStartAutoUpdate()
     {
-        appService.startAutoUpdate(day -> {}, autoInterruptionStrategyMock);
+        appService.startAutoUpdate(day -> {});
         verify(schedulingServiceMock).schedule(ArgumentMatchers.any(DayUpdateExecutor.class));
     }
 
@@ -275,6 +251,6 @@ class AppServiceTest
         when(storageMock.loadMonth(day.getDate())).thenReturn(monthIndexMock);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(new DayRecord(day));
 
-        appService.updateNow(autoInterruptionStrategyMock);
+        appService.updateNow();
     }
 }

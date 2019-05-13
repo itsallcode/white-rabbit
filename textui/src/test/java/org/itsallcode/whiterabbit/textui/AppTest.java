@@ -87,7 +87,7 @@ class AppTest
     void testRunTogglesAutoUpdate()
     {
         runCommand('q');
-        verify(appServiceMock).startAutoUpdate(any(), any());
+        verify(appServiceMock).startAutoUpdate(any());
     }
 
     @Test
@@ -105,7 +105,7 @@ class AppTest
     private void runAutoUpdateListener()
     {
         runCommand('q');
-        verify(appServiceMock).startAutoUpdate(consumerArg.capture(), any());
+        verify(appServiceMock).startAutoUpdate(consumerArg.capture());
         consumerArg.getValue().accept(dayRecordMock);
     }
 
@@ -127,14 +127,14 @@ class AppTest
     void testRunUpdateCommand()
     {
         runCommand('u', 'q');
-        verify(appServiceMock).updateNow(any());
+        verify(appServiceMock).updateNow();
     }
 
     @Test
     void testCaseIgnoredUpdateCommand()
     {
         runCommand('U', 'q');
-        verify(appServiceMock).updateNow(any());
+        verify(appServiceMock).updateNow();
     }
 
     @Test
@@ -162,7 +162,7 @@ class AppTest
     @Test
     void testToggleAutoUpdateManually()
     {
-        when(appServiceMock.startAutoUpdate(any(), any())).thenReturn(autoUpdateFutureMock);
+        when(appServiceMock.startAutoUpdate(any())).thenReturn(autoUpdateFutureMock);
         runCommand('a', 'q');
         verify(autoUpdateFutureMock).cancel();
     }

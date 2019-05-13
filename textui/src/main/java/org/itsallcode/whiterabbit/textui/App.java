@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.textui;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Optional;
@@ -107,8 +106,7 @@ public class App
     {
         if (autoUpdateFuture == null)
         {
-            autoUpdateFuture = appService.startAutoUpdate(this::dayRecordUpdated,
-                    this::shouldCreateInterruption);
+            autoUpdateFuture = appService.startAutoUpdate(this::dayRecordUpdated);
         }
         else
         {
@@ -141,17 +139,10 @@ public class App
 
     private void update()
     {
-        final DayRecord updatedRecord = appService.updateNow(this::shouldCreateInterruption);
+        final DayRecord updatedRecord = appService.updateNow();
         final String message = "Day: " + formatterService.format(updatedRecord);
         println(message);
         LOG.trace(message);
-    }
-
-    // Argument required by interface AutoInterruptionStrategy
-    @SuppressWarnings("squid:S1172")
-    private boolean shouldCreateInterruption(LocalTime beginOfInterruption)
-    {
-        return true;
     }
 
     private Optional<Character> promptUser()
