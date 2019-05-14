@@ -191,4 +191,11 @@ public class AppService
     {
         return storage.loadMonth(yearMonth).getSortedDays().collect(toList());
     }
+
+    public void store(DayRecord record)
+    {
+        final MonthIndex month = storage.loadMonth(YearMonth.from(record.getDate()));
+        month.put(record);
+        storage.storeMonth(month);
+    }
 }

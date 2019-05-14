@@ -8,7 +8,9 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.ui.DayRecordTable;
+import org.itsallcode.whiterabbit.jfxui.ui.RecordEditListener;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
@@ -64,7 +66,14 @@ public class JavaFxApp extends Application
         final GridPane grid = createGridPane();
         grid.add(updateButton(), 0, 1);
 
-        final Node tableNode = dayRecordTable.initTable();
+        final Node tableNode = dayRecordTable.initTable(new RecordEditListener()
+        {
+            @Override
+            public void recordUpdated(DayRecord record)
+            {
+                appService.store(record);
+            }
+        });
         GridPane.setFillHeight(tableNode, true);
         GridPane.setFillWidth(tableNode, true);
         grid.add(tableNode, 0, 0);
