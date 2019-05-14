@@ -1,8 +1,12 @@
 package org.itsallcode.whiterabbit.logic.service;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -55,7 +59,7 @@ public class AppService
     public DayRecord updateNow()
     {
         final LocalDate today = clock.getCurrentDate();
-        final MonthIndex month = storage.loadMonth(today);
+        final MonthIndex month = storage.loadMonth(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         final LocalTime now = clock.getCurrentTime();
         if (day.isWorkingDay())
@@ -152,7 +156,7 @@ public class AppService
             return;
         }
         final LocalDate today = clock.getCurrentDate();
-        final MonthIndex month = storage.loadMonth(today);
+        final MonthIndex month = storage.loadMonth(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         addToInterruption(day, additionalInterruption);
         storage.storeMonth(month);
@@ -175,5 +179,10 @@ public class AppService
     public ClockService getClock()
     {
         return clock;
+    }
+
+    public List<DayRecord> getRecords(YearMonth yearMonth)
+    {
+        return storage.loadMonth(yearMonth).getSortedDays().collect(toList());
     }
 }

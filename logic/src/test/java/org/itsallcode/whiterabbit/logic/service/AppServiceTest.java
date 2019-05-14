@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -248,7 +249,7 @@ class AppServiceTest
     {
         when(clockMock.getCurrentDate()).thenReturn(day.getDate());
         when(clockMock.getCurrentTime()).thenReturn(now);
-        when(storageMock.loadMonth(day.getDate())).thenReturn(monthIndexMock);
+        when(storageMock.loadMonth(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(new DayRecord(day));
 
         appService.updateNow();

@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 
 public class ClockService
@@ -24,6 +25,11 @@ public class ClockService
     public LocalDate getCurrentDate()
     {
         return LocalDate.now(clock);
+    }
+
+    public YearMonth getCurrentYearMonth()
+    {
+        return YearMonth.now(clock);
     }
 
     public LocalTime getCurrentTime()

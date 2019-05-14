@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,9 @@ public class MonthIndex
         return new MonthIndex(record, days);
     }
 
-    public LocalDate getFirstDayOfMonth()
+    public YearMonth getYearMonth()
     {
-        return LocalDate.of(record.getYear(), record.getMonth(), 1);
+        return YearMonth.of(record.getYear(), record.getMonth());
     }
 
     public DayRecord getDay(LocalDate date)

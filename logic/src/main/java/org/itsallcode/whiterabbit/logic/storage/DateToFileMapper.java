@@ -3,14 +3,13 @@ package org.itsallcode.whiterabbit.logic.storage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 
 public class DateToFileMapper
 {
@@ -25,17 +24,12 @@ public class DateToFileMapper
         this.dataDir = dataDir;
     }
 
-    public Path getPathForDate(MonthIndex month)
-    {
-        return getPathForDate(month.getFirstDayOfMonth());
-    }
-
-    public Path getPathForDate(LocalDate date)
+    public Path getPathForDate(YearMonth date)
     {
         return dataDir.resolve(getFileName(date));
     }
 
-    private String getFileName(LocalDate date)
+    private String getFileName(YearMonth date)
     {
         return date.format(formatter) + ".json";
     }

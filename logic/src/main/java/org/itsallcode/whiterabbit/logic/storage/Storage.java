@@ -9,7 +9,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -42,7 +42,7 @@ public class Storage
         this(dateToFileMapper, JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
     }
 
-    public MonthIndex loadMonth(LocalDate date)
+    public MonthIndex loadMonth(YearMonth date)
     {
         return MonthIndex.create(loadMonthRecord(date));
     }
@@ -57,15 +57,15 @@ public class Storage
         final List<MonthIndex> months = dateToFileMapper.getAllFiles() //
                 .map(this::loadFromFile) //
                 .map(MonthIndex::create) //
-                .sorted(Comparator.comparing(MonthIndex::getFirstDayOfMonth)) //
+                .sorted(Comparator.comparing(MonthIndex::getYearMonth)) //
                 .collect(toList());
         return new MultiMonthIndex(months);
     }
 
     private void writeToFile(MonthIndex month)
     {
-        final Path file = dateToFileMapper.getPathForDate(month);
-        LOG.trace("Write month {} to file {}", month.getFirstDayOfMonth(), file);
+        final Path file = dateToFileMapper.getPathForDate(month.getYearMonth());
+        LOG.trace("Write month {} to file {}", month.getYearMonth(), file);
         createDirectory(file.getParent());
         try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING))
@@ -94,7 +94,7 @@ public class Storage
         }
     }
 
-    private JsonMonth loadMonthRecord(LocalDate date)
+    private JsonMonth loadMonthRecord(YearMonth date)
     {
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
@@ -104,7 +104,7 @@ public class Storage
         return createNewMonth(date);
     }
 
-    private JsonMonth createNewMonth(LocalDate date)
+    private JsonMonth createNewMonth(YearMonth date)
     {
         final JsonMonth month = new JsonMonth();
         month.setYear(date.getYear());
