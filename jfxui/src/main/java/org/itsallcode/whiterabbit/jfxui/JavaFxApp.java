@@ -2,22 +2,34 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.ui.DayRecordTable;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -61,7 +73,53 @@ public class JavaFxApp extends Application
 
     private void configureAppService()
     {
-        appService.setUpdateListener(dayRecordTable::recordUpdated);
+        appService.setUpdateListener(new AppServiceCallback()
+        {
+            @Override
+            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption,
+                    Duration interruption)
+            {
+                LOG.info("Start task in JavaFX thread...");
+                final CompletableFuture<Boolean> future = new CompletableFuture<>();
+                Platform.runLater(() -> {
+                    LOG.info("Showing automatic interruption alert...");
+                    final Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Add automatic interruption?");
+                    alert.setHeaderText("An interruption of " + interruption
+                            + " was detected beginning at " + startOfInterruption + ".");
+                    final ButtonType addInterruption = new ButtonType("Add interruption",
+                            ButtonData.YES);
+                    final ButtonType skipInterruption = new ButtonType("Skip interruption",
+                            ButtonData.NO);
+                    alert.getButtonTypes().setAll(addInterruption, skipInterruption);
+                    final Optional<ButtonType> selectedButton = alert.showAndWait();
+
+                    final boolean shouldAddInterruption = selectedButton
+                            .map(ButtonType::getButtonData) //
+                            .filter(d -> d == ButtonData.YES) //
+                            .isPresent();
+                    LOG.info("Got user's descision: {}", shouldAddInterruption);
+                    future.complete(shouldAddInterruption);
+                });
+                try
+                {
+                    LOG.info("Waiting for user's descision...");
+                    return future.get();
+                }
+                catch (InterruptedException | ExecutionException e)
+                {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(
+                            "Error waiting for user descision: " + e.getMessage(), e);
+                }
+            }
+
+            @Override
+            public void recordUpdated(DayRecord record)
+            {
+                dayRecordTable.recordUpdated(record);
+            }
+        });
         appService.startAutoUpdate();
     }
 

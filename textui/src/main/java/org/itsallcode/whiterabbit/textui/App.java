@@ -2,7 +2,9 @@ package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
@@ -52,7 +55,21 @@ public class App
 
     void run()
     {
-        this.appService.setUpdateListener(this::dayRecordUpdated);
+        this.appService.setUpdateListener(new AppServiceCallback()
+        {
+            @Override
+            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption,
+                    Duration interruption)
+            {
+                return true;
+            }
+
+            @Override
+            public void recordUpdated(DayRecord record)
+            {
+                dayRecordUpdated(record);
+            }
+        });
         this.toggleAutoUpdate();
         while (running)
         {

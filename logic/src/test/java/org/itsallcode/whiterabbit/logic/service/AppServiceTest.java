@@ -41,7 +41,7 @@ class AppServiceTest
     @Mock
     private Config configMock;
     @Mock
-    private UpdateListener updateListenerMock;
+    private AppServiceCallback updateListenerMock;
 
     private AppService appService;
 

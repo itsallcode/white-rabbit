@@ -13,10 +13,10 @@ import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
-import org.itsallcode.whiterabbit.logic.service.UpdateListener;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ class AppTest
     private DayRecord dayRecordMock;
 
     @Captor
-    private ArgumentCaptor<UpdateListener> consumerArg;
+    private ArgumentCaptor<AppServiceCallback> appServiceCallbackArg;
 
     private App app;
 
@@ -104,8 +104,8 @@ class AppTest
     private void runAutoUpdateListener()
     {
         runCommand('q');
-        verify(appServiceMock).setUpdateListener(consumerArg.capture());
-        consumerArg.getValue().recordUpdated(dayRecordMock);
+        verify(appServiceMock).setUpdateListener(appServiceCallbackArg.capture());
+        appServiceCallbackArg.getValue().recordUpdated(dayRecordMock);
     }
 
     @Test

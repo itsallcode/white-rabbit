@@ -31,7 +31,7 @@ public class AppService
     private final FormatterService formatterService;
     private final SchedulingService schedulingService;
     private final AtomicReference<Interruption> currentInterruption = new AtomicReference<>();
-    private final DelegatingUpdateListener updateListener = new DelegatingUpdateListener();
+    private final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
 
     public AppService(Storage storage, FormatterService formatterService, ClockService clock,
             SchedulingService schedulingService)
@@ -51,9 +51,9 @@ public class AppService
         return new AppService(storage, formatterService, clockService, schedulingService);
     }
 
-    public void setUpdateListener(UpdateListener updateListener)
+    public void setUpdateListener(AppServiceCallback callback)
     {
-        this.updateListener.setDelegate(updateListener);
+        this.appServiceCallback.setDelegate(callback);
     }
 
     public ScheduledTaskFuture startAutoUpdate()
@@ -85,7 +85,7 @@ public class AppService
                 LOG.trace("Updating day {} for time {}: {}", day.getDate(), now,
                         formatterService.format(day));
                 storage.storeMonth(month);
-                updateListener.recordUpdated(day);
+                appServiceCallback.recordUpdated(day);
             }
             else
             {
@@ -121,9 +121,11 @@ public class AppService
         }
         if (!isInterruptionActive())
         {
-            final Duration interruptionToAdd = Duration.between(day.getEnd(),
-                    clock.getCurrentTime());
-            addToInterruption(day, interruptionToAdd);
+            final Duration interruptionToAdd = Duration.between(day.getEnd(), now);
+            if (appServiceCallback.shouldAddAutomaticInterruption(day.getEnd(), interruptionToAdd))
+            {
+                addToInterruption(day, interruptionToAdd);
+            }
         }
         return true;
     }
@@ -197,6 +199,6 @@ public class AppService
         final MonthIndex month = storage.loadMonth(YearMonth.from(record.getDate()));
         month.put(record);
         storage.storeMonth(month);
-        updateListener.recordUpdated(record);
+        appServiceCallback.recordUpdated(record);
     }
 }
