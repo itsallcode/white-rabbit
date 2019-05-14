@@ -53,6 +53,12 @@ public class JavaFxApp extends Application
         fillRecords(appService.getClock().getCurrentYearMonth());
     }
 
+    @Override
+    public void stop()
+    {
+        appService.shutdown();
+    }
+
     private void configureAppService()
     {
         appService.setUpdateListener(dayRecordTable::recordUpdated);
