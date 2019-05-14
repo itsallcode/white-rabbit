@@ -52,6 +52,7 @@ public class App
 
     void run()
     {
+        this.appService.setUpdateListener(this::dayRecordUpdated);
         this.toggleAutoUpdate();
         while (running)
         {
@@ -106,7 +107,7 @@ public class App
     {
         if (autoUpdateFuture == null)
         {
-            autoUpdateFuture = appService.startAutoUpdate(this::dayRecordUpdated);
+            autoUpdateFuture = appService.startAutoUpdate();
         }
         else
         {

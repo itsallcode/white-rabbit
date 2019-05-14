@@ -2,7 +2,9 @@ package org.itsallcode.whiterabbit.logic.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
@@ -38,6 +40,8 @@ class AppServiceTest
     private MonthIndex monthIndexMock;
     @Mock
     private Config configMock;
+    @Mock
+    private UpdateListener updateListenerMock;
 
     private AppService appService;
 
@@ -46,6 +50,7 @@ class AppServiceTest
     {
         appService = new AppService(storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock);
+        appService.setUpdateListener(updateListenerMock);
     }
 
     @Test
@@ -66,6 +71,32 @@ class AppServiceTest
 
         assertThat(day.getBegin()).isNull();
         assertThat(day.getEnd()).isNull();
+    }
+
+    @Test
+    void testUpdateListenerNotCalledWhenNoUpdate()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 9);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+
+        updateNow(now, day);
+
+        verifyZeroInteractions(updateListenerMock);
+    }
+
+    @Test
+    void testUpdateListenerCalledWhenDayRecordUpdated()
+    {
+        final LocalTime now = LocalTime.of(8, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+
+        final DayRecord updatedRecord = updateNow(now, day);
+
+        verify(updateListenerMock).recordUpdated(same(updatedRecord));
     }
 
     @Test
@@ -241,17 +272,19 @@ class AppServiceTest
     @Test
     void testStartAutoUpdate()
     {
-        appService.startAutoUpdate(day -> {});
-        verify(schedulingServiceMock).schedule(ArgumentMatchers.any(DayUpdateExecutor.class));
+        appService.startAutoUpdate();
+        verify(schedulingServiceMock).schedule(ArgumentMatchers.any(Runnable.class));
     }
 
-    private void updateNow(final LocalTime now, final JsonDay day)
+    private DayRecord updateNow(final LocalTime now, final JsonDay day)
     {
         when(clockMock.getCurrentDate()).thenReturn(day.getDate());
         when(clockMock.getCurrentTime()).thenReturn(now);
         when(storageMock.loadMonth(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
-        when(monthIndexMock.getDay(day.getDate())).thenReturn(new DayRecord(day));
+        final DayRecord dayRecord = new DayRecord(day);
+        when(monthIndexMock.getDay(day.getDate())).thenReturn(dayRecord);
 
         appService.updateNow();
+        return dayRecord;
     }
 }

@@ -2,7 +2,6 @@ package org.itsallcode.whiterabbit.textui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,13 +10,13 @@ import static org.mockito.Mockito.when;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
+import org.itsallcode.whiterabbit.logic.service.UpdateListener;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +50,7 @@ class AppTest
     private DayRecord dayRecordMock;
 
     @Captor
-    private ArgumentCaptor<Consumer<DayRecord>> consumerArg;
+    private ArgumentCaptor<UpdateListener> consumerArg;
 
     private App app;
 
@@ -87,7 +86,7 @@ class AppTest
     void testRunTogglesAutoUpdate()
     {
         runCommand('q');
-        verify(appServiceMock).startAutoUpdate(any());
+        verify(appServiceMock).startAutoUpdate();
     }
 
     @Test
@@ -105,8 +104,8 @@ class AppTest
     private void runAutoUpdateListener()
     {
         runCommand('q');
-        verify(appServiceMock).startAutoUpdate(consumerArg.capture());
-        consumerArg.getValue().accept(dayRecordMock);
+        verify(appServiceMock).setUpdateListener(consumerArg.capture());
+        consumerArg.getValue().recordUpdated(dayRecordMock);
     }
 
     @Test
@@ -162,7 +161,7 @@ class AppTest
     @Test
     void testToggleAutoUpdateManually()
     {
-        when(appServiceMock.startAutoUpdate(any())).thenReturn(autoUpdateFutureMock);
+        when(appServiceMock.startAutoUpdate()).thenReturn(autoUpdateFutureMock);
         runCommand('a', 'q');
         verify(autoUpdateFutureMock).cancel();
     }

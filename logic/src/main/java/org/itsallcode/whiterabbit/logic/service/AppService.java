@@ -8,7 +8,6 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +31,7 @@ public class AppService
     private final FormatterService formatterService;
     private final SchedulingService schedulingService;
     private final AtomicReference<Interruption> currentInterruption = new AtomicReference<>();
+    private final DelegatingUpdateListener updateListener = new DelegatingUpdateListener();
 
     public AppService(Storage storage, FormatterService formatterService, ClockService clock,
             SchedulingService schedulingService)
@@ -51,9 +51,14 @@ public class AppService
         return new AppService(storage, formatterService, clockService, schedulingService);
     }
 
-    public ScheduledTaskFuture startAutoUpdate(Consumer<DayRecord> listener)
+    public void setUpdateListener(UpdateListener updateListener)
     {
-        return this.schedulingService.schedule(new DayUpdateExecutor(this, listener));
+        this.updateListener.setDelegate(updateListener);
+    }
+
+    public ScheduledTaskFuture startAutoUpdate()
+    {
+        return this.schedulingService.schedule(this::updateNow);
     }
 
     public DayRecord updateNow()
@@ -80,6 +85,7 @@ public class AppService
                 LOG.trace("Updating day {} for time {}: {}", day.getDate(), now,
                         formatterService.format(day));
                 storage.storeMonth(month);
+                updateListener.recordUpdated(day);
             }
             else
             {
