@@ -1,5 +1,12 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
+import static java.util.Arrays.asList;
+
+import java.time.format.FormatStyle;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
@@ -9,79 +16,100 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.ChoiceBoxTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.LocalTimeStringConverter;
 
 public class DayRecordTable
 {
     private final ObservableList<DayRecord> dayRecords = FXCollections.observableArrayList();
     private final TableView<DayRecord> table = new TableView<>(dayRecords);
+    private final RecordEditListener editListener;
 
-    public Node initTable(RecordEditListener editListener)
+    public DayRecordTable(RecordEditListener editListener)
+    {
+        this.editListener = editListener;
+    }
+
+    public Node initTable()
     {
         table.setEditable(true);
+        table.getColumns().addAll(createColumns());
+        return table;
+    }
 
-        table.getColumns().add(tableColumn("Date", "date"));
+    private List<TableColumn<DayRecord, ?>> createColumns()
+    {
+        return asList(createReadonlyColumn("Date", DayRecord::getDate),
+                createEditableColumn("Type", DayRecord::getType,
+                        (record, type) -> record.setType(type),
+                        (TableColumn<DayRecord, DayType> data) -> new ChoiceBoxTableCell<>(
+                                new DayTypeStringConverter(), DayType.values())),
+                createEditableColumn("Begin", DayRecord::getBegin,
+                        (record, begin) -> record.setBegin(begin),
+                        new LocalTimeStringConverter(FormatStyle.SHORT)),
+                createEditableColumn("End", DayRecord::getEnd, (record, end) -> record.setEnd(end),
+                        new LocalTimeStringConverter(FormatStyle.SHORT)),
+                createReadonlyColumn("Break", DayRecord::getMandatoryBreak),
+                createEditableColumn("Interruption", DayRecord::getInterruption,
+                        (record, interruption) -> record.setInterruption(interruption),
+                        new DurationStringConverter()),
+                createReadonlyColumn("Overtime", DayRecord::getOvertime),
+                createEditableColumn("Comment", DayRecord::getComment,
+                        (record, comment) -> record.setComment(comment),
+                        new DefaultStringConverter()));
+    }
 
-        final TableColumn<DayRecord, DayType> dayTypeColumn = new TableColumn<>("Type");
-        dayTypeColumn
-                .setCellFactory((param) -> new ComboBoxTableCell<>(new StringConverter<DayType>()
-                {
-                    @Override
-                    public String toString(DayType object)
-                    {
-                        return object != null ? object.name() : null;
-                    }
+    private <T> TableColumn<DayRecord, T> createEditableColumn(String label,
+            Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter,
+            StringConverter<T> stringConverter)
+    {
+        return createEditableColumn(label, getter, setter,
+                param -> new TextFieldTableCell<>(stringConverter));
+    }
 
-                    @Override
-                    public DayType fromString(String string)
-                    {
-                        return DayType.valueOf(string);
-                    }
-                }, DayType.values()));
-        dayTypeColumn.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
-                data.getValue() != null ? data.getValue().getType() : null));
-        dayTypeColumn.setOnEditCommit(event -> {
+    private <T> TableColumn<DayRecord, T> createEditableColumn(String label,
+            Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter,
+            Callback<TableColumn<DayRecord, T>, TableCell<DayRecord, T>> cellFactory)
+    {
+        final TableColumn<DayRecord, T> column = new TableColumn<>(label);
+        column.setCellFactory(cellFactory);
+        column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
+                data.getValue() != null ? getter.apply(data.getValue()) : null));
+        column.setOnEditCommit(editCommitHandler(setter));
+        column.setEditable(true);
+        return column;
+    }
+
+    private <T> TableColumn<DayRecord, T> createReadonlyColumn(String label,
+            Function<DayRecord, T> getter)
+    {
+        final TableColumn<DayRecord, T> column = new TableColumn<>(label);
+        column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
+                data.getValue() != null ? getter.apply(data.getValue()) : null));
+        column.setEditable(false);
+        return column;
+    }
+
+    private <T> EventHandler<CellEditEvent<DayRecord, T>> editCommitHandler(
+            BiConsumer<DayRecord, T> setter)
+    {
+        return event -> {
             final DayRecord rowValue = event.getRowValue();
             if (rowValue == null)
             {
                 return;
             }
-            rowValue.setType(event.getNewValue());
+            setter.accept(rowValue, event.getNewValue());
             editListener.recordUpdated(rowValue);
-        });
-        dayTypeColumn.setEditable(true);
-        table.getColumns().add(dayTypeColumn);
-
-        table.getColumns().add(tableColumn("Begin", "begin"));
-        table.getColumns().add(tableColumn("End", "end"));
-        table.getColumns().add(tableColumn("Break", "mandatoryBreak"));
-        table.getColumns().add(tableColumn("Interruption", "interruption"));
-        table.getColumns().add(tableColumn("Comment", "comment"));
-
-        return table;
-    }
-
-    private <T> TableColumn<DayRecord, T> tableColumn(String label, String property)
-    {
-        return tableColumn(label, property, null);
-    }
-
-    private <T> TableColumn<DayRecord, T> tableColumn(String label, String property,
-            EventHandler<CellEditEvent<DayRecord, T>> editCommitHandler)
-    {
-        final TableColumn<DayRecord, T> column = new TableColumn<>(label);
-        column.setCellValueFactory(new PropertyValueFactory<>(property));
-        if (editCommitHandler != null)
-        {
-            column.setEditable(true);
-            column.setOnEditCommit(editCommitHandler);
-        }
-        return column;
+        };
     }
 
     public void recordUpdated(DayRecord record)

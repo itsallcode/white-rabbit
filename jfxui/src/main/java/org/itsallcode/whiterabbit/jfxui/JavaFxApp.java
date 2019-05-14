@@ -8,9 +8,7 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.ui.DayRecordTable;
-import org.itsallcode.whiterabbit.jfxui.ui.RecordEditListener;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
@@ -30,7 +28,7 @@ public class JavaFxApp extends Application
     private static final Logger LOG = LogManager.getLogger(App.class);
 
     private AppService appService;
-    private final DayRecordTable dayRecordTable = new DayRecordTable();
+    private DayRecordTable dayRecordTable;
 
     @Override
     public void init() throws Exception
@@ -47,10 +45,10 @@ public class JavaFxApp extends Application
     {
         LOG.info("Starting UI");
 
-        configureAppService();
-
         createUi(primaryStage);
         primaryStage.show();
+
+        configureAppService();
 
         fillRecords(appService.getClock().getCurrentYearMonth());
     }
@@ -66,19 +64,13 @@ public class JavaFxApp extends Application
         final GridPane grid = createGridPane();
         grid.add(updateButton(), 0, 1);
 
-        final Node tableNode = dayRecordTable.initTable(new RecordEditListener()
-        {
-            @Override
-            public void recordUpdated(DayRecord record)
-            {
-                appService.store(record);
-            }
-        });
+        dayRecordTable = new DayRecordTable(record -> appService.store(record));
+        final Node tableNode = dayRecordTable.initTable();
         GridPane.setFillHeight(tableNode, true);
         GridPane.setFillWidth(tableNode, true);
         grid.add(tableNode, 0, 0);
 
-        final Scene scene = new Scene(grid, 600, 600);
+        final Scene scene = new Scene(grid, 650, 600);
         primaryStage.setScene(scene);
     }
 
@@ -102,7 +94,7 @@ public class JavaFxApp extends Application
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(15, 5, 15, 5));
-        grid.setGridLinesVisible(true);
+        grid.setGridLinesVisible(false);
         return grid;
     }
 

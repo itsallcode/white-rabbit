@@ -145,6 +145,11 @@ public class DayRecord
         return day.getComment();
     }
 
+    public void setComment(String comment)
+    {
+        day.setComment(comment);
+    }
+
     public void setType(DayType newValue)
     {
         day.setType(newValue);

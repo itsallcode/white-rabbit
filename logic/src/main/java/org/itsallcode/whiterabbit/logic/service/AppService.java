@@ -197,5 +197,6 @@ public class AppService
         final MonthIndex month = storage.loadMonth(YearMonth.from(record.getDate()));
         month.put(record);
         storage.storeMonth(month);
+        updateListener.recordUpdated(record);
     }
 }
