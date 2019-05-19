@@ -104,6 +104,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
     @Override
     public void cancel()
     {
+        LOG.debug("Cancel rescheduling runnable");
         synchronized (this.triggerContextMonitor)
         {
             obtainCurrentFuture().cancel(false);

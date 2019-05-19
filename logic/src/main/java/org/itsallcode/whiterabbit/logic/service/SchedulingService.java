@@ -13,22 +13,19 @@ public class SchedulingService
 {
     private final ScheduledExecutorService executorService;
     private final ClockService clockService;
-    private final Trigger trigger;
 
-    public SchedulingService(ClockService clockService, Trigger trigger)
+    public SchedulingService(ClockService clockService)
     {
-        this(clockService, new ScheduledThreadPoolExecutor(1), trigger);
+        this(clockService, new ScheduledThreadPoolExecutor(1));
     }
 
-    SchedulingService(ClockService clockService, ScheduledExecutorService executorService,
-            Trigger trigger)
+    SchedulingService(ClockService clockService, ScheduledExecutorService executorService)
     {
         this.clockService = clockService;
         this.executorService = executorService;
-        this.trigger = trigger;
     }
 
-    public ScheduledTaskFuture schedule(Runnable command)
+    public ScheduledTaskFuture schedule(Trigger trigger, Runnable command)
     {
         final ErrorHandler errorHandler = new DefaultErrorHandler();
         return new ReschedulingRunnable(command, trigger, executorService, clockService,

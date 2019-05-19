@@ -2,6 +2,11 @@ package org.itsallcode.whiterabbit.logic.service;
 
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Locale;
@@ -11,14 +16,21 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 public class FormatterService
 {
-
     private static final int MAX_DAY_TYPE_LENGTH = getMaxDayTypeLength();
 
     private final Locale locale;
 
-    public FormatterService(Locale locale)
+    private final ZoneId timeZoneId;
+
+    public FormatterService()
+    {
+        this(Locale.UK, ZoneId.systemDefault());
+    }
+
+    private FormatterService(Locale locale, ZoneId timeZoneId)
     {
         this.locale = locale;
+        this.timeZoneId = timeZoneId;
     }
 
     public String format(DayRecord day)
@@ -63,5 +75,14 @@ public class FormatterService
                 .map(DayType::toString) //
                 .mapToInt(String::length) //
                 .max().getAsInt();
+    }
+
+    public String formatDateAndtime(Instant instant)
+    {
+        final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+                .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(locale)
+                .withZone(timeZoneId);
+        return dateTime.format(dateTimeFormatter);
     }
 }

@@ -8,16 +8,16 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class FullMinuteTriggerTest
+class PeriodicTriggerTest
 {
     private static final Instant NOW = Instant.parse("2007-12-03T10:15:30.00Z");
 
-    private FullMinuteTrigger trigger;
+    private Trigger trigger;
 
     @BeforeEach
     void setUp()
     {
-        trigger = new FullMinuteTrigger();
+        trigger = PeriodicTrigger.everyMinute();
     }
 
     @Test

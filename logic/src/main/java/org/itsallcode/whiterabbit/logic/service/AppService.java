@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.service.scheduling.FullMinuteTrigger;
+import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
@@ -46,8 +46,7 @@ public class AppService
     {
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
         final ClockService clockService = new ClockService();
-        final Trigger trigger = new FullMinuteTrigger();
-        final SchedulingService schedulingService = new SchedulingService(clockService, trigger);
+        final SchedulingService schedulingService = new SchedulingService(clockService);
         return new AppService(storage, formatterService, clockService, schedulingService);
     }
 
@@ -58,7 +57,12 @@ public class AppService
 
     public ScheduledTaskFuture startAutoUpdate()
     {
-        return this.schedulingService.schedule(this::updateNow);
+        return schedule(PeriodicTrigger.everyMinute(), this::updateNow);
+    }
+
+    public ScheduledTaskFuture schedule(Trigger trigger, Runnable runnable)
+    {
+        return this.schedulingService.schedule(trigger, runnable);
     }
 
     public DayRecord updateNow()
@@ -139,7 +143,8 @@ public class AppService
 
     public Interruption startInterruption()
     {
-        final Interruption newInterruption = Interruption.start(clock, this::addToInterruption);
+        final Interruption newInterruption = Interruption.start(clock,
+                InterruptionCallback.create(this::addToInterruption, this::cancelInterruption));
         if (currentInterruption.compareAndSet(null, newInterruption))
         {
             return newInterruption;
@@ -158,6 +163,8 @@ public class AppService
 
     private void addToInterruption(Duration additionalInterruption)
     {
+        resetInterruption();
+
         if (additionalInterruption.isZero())
         {
             LOG.debug("Interruption is zero: ignore.");
@@ -168,6 +175,20 @@ public class AppService
         final DayRecord day = month.getDay(today);
         addToInterruption(day, additionalInterruption);
         storage.storeMonth(month);
+        appServiceCallback.recordUpdated(day);
+    }
+
+    private void resetInterruption()
+    {
+        if (!currentInterruption.compareAndSet(currentInterruption.get(), null))
+        {
+            throw new IllegalStateException("No interruption is active");
+        }
+    }
+
+    private void cancelInterruption()
+    {
+        resetInterruption();
     }
 
     private void addToInterruption(final DayRecord day, Duration additionalInterruption)

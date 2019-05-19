@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +45,7 @@ public class App
 
     public static void main(String[] args)
     {
-        final FormatterService formatterService = new FormatterService(Locale.US);
+        final FormatterService formatterService = new FormatterService();
         final Config config = Config.read(Paths.get("time.properties"));
         final AppService appService = AppService.create(config, formatterService);
         final UiTerminal terminal = UiTerminal.create();
@@ -187,8 +186,9 @@ public class App
                 COMMAND_QUIT);
         if (interruption != null)
         {
-            prompt += " (interruption " + formatterService.format(interruption.currentDuration())
-                    + ")";
+            final String currentInterruption = formatterService
+                    .format(interruption.currentDuration(appService.getClock().instant()));
+            prompt += " (interruption " + currentInterruption + ")";
         }
         if (autoUpdateFuture != null)
         {

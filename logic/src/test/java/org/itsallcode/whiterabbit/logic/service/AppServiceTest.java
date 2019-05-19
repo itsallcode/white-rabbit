@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -273,7 +274,7 @@ class AppServiceTest
     void testStartAutoUpdate()
     {
         appService.startAutoUpdate();
-        verify(schedulingServiceMock).schedule(ArgumentMatchers.any(Runnable.class));
+        verify(schedulingServiceMock).schedule(any(), ArgumentMatchers.any(Runnable.class));
     }
 
     private DayRecord updateNow(final LocalTime now, final JsonDay day)

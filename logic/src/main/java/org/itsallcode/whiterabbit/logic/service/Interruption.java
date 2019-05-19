@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.logic.service;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,12 +11,12 @@ public class Interruption
 {
     private static final Logger LOG = LogManager.getLogger(Interruption.class);
 
-    private final Consumer<Duration> callback;
     private final ClockService clock;
     private final Instant start;
     private Duration duration;
+    private final InterruptionCallback callback;
 
-    private Interruption(ClockService clock, Instant start, Consumer<Duration> callback)
+    private Interruption(ClockService clock, Instant start, InterruptionCallback callback)
     {
         this.clock = clock;
         this.start = start;
@@ -25,7 +24,7 @@ public class Interruption
         this.duration = null;
     }
 
-    public static Interruption start(ClockService clock, Consumer<Duration> callback)
+    public static Interruption start(ClockService clock, InterruptionCallback callback)
     {
         final Instant start = clock.instant();
         LOG.debug("Interruption started at {}", start);
@@ -38,14 +37,30 @@ public class Interruption
         {
             throw new IllegalStateException("Interruption is already finished");
         }
-        this.duration = currentDuration();
+        this.duration = currentDuration(clock.instant());
         LOG.debug("Interruption ended after {}", duration);
-        callback.accept(duration);
+        callback.addInterruption(duration);
     }
 
-    public Duration currentDuration()
+    public void cancel()
     {
-        final Instant end = clock.instant();
+        if (duration != null)
+        {
+            throw new IllegalStateException("Interruption is already finished");
+        }
+        LOG.debug("Interruption cancelled after {}", currentDuration(clock.instant()));
+        callback.cancelInterruption();
+    }
+
+    public Duration currentDuration(Instant end)
+    {
         return Duration.between(start, end).truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Interruption [start=" + start + ", currently: " + currentDuration(clock.instant())
+                + ", duration=" + duration + "]";
     }
 }
