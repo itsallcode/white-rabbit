@@ -87,7 +87,7 @@ public class App
             shutdown();
             break;
         default:
-            LOG.error("Unknown command '" + command + "'");
+            LOG.error("Unknown command '{}'", command);
             printPrompt();
             break;
         }

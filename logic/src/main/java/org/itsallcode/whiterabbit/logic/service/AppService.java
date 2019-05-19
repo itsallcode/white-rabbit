@@ -86,8 +86,6 @@ public class AppService
             }
             if (updated)
             {
-                LOG.trace("Updating day {} for time {}: {}", day.getDate(), now,
-                        formatterService.format(day));
                 storage.storeMonth(month);
                 appServiceCallback.recordUpdated(day);
             }
@@ -194,8 +192,8 @@ public class AppService
     private void addToInterruption(final DayRecord day, Duration additionalInterruption)
     {
         final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
-        LOG.info("Add interruption {} for {}, total interruption: {}: {}", additionalInterruption,
-                day.getDate(), updatedInterruption, formatterService.format(day));
+        LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption,
+                day.getDate(), updatedInterruption);
         day.setInterruption(updatedInterruption);
     }
 

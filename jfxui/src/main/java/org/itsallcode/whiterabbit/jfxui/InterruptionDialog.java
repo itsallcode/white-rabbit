@@ -47,7 +47,7 @@ public class InterruptionDialog
         final DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.setHeaderText("Interruption is active. End interruption now?");
         dialogPane.contentTextProperty()
-                .bind(Bindings.createStringBinding(() -> formatText(), currentTimeProperty));
+                .bind(Bindings.createStringBinding(this::formatText, currentTimeProperty));
         final ButtonType addInterruptionButton = new ButtonType("Add interruption",
                 ButtonData.OK_DONE);
         final ButtonType cancelInterruptionButton = new ButtonType("Cancel interruption",
