@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.awt.TrayIcon.MessageType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
+import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.ui.DayRecordTable;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -51,6 +53,8 @@ public class JavaFxApp extends Application
 
     private FormatterService formatter;
 
+    private Tray tray;
+
     @Override
     public void init() throws Exception
     {
@@ -60,6 +64,8 @@ public class JavaFxApp extends Application
         final Config config = Config.read(configFile);
         this.appService = AppService.create(config, formatter);
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
+        tray = Tray.create();
+        tray.displayMessage("caption", "text", MessageType.INFO);
     }
 
     @Override
