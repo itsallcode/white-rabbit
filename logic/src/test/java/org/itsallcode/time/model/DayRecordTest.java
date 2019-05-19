@@ -10,17 +10,10 @@ import java.time.LocalTime;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class DayRecordTest
 {
-
-    @BeforeEach
-    void setUp()
-    {
-    }
-
     @Test
     void testOnWorkingDayNoMandatoryBreakFor6h()
     {
@@ -220,6 +213,6 @@ class DayRecordTest
         day.setDate(date);
         day.setType(type);
         day.setInterruption(interruption);
-        return new DayRecord(day);
+        return new DayRecord(day, Duration.ZERO);
     }
 }

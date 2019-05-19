@@ -12,10 +12,12 @@ public class DayRecord
     private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
     private final JsonDay day;
+    private final Duration previousOvertime;
 
-    public DayRecord(JsonDay day)
+    public DayRecord(JsonDay day, Duration previousOvertime)
     {
         this.day = day;
+        this.previousOvertime = previousOvertime;
     }
 
     public Duration getMandatoryBreak()
@@ -68,6 +70,11 @@ public class DayRecord
     {
         return getWorkingTime() //
                 .minus(getMandatoryWorkingTime());
+    }
+
+    public Duration getTotalOvertime()
+    {
+        return previousOvertime.plus(getOvertime());
     }
 
     public LocalDate getDate()

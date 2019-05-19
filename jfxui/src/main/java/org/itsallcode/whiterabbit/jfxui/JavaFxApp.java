@@ -127,7 +127,7 @@ public class JavaFxApp extends Application
     {
         dayRecordTable = new DayRecordTable(record -> appService.store(record));
         final BorderPane pane = createMainPane();
-        final Scene scene = new Scene(pane, 650, 700);
+        final Scene scene = new Scene(pane, 700, 700);
         primaryStage.setScene(scene);
     }
 

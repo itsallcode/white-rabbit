@@ -62,6 +62,7 @@ public class DayRecordTable
                         (record, interruption) -> record.setInterruption(interruption),
                         new DurationStringConverter()),
                 createReadonlyColumn("Overtime", DayRecord::getOvertime),
+                createReadonlyColumn("Total Overtime", DayRecord::getTotalOvertime),
                 createEditableColumn("Comment", DayRecord::getComment,
                         (record, comment) -> record.setComment(comment),
                         new DefaultStringConverter()));

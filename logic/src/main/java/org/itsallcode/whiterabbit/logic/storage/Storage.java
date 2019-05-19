@@ -9,8 +9,10 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class Storage
 
     public MonthIndex loadMonth(YearMonth date)
     {
-        return MonthIndex.create(loadMonthRecord(date));
+        return MonthIndex.create(loadMonthRecord(date), Duration.ZERO);
     }
 
     public void storeMonth(MonthIndex month)
@@ -54,11 +56,18 @@ public class Storage
 
     public MultiMonthIndex loadAll()
     {
-        final List<MonthIndex> months = dateToFileMapper.getAllFiles() //
-                .map(this::loadFromFile) //
-                .map(MonthIndex::create) //
-                .sorted(Comparator.comparing(MonthIndex::getYearMonth)) //
-                .collect(toList());
+        Duration previousOvertime = Duration.ZERO;
+        final List<MonthIndex> months = new ArrayList<>();
+        for (final Path file : dateToFileMapper.getAllFiles().collect(toList()))
+        {
+            final JsonMonth jsonMonth = loadFromFile(file);
+            final MonthIndex month = MonthIndex.create(jsonMonth, previousOvertime);
+            previousOvertime = previousOvertime.plus(month.getTotalOvertime());
+            months.add(month);
+        }
+
+        Collections.sort(months, Comparator.comparing(MonthIndex::getYearMonth));
+
         return new MultiMonthIndex(months);
     }
 
