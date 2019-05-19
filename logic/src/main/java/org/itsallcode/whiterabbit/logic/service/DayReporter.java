@@ -34,6 +34,6 @@ public class DayReporter
     public void finish()
     {
         report.append("Total overtime: ").append(overtime);
-        LOG.info("Report\n{}", report.toString());
+        LOG.info("Report\n{}", report);
     }
 }
