@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.textui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,6 +59,7 @@ class AppTest
     void setUp()
     {
         app = new App(appServiceMock, formatterServiceMock, terminalMock);
+        lenient().when(appServiceMock.getClock()).thenReturn(clockMock);
     }
 
     @Test
@@ -86,7 +88,7 @@ class AppTest
     void testRunTogglesAutoUpdate()
     {
         runCommand('q');
-        verify(appServiceMock).startAutoUpdate();
+        verify(appServiceMock).start();
     }
 
     @Test
@@ -159,14 +161,6 @@ class AppTest
     }
 
     @Test
-    void testToggleAutoUpdateManually()
-    {
-        when(appServiceMock.startAutoUpdate()).thenReturn(autoUpdateFutureMock);
-        runCommand('a', 'q');
-        verify(autoUpdateFutureMock).cancel();
-    }
-
-    @Test
     void testUnknownCommand()
     {
         runCommand('z', 'q');
@@ -176,7 +170,7 @@ class AppTest
     private void verifyTerminalPrintsPrompt(int count)
     {
         verify(terminalMock, times(count)).println(
-                "Press command key: u=update now, i=begin/end interruption, a=toggle auto-update, r=report, q=quit");
+                "Press command key: u=update now, i=begin/end interruption, r=report, q=quit");
     }
 
     private void runCommand(Character... commands)

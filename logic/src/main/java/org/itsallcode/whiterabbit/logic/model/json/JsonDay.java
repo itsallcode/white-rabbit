@@ -10,7 +10,6 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 @JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "comment" })
 public class JsonDay
 {
-
     @JsonbProperty("date")
     private LocalDate date;
     @JsonbProperty("type")

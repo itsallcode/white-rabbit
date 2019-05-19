@@ -55,9 +55,9 @@ public class AppService
         this.appServiceCallback.setDelegate(callback);
     }
 
-    public ScheduledTaskFuture startAutoUpdate()
+    public void start()
     {
-        return schedule(PeriodicTrigger.everyMinute(), this::updateNow);
+        schedule(PeriodicTrigger.everyMinute(), this::updateNow);
     }
 
     public ScheduledTaskFuture schedule(Trigger trigger, Runnable runnable)

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -28,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class AppServiceTest
 {
+    private static final Instant NOW = Instant.parse("2007-12-03T10:15:30.00Z");
 
     @Mock
     private Storage storageMock;
@@ -193,9 +195,30 @@ class AppServiceTest
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
 
+        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1)))
+                .thenReturn(true);
+
         updateNow(now, day);
 
         assertThat(day.getInterruption()).isEqualTo(Duration.ofHours(1));
+    }
+
+    @Test
+    void testUpdateNowDoesNotAddInterruptionWhenCallbackSaysNo()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(LocalTime.of(13, 0));
+
+        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1)))
+                .thenReturn(false);
+
+        updateNow(now, day);
+
+        assertThat(day.getInterruption()).isEqualTo(null);
     }
 
     @Test
@@ -252,6 +275,7 @@ class AppServiceTest
     @Test
     void testStartingInterruptionTwiceThrowsException()
     {
+        when(clockMock.instant()).thenReturn(NOW);
         appService.startInterruption();
 
         assertThrows(IllegalStateException.class, () -> appService.startInterruption());
@@ -273,7 +297,7 @@ class AppServiceTest
     @Test
     void testStartAutoUpdate()
     {
-        appService.startAutoUpdate();
+        appService.start();
         verify(schedulingServiceMock).schedule(any(), ArgumentMatchers.any(Runnable.class));
     }
 

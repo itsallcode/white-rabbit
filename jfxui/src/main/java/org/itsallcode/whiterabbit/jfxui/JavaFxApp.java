@@ -100,7 +100,7 @@ public class JavaFxApp extends Application
                 dayRecordTable.recordUpdated(record);
             }
         });
-        appService.startAutoUpdate();
+        appService.start();
     }
 
     private boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption,

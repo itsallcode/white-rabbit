@@ -4,13 +4,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class PeriodicTrigger implements Trigger
 {
-    private static final Logger LOG = LogManager.getLogger(PeriodicTrigger.class);
-
     private final ChronoUnit roundToUnit;
 
     private PeriodicTrigger(ChronoUnit roundToUnit)

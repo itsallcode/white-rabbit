@@ -2,9 +2,7 @@ package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -16,13 +14,11 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
-import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 
 public class App
 {
     private static final Logger LOG = LogManager.getLogger(App.class);
 
-    private static final char COMMAND_AUTO_UPDATE = 'a';
     private static final char COMMAND_REPORT = 'r';
     private static final char COMMAND_UPDATE = 'u';
     private static final char COMMAND_TOGGLE_INTERRUPT = 'i';
@@ -33,7 +29,6 @@ public class App
     private final FormatterService formatterService;
 
     private Interruption interruption;
-    private ScheduledTaskFuture autoUpdateFuture;
     private boolean running = true;
 
     public App(AppService appService, FormatterService formatterService, UiTerminal terminal)
@@ -54,22 +49,10 @@ public class App
 
     void run()
     {
-        this.appService.setUpdateListener(new AppServiceCallback()
-        {
-            @Override
-            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption,
-                    Duration interruption)
-            {
-                return true;
-            }
+        this.appService
+                .setUpdateListener(AppServiceCallback.createOnlyUpdate(this::dayRecordUpdated));
+        appService.start();
 
-            @Override
-            public void recordUpdated(DayRecord record)
-            {
-                dayRecordUpdated(record);
-            }
-        });
-        this.toggleAutoUpdate();
         while (running)
         {
             final Optional<Character> command = promptUser();
@@ -100,9 +83,6 @@ public class App
         case COMMAND_REPORT:
             appService.report();
             break;
-        case COMMAND_AUTO_UPDATE:
-            toggleAutoUpdate();
-            break;
         case COMMAND_QUIT:
             shutdown();
             break;
@@ -117,19 +97,6 @@ public class App
     {
         this.appService.shutdown();
         this.running = false;
-    }
-
-    private void toggleAutoUpdate()
-    {
-        if (autoUpdateFuture == null)
-        {
-            autoUpdateFuture = appService.startAutoUpdate();
-        }
-        else
-        {
-            autoUpdateFuture.cancel();
-            autoUpdateFuture = null;
-        }
     }
 
     private void dayRecordUpdated(DayRecord day)
@@ -181,18 +148,13 @@ public class App
     private String getPrompt()
     {
         String prompt = MessageFormat.format(
-                "Press command key: {0}=update now, {1}=begin/end interruption, {2}=toggle auto-update, {3}=report, {4}=quit",
-                COMMAND_UPDATE, COMMAND_TOGGLE_INTERRUPT, COMMAND_AUTO_UPDATE, COMMAND_REPORT,
-                COMMAND_QUIT);
+                "Press command key: {0}=update now, {1}=begin/end interruption, {2}=report, {3}=quit",
+                COMMAND_UPDATE, COMMAND_TOGGLE_INTERRUPT, COMMAND_REPORT, COMMAND_QUIT);
         if (interruption != null)
         {
             final String currentInterruption = formatterService
                     .format(interruption.currentDuration(appService.getClock().instant()));
             prompt += " (interruption " + currentInterruption + ")";
-        }
-        if (autoUpdateFuture != null)
-        {
-            prompt += " (auto-update on)";
         }
         return prompt;
     }

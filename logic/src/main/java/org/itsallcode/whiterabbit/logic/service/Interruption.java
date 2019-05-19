@@ -52,9 +52,9 @@ public class Interruption
         callback.cancelInterruption();
     }
 
-    public Duration currentDuration(Instant end)
+    public Duration currentDuration(Instant now)
     {
-        return Duration.between(start, end).truncatedTo(ChronoUnit.MINUTES);
+        return Duration.between(start, now).truncatedTo(ChronoUnit.MINUTES);
     }
 
     @Override
