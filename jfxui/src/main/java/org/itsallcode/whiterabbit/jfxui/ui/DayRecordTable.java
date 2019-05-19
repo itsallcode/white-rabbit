@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -32,10 +33,12 @@ public class DayRecordTable
     private final ObservableList<DayRecord> dayRecords = FXCollections.observableArrayList();
     private final TableView<DayRecord> table = new TableView<>(dayRecords);
     private final RecordEditListener editListener;
+    private final FormatterService formatterService;
 
-    public DayRecordTable(RecordEditListener editListener)
+    public DayRecordTable(RecordEditListener editListener, FormatterService formatterService)
     {
         this.editListener = editListener;
+        this.formatterService = formatterService;
     }
 
     public Node initTable()
@@ -57,12 +60,14 @@ public class DayRecordTable
                         new LocalTimeStringConverter(FormatStyle.SHORT)),
                 createEditableColumn("End", DayRecord::getEnd, (record, end) -> record.setEnd(end),
                         new LocalTimeStringConverter(FormatStyle.SHORT)),
-                createReadonlyColumn("Break", DayRecord::getMandatoryBreak),
+                createReadonlyColumn("Break", DayRecord::getMandatoryBreak,
+                        formatterService::format),
                 createEditableColumn("Interruption", DayRecord::getInterruption,
                         (record, interruption) -> record.setInterruption(interruption),
-                        new DurationStringConverter()),
-                createReadonlyColumn("Overtime", DayRecord::getOvertime),
-                createReadonlyColumn("Total Overtime", DayRecord::getTotalOvertime),
+                        new DurationStringConverter(formatterService)),
+                createReadonlyColumn("Overtime", DayRecord::getOvertime, formatterService::format),
+                createReadonlyColumn("Total Overtime", DayRecord::getTotalOvertime,
+                        formatterService::format),
                 createEditableColumn("Comment", DayRecord::getComment,
                         (record, comment) -> record.setComment(comment),
                         new DefaultStringConverter()));
@@ -89,12 +94,18 @@ public class DayRecordTable
         return column;
     }
 
-    private <T> TableColumn<DayRecord, T> createReadonlyColumn(String label,
+    private <T> TableColumn<DayRecord, String> createReadonlyColumn(String label,
             Function<DayRecord, T> getter)
     {
-        final TableColumn<DayRecord, T> column = new TableColumn<>(label);
+        return createReadonlyColumn(label, getter, T::toString);
+    }
+
+    private <T> TableColumn<DayRecord, String> createReadonlyColumn(String label,
+            Function<DayRecord, T> getter, Function<T, String> formatter)
+    {
+        final TableColumn<DayRecord, String> column = new TableColumn<>(label);
         column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
-                data.getValue() != null ? getter.apply(data.getValue()) : null));
+                data.getValue() != null ? formatter.apply(getter.apply(data.getValue())) : null));
         column.setEditable(false);
         return column;
     }
