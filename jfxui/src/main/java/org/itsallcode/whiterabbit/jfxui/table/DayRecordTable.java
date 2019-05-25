@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.ui;
+package org.itsallcode.whiterabbit.jfxui.table;
 
 import static java.util.Arrays.asList;
 

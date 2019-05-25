@@ -14,7 +14,7 @@ import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.table.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
-import org.itsallcode.whiterabbit.jfxui.ui.DayRecordTable;
+import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
