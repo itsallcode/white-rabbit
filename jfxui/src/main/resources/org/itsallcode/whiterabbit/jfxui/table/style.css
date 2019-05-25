@@ -1,0 +1,21 @@
+TableView#day-table {
+  -fx-font-size: 9pt;
+}
+
+#day-table #date {
+	-fx-alignment: CENTER;
+}
+
+#day-table #day-type {
+	-fx-alignment: CENTER_LEFT;
+}
+
+#day-table #begin,
+#day-table #end,
+#day-table #break,
+#day-table #interruption,
+#day-table #overtime,
+#day-table #total-overtime
+{
+	-fx-alignment: CENTER;
+}

@@ -165,7 +165,8 @@ public class JavaFxApp extends Application
     {
         dayRecordTable = new DayRecordTable(record -> appService.store(record), formatter);
         final BorderPane pane = createMainPane();
-        final Scene scene = new Scene(pane, 750, 750);
+        final Scene scene = new Scene(pane, 750, 875);
+        scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         primaryStage.setTitle("White Rabbit Time Recording");
         primaryStage.setOnCloseRequest(event -> {
             LOG.info("Hiding primary stage");

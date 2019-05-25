@@ -45,47 +45,51 @@ public class DayRecordTable
     {
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
+        table.setId("day-table");
+
         return table;
     }
 
     private List<TableColumn<DayRecord, ?>> createColumns()
     {
-        return asList(createReadonlyColumn("Date", DayRecord::getDate),
-                createEditableColumn("Type", DayRecord::getType,
+        return asList(createReadonlyColumn("date", "Date", DayRecord::getDate),
+                createEditableColumn("day-type", "Type", DayRecord::getType,
                         (record, type) -> record.setType(type),
                         (TableColumn<DayRecord, DayType> data) -> new ChoiceBoxTableCell<>(
                                 new DayTypeStringConverter(), DayType.values())),
-                createEditableColumn("Begin", DayRecord::getBegin,
+                createEditableColumn("begin", "Begin", DayRecord::getBegin,
                         (record, begin) -> record.setBegin(begin),
                         new LocalTimeStringConverter(FormatStyle.SHORT)),
-                createEditableColumn("End", DayRecord::getEnd, (record, end) -> record.setEnd(end),
+                createEditableColumn("end", "End", DayRecord::getEnd,
+                        (record, end) -> record.setEnd(end),
                         new LocalTimeStringConverter(FormatStyle.SHORT)),
-                createReadonlyColumn("Break", DayRecord::getMandatoryBreak,
+                createReadonlyColumn("break", "Break", DayRecord::getMandatoryBreak,
                         formatterService::format),
-                createEditableColumn("Interruption", DayRecord::getInterruption,
+                createEditableColumn("interruption", "Interruption", DayRecord::getInterruption,
                         (record, interruption) -> record.setInterruption(interruption),
                         new DurationStringConverter(formatterService)),
-                createReadonlyColumn("Overtime", DayRecord::getOvertime, formatterService::format),
-                createReadonlyColumn("Total Overtime", DayRecord::getTotalOvertime,
+                createReadonlyColumn("overtime", "Overtime", DayRecord::getOvertime,
                         formatterService::format),
-                createEditableColumn("Comment", DayRecord::getComment,
+                createReadonlyColumn("total-overtime", "Total Overtime",
+                        DayRecord::getTotalOvertime, formatterService::format),
+                createEditableColumn("comment", "Comment", DayRecord::getComment,
                         (record, comment) -> record.setComment(comment),
                         new DefaultStringConverter()));
     }
 
-    private <T> TableColumn<DayRecord, T> createEditableColumn(String label,
+    private <T> TableColumn<DayRecord, T> createEditableColumn(String id, String label,
             Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter,
             StringConverter<T> stringConverter)
     {
-        return createEditableColumn(label, getter, setter,
+        return createEditableColumn(id, label, getter, setter,
                 param -> new TextFieldTableCell<>(stringConverter));
     }
 
-    private <T> TableColumn<DayRecord, T> createEditableColumn(String label,
+    private <T> TableColumn<DayRecord, T> createEditableColumn(String id, String label,
             Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter,
             Callback<TableColumn<DayRecord, T>, TableCell<DayRecord, T>> cellFactory)
     {
-        final TableColumn<DayRecord, T> column = new TableColumn<>(label);
+        final TableColumn<DayRecord, T> column = createColumn(id, label);
         column.setCellFactory(cellFactory);
         column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
                 data.getValue() != null ? getter.apply(data.getValue()) : null));
@@ -94,19 +98,27 @@ public class DayRecordTable
         return column;
     }
 
-    private <T> TableColumn<DayRecord, String> createReadonlyColumn(String label,
+    private <T> TableColumn<DayRecord, String> createReadonlyColumn(String id, String label,
             Function<DayRecord, T> getter)
     {
-        return createReadonlyColumn(label, getter, T::toString);
+        return createReadonlyColumn(id, label, getter, T::toString);
     }
 
-    private <T> TableColumn<DayRecord, String> createReadonlyColumn(String label,
+    private <T> TableColumn<DayRecord, String> createReadonlyColumn(String id, String label,
             Function<DayRecord, T> getter, Function<T, String> formatter)
     {
-        final TableColumn<DayRecord, String> column = new TableColumn<>(label);
+        final TableColumn<DayRecord, String> column = createColumn(id, label);
         column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
                 data.getValue() != null ? formatter.apply(getter.apply(data.getValue())) : null));
         column.setEditable(false);
+        return column;
+    }
+
+    private <T> TableColumn<DayRecord, T> createColumn(String id, String label)
+    {
+        final TableColumn<DayRecord, T> column = new TableColumn<>(label);
+        column.setSortable(false);
+        column.setId(id);
         return column;
     }
 
