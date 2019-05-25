@@ -11,7 +11,7 @@ public interface Tray
 {
     static final Logger LOG = LogManager.getLogger(Tray.class);
 
-    public static Tray create()
+    public static Tray create(TrayCallback callback)
     {
         return SwingUtil.runOnFxApplicationThread(() -> {
             ensureToolkitInitialized();
@@ -21,7 +21,7 @@ public interface Tray
                 return new DummyTrayIcon();
             }
 
-            return AwtTrayIcon.createAwtTray();
+            return AwtTrayIcon.createAwtTray(callback);
         });
     }
 
@@ -31,4 +31,6 @@ public interface Tray
     }
 
     void displayMessage(String caption, String text, MessageType messageType);
+
+    void removeTrayIcon();
 }

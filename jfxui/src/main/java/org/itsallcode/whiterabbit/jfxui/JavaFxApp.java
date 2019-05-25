@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import java.awt.TrayIcon.MessageType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -13,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
+import org.itsallcode.whiterabbit.jfxui.table.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.ui.DayRecordTable;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -23,6 +23,7 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -58,14 +59,44 @@ public class JavaFxApp extends Application
     @Override
     public void init() throws Exception
     {
+        Platform.setImplicitExit(false);
         this.formatter = new FormatterService();
         final Path configFile = Paths.get("time.properties").toAbsolutePath();
         LOG.info("Loading config from {}", configFile);
         final Config config = Config.read(configFile);
         this.appService = AppService.create(config, formatter);
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
-        tray = Tray.create();
-        tray.displayMessage("caption", "text", MessageType.INFO);
+        tray = Tray.create(new TrayCallback()
+        {
+            @Override
+            public void showMainWindow()
+            {
+                Platform.runLater(() -> {
+                    if (primaryStage.isShowing())
+                    {
+                        LOG.debug("Request focus");
+                        primaryStage.requestFocus();
+                    }
+                    else
+                    {
+                        LOG.debug("Show primary stage");
+                        primaryStage.show();
+                    }
+                });
+            }
+
+            @Override
+            public void startInterruption()
+            {
+                startManualInterruption();
+            }
+
+            @Override
+            public void exit()
+            {
+                Platform.exit();
+            }
+        });
     }
 
     @Override
@@ -85,6 +116,7 @@ public class JavaFxApp extends Application
     @Override
     public void stop()
     {
+        tray.removeTrayIcon();
         currentTimeProperty.cancel();
         appService.shutdown();
     }
@@ -133,7 +165,13 @@ public class JavaFxApp extends Application
     {
         dayRecordTable = new DayRecordTable(record -> appService.store(record), formatter);
         final BorderPane pane = createMainPane();
-        final Scene scene = new Scene(pane, 750, 700);
+        final Scene scene = new Scene(pane, 750, 750);
+        primaryStage.setTitle("White Rabbit Time Recording");
+        primaryStage.setOnCloseRequest(event -> {
+            LOG.info("Hiding primary stage");
+            event.consume();
+            primaryStage.hide();
+        });
         primaryStage.setScene(scene);
     }
 
@@ -188,8 +226,11 @@ public class JavaFxApp extends Application
             LOG.warn("Interruption {} already active", interruption.get());
             return;
         }
-        interruption.set(appService.startInterruption());
-        new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption).show();
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            interruption.set(appService.startInterruption());
+            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption)
+                    .show();
+        });
     }
 
     private Button updateButton()

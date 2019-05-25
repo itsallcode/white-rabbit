@@ -19,6 +19,14 @@ public class JavaFxUtil
         // Not instantiable
     }
 
+    public static void runOnFxApplicationThread(Runnable runnable)
+    {
+        runOnFxApplicationThread(() -> {
+            runnable.run();
+            return null;
+        });
+    }
+
     public static <T> T runOnFxApplicationThread(Supplier<T> supplier)
     {
         if (Platform.isFxApplicationThread())

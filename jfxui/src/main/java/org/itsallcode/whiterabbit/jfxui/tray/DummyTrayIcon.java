@@ -9,4 +9,11 @@ class DummyTrayIcon implements Tray
     public void displayMessage(String caption, String text, MessageType messageType)
     {
     }
+
+    @Override
+    public void removeTrayIcon()
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }
