@@ -24,10 +24,13 @@ public class DayReporter
     public void add(DayRecord day)
     {
         this.overtime = overtime.plus(day.getOvertime());
+        if (!this.overtime.equals(day.getTotalOvertime()))
+        {
+            throw new AssertionError("Invalid overtime: expected " + this.overtime + " but was "
+                    + day.getTotalOvertime());
+        }
         final String line = formatterService.format(day);
         report.append(line) //
-                .append(", Acc. overtime: ") //
-                .append(formatterService.format(overtime)) //
                 .append(day.getComment() != null ? ", " + day.getComment() : "").append(NEWLINE);
     }
 

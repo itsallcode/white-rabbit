@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.model;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
@@ -17,7 +18,7 @@ public class DayRecord
     public DayRecord(JsonDay day, Duration previousOvertime)
     {
         this.day = day;
-        this.previousOvertime = previousOvertime;
+        this.previousOvertime = Objects.requireNonNull(previousOvertime, "previousOvertime");
     }
 
     public Duration getMandatoryBreak()

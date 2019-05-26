@@ -41,7 +41,7 @@ public class Config
 
     public Path getDataDir()
     {
-        return Paths.get(getMandatoryValue("data"));
+        return Paths.get(getMandatoryValue("data")).toAbsolutePath();
     }
 
     private String getMandatoryValue(String param)

@@ -17,6 +17,7 @@ import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
@@ -27,6 +28,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -50,6 +53,7 @@ public class JavaFxApp extends Application
     private DayRecordTable dayRecordTable;
 
     private final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
+    private final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
     private ScheduledProperty<Instant> currentTimeProperty;
     private Stage primaryStage;
 
@@ -209,9 +213,10 @@ public class JavaFxApp extends Application
 
     private void createUi()
     {
-        dayRecordTable = new DayRecordTable(record -> appService.store(record), formatter);
+        dayRecordTable = new DayRecordTable(currentMonth, record -> appService.store(record),
+                formatter);
         final BorderPane pane = createMainPane();
-        final Scene scene = new Scene(pane, 750, 875);
+        final Scene scene = new Scene(pane, 800, 900);
         scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         primaryStage.setTitle("White Rabbit Time Recording");
         primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
@@ -235,14 +240,16 @@ public class JavaFxApp extends Application
         pane.setTop(currentTimeLabel);
         BorderPane.setMargin(currentTimeLabel, insets);
 
-        final Button updateButton = updateButton();
-        updateButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        final Button startInterruptionButton = startInterruptionButton();
-        startInterruptionButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        final Button updateButton = button("Update", e -> appService.updateNow());
+        final Button startInterruptionButton = button("Start interruption",
+                e -> startManualInterruption());
+        startInterruptionButton.disableProperty().bind(interruption.isNotNull());
+        final Button updateAllMonthsButton = button("Update overtime for all months",
+                e -> appService.updatePreviousMonthOvertimeField());
 
         final TilePane bottom = new TilePane(Orientation.HORIZONTAL);
         bottom.setHgap(gap);
-        bottom.getChildren().addAll(updateButton, startInterruptionButton);
+        bottom.getChildren().addAll(updateButton, startInterruptionButton, updateAllMonthsButton);
 
         pane.setBottom(bottom);
         BorderPane.setMargin(bottom, insets);
@@ -254,16 +261,27 @@ public class JavaFxApp extends Application
         final Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(() -> {
             final Instant now = currentTimeProperty.property().getValue();
-            return formatter.formatDateAndtime(now);
-        }, currentTimeProperty.property()));
+            String text = formatter.formatDateAndtime(now);
+            final MonthIndex month = currentMonth.get();
+            if (month != null)
+            {
+                text += ", current month: " + month.getYearMonth() + ", overtime previous month: "
+                        + formatter.format(month.getOvertimePreviousMonth())
+                        + ", overtime this month: "
+                        + formatter.format(
+                                month.getTotalOvertime().minus(month.getOvertimePreviousMonth()))
+                        + ", total overtime: " + formatter.format(month.getTotalOvertime());
+            }
+            return text;
+        }, currentTimeProperty.property(), currentMonth));
         return label;
     }
 
-    private Button startInterruptionButton()
+    private Button button(String label, EventHandler<ActionEvent> action)
     {
-        final Button button = new Button("Start interruption");
-        button.setOnAction(e -> startManualInterruption());
-        button.disableProperty().bind(interruption.isNotNull());
+        final Button button = new Button(label);
+        button.setOnAction(action);
+        button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         return button;
     }
 
@@ -281,15 +299,8 @@ public class JavaFxApp extends Application
         });
     }
 
-    private Button updateButton()
-    {
-        final Button button = new Button("Update");
-        button.setOnAction(e -> appService.updateNow());
-        return button;
-    }
-
     private void fillRecords(YearMonth yearMonth)
     {
-        appService.getRecords(yearMonth).stream().forEach(dayRecordTable::recordUpdated);
+        currentMonth.setValue(appService.getMonth(yearMonth));
     }
 }

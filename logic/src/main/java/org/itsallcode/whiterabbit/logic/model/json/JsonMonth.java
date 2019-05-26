@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.model.json;
 
+import java.time.Duration;
 import java.time.Month;
 import java.util.List;
 
@@ -13,12 +14,15 @@ public class JsonMonth
     private int year;
     @JsonbProperty("month")
     private Month month;
+    @JsonbProperty("overtimePreviousMonth")
+    private Duration overtimePreviousMonth;
     @JsonbProperty("days")
     private List<JsonDay> days;
 
     public static JsonMonth create(JsonMonth record, List<JsonDay> sortedDays)
     {
         final JsonMonth month = new JsonMonth();
+        month.setOvertimePreviousMonth(record.getOvertimePreviousMonth());
         month.setYear(record.getYear());
         month.setMonth(record.getMonth());
         month.setDays(sortedDays);
@@ -53,5 +57,15 @@ public class JsonMonth
     public void setDays(List<JsonDay> days)
     {
         this.days = days;
+    }
+
+    public Duration getOvertimePreviousMonth()
+    {
+        return overtimePreviousMonth;
+    }
+
+    public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
+    {
+        this.overtimePreviousMonth = overtimePreviousMonth;
     }
 }

@@ -9,9 +9,11 @@ import java.util.function.Function;
 
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,10 +37,14 @@ public class DayRecordTable
     private final RecordEditListener editListener;
     private final FormatterService formatterService;
 
-    public DayRecordTable(RecordEditListener editListener, FormatterService formatterService)
+    public DayRecordTable(ObjectProperty<MonthIndex> currentMonth, RecordEditListener editListener,
+            FormatterService formatterService)
     {
         this.editListener = editListener;
         this.formatterService = formatterService;
+
+        currentMonth.addListener((observable, oldValue, newValue) -> newValue.getSortedDays()
+                .forEach(this::recordUpdated));
     }
 
     public Node initTable()
@@ -68,6 +74,8 @@ public class DayRecordTable
                 createEditableColumn("interruption", "Interruption", DayRecord::getInterruption,
                         (record, interruption) -> record.setInterruption(interruption),
                         new DurationStringConverter(formatterService)),
+                createReadonlyColumn("working-time", "Working time", DayRecord::getWorkingTime,
+                        formatterService::format),
                 createReadonlyColumn("overtime", "Overtime", DayRecord::getOvertime,
                         formatterService::format),
                 createReadonlyColumn("total-overtime", "Total Overtime",

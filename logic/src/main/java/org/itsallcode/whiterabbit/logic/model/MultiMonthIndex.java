@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 
 public class MultiMonthIndex
 {
-
     private final List<MonthIndex> months;
 
     public MultiMonthIndex(List<MonthIndex> months)

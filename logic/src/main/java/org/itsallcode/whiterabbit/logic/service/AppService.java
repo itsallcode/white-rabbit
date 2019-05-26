@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -144,6 +145,21 @@ public class AppService
         reporter.finish();
     }
 
+    public void updatePreviousMonthOvertimeField()
+    {
+        final List<MonthIndex> months = storage.loadAll().getMonths().stream()
+                .sorted(Comparator.comparing(MonthIndex::getYearMonth)) //
+                .collect(toList());
+        Duration totalOvertime = Duration.ZERO;
+        for (final MonthIndex month : months)
+        {
+            LOG.info("Updating overtime {} for month {}", totalOvertime, month.getYearMonth());
+            month.setOvertimePreviousMonth(totalOvertime);
+            totalOvertime = totalOvertime.plus(month.calculateThisMonthOvertime());
+            storage.storeMonth(month);
+        }
+    }
+
     public Interruption startInterruption()
     {
         final Interruption newInterruption = Interruption.start(clock,
@@ -216,7 +232,12 @@ public class AppService
 
     public List<DayRecord> getRecords(YearMonth yearMonth)
     {
-        return storage.loadMonth(yearMonth).getSortedDays().collect(toList());
+        return getMonth(yearMonth).getSortedDays().collect(toList());
+    }
+
+    public MonthIndex getMonth(YearMonth yearMonth)
+    {
+        return storage.loadMonth(yearMonth);
     }
 
     public void store(DayRecord record)

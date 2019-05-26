@@ -11,11 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 
 public class MonthIndex
 {
+    private static final Logger LOG = LogManager.getLogger(MonthIndex.class);
+
     private final JsonMonth record;
     private final Map<LocalDate, DayRecord> days;
     private final Duration totalOvertime;
@@ -27,9 +31,9 @@ public class MonthIndex
         this.totalOvertime = totalOvertime;
     }
 
-    public static MonthIndex create(JsonMonth record, Duration previousOvertime)
+    public static MonthIndex create(JsonMonth record)
     {
-        Duration currentOvertime = previousOvertime;
+        Duration currentOvertime = getOvertimePreviousMonth(record);
         final Map<LocalDate, DayRecord> days = new HashMap<>();
         for (final JsonDay jsonDay : record.getDays())
         {
@@ -66,6 +70,13 @@ public class MonthIndex
         return totalOvertime;
     }
 
+    public Duration calculateThisMonthOvertime()
+    {
+        final long overtimeMinutes = days.values().stream().map(DayRecord::getOvertime)
+                .mapToLong(Duration::toMinutes).sum();
+        return Duration.ofMinutes(overtimeMinutes);
+    }
+
     private List<JsonDay> getSortedJsonDays()
     {
         return getSortedDays() //
@@ -84,5 +95,29 @@ public class MonthIndex
         final JsonDay day = new JsonDay();
         day.setDate(date);
         return new DayRecord(day, Duration.ZERO);
+    }
+
+    private static Duration getOvertimePreviousMonth(JsonMonth month)
+    {
+        if (month.getOvertimePreviousMonth() != null)
+        {
+            return month.getOvertimePreviousMonth();
+        }
+        else
+        {
+            LOG.warn("No overtime for previous month found for {} / {}", month.getMonth(),
+                    month.getYear());
+            return Duration.ZERO;
+        }
+    }
+
+    public Duration getOvertimePreviousMonth()
+    {
+        return record.getOvertimePreviousMonth();
+    }
+
+    public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
+    {
+        record.setOvertimePreviousMonth(overtimePreviousMonth);
     }
 }

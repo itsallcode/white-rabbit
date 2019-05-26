@@ -14,6 +14,7 @@ TableView#day-table {
 #day-table #end,
 #day-table #break,
 #day-table #interruption,
+#day-table #working-time,
 #day-table #overtime,
 #day-table #total-overtime
 {
