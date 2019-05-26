@@ -37,6 +37,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -120,7 +121,20 @@ public class JavaFxApp extends Application
     {
         this.primaryStage = primaryStage;
         LOG.info("Starting UI");
+        try
+        {
+            doStart(primaryStage);
+        }
+        catch (final Exception e)
+        {
+            LOG.error("Exception during start: " + e.getMessage(), e);
+            showErrorDialog(e);
+            Platform.exit();
+        }
+    }
 
+    private void doStart(Stage primaryStage)
+    {
         createUi();
         primaryStage.show();
 
@@ -200,6 +214,7 @@ public class JavaFxApp extends Application
         final Scene scene = new Scene(pane, 750, 875);
         scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         primaryStage.setTitle("White Rabbit Time Recording");
+        primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
         primaryStage.setOnCloseRequest(event -> {
             LOG.info("Hiding primary stage");
             event.consume();
