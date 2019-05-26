@@ -1,11 +1,14 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +20,7 @@ public class DateToFileMapper
 
     private final Path dataDir;
     private final DateTimeFormatter formatter;
+    private final Pattern fileNamePattern = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)\\.json$");
 
     public DateToFileMapper(Path dataDir)
     {
@@ -45,7 +49,28 @@ public class DateToFileMapper
         }
         catch (final IOException e)
         {
-            throw new IllegalStateException("Error listing directory " + dataDir, e);
+            throw new UncheckedIOException("Error listing directory " + dataDir, e);
         }
+    }
+
+    public Stream<YearMonth> getAllYearMonths()
+    {
+        return getAllFiles() //
+                .map(Path::getFileName) //
+                .map(Path::toString) //
+                .map(this::parseYearMonth) //
+                .filter(yearMonth -> yearMonth != null);
+    }
+
+    private YearMonth parseYearMonth(String filename)
+    {
+        final Matcher matcher = fileNamePattern.matcher(filename);
+        if (!matcher.matches())
+        {
+            return null;
+        }
+        final int year = Integer.parseInt(matcher.group(1));
+        final int month = Integer.parseInt(matcher.group(2));
+        return YearMonth.of(year, month);
     }
 }

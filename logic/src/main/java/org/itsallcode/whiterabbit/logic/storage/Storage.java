@@ -131,4 +131,9 @@ public class Storage
             throw new UncheckedIOException("Error reading file " + file, e);
         }
     }
+
+    public List<YearMonth> getAvailableDataYearMonth()
+    {
+        return dateToFileMapper.getAllYearMonths().sorted().collect(toList());
+    }
 }

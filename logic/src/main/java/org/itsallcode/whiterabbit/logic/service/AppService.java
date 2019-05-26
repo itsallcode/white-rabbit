@@ -235,6 +235,11 @@ public class AppService
         return getMonth(yearMonth).getSortedDays().collect(toList());
     }
 
+    public List<YearMonth> getAvailableDataYearMonth()
+    {
+        return storage.getAvailableDataYearMonth();
+    }
+
     public MonthIndex getMonth(YearMonth yearMonth)
     {
         return storage.loadMonth(yearMonth);
