@@ -32,22 +32,27 @@ public class AppService
     private final SchedulingService schedulingService;
     private final AtomicReference<Interruption> currentInterruption = new AtomicReference<>();
     private final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
+    private final SingleInstanceService singleInstanceService;
 
     public AppService(Storage storage, FormatterService formatterService, ClockService clock,
-            SchedulingService schedulingService)
+            SchedulingService schedulingService, SingleInstanceService singleInstanceService)
     {
         this.storage = storage;
         this.formatterService = formatterService;
         this.clock = clock;
         this.schedulingService = schedulingService;
+        this.singleInstanceService = singleInstanceService;
     }
 
     public static AppService create(final Config config, final FormatterService formatterService)
     {
+        final SingleInstanceService singleInstanceService = new SingleInstanceService();
+        singleInstanceService.registerInstance();
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
         final ClockService clockService = new ClockService();
         final SchedulingService schedulingService = new SchedulingService(clockService);
-        return new AppService(storage, formatterService, clockService, schedulingService);
+        return new AppService(storage, formatterService, clockService, schedulingService,
+                singleInstanceService);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -200,6 +205,7 @@ public class AppService
     public void shutdown()
     {
         LOG.debug("Shutting down...");
+        singleInstanceService.shutdown();
         this.schedulingService.shutdown();
     }
 

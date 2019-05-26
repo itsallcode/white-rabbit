@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -138,7 +138,7 @@ public class DayRecordTable
 
     public void recordUpdated(DayRecord record)
     {
-        Platform.runLater(() -> {
+        JavaFxUtil.runOnFxApplicationThread(() -> {
             final int recordIndex = record.getDate().getDayOfMonth() - 1;
             while (dayRecords.size() <= recordIndex)
             {

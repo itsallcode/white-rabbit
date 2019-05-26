@@ -60,6 +60,22 @@ public class JavaFxApp extends Application
     public void init() throws Exception
     {
         Platform.setImplicitExit(false);
+        Thread.setDefaultUncaughtExceptionHandler(
+                (thread, exception) -> showErrorDialog(exception));
+        try
+        {
+            doInitialize();
+        }
+        catch (final Exception e)
+        {
+            LOG.error("Exception during initialization: " + e.getMessage(), e);
+            showErrorDialog(e);
+            Platform.exit();
+        }
+    }
+
+    private void doInitialize()
+    {
         this.formatter = new FormatterService();
         final Path configFile = Paths.get("time.properties").toAbsolutePath();
         LOG.info("Loading config from {}", configFile);
@@ -137,8 +153,24 @@ public class JavaFxApp extends Application
             {
                 dayRecordTable.recordUpdated(record);
             }
+
+            @Override
+            public void exceptionOccured(Exception e)
+            {
+                showErrorDialog(e);
+            }
         });
         appService.start();
+    }
+
+    private void showErrorDialog(Throwable e)
+    {
+        final String message = "An error occured: " + e.getMessage();
+
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+            alert.showAndWait();
+        });
     }
 
     private boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption,

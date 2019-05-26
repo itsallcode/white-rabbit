@@ -31,15 +31,15 @@ public class JavaFxUtil
     {
         if (Platform.isFxApplicationThread())
         {
-            LOG.debug("Already on Fx thread: run directly");
+            LOG.trace("Already on Fx thread: run directly");
             return supplier.get();
         }
 
-        LOG.debug("Not running on Fx thread: schedule for execution...");
+        LOG.trace("Not running on Fx thread: schedule for execution...");
         final Future<T> future = scheduleOnFxThread(supplier);
-        LOG.debug("Waiting for result from Fx thread...");
+        LOG.trace("Waiting for result from Fx thread...");
         final T result = waitForResult(future);
-        LOG.debug("Got result from Fx thread: {}", result);
+        LOG.trace("Got result from Fx thread: {}", result);
         return result;
     }
 
@@ -47,7 +47,7 @@ public class JavaFxUtil
     {
         final CompletableFuture<T> future = new CompletableFuture<>();
         Platform.runLater(() -> {
-            LOG.debug("Running on Fx thread: run now...");
+            LOG.trace("Running on Fx thread: run now...");
             future.complete(supplier.get());
         });
         return future;

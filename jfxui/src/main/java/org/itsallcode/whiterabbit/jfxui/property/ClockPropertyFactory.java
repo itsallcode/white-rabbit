@@ -5,12 +5,12 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class ClockPropertyFactory
@@ -37,7 +37,7 @@ public class ClockPropertyFactory
         LOG.debug("Setting initial property value {} from supplier", initialValue);
         property.set(initialValue);
         final ScheduledTaskFuture scheduledTaskFuture = appService.schedule(trigger,
-                () -> Platform.runLater(() -> {
+                () -> JavaFxUtil.runOnFxApplicationThread(() -> {
                     final T newValue = supplier.get();
                     LOG.trace("Updating property with new value {} from supplier", newValue);
                     property.set(newValue);

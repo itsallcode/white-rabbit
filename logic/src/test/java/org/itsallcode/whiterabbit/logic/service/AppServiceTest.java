@@ -45,6 +45,8 @@ class AppServiceTest
     private Config configMock;
     @Mock
     private AppServiceCallback updateListenerMock;
+    @Mock
+    private SingleInstanceService singleInstanceService;
 
     private AppService appService;
 
@@ -52,7 +54,7 @@ class AppServiceTest
     void setUp()
     {
         appService = new AppService(storageMock, formatterServiceMock, clockMock,
-                schedulingServiceMock);
+                schedulingServiceMock, singleInstanceService);
         appService.setUpdateListener(updateListenerMock);
     }
 

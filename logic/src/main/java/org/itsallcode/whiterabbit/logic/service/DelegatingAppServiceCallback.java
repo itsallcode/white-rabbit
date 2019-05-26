@@ -3,10 +3,14 @@ package org.itsallcode.whiterabbit.logic.service;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 class DelegatingAppServiceCallback implements AppServiceCallback
 {
+    private static final Logger LOG = LogManager.getLogger(DelegatingAppServiceCallback.class);
+
     private AppServiceCallback delegate;
 
     public void setDelegate(AppServiceCallback delegate)
@@ -34,6 +38,19 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         else
         {
             return true;
+        }
+    }
+
+    @Override
+    public void exceptionOccured(Exception e)
+    {
+        if (delegate != null)
+        {
+            delegate.exceptionOccured(e);
+        }
+        else
+        {
+            LOG.error("An error occured: {}", e.getMessage(), e);
         }
     }
 }
