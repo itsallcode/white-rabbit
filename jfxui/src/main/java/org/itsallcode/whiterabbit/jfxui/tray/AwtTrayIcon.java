@@ -16,8 +16,13 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 class AwtTrayIcon implements Tray
 {
+    private static final Logger LOG = LogManager.getLogger(AwtTrayIcon.class);
+
     private final SystemTray tray;
     private final TrayIcon trayIcon;
 
@@ -27,7 +32,7 @@ class AwtTrayIcon implements Tray
         this.trayIcon = trayIcon;
     }
 
-    public static Tray createAwtTray(TrayCallback callback)
+    static Tray createAwtTray(TrayCallback callback)
     {
         try
         {
@@ -35,6 +40,7 @@ class AwtTrayIcon implements Tray
             final Image scaledIcon = loadImage("/icon.png", tray.getTrayIconSize());
             final TrayIcon trayIcon = new TrayIcon(scaledIcon, "White Rabbit Time Recording",
                     createPopupMenu(callback));
+            LOG.info("Adding tray icon {}", trayIcon);
             tray.add(trayIcon);
             trayIcon.addActionListener(event -> callback.showMainWindow());
             return new AwtTrayIcon(tray, trayIcon);
@@ -86,6 +92,7 @@ class AwtTrayIcon implements Tray
     @Override
     public void removeTrayIcon()
     {
+        LOG.debug("Removing tray icon");
         tray.remove(trayIcon);
     }
 }

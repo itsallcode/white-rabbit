@@ -19,7 +19,7 @@ public class SwingUtil
         // Not instantiable
     }
 
-    public static <T> T runOnFxApplicationThread(Supplier<T> supplier)
+    public static <T> T runOnSwingThread(Supplier<T> supplier)
     {
         if (SwingUtilities.isEventDispatchThread())
         {
@@ -28,14 +28,14 @@ public class SwingUtil
         }
 
         LOG.debug("Not running on Swing thread: schedule for execution...");
-        final Future<T> future = scheduleOnFxThread(supplier);
+        final Future<T> future = scheduleOnSwingThread(supplier);
         LOG.debug("Waiting for result from Swing thread...");
         final T result = waitForResult(future);
         LOG.debug("Got result from Swing thread: {}", result);
         return result;
     }
 
-    private static <T> CompletableFuture<T> scheduleOnFxThread(Supplier<T> supplier)
+    private static <T> CompletableFuture<T> scheduleOnSwingThread(Supplier<T> supplier)
     {
         final CompletableFuture<T> future = new CompletableFuture<>();
         SwingUtilities.invokeLater(() -> {

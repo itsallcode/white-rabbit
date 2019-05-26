@@ -13,7 +13,7 @@ public interface Tray
 
     public static Tray create(TrayCallback callback)
     {
-        return SwingUtil.runOnFxApplicationThread(() -> {
+        return SwingUtil.runOnSwingThread(() -> {
             ensureToolkitInitialized();
             if (!SystemTray.isSupported())
             {
