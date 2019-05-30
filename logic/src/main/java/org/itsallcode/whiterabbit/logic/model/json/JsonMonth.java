@@ -7,7 +7,7 @@ import java.util.List;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
-@JsonbPropertyOrder({ "year", "month", "days" })
+@JsonbPropertyOrder({ "year", "month", "overtimePreviousMonth", "days" })
 public class JsonMonth
 {
     @JsonbProperty("year")
@@ -49,16 +49,6 @@ public class JsonMonth
         this.month = month;
     }
 
-    public List<JsonDay> getDays()
-    {
-        return days;
-    }
-
-    public void setDays(List<JsonDay> days)
-    {
-        this.days = days;
-    }
-
     public Duration getOvertimePreviousMonth()
     {
         return overtimePreviousMonth;
@@ -67,5 +57,15 @@ public class JsonMonth
     public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
     {
         this.overtimePreviousMonth = overtimePreviousMonth;
+    }
+
+    public List<JsonDay> getDays()
+    {
+        return days;
+    }
+
+    public void setDays(List<JsonDay> days)
+    {
+        this.days = days;
     }
 }
