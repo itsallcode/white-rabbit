@@ -95,4 +95,10 @@ class AwtTrayIcon implements Tray
         LOG.debug("Removing tray icon");
         tray.remove(trayIcon);
     }
+
+    @Override
+    public boolean isSupported()
+    {
+        return true;
+    }
 }

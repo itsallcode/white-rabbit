@@ -64,7 +64,6 @@ public class JavaFxApp extends Application
     @Override
     public void init() throws Exception
     {
-        Platform.setImplicitExit(false);
         Thread.setDefaultUncaughtExceptionHandler(
                 (thread, exception) -> showErrorDialog(exception));
         try
@@ -150,6 +149,7 @@ public class JavaFxApp extends Application
     @Override
     public void stop()
     {
+        LOG.info("Stopping application");
         tray.removeTrayIcon();
         currentTimeProperty.cancel();
         appService.shutdown();
@@ -183,11 +183,10 @@ public class JavaFxApp extends Application
 
     private void showErrorDialog(Throwable e)
     {
-        final String message = "An error occured: " + e.getMessage();
-
+        final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
-            alert.showAndWait();
+            alert.show();
         });
     }
 
@@ -216,15 +215,26 @@ public class JavaFxApp extends Application
         dayRecordTable = new DayRecordTable(currentMonth, record -> appService.store(record),
                 formatter);
         final BorderPane pane = createMainPane();
-        final Scene scene = new Scene(pane, 800, 900);
+        final Scene scene = new Scene(pane, 800, 800);
         scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         primaryStage.setTitle("White Rabbit Time Recording");
         primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
-        primaryStage.setOnCloseRequest(event -> {
-            LOG.info("Hiding primary stage");
-            event.consume();
-            primaryStage.hide();
-        });
+
+        if (tray.isSupported())
+        {
+            LOG.debug("System tray is supported: allow hiding primary stage");
+            Platform.setImplicitExit(false);
+            primaryStage.setOnCloseRequest(event -> {
+                LOG.info("Hiding primary stage");
+                event.consume();
+                primaryStage.hide();
+            });
+        }
+        else
+        {
+            LOG.debug("System tray is not supported: don't allow hiding primary stage");
+        }
+
         primaryStage.setScene(scene);
     }
 

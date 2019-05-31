@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.tray;
 
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon.MessageType;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +13,6 @@ public interface Tray
     public static Tray create(TrayCallback callback)
     {
         return SwingUtil.runOnSwingThread(() -> {
-            ensureToolkitInitialized();
             if (!SystemTray.isSupported())
             {
                 LOG.warn("No system tray support.");
@@ -25,12 +23,9 @@ public interface Tray
         });
     }
 
-    private static void ensureToolkitInitialized()
-    {
-        Toolkit.getDefaultToolkit();
-    }
-
     void displayMessage(String caption, String text, MessageType messageType);
 
     void removeTrayIcon();
+
+    boolean isSupported();
 }
