@@ -144,7 +144,7 @@ public class DayRecordTable
         };
     }
 
-    public void recordUpdated(DayRecord record)
+    private void recordUpdated(DayRecord record)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final int recordIndex = record.getDate().getDayOfMonth() - 1;

@@ -144,7 +144,13 @@ public class JavaFxApp extends Application
 
         configureAppService();
 
-        fillRecords(appService.getClock().getCurrentYearMonth());
+        loadInitialData();
+    }
+
+    private void loadInitialData()
+    {
+        final YearMonth thisMonth = appService.getClock().getCurrentYearMonth();
+        currentMonth.setValue(appService.getMonth(thisMonth));
     }
 
     @Override
@@ -170,7 +176,7 @@ public class JavaFxApp extends Application
             @Override
             public void recordUpdated(DayRecord record)
             {
-                dayRecordTable.recordUpdated(record);
+                currentMonth.setValue(record.getMonth());
             }
 
             @Override
@@ -317,10 +323,5 @@ public class JavaFxApp extends Application
             new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption)
                     .show();
         });
-    }
-
-    private void fillRecords(YearMonth yearMonth)
-    {
-        currentMonth.setValue(appService.getMonth(yearMonth));
     }
 }

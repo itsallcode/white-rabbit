@@ -39,18 +39,19 @@ public class MonthIndex
         final Map<LocalDate, DayRecord> days = new HashMap<>();
         final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
                 .collect(toMap(JsonDay::getDate, Function.identity()));
+        final MonthIndex monthIndex = new MonthIndex(record, days, currentOvertime);
 
         final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
         for (int day = 1; day <= yearMonth.lengthOfMonth(); day++)
         {
             final LocalDate date = yearMonth.atDay(day);
             final JsonDay jsonDay = jsonDays.computeIfAbsent(date, MonthIndex::createDummyDay);
-            final DayRecord dayRecord = new DayRecord(jsonDay, currentOvertime);
+            final DayRecord dayRecord = new DayRecord(jsonDay, currentOvertime, monthIndex);
             currentOvertime = dayRecord.getTotalOvertime();
             days.put(dayRecord.getDate(), dayRecord);
         }
 
-        return new MonthIndex(record, days, currentOvertime);
+        return monthIndex;
     }
 
     private static JsonDay createDummyDay(LocalDate date)

@@ -18,10 +18,12 @@ public class DayRecord
 
     private final JsonDay day;
     private final Duration previousOvertime;
+    private final MonthIndex month;
 
-    public DayRecord(JsonDay day, Duration previousOvertime)
+    public DayRecord(JsonDay day, Duration previousOvertime, MonthIndex month)
     {
         this.day = day;
+        this.month = month;
         this.previousOvertime = Objects.requireNonNull(previousOvertime, "previousOvertime");
     }
 
@@ -177,5 +179,10 @@ public class DayRecord
     private void setNonDummyDay()
     {
         day.setDummyDay(false);
+    }
+
+    public MonthIndex getMonth()
+    {
+        return month;
     }
 }
