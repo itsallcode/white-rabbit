@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.model;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,14 +37,29 @@ public class MonthIndex
     {
         Duration currentOvertime = getOvertimePreviousMonth(record);
         final Map<LocalDate, DayRecord> days = new HashMap<>();
-        for (final JsonDay jsonDay : record.getDays())
+        final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
+                .collect(toMap(JsonDay::getDate, Function.identity()));
+
+        final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
+        for (int day = 1; day <= yearMonth.lengthOfMonth(); day++)
         {
-            final DayRecord day = new DayRecord(jsonDay, currentOvertime);
-            currentOvertime = day.getTotalOvertime();
-            days.put(day.getDate(), day);
+            final LocalDate date = yearMonth.atDay(day);
+            final JsonDay jsonDay = jsonDays.computeIfAbsent(date, MonthIndex::createDummyDay);
+            final DayRecord dayRecord = new DayRecord(jsonDay, currentOvertime);
+            currentOvertime = dayRecord.getTotalOvertime();
+            days.put(dayRecord.getDate(), dayRecord);
         }
 
         return new MonthIndex(record, days, currentOvertime);
+    }
+
+    private static JsonDay createDummyDay(LocalDate date)
+    {
+        final JsonDay day = new JsonDay();
+        LOG.trace("No entry found for {}: create dummy day", date);
+        day.setDate(date);
+        day.setDummyDay(true);
+        return day;
     }
 
     public YearMonth getYearMonth()
@@ -62,7 +79,11 @@ public class MonthIndex
 
     public JsonMonth getMonthRecord()
     {
-        return JsonMonth.create(record, getSortedJsonDays());
+        final List<JsonDay> sortedNonDummyJsonDays = getSortedDays() //
+                .map(DayRecord::getJsonDay) //
+                .filter(d -> !d.isDummyDay()) //
+                .collect(toList());
+        return JsonMonth.create(record, sortedNonDummyJsonDays);
     }
 
     public Duration getTotalOvertime()
@@ -75,13 +96,6 @@ public class MonthIndex
         final long overtimeMinutes = days.values().stream().map(DayRecord::getOvertime)
                 .mapToLong(Duration::toMinutes).sum();
         return Duration.ofMinutes(overtimeMinutes);
-    }
-
-    private List<JsonDay> getSortedJsonDays()
-    {
-        return getSortedDays() //
-                .map(DayRecord::getJsonDay) //
-                .collect(toList());
     }
 
     public Stream<DayRecord> getSortedDays()

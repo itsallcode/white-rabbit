@@ -1,7 +1,6 @@
 package org.itsallcode.time.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -49,17 +48,15 @@ class DayRecordTest
     }
 
     @Test
-    void testWorkingTimeThrowsExceptionForMissingEndTime()
+    void testWorkingTimeReturnsZeroForMissingEndTime()
     {
-        assertThrows(IllegalStateException.class,
-                () -> getMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), null));
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), null, Duration.ZERO);
     }
 
     @Test
     void testWorkingTimeThrowsExceptionForMissingBeginTime()
     {
-        assertThrows(IllegalStateException.class,
-                () -> getMandatoryBreak(LocalDate.of(2018, 10, 1), null, LocalTime.of(8, 0)));
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), null, LocalTime.of(16, 0), Duration.ZERO);
     }
 
     @Test

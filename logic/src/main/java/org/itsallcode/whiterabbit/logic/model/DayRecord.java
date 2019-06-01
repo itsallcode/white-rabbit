@@ -5,11 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 
 public class DayRecord
 {
+    private static final Logger LOG = LogManager.getLogger(DayRecord.class);
+
     private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
     private final JsonDay day;
@@ -37,14 +41,15 @@ public class DayRecord
 
     public Duration getMandatoryWorkingTime()
     {
+        if (day.isDummyDay())
+        {
+            return Duration.ZERO;
+        }
         if (isWorkingDay())
         {
             return Duration.ofHours(8);
         }
-        else
-        {
-            return Duration.ZERO;
-        }
+        return Duration.ZERO;
     }
 
     private Duration getRawWorkingTime()
@@ -55,7 +60,8 @@ public class DayRecord
         }
         if (getBegin() == null || getEnd() == null)
         {
-            throw new IllegalStateException("Begin or end is null for " + day);
+            LOG.warn("Either begin or end is missing for {}", this);
+            return Duration.ZERO;
         }
         return Duration.between(getBegin(), getEnd());
     }
@@ -108,6 +114,7 @@ public class DayRecord
 
     public void setBegin(LocalTime begin)
     {
+        setNonDummyDay();
         day.setBegin(begin);
     }
 
@@ -118,6 +125,7 @@ public class DayRecord
 
     public void setEnd(LocalTime end)
     {
+        setNonDummyDay();
         day.setEnd(end);
     }
 
@@ -128,6 +136,7 @@ public class DayRecord
 
     public void setInterruption(Duration interruption)
     {
+        setNonDummyDay();
         day.setInterruption(interruption);
     }
 
@@ -155,11 +164,18 @@ public class DayRecord
 
     public void setComment(String comment)
     {
+        setNonDummyDay();
         day.setComment(comment);
     }
 
     public void setType(DayType newValue)
     {
+        setNonDummyDay();
         day.setType(newValue);
+    }
+
+    private void setNonDummyDay()
+    {
+        day.setDummyDay(false);
     }
 }
