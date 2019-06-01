@@ -48,6 +48,7 @@ import javafx.stage.Stage;
 public class JavaFxApp extends Application
 {
     private static final Logger LOG = LogManager.getLogger(App.class);
+    private static final int GAP_PIXEL = 10;
 
     private AppService appService;
     private DayRecordTable dayRecordTable;
@@ -184,6 +185,7 @@ public class JavaFxApp extends Application
     private void showErrorDialog(Throwable e)
     {
         final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
+        LOG.error(message, e);
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
             alert.show();
@@ -243,27 +245,35 @@ public class JavaFxApp extends Application
         final BorderPane pane = new BorderPane();
         final Node table = dayRecordTable.initTable();
         pane.setCenter(table);
-        final int gap = 10;
-        final Insets insets = new Insets(gap);
+
+        final Insets insets = new Insets(GAP_PIXEL);
         BorderPane.setMargin(table, insets);
+
         final Node currentTimeLabel = currentTimeLabel();
         pane.setTop(currentTimeLabel);
         BorderPane.setMargin(currentTimeLabel, insets);
 
-        final Button updateButton = button("Update", e -> appService.updateNow());
+        final Node buttonBar = createButtonBar();
+
+        pane.setBottom(buttonBar);
+        BorderPane.setMargin(buttonBar, insets);
+        return pane;
+    }
+
+    private TilePane createButtonBar()
+    {
         final Button startInterruptionButton = button("Start interruption",
                 e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
-        final Button updateAllMonthsButton = button("Update overtime for all months",
-                e -> appService.updatePreviousMonthOvertimeField());
-
         final TilePane bottom = new TilePane(Orientation.HORIZONTAL);
-        bottom.setHgap(gap);
-        bottom.getChildren().addAll(updateButton, startInterruptionButton, updateAllMonthsButton);
+        bottom.setHgap(GAP_PIXEL);
 
-        pane.setBottom(bottom);
-        BorderPane.setMargin(bottom, insets);
-        return pane;
+        bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
+                startInterruptionButton, //
+                button("Update overtime for all months",
+                        e -> appService.updatePreviousMonthOvertimeField()), //
+                button("Quit", e -> Platform.exit()));
+        return bottom;
     }
 
     private Node currentTimeLabel()
