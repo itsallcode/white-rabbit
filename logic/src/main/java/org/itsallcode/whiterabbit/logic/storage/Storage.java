@@ -9,7 +9,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -105,8 +107,10 @@ public class Storage
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
         {
+            LOG.debug("Found file {} for month {}", file, date);
             return loadFromFile(file);
         }
+        LOG.debug("File {} not found for month {}: create new month", file, date);
         return createNewMonth(date);
     }
 
@@ -116,7 +120,17 @@ public class Storage
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
         month.setDays(new ArrayList<>());
+        month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
         return month;
+    }
+
+    private Duration loadPreviousMonthOvertime(YearMonth date)
+    {
+        final YearMonth previousYearMonth = date.minus(1, ChronoUnit.MONTHS);
+        final MonthIndex previousMonth = loadMonth(previousYearMonth);
+        final Duration overtime = previousMonth.getTotalOvertime();
+        LOG.info("Found overtime {} for previous month {}", overtime, previousYearMonth);
+        return overtime;
     }
 
     private JsonMonth loadFromFile(Path file)
