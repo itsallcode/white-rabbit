@@ -69,7 +69,7 @@ public class MonthIndex
 
     public DayRecord getDay(LocalDate date)
     {
-        return days.computeIfAbsent(date, this::createDay);
+        return days.get(date);
     }
 
     public void put(DayRecord day)
@@ -102,13 +102,6 @@ public class MonthIndex
     {
         return days.values().stream() //
                 .sorted(Comparator.comparing(DayRecord::getDate));
-    }
-
-    private DayRecord createDay(LocalDate date)
-    {
-        final JsonDay day = new JsonDay();
-        day.setDate(date);
-        return new DayRecord(day, Duration.ZERO);
     }
 
     private static Duration getOvertimePreviousMonth(JsonMonth month)
