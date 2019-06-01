@@ -1,5 +1,5 @@
 TableView#day-table {
-  -fx-font-size: 9pt;
+  -fx-font-size: 8.5pt;
 }
 
 #day-table #date {
@@ -19,4 +19,10 @@ TableView#day-table {
 #day-table #total-overtime
 {
 	-fx-alignment: CENTER;
+	-fx-pref-width: 4em;
+}
+
+#day-table #comment
+{
+	-fx-pref-width: 15em;
 }
