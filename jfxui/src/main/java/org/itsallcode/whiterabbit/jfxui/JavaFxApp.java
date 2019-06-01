@@ -283,7 +283,7 @@ public class JavaFxApp extends Application
             final Instant now = currentTimeProperty.property().getValue();
             String text = formatter.formatDateAndtime(now);
             final MonthIndex month = currentMonth.get();
-            if (month != null)
+            if (month != null && month.getOvertimePreviousMonth() != null)
             {
                 text += ", current month: " + month.getYearMonth() + ", overtime previous month: "
                         + formatter.format(month.getOvertimePreviousMonth())
