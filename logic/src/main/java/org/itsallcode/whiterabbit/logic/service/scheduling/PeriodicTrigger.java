@@ -31,12 +31,13 @@ public class PeriodicTrigger implements Trigger
             return now;
         }
 
-        return nextFullMinute(now);
+        return nextFullUnit(now);
     }
 
-    private Instant nextFullMinute(Instant instant)
+    private Instant nextFullUnit(Instant instant)
     {
         return instant.plus(1, roundToUnit) //
-                .truncatedTo(roundToUnit);
+                .truncatedTo(roundToUnit) //
+                .plusMillis(1);
     }
 }
