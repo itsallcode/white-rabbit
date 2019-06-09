@@ -47,7 +47,10 @@ public class MonthIndex
             final LocalDate date = yearMonth.atDay(day);
             final JsonDay jsonDay = jsonDays.computeIfAbsent(date, MonthIndex::createDummyDay);
             final DayRecord dayRecord = new DayRecord(jsonDay, currentOvertime, monthIndex);
-            currentOvertime = dayRecord.getTotalOvertime();
+            if (!dayRecord.isDummyDay())
+            {
+                currentOvertime = dayRecord.getTotalOvertime();
+            }
             days.put(dayRecord.getDate(), dayRecord);
         }
 
@@ -59,7 +62,6 @@ public class MonthIndex
         final JsonDay day = new JsonDay();
         LOG.trace("No entry found for {}: create dummy day", date);
         day.setDate(date);
-        day.setDummyDay(true);
         return day;
     }
 
@@ -81,8 +83,8 @@ public class MonthIndex
     public JsonMonth getMonthRecord()
     {
         final List<JsonDay> sortedNonDummyJsonDays = getSortedDays() //
-                .map(DayRecord::getJsonDay) //
                 .filter(d -> !d.isDummyDay()) //
+                .peek(System.out::println).map(DayRecord::getJsonDay) //
                 .collect(toList());
         return JsonMonth.create(record, sortedNonDummyJsonDays);
     }
@@ -94,7 +96,10 @@ public class MonthIndex
 
     public Duration calculateThisMonthOvertime()
     {
-        final long overtimeMinutes = days.values().stream().map(DayRecord::getOvertime)
+        final long overtimeMinutes = days.values().stream() //
+                .filter(day -> !day.isDummyDay()) //
+                .peek(System.out::println) //
+                .map(DayRecord::getOvertime) //
                 .mapToLong(Duration::toMinutes).sum();
         return Duration.ofMinutes(overtimeMinutes);
     }

@@ -43,7 +43,7 @@ public class DayRecord
 
     public Duration getMandatoryWorkingTime()
     {
-        if (day.isDummyDay())
+        if (isDummyDay())
         {
             return Duration.ZERO;
         }
@@ -116,7 +116,6 @@ public class DayRecord
 
     public void setBegin(LocalTime begin)
     {
-        setNonDummyDay();
         day.setBegin(begin);
     }
 
@@ -127,7 +126,6 @@ public class DayRecord
 
     public void setEnd(LocalTime end)
     {
-        setNonDummyDay();
         day.setEnd(end);
     }
 
@@ -138,11 +136,10 @@ public class DayRecord
 
     public void setInterruption(Duration interruption)
     {
-        setNonDummyDay();
         day.setInterruption(interruption);
     }
 
-    public JsonDay getJsonDay()
+    JsonDay getJsonDay()
     {
         return day;
     }
@@ -166,23 +163,29 @@ public class DayRecord
 
     public void setComment(String comment)
     {
-        setNonDummyDay();
         day.setComment(comment);
     }
 
     public void setType(DayType newValue)
     {
-        setNonDummyDay();
         day.setType(newValue);
-    }
-
-    private void setNonDummyDay()
-    {
-        day.setDummyDay(false);
     }
 
     public MonthIndex getMonth()
     {
         return month;
+    }
+
+    public boolean isDummyDay()
+    {
+        return day.getBegin() == null && day.getEnd() == null //
+                && day.getType() == null && day.getComment() == null
+                && day.getInterruption() == null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DayRecord [day=" + day + ", previousOvertime=" + previousOvertime + "]";
     }
 }

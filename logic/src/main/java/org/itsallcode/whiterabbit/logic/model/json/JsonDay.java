@@ -6,7 +6,6 @@ import java.time.LocalTime;
 
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
-import javax.json.bind.annotation.JsonbTransient;
 
 @JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "comment" })
 public class JsonDay
@@ -23,9 +22,6 @@ public class JsonDay
     private Duration interruption;
     @JsonbProperty("comment")
     private String comment;
-
-    @JsonbTransient
-    private boolean dummyDay = false;
 
     public LocalDate getDate()
     {
@@ -87,13 +83,10 @@ public class JsonDay
         this.interruption = interruption;
     }
 
-    public boolean isDummyDay()
+    @Override
+    public String toString()
     {
-        return dummyDay;
-    }
-
-    public void setDummyDay(boolean dummyDay)
-    {
-        this.dummyDay = dummyDay;
+        return "JsonDay [date=" + date + ", type=" + type + ", begin=" + begin + ", end=" + end
+                + ", interruption=" + interruption + ", comment=" + comment + "]";
     }
 }

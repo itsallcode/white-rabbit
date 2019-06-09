@@ -18,49 +18,51 @@ class MonthIndexTest
     @Test
     void testCalculateThisMonthOvertimeNoDays()
     {
-        assertThat(create(Duration.ZERO)).isEqualTo(Duration.ZERO);
+        assertThat(calculateThisMonthOvertime(Duration.ZERO)).isEqualTo(Duration.ZERO);
     }
 
     @Test
     void testCalculateThisMonthIgnoresPreviousMonths()
     {
-        assertThat(create(Duration.ofHours(1))).isEqualTo(Duration.ZERO);
+        assertThat(calculateThisMonthOvertime(Duration.ofHours(1))).isEqualTo(Duration.ZERO);
     }
 
     @Test
     void testCalculateThisMonthSingleDayPositiveOvertime()
     {
-        assertThat(create(day(Duration.ofMinutes(10), 1))).isEqualTo(Duration.ofMinutes(10));
+        assertThat(calculateThisMonthOvertime(day(Duration.ofMinutes(10), 1)))
+                .isEqualTo(Duration.ofMinutes(10));
     }
 
     @Test
     void testCalculateThisMonthSingleDayNegativeOvertime()
     {
-        assertThat(create(day(Duration.ofMinutes(10).negated(), 1)))
+        assertThat(calculateThisMonthOvertime(day(Duration.ofMinutes(10).negated(), 1)))
                 .isEqualTo(Duration.ofMinutes(10).negated());
     }
 
     @Test
     void testCalculateThisMonthMultipleDaysPositiveOvertime()
     {
-        assertThat(create(day(Duration.ofMinutes(10), 1), day(Duration.ofMinutes(10), 2),
-                day(Duration.ofMinutes(10), 3))).isEqualTo(Duration.ofMinutes(30));
+        assertThat(calculateThisMonthOvertime(day(Duration.ofMinutes(10), 1),
+                day(Duration.ofMinutes(10), 2), day(Duration.ofMinutes(10), 3)))
+                        .isEqualTo(Duration.ofMinutes(30));
     }
 
     @Test
     void testCalculateThisMonthMultipleDaysNegativeOvertime()
     {
-        assertThat(create(day(Duration.ofMinutes(10), 1), day(Duration.ofMinutes(10), 2),
-                day(Duration.ofMinutes(30).negated(), 3)))
+        assertThat(calculateThisMonthOvertime(day(Duration.ofMinutes(10), 1),
+                day(Duration.ofMinutes(10), 2), day(Duration.ofMinutes(30).negated(), 3)))
                         .isEqualTo(Duration.ofMinutes(10).negated());
     }
 
-    private Duration create(JsonDay... days)
+    private Duration calculateThisMonthOvertime(JsonDay... days)
     {
-        return create(null, days);
+        return calculateThisMonthOvertime(null, days);
     }
 
-    private Duration create(Duration overtimePreviousMonth, JsonDay... days)
+    private Duration calculateThisMonthOvertime(Duration overtimePreviousMonth, JsonDay... days)
     {
         return MonthIndex.create(jsonMonth(overtimePreviousMonth, days))
                 .calculateThisMonthOvertime();
