@@ -62,7 +62,8 @@ public class JavaFxUtil
         catch (InterruptedException | ExecutionException e)
         {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("Error executing: " + e.getMessage(), e);
+            throw new IllegalStateException(
+                    "Error executing: " + e.getClass() + ": " + e.getMessage(), e);
         }
     }
 }
