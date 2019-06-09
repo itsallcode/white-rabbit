@@ -7,7 +7,7 @@ before_script:
   - git fetch --unshallow
 
 script:
-  - ./gradlew clean check sonarqube --info --stacktrace -Dsonar.login=${SONAR_TOKEN}
+  - ./gradlew clean check sonarqube --info --stacktrace -Dsonar.login=$SONAR_TOKEN
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
