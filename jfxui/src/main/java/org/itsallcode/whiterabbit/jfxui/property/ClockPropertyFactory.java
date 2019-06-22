@@ -39,7 +39,6 @@ public class ClockPropertyFactory
         final ScheduledTaskFuture scheduledTaskFuture = appService.schedule(trigger,
                 () -> JavaFxUtil.runOnFxApplicationThread(() -> {
                     final T newValue = supplier.get();
-                    LOG.trace("Updating property with new value {} from supplier", newValue);
                     property.set(newValue);
                 }));
 

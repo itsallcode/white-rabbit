@@ -60,7 +60,6 @@ public class MonthIndex
     private static JsonDay createDummyDay(LocalDate date)
     {
         final JsonDay day = new JsonDay();
-        LOG.trace("No entry found for {}: create dummy day", date);
         day.setDate(date);
         return day;
     }
