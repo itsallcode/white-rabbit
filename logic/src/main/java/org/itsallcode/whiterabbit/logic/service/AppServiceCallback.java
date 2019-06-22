@@ -10,10 +10,9 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public interface AppServiceCallback
 {
-
     public static AppServiceCallback createOnlyUpdate(Consumer<DayRecord> recordUpdatedCallback)
     {
-        final Logger LOG = LogManager.getLogger(AppServiceCallback.class);
+        final Logger log = LogManager.getLogger(AppServiceCallback.class);
         return new AppServiceCallback()
         {
             @Override
@@ -32,7 +31,7 @@ public interface AppServiceCallback
             @Override
             public void exceptionOccured(Exception e)
             {
-                LOG.error("An error occured: {}", e.getMessage(), e);
+                log.error("An error occured: {}", e.getMessage(), e);
             }
         };
     }

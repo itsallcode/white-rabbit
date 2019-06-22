@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -59,7 +60,7 @@ public class DateToFileMapper
                 .map(Path::getFileName) //
                 .map(Path::toString) //
                 .map(this::parseYearMonth) //
-                .filter(yearMonth -> yearMonth != null);
+                .filter(Objects::nonNull);
     }
 
     private YearMonth parseYearMonth(String filename)

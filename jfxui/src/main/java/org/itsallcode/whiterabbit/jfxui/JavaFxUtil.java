@@ -5,15 +5,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javafx.application.Platform;
 
 public class JavaFxUtil
 {
-    private static final Logger LOG = LogManager.getLogger(JavaFxUtil.class);
-
     private JavaFxUtil()
     {
         // Not instantiable
@@ -35,16 +30,13 @@ public class JavaFxUtil
         }
 
         final Future<T> future = scheduleOnFxThread(supplier);
-        final T result = waitForResult(future);
-        return result;
+        return waitForResult(future);
     }
 
     private static <T> CompletableFuture<T> scheduleOnFxThread(Supplier<T> supplier)
     {
         final CompletableFuture<T> future = new CompletableFuture<>();
-        Platform.runLater(() -> {
-            future.complete(supplier.get());
-        });
+        Platform.runLater(() -> future.complete(supplier.get()));
         return future;
     }
 

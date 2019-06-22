@@ -47,7 +47,7 @@ import javafx.stage.Stage;
 
 public class JavaFxApp extends Application
 {
-    private static final Logger LOG = LogManager.getLogger(App.class);
+    private static final Logger LOG = LogManager.getLogger(JavaFxApp.class);
     private static final int GAP_PIXEL = 10;
 
     private AppService appService;
