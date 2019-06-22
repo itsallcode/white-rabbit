@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +21,7 @@ public class SingleInstanceService
     {
         try
         {
-            serverSocket = new ServerSocket(PORT, 0,
-                    InetAddress.getByAddress(new byte[]
-                    { 127, 0, 0, 1 }));
+            serverSocket = createLocalhostSocket(PORT);
             LOG.info("Opened server socket {}", serverSocket);
         }
         catch (final BindException e)
@@ -34,6 +33,12 @@ public class SingleInstanceService
         {
             throw new UncheckedIOException("Unexpected exception when creating socket", e);
         }
+    }
+
+    @SuppressWarnings("squid:S4818") // Socket is used safely here
+    private ServerSocket createLocalhostSocket(int port) throws IOException, UnknownHostException
+    {
+        return new ServerSocket(port, 0, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
     }
 
     public void shutdown()
