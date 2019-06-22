@@ -5,7 +5,6 @@ import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.UnknownHostException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +35,7 @@ public class SingleInstanceService
     }
 
     @SuppressWarnings("squid:S4818") // Socket is used safely here
-    private ServerSocket createLocalhostSocket(int port) throws IOException, UnknownHostException
+    private ServerSocket createLocalhostSocket(int port) throws IOException
     {
         return new ServerSocket(port, 0, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
     }

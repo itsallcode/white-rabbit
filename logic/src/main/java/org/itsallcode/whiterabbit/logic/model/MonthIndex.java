@@ -14,15 +14,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 
 public class MonthIndex
 {
-    private static final Logger LOG = LogManager.getLogger(MonthIndex.class);
-
     private final JsonMonth record;
     private final Map<LocalDate, DayRecord> days;
 
