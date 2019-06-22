@@ -38,6 +38,6 @@ public class PeriodicTrigger implements Trigger
     {
         return instant.plus(1, roundToUnit) //
                 .truncatedTo(roundToUnit) //
-                .plusMillis(1);
+                .plusMillis(10);
     }
 }

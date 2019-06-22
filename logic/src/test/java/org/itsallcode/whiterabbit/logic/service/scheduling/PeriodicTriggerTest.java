@@ -23,7 +23,7 @@ class PeriodicTriggerTest
     {
         assertThat(PeriodicTrigger.everyMinute().nextExecutionTime(NOW,
                 Optional.of(new TriggerContext(null, null, NOW.minusSeconds(60)))))
-                        .isEqualTo(NOW.plusSeconds(30).plusMillis(1));
+                        .isEqualTo(NOW.plusSeconds(30).plusMillis(10));
     }
 
     @Test
@@ -38,6 +38,6 @@ class PeriodicTriggerTest
     {
         assertThat(PeriodicTrigger.everySecond().nextExecutionTime(NOW,
                 Optional.of(new TriggerContext(null, null, NOW.minusSeconds(1)))))
-                        .isEqualTo(NOW.plusSeconds(1).plusMillis(1));
+                        .isEqualTo(NOW.plusSeconds(1).plusMillis(10));
     }
 }
