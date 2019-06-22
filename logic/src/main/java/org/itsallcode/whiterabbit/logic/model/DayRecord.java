@@ -80,7 +80,13 @@ public class DayRecord
                 .minus(getMandatoryWorkingTime());
     }
 
-    public Duration getTotalOvertime()
+    public Duration getOverallOvertime()
+    {
+        return getTotalOvertimeThisMonth()
+                .plus(month != null ? month.getOvertimePreviousMonth() : Duration.ZERO);
+    }
+
+    public Duration getTotalOvertimeThisMonth()
     {
         return getPreviousDayOvertime() //
                 .plus(getOvertime());
@@ -88,7 +94,7 @@ public class DayRecord
 
     private Duration getPreviousDayOvertime()
     {
-        return previousDay != null ? previousDay.getTotalOvertime() : Duration.ZERO;
+        return previousDay != null ? previousDay.getTotalOvertimeThisMonth() : Duration.ZERO;
     }
 
     public LocalDate getDate()

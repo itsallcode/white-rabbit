@@ -79,7 +79,7 @@ public class DayRecordTable
                 createReadonlyColumn("overtime", "Overtime", DayRecord::getOvertime,
                         formatterService::format),
                 createReadonlyColumn("total-overtime", "Total Overtime",
-                        DayRecord::getTotalOvertime, formatterService::format),
+                        DayRecord::getOverallOvertime, formatterService::format),
                 createEditableColumn("comment", "Comment", DayRecord::getComment,
                         (record, comment) -> record.setComment(comment),
                         new DefaultStringConverter()));
@@ -148,11 +148,16 @@ public class DayRecordTable
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final int recordIndex = record.getDate().getDayOfMonth() - 1;
-            while (dayRecords.size() <= recordIndex)
-            {
-                dayRecords.add(null);
-            }
+            fillTableWithEmptyRows(recordIndex);
             dayRecords.set(recordIndex, record);
         });
+    }
+
+    private void fillTableWithEmptyRows(final int index)
+    {
+        while (dayRecords.size() <= index)
+        {
+            dayRecords.add(null);
+        }
     }
 }

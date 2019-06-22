@@ -155,7 +155,7 @@ public class AppService
         {
             LOG.info("Updating overtime {} for month {}", totalOvertime, month.getYearMonth());
             month.setOvertimePreviousMonth(totalOvertime);
-            totalOvertime = totalOvertime.plus(month.getTotalOvertime());
+            totalOvertime = month.getTotalOvertime();
             storage.storeMonth(month);
         }
     }

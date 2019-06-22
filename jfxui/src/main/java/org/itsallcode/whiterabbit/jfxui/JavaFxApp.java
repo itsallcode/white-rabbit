@@ -176,7 +176,7 @@ public class JavaFxApp extends Application
             @Override
             public void recordUpdated(DayRecord record)
             {
-                currentMonth.setValue(record.getMonth());
+                JavaFxUtil.runOnFxApplicationThread(() -> currentMonth.setValue(record.getMonth()));
             }
 
             @Override
@@ -220,8 +220,10 @@ public class JavaFxApp extends Application
 
     private void createUi()
     {
-        dayRecordTable = new DayRecordTable(currentMonth, record -> appService.store(record),
-                formatter);
+        dayRecordTable = new DayRecordTable(currentMonth, record -> {
+            appService.store(record);
+            appService.updateNow();
+        }, formatter);
         final BorderPane pane = createMainPane();
         final Scene scene = new Scene(pane, 800, 800);
         scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
@@ -293,7 +295,8 @@ public class JavaFxApp extends Application
             {
                 final Duration totalOvertime = month.getTotalOvertime();
                 text += ", current month: " + month.getYearMonth() //
-                        + ", overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
+                        + ", overtime previous month: "
+                        + formatter.format(month.getOvertimePreviousMonth())
                         + ", overtime this month: "
                         + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth()))
                         + ", total overtime: " + formatter.format(totalOvertime);

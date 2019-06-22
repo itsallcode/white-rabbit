@@ -64,6 +64,30 @@ class MonthIndexTest
                         .isEqualTo(Duration.ofMinutes(10).negated());
     }
 
+    @Test
+    void testSetOvertimePreviousMonthUpdatesJsonRecord()
+    {
+        final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
+        final MonthIndex monthIndex = MonthIndex.create(jsonMonth);
+        monthIndex.setOvertimePreviousMonth(Duration.ofHours(2));
+
+        assertThat(jsonMonth.getOvertimePreviousMonth()).isEqualTo(Duration.ofHours(2));
+    }
+
+    @Test
+    void testSetOvertimePreviousMonthUpdatesTotalOvertime()
+    {
+        final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
+        final MonthIndex monthIndex = MonthIndex.create(jsonMonth);
+
+        assertThat(monthIndex.getTotalOvertime()).isEqualTo(Duration.ofHours(1));
+
+        monthIndex.setOvertimePreviousMonth(Duration.ofHours(2));
+        assertThat(monthIndex.getTotalOvertime()).isEqualTo(Duration.ofHours(2));
+
+        assertThat(jsonMonth.getOvertimePreviousMonth()).isEqualTo(Duration.ofHours(2));
+    }
+
     private Duration calculateTotalOvertime(JsonDay... days)
     {
         return calculateTotalOvertime(null, days);

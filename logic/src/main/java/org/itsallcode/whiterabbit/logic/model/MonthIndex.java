@@ -25,14 +25,11 @@ public class MonthIndex
 
     private final JsonMonth record;
     private final Map<LocalDate, DayRecord> days;
-    private final Duration overtimePreviousMonth;
 
-    private MonthIndex(JsonMonth record, Map<LocalDate, DayRecord> days,
-            Duration overtimePreviousMonth)
+    private MonthIndex(JsonMonth record, Map<LocalDate, DayRecord> days)
     {
         this.record = record;
         this.days = days;
-        this.overtimePreviousMonth = overtimePreviousMonth;
     }
 
     public static MonthIndex create(JsonMonth record)
@@ -40,8 +37,7 @@ public class MonthIndex
         final Map<LocalDate, DayRecord> days = new HashMap<>();
         final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
                 .collect(toMap(JsonDay::getDate, Function.identity()));
-        final MonthIndex monthIndex = new MonthIndex(record, days,
-                getOvertimeForPreviousMonth(record));
+        final MonthIndex monthIndex = new MonthIndex(record, days);
 
         final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
 
@@ -84,7 +80,6 @@ public class MonthIndex
     {
         final List<JsonDay> sortedNonDummyJsonDays = getSortedDays() //
                 .filter(d -> !d.isDummyDay()) //
-                .peek(System.out::println) //
                 .map(DayRecord::getJsonDay) //
                 .collect(toList());
         return JsonMonth.create(record, sortedNonDummyJsonDays);
@@ -92,27 +87,13 @@ public class MonthIndex
 
     public Duration getOvertimePreviousMonth()
     {
-        return overtimePreviousMonth;
+        return record.getOvertimePreviousMonth();
     }
 
     public Stream<DayRecord> getSortedDays()
     {
         return days.values().stream() //
                 .sorted(Comparator.comparing(DayRecord::getDate));
-    }
-
-    private static Duration getOvertimeForPreviousMonth(JsonMonth month)
-    {
-        if (month.getOvertimePreviousMonth() != null)
-        {
-            return month.getOvertimePreviousMonth();
-        }
-        else
-        {
-            LOG.warn("No overtime for previous month found for {} / {}", month.getMonth(),
-                    month.getYear());
-            return Duration.ZERO;
-        }
     }
 
     public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
@@ -122,13 +103,13 @@ public class MonthIndex
 
     public Duration getTotalOvertime()
     {
-        return overtimePreviousMonth.plus(getThisMonthOvertime());
+        return getOvertimePreviousMonth().plus(getThisMonthOvertime());
     }
 
     private Duration getThisMonthOvertime()
     {
         final Optional<DayRecord> lastDay = getSortedDays().reduce((first, second) -> second);
-        return lastDay.map(DayRecord::getTotalOvertime) //
+        return lastDay.map(DayRecord::getTotalOvertimeThisMonth) //
                 .orElse(Duration.ZERO);
     }
 }

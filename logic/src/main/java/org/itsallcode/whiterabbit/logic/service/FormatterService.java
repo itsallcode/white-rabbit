@@ -46,7 +46,7 @@ public class FormatterService
                 : "interr.: " + format(day.getInterruption()) + ", ";
         return format("{0} {1} break: {2}, {3}working time: {4}, overtime: {5}, total: {6}", date,
                 time, format(day.getMandatoryBreak()), interruption, format(day.getWorkingTime()),
-                format(day.getOvertime()), format(day.getTotalOvertime()));
+                format(day.getOvertime()), format(day.getOverallOvertime()));
     }
 
     private String formatDayType(DayType type)
