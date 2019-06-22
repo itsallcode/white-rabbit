@@ -107,7 +107,7 @@ public class Storage
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
         {
-            LOG.debug("Found file {} for month {}", file, date);
+            LOG.trace("Found file {} for month {}", file, date);
             return loadFromFile(file);
         }
         LOG.debug("File {} not found for month {}: create new month", file, date);

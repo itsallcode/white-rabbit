@@ -291,12 +291,12 @@ public class JavaFxApp extends Application
             final MonthIndex month = currentMonth.get();
             if (month != null && month.getOvertimePreviousMonth() != null)
             {
-                text += ", current month: " + month.getYearMonth() + ", overtime previous month: "
-                        + formatter.format(month.getOvertimePreviousMonth())
+                final Duration totalOvertime = month.getTotalOvertime();
+                text += ", current month: " + month.getYearMonth() //
+                        + ", overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
                         + ", overtime this month: "
-                        + formatter.format(
-                                month.getTotalOvertime().minus(month.getOvertimePreviousMonth()))
-                        + ", total overtime: " + formatter.format(month.getTotalOvertime());
+                        + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth()))
+                        + ", total overtime: " + formatter.format(totalOvertime);
             }
             return text;
         }, currentTimeProperty.property(), currentMonth));

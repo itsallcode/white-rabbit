@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.logic.model;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,14 +16,14 @@ public class DayRecord
     private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
     private final JsonDay day;
-    private final Duration previousOvertime;
     private final MonthIndex month;
+    private final DayRecord previousDay;
 
-    public DayRecord(JsonDay day, Duration previousOvertime, MonthIndex month)
+    public DayRecord(JsonDay day, DayRecord previousDay, MonthIndex month)
     {
         this.day = day;
+        this.previousDay = previousDay;
         this.month = month;
-        this.previousOvertime = Objects.requireNonNull(previousOvertime, "previousOvertime");
     }
 
     public Duration getMandatoryBreak()
@@ -83,7 +82,13 @@ public class DayRecord
 
     public Duration getTotalOvertime()
     {
-        return previousOvertime.plus(getOvertime());
+        return getPreviousDayOvertime() //
+                .plus(getOvertime());
+    }
+
+    private Duration getPreviousDayOvertime()
+    {
+        return previousDay != null ? previousDay.getTotalOvertime() : Duration.ZERO;
     }
 
     public LocalDate getDate()
@@ -186,6 +191,6 @@ public class DayRecord
     @Override
     public String toString()
     {
-        return "DayRecord [day=" + day + ", previousOvertime=" + previousOvertime + "]";
+        return "DayRecord [day=" + day + "]";
     }
 }

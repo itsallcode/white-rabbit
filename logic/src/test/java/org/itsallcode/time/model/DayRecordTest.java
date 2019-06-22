@@ -210,6 +210,6 @@ class DayRecordTest
         day.setDate(date);
         day.setType(type);
         day.setInterruption(interruption);
-        return new DayRecord(day, Duration.ZERO, null);
+        return new DayRecord(day, null, null);
     }
 }

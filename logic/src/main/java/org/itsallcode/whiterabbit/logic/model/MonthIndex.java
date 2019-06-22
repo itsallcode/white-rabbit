@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -24,34 +25,34 @@ public class MonthIndex
 
     private final JsonMonth record;
     private final Map<LocalDate, DayRecord> days;
-    private final Duration totalOvertime;
+    private final Duration overtimePreviousMonth;
 
-    private MonthIndex(JsonMonth record, Map<LocalDate, DayRecord> days, Duration totalOvertime)
+    private MonthIndex(JsonMonth record, Map<LocalDate, DayRecord> days,
+            Duration overtimePreviousMonth)
     {
         this.record = record;
         this.days = days;
-        this.totalOvertime = totalOvertime;
+        this.overtimePreviousMonth = overtimePreviousMonth;
     }
 
     public static MonthIndex create(JsonMonth record)
     {
-        Duration currentOvertime = getOvertimePreviousMonth(record);
         final Map<LocalDate, DayRecord> days = new HashMap<>();
         final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
                 .collect(toMap(JsonDay::getDate, Function.identity()));
-        final MonthIndex monthIndex = new MonthIndex(record, days, currentOvertime);
+        final MonthIndex monthIndex = new MonthIndex(record, days,
+                getOvertimeForPreviousMonth(record));
 
         final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
+
+        DayRecord previousDay = null;
         for (int day = 1; day <= yearMonth.lengthOfMonth(); day++)
         {
             final LocalDate date = yearMonth.atDay(day);
             final JsonDay jsonDay = jsonDays.computeIfAbsent(date, MonthIndex::createDummyDay);
-            final DayRecord dayRecord = new DayRecord(jsonDay, currentOvertime, monthIndex);
-            if (!dayRecord.isDummyDay())
-            {
-                currentOvertime = dayRecord.getTotalOvertime();
-            }
+            final DayRecord dayRecord = new DayRecord(jsonDay, previousDay, monthIndex);
             days.put(dayRecord.getDate(), dayRecord);
+            previousDay = dayRecord;
         }
 
         return monthIndex;
@@ -83,24 +84,15 @@ public class MonthIndex
     {
         final List<JsonDay> sortedNonDummyJsonDays = getSortedDays() //
                 .filter(d -> !d.isDummyDay()) //
-                .peek(System.out::println).map(DayRecord::getJsonDay) //
+                .peek(System.out::println) //
+                .map(DayRecord::getJsonDay) //
                 .collect(toList());
         return JsonMonth.create(record, sortedNonDummyJsonDays);
     }
 
-    public Duration getTotalOvertime()
+    public Duration getOvertimePreviousMonth()
     {
-        return totalOvertime;
-    }
-
-    public Duration calculateThisMonthOvertime()
-    {
-        final long overtimeMinutes = days.values().stream() //
-                .filter(day -> !day.isDummyDay()) //
-                .peek(System.out::println) //
-                .map(DayRecord::getOvertime) //
-                .mapToLong(Duration::toMinutes).sum();
-        return Duration.ofMinutes(overtimeMinutes);
+        return overtimePreviousMonth;
     }
 
     public Stream<DayRecord> getSortedDays()
@@ -109,7 +101,7 @@ public class MonthIndex
                 .sorted(Comparator.comparing(DayRecord::getDate));
     }
 
-    private static Duration getOvertimePreviousMonth(JsonMonth month)
+    private static Duration getOvertimeForPreviousMonth(JsonMonth month)
     {
         if (month.getOvertimePreviousMonth() != null)
         {
@@ -123,13 +115,20 @@ public class MonthIndex
         }
     }
 
-    public Duration getOvertimePreviousMonth()
-    {
-        return record.getOvertimePreviousMonth();
-    }
-
     public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
     {
         record.setOvertimePreviousMonth(overtimePreviousMonth);
+    }
+
+    public Duration getTotalOvertime()
+    {
+        return overtimePreviousMonth.plus(getThisMonthOvertime());
+    }
+
+    private Duration getThisMonthOvertime()
+    {
+        final Optional<DayRecord> lastDay = getSortedDays().reduce((first, second) -> second);
+        return lastDay.map(DayRecord::getTotalOvertime) //
+                .orElse(Duration.ZERO);
     }
 }
