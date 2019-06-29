@@ -82,8 +82,16 @@ public class DayRecord
 
     public Duration getOverallOvertime()
     {
-        return getTotalOvertimeThisMonth()
-                .plus(month != null ? month.getOvertimePreviousMonth() : Duration.ZERO);
+        return getTotalOvertimeThisMonth().plus(getOvertimePreviousMonth());
+    }
+
+    private Duration getOvertimePreviousMonth()
+    {
+        if (month != null && month.getOvertimePreviousMonth() != null)
+        {
+            return month.getOvertimePreviousMonth();
+        }
+        return Duration.ZERO;
     }
 
     public Duration getTotalOvertimeThisMonth()
