@@ -202,7 +202,8 @@ public class JavaFxApp extends Application
             Duration interruption)
     {
         return JavaFxUtil.runOnFxApplicationThread(() -> {
-            LOG.info("Showing automatic interruption alert...");
+            LOG.info("Showing automatic interruption alert starting at {} for {}...",
+                    startOfInterruption, interruption);
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Add automatic interruption?");
             alert.setHeaderText("An interruption of " + interruption + " was detected beginning at "
@@ -212,6 +213,7 @@ public class JavaFxApp extends Application
             alert.getButtonTypes().setAll(addInterruption, skipInterruption);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
 
+            LOG.info("User clicked button {}", selectedButton);
             return selectedButton.map(ButtonType::getButtonData) //
                     .filter(d -> d == ButtonData.YES) //
                     .isPresent();

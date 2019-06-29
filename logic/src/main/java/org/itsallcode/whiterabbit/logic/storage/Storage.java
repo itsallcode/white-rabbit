@@ -73,7 +73,7 @@ public class Storage
     private void writeToFile(MonthIndex month)
     {
         final Path file = dateToFileMapper.getPathForDate(month.getYearMonth());
-        LOG.debug("Write month {} to file {}", month.getYearMonth(), file);
+        LOG.trace("Write month {} to file {}", month.getYearMonth(), file);
         createDirectory(file.getParent());
         try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING))

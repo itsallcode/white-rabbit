@@ -53,7 +53,11 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
                 throw new IllegalStateException("Next executiontion time from trigger " + trigger
                         + " is " + delay + " in the past");
             }
-            LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime, delay);
+            if (!delay.minus(Duration.ofSeconds(2)).isNegative())
+            {
+                LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime,
+                        delay);
+            }
             this.currentFuture = this.executorService.schedule(this, delay.toMillis(),
                     TimeUnit.MILLISECONDS);
             return this;
