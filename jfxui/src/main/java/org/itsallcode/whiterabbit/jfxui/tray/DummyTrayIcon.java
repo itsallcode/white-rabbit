@@ -27,4 +27,10 @@ class DummyTrayIcon implements Tray
     {
         return false;
     }
+
+    @Override
+    public void setTooltip(String tooltip)
+    {
+        // nothing to do
+    }
 }

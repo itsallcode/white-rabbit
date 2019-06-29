@@ -22,4 +22,6 @@ public interface Tray
     void removeTrayIcon();
 
     boolean isSupported();
+
+    void setTooltip(String tooltip);
 }

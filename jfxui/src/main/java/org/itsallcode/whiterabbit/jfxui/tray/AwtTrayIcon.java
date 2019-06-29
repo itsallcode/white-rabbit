@@ -84,6 +84,12 @@ class AwtTrayIcon implements Tray
     }
 
     @Override
+    public void setTooltip(String tooltip)
+    {
+        trayIcon.setToolTip(tooltip);
+    }
+
+    @Override
     public void displayMessage(String caption, String text, MessageType messageType)
     {
         SwingUtilities.invokeLater(() -> trayIcon.displayMessage(caption, text, messageType));
