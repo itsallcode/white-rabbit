@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service.scheduling;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 public class PeriodicTrigger implements Trigger
 {
     private final ChronoUnit roundToUnit;
+    private final Duration ADDITIONAL_WAIT = Duration.ofMillis(50);
 
     private PeriodicTrigger(ChronoUnit roundToUnit)
     {
@@ -38,6 +40,6 @@ public class PeriodicTrigger implements Trigger
     {
         return instant.plus(1, roundToUnit) //
                 .truncatedTo(roundToUnit) //
-                .plusMillis(10);
+                .plus(ADDITIONAL_WAIT);
     }
 }
