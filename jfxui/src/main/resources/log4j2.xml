@@ -16,7 +16,7 @@
             </PatternLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy
-                    size="10 MB" />
+                    size="5 MB" />
             </Policies>
         </RollingFile>
 
