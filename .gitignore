@@ -7,3 +7,4 @@
 /time.properties
 **/logs/white-rabbit.log
 **/logs/white-rabbit-*.log.gz
+/.idea
