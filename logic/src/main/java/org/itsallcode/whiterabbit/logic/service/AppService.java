@@ -97,7 +97,7 @@ public class AppService
             }
             else
             {
-                LOG.trace("No update for {} at {}: {}", day.getDate(), now);
+                LOG.trace("No update for {} at {}", day.getDate(), now);
             }
         }
         else

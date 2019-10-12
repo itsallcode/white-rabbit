@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public class PeriodicTrigger implements Trigger
 {
+    private static final Duration ADDITIONAL_WAIT = Duration.ofMillis(50);
     private final ChronoUnit roundToUnit;
-    private final Duration ADDITIONAL_WAIT = Duration.ofMillis(50);
 
     private PeriodicTrigger(ChronoUnit roundToUnit)
     {
