@@ -28,6 +28,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -39,9 +41,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
@@ -149,7 +153,12 @@ public class JavaFxApp extends Application
     private void loadInitialData()
     {
         final YearMonth thisMonth = appService.getClock().getCurrentYearMonth();
-        currentMonth.setValue(appService.getMonth(thisMonth));
+        loadMonth(thisMonth);
+    }
+
+    private void loadMonth(final YearMonth month)
+    {
+        currentMonth.setValue(appService.getMonth(month));
     }
 
     @Override
@@ -256,9 +265,12 @@ public class JavaFxApp extends Application
         final Insets insets = new Insets(GAP_PIXEL);
         BorderPane.setMargin(table, insets);
 
-        final Node currentTimeLabel = currentTimeLabel();
-        pane.setTop(currentTimeLabel);
-        BorderPane.setMargin(currentTimeLabel, insets);
+        final FlowPane topPane = new FlowPane();
+        topPane.getChildren().add(new Label("Month:"));
+        topPane.getChildren().add(monthDropDownBox());
+        topPane.getChildren().add(currentTimeLabel());
+        pane.setTop(topPane);
+        BorderPane.setMargin(topPane, insets);
 
         final Node buttonBar = createButtonBar();
 
@@ -281,6 +293,19 @@ public class JavaFxApp extends Application
         return bottom;
     }
 
+    private Node monthDropDownBox()
+    {
+        final ObservableList<YearMonth> items = FXCollections
+                .observableArrayList(appService.getAvailableDataYearMonth());
+        final ComboBox<YearMonth> comboBox = new ComboBox<>(items);
+
+        currentMonth.addListener(
+                (observable, oldValue, newValue) -> comboBox.getSelectionModel().select(newValue.getYearMonth()));
+        comboBox.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> loadMonth(newValue));
+        return comboBox;
+    }
+
     private Node currentTimeLabel()
     {
         final Label label = new Label();
@@ -291,8 +316,7 @@ public class JavaFxApp extends Application
             if (month != null && month.getOvertimePreviousMonth() != null)
             {
                 final Duration totalOvertime = month.getTotalOvertime();
-                text += ", current month: " + month.getYearMonth() //
-                        + ", overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
+                text += ", overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
                         + ", overtime this month: "
                         + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total overtime: "
                         + formatter.format(totalOvertime);
