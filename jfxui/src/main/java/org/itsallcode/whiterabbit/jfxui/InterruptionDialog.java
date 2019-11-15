@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,8 +46,8 @@ public class InterruptionDialog
         dialog.setTitle("Add interruption");
 
         final DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane
-                .setHeaderText("Interruption started at " + interruption.get().getStart() + ". End interruption now?");
+        final Instant interruptionStart = interruption.get().getStart().truncatedTo(ChronoUnit.MINUTES);
+        dialogPane.setHeaderText("Interruption started at " + interruptionStart + ". End interruption now?");
         dialogPane.contentTextProperty().bind(Bindings.createStringBinding(this::formatText, currentTimeProperty));
         final ButtonType addInterruptionButton = new ButtonType("Add interruption", ButtonData.OK_DONE);
         final ButtonType cancelInterruptionButton = new ButtonType("Cancel interruption", ButtonData.CANCEL_CLOSE);
