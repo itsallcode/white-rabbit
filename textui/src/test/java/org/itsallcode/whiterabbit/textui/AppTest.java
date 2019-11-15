@@ -65,8 +65,7 @@ class AppTest
     @Test
     void testRunMainThrowsIoException()
     {
-        final UncheckedIOException exception = assertThrows(UncheckedIOException.class,
-                () -> App.main(new String[0]));
+        final UncheckedIOException exception = assertThrows(UncheckedIOException.class, () -> App.main(new String[0]));
         assertThat(exception).hasMessage("Error reading time.properties");
     }
 
@@ -169,8 +168,8 @@ class AppTest
 
     private void verifyTerminalPrintsPrompt(int count)
     {
-        verify(terminalMock, times(count)).println(
-                "Press command key: u=update now, i=begin/end interruption, r=report, q=quit");
+        verify(terminalMock, times(count))
+                .println("Press command key: u=update now, i=begin/end interruption, r=report, q=quit");
     }
 
     private void runCommand(Character... commands)

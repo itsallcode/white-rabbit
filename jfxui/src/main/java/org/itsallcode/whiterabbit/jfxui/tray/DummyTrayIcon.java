@@ -12,8 +12,7 @@ class DummyTrayIcon implements Tray
     @Override
     public void displayMessage(String caption, String text, MessageType messageType)
     {
-        LOG.info("Display message with caption {} and text {} of type {}", caption, text,
-                messageType);
+        LOG.info("Display message with caption {} and text {} of type {}", caption, text, messageType);
     }
 
     @Override

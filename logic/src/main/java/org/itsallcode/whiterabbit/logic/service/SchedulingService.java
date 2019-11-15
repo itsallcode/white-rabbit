@@ -28,8 +28,7 @@ public class SchedulingService
     public ScheduledTaskFuture schedule(Trigger trigger, Runnable command)
     {
         final ErrorHandler errorHandler = new DefaultErrorHandler();
-        return new ReschedulingRunnable(command, trigger, executorService, clockService,
-                errorHandler).schedule();
+        return new ReschedulingRunnable(command, trigger, executorService, clockService, errorHandler).schedule();
     }
 
     public void shutdown()

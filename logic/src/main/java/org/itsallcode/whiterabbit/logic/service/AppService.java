@@ -52,8 +52,7 @@ public class AppService
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
         final ClockService clockService = new ClockService();
         final SchedulingService schedulingService = new SchedulingService(clockService);
-        return new AppService(storage, formatterService, clockService, schedulingService,
-                singleInstanceService);
+        return new AppService(storage, formatterService, clockService, schedulingService, singleInstanceService);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -170,8 +169,7 @@ public class AppService
         }
         else
         {
-            throw new IllegalStateException(
-                    "An interruption was already started: " + currentInterruption.get());
+            throw new IllegalStateException("An interruption was already started: " + currentInterruption.get());
         }
     }
 
@@ -213,8 +211,8 @@ public class AppService
     private void addToInterruption(final DayRecord day, Duration additionalInterruption)
     {
         final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
-        LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption,
-                day.getDate(), updatedInterruption);
+        LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption, day.getDate(),
+                updatedInterruption);
         day.setInterruption(updatedInterruption);
     }
 

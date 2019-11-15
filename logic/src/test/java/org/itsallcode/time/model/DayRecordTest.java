@@ -16,15 +16,13 @@ class DayRecordTest
     @Test
     void testOnWorkingDayNoMandatoryBreakFor6h()
     {
-        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(14, 0),
-                Duration.ZERO);
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(14, 0), Duration.ZERO);
     }
 
     @Test
     void testOnNonWorkingDayNoMandatoryBreakFor8h()
     {
-        assertMandatoryBreak(LocalDate.of(2018, 10, 6), LocalTime.of(8, 0), LocalTime.of(16, 0),
-                Duration.ZERO);
+        assertMandatoryBreak(LocalDate.of(2018, 10, 6), LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ZERO);
     }
 
     @Test
@@ -43,8 +41,7 @@ class DayRecordTest
     @Test
     void testWorkingTimeIsZeroOnWeekend()
     {
-        assertMandatoryBreak(LocalDate.of(2018, 10, 6), LocalTime.of(8, 0), LocalTime.of(14, 1),
-                Duration.ZERO);
+        assertMandatoryBreak(LocalDate.of(2018, 10, 6), LocalTime.of(8, 0), LocalTime.of(14, 1), Duration.ZERO);
     }
 
     @Test
@@ -62,8 +59,7 @@ class DayRecordTest
     @Test
     void testWorkingTime1h()
     {
-        final DayRecord day = createDay(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0),
-                LocalTime.of(9, 0), null, null);
+        final DayRecord day = createDay(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(9, 0), null, null);
         assertThat(day.getWorkingTime()).isEqualTo(Duration.ofMinutes(60));
         assertThat(day.getMandatoryBreak()).isEqualTo(Duration.ZERO);
         assertThat(day.getOvertime()).isEqualTo(Duration.ofHours(-7));
@@ -114,29 +110,25 @@ class DayRecordTest
     @Test
     void testNegativeOvertimeOnWorkingDay()
     {
-        assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(9, 0),
-                Duration.ofHours(-7));
+        assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(9, 0), Duration.ofHours(-7));
     }
 
     @Test
     void testZeroOvertimeOnWorkingDay()
     {
-        assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 30),
-                Duration.ofMinutes(-15));
+        assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 30), Duration.ofMinutes(-15));
     }
 
     @Test
     void testPositiveOvertimeOnWorkingDay()
     {
-        assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(17, 0),
-                Duration.ofMinutes(15));
+        assertOvertime(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(17, 0), Duration.ofMinutes(15));
     }
 
     @Test
     void testPositiveOvertimeOnWeekendDay()
     {
-        assertOvertime(LocalDate.of(2018, 10, 6), LocalTime.of(8, 0), LocalTime.of(9, 0),
-                Duration.ofHours(1));
+        assertOvertime(LocalDate.of(2018, 10, 6), LocalTime.of(8, 0), LocalTime.of(9, 0), Duration.ofHours(1));
     }
 
     @Test
@@ -160,16 +152,14 @@ class DayRecordTest
         assertThat(day.getInterruption()).isEqualTo(Duration.ofMinutes(30));
     }
 
-    private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end,
-            Duration expectedOvertime)
+    private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
     {
         final DayRecord day = createDay(date, begin, end, null, null);
         final Duration overtime = day.getOvertime();
         assertThat(overtime).isEqualTo(expectedOvertime);
     }
 
-    private void assertMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end,
-            Duration expectedDuration)
+    private void assertMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration expectedDuration)
     {
         assertThat(getMandatoryBreak(date, begin, end)).isEqualTo(expectedDuration);
     }
@@ -201,8 +191,7 @@ class DayRecordTest
         return createDay(date, null, null, null, null);
     }
 
-    private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end, DayType type,
-            Duration interruption)
+    private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end, DayType type, Duration interruption)
     {
         final JsonDay day = new JsonDay();
         day.setBegin(begin);

@@ -49,8 +49,7 @@ public class App
 
     void run()
     {
-        this.appService
-                .setUpdateListener(AppServiceCallback.createOnlyUpdate(this::dayRecordUpdated));
+        this.appService.setUpdateListener(AppServiceCallback.createOnlyUpdate(this::dayRecordUpdated));
         appService.start();
 
         while (running)
@@ -148,8 +147,8 @@ public class App
     private String getPrompt()
     {
         String prompt = MessageFormat.format(
-                "Press command key: {0}=update now, {1}=begin/end interruption, {2}=report, {3}=quit",
-                COMMAND_UPDATE, COMMAND_TOGGLE_INTERRUPT, COMMAND_REPORT, COMMAND_QUIT);
+                "Press command key: {0}=update now, {1}=begin/end interruption, {2}=report, {3}=quit", COMMAND_UPDATE,
+                COMMAND_TOGGLE_INTERRUPT, COMMAND_REPORT, COMMAND_QUIT);
         if (interruption != null)
         {
             final String currentInterruption = formatterService

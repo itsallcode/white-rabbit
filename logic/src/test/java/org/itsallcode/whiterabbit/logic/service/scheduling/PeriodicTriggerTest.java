@@ -16,8 +16,7 @@ class PeriodicTriggerTest
     @Test
     void testEveryMinuteNoContextReturnsNow()
     {
-        assertThat(PeriodicTrigger.everyMinute().nextExecutionTime(NOW, Optional.empty()))
-                .isEqualTo(NOW);
+        assertThat(PeriodicTrigger.everyMinute().nextExecutionTime(NOW, Optional.empty())).isEqualTo(NOW);
     }
 
     @Test
@@ -31,8 +30,7 @@ class PeriodicTriggerTest
     @Test
     void testEverySecondNoContextReturnsNow()
     {
-        assertThat(PeriodicTrigger.everySecond().nextExecutionTime(NOW, Optional.empty()))
-                .isEqualTo(NOW);
+        assertThat(PeriodicTrigger.everySecond().nextExecutionTime(NOW, Optional.empty())).isEqualTo(NOW);
     }
 
     @Test

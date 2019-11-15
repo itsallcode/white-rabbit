@@ -12,8 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 
-public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
-        implements ScheduledTaskFuture
+public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements ScheduledTaskFuture
 {
 
     private static final Logger LOG = LogManager.getLogger(ReschedulingRunnable.class);
@@ -27,8 +26,8 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
     private final ClockService clock;
     private ScheduledFuture<?> currentFuture;
 
-    public ReschedulingRunnable(Runnable command, Trigger trigger,
-            ScheduledExecutorService executorService, ClockService clock, ErrorHandler errorHandler)
+    public ReschedulingRunnable(Runnable command, Trigger trigger, ScheduledExecutorService executorService,
+            ClockService clock, ErrorHandler errorHandler)
     {
         super(command, errorHandler);
         this.trigger = trigger;
@@ -50,16 +49,14 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
             final Duration delay = Duration.between(now, this.scheduledExecutionTime);
             if (delay.isNegative())
             {
-                throw new IllegalStateException("Next executiontion time from trigger " + trigger
-                        + " is " + delay + " in the past");
+                throw new IllegalStateException(
+                        "Next executiontion time from trigger " + trigger + " is " + delay + " in the past");
             }
             if (!delay.minus(Duration.ofSeconds(2)).isNegative())
             {
-                LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime,
-                        delay);
+                LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime, delay);
             }
-            this.currentFuture = this.executorService.schedule(this, delay.toMillis(),
-                    TimeUnit.MILLISECONDS);
+            this.currentFuture = this.executorService.schedule(this, delay.toMillis(), TimeUnit.MILLISECONDS);
             return this;
         }
     }
@@ -73,8 +70,8 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable
         synchronized (this.triggerContextMonitor)
         {
             Objects.requireNonNull(this.scheduledExecutionTime, "No scheduled execution");
-            this.triggerContext = Optional.of(new TriggerContext(this.scheduledExecutionTime,
-                    actualExecutionTime, completionTime));
+            this.triggerContext = Optional
+                    .of(new TriggerContext(this.scheduledExecutionTime, actualExecutionTime, completionTime));
             if (!obtainCurrentFuture().isCancelled())
             {
                 schedule();

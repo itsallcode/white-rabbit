@@ -49,8 +49,7 @@ public class Config
         final String value = this.properties.getProperty(param);
         if (value == null)
         {
-            throw new IllegalStateException(
-                    "Property '" + param + "' not found in config file " + configFile);
+            throw new IllegalStateException("Property '" + param + "' not found in config file " + configFile);
         }
         return value;
     }

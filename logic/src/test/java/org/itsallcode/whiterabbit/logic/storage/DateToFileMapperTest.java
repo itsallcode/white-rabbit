@@ -35,8 +35,7 @@ class DateToFileMapperTest
     @Test
     void testGetAllFilesDirDoesNotExist()
     {
-        assertThrows(UncheckedIOException.class,
-                new DateToFileMapper(Paths.get("notExistingDir"))::getAllFiles);
+        assertThrows(UncheckedIOException.class, new DateToFileMapper(Paths.get("notExistingDir"))::getAllFiles);
     }
 
     @Test
@@ -75,8 +74,7 @@ class DateToFileMapperTest
     @Test
     void testGetAllYearMonthDirDoesNotExist()
     {
-        assertThrows(UncheckedIOException.class,
-                new DateToFileMapper(Paths.get("notExistingDir"))::getAllYearMonths);
+        assertThrows(UncheckedIOException.class, new DateToFileMapper(Paths.get("notExistingDir"))::getAllYearMonths);
     }
 
     @Test

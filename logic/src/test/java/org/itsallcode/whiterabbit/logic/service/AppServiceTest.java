@@ -53,8 +53,8 @@ class AppServiceTest
     @BeforeEach
     void setUp()
     {
-        appService = new AppService(storageMock, formatterServiceMock, clockMock,
-                schedulingServiceMock, singleInstanceService);
+        appService = new AppService(storageMock, formatterServiceMock, clockMock, schedulingServiceMock,
+                singleInstanceService);
         appService.setUpdateListener(updateListenerMock);
     }
 
@@ -197,8 +197,7 @@ class AppServiceTest
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
 
-        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1)))
-                .thenReturn(true);
+        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1))).thenReturn(true);
 
         updateNow(now, day);
 
@@ -215,8 +214,7 @@ class AppServiceTest
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
 
-        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1)))
-                .thenReturn(false);
+        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1))).thenReturn(false);
 
         updateNow(now, day);
 

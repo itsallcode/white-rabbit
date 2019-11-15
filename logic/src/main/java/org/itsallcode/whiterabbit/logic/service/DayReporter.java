@@ -26,8 +26,8 @@ public class DayReporter
         this.overtime = overtime.plus(day.getOvertime());
         if (!this.overtime.equals(day.getOverallOvertime()))
         {
-            throw new AssertionError("Invalid overtime: expected " + this.overtime + " but was "
-                    + day.getTotalOvertimeThisMonth());
+            throw new AssertionError(
+                    "Invalid overtime: expected " + this.overtime + " but was " + day.getTotalOvertimeThisMonth());
         }
         final String line = formatterService.format(day);
         report.append(line) //

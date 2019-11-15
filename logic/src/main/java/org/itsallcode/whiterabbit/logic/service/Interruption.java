@@ -65,7 +65,7 @@ public class Interruption
     @Override
     public String toString()
     {
-        return "Interruption [start=" + start + ", currently: " + currentDuration(clock.instant())
-                + ", duration=" + duration + "]";
+        return "Interruption [start=" + start + ", currently: " + currentDuration(clock.instant()) + ", duration="
+                + duration + "]";
     }
 }

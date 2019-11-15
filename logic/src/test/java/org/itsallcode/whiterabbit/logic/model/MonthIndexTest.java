@@ -37,8 +37,7 @@ class MonthIndexTest
     @Test
     void testCalculateTotalOvertimeSingleDayPositiveOvertime()
     {
-        assertThat(calculateTotalOvertime(day(Duration.ofMinutes(10), 1)))
-                .isEqualTo(Duration.ofMinutes(10));
+        assertThat(calculateTotalOvertime(day(Duration.ofMinutes(10), 1))).isEqualTo(Duration.ofMinutes(10));
     }
 
     @Test
@@ -51,17 +50,15 @@ class MonthIndexTest
     @Test
     void testCalculateTotalOvertimeMultipleDaysPositiveOvertime()
     {
-        assertThat(calculateTotalOvertime(day(Duration.ofMinutes(10), 1),
-                day(Duration.ofMinutes(10), 2), day(Duration.ofMinutes(10), 3)))
-                        .isEqualTo(Duration.ofMinutes(30));
+        assertThat(calculateTotalOvertime(day(Duration.ofMinutes(10), 1), day(Duration.ofMinutes(10), 2),
+                day(Duration.ofMinutes(10), 3))).isEqualTo(Duration.ofMinutes(30));
     }
 
     @Test
     void testCalculateTotalOvertimeMultipleDaysNegativeOvertime()
     {
-        assertThat(calculateTotalOvertime(day(Duration.ofMinutes(10), 1),
-                day(Duration.ofMinutes(10), 2), day(Duration.ofMinutes(30).negated(), 3)))
-                        .isEqualTo(Duration.ofMinutes(10).negated());
+        assertThat(calculateTotalOvertime(day(Duration.ofMinutes(10), 1), day(Duration.ofMinutes(10), 2),
+                day(Duration.ofMinutes(30).negated(), 3))).isEqualTo(Duration.ofMinutes(10).negated());
     }
 
     @Test
@@ -104,16 +101,14 @@ class MonthIndexTest
         month.setYear(2019);
         month.setMonth(Month.MAY);
         month.setDays(asList(days));
-        month.setOvertimePreviousMonth(
-                overtimePreviousMonth != null ? overtimePreviousMonth : Duration.ZERO);
+        month.setOvertimePreviousMonth(overtimePreviousMonth != null ? overtimePreviousMonth : Duration.ZERO);
         return month;
     }
 
     private JsonDay day(Duration overtime, int dayOfMonth)
     {
         final LocalTime begin = LocalTime.of(8, 0);
-        final LocalTime end = begin.plus(Duration.ofHours(8))
-                .plus(Duration.ofMinutes(45).plus(overtime));
+        final LocalTime end = begin.plus(Duration.ofHours(8)).plus(Duration.ofMinutes(45).plus(overtime));
 
         final JsonDay day = new JsonDay();
         day.setDate(LocalDate.of(2019, Month.MAY, dayOfMonth));

@@ -16,8 +16,7 @@ public interface AppServiceCallback
         return new AppServiceCallback()
         {
             @Override
-            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption,
-                    Duration interruption)
+            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
             {
                 return true;
             }

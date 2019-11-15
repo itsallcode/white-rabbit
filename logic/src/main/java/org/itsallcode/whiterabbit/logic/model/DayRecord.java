@@ -198,8 +198,7 @@ public class DayRecord
     public boolean isDummyDay()
     {
         return day.getBegin() == null && day.getEnd() == null //
-                && day.getType() == null && day.getComment() == null
-                && day.getInterruption() == null;
+                && day.getType() == null && day.getComment() == null && day.getInterruption() == null;
     }
 
     @Override

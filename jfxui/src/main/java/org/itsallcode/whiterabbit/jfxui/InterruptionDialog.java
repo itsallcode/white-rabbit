@@ -45,14 +45,11 @@ public class InterruptionDialog
         dialog.setTitle("Add interruption");
 
         final DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.setHeaderText("Interruption started at " + interruption.get().getStart()
-                + ". End interruption now?");
-        dialogPane.contentTextProperty()
-                .bind(Bindings.createStringBinding(this::formatText, currentTimeProperty));
-        final ButtonType addInterruptionButton = new ButtonType("Add interruption",
-                ButtonData.OK_DONE);
-        final ButtonType cancelInterruptionButton = new ButtonType("Cancel interruption",
-                ButtonData.CANCEL_CLOSE);
+        dialogPane
+                .setHeaderText("Interruption started at " + interruption.get().getStart() + ". End interruption now?");
+        dialogPane.contentTextProperty().bind(Bindings.createStringBinding(this::formatText, currentTimeProperty));
+        final ButtonType addInterruptionButton = new ButtonType("Add interruption", ButtonData.OK_DONE);
+        final ButtonType cancelInterruptionButton = new ButtonType("Cancel interruption", ButtonData.CANCEL_CLOSE);
         dialogPane.getButtonTypes().addAll(addInterruptionButton, cancelInterruptionButton);
 
         dialog.showAndWait() //
@@ -83,7 +80,6 @@ public class InterruptionDialog
         final Duration duration = interruption.get().currentDuration(now);
         final LocalTime currentTime = LocalTime.ofInstant(now, ZoneId.systemDefault());
         final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM);
-        return "Current time: " + currentTime.format(formatter) + ". Add interruption of "
-                + duration + "?";
+        return "Current time: " + currentTime.format(formatter) + ". Add interruption of " + duration + "?";
     }
 }

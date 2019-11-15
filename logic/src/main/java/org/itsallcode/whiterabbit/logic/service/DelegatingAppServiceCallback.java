@@ -28,8 +28,7 @@ class DelegatingAppServiceCallback implements AppServiceCallback
     }
 
     @Override
-    public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption,
-            Duration interruption)
+    public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
     {
         if (delegate != null)
         {

@@ -65,8 +65,7 @@ public class JavaFxApp extends Application
     @Override
     public void init() throws Exception
     {
-        Thread.setDefaultUncaughtExceptionHandler(
-                (thread, exception) -> showErrorDialog(exception));
+        Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> showErrorDialog(exception));
         try
         {
             doInitialize();
@@ -167,8 +166,7 @@ public class JavaFxApp extends Application
         appService.setUpdateListener(new AppServiceCallback()
         {
             @Override
-            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption,
-                    Duration interruption)
+            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
             {
                 return showAutomaticInterruptionDialog(startOfInterruption, interruption);
             }
@@ -198,16 +196,15 @@ public class JavaFxApp extends Application
         });
     }
 
-    private boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption,
-            Duration interruption)
+    private boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption, Duration interruption)
     {
         return JavaFxUtil.runOnFxApplicationThread(() -> {
-            LOG.info("Showing automatic interruption alert starting at {} for {}...",
-                    startOfInterruption, interruption);
+            LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
+                    interruption);
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Add automatic interruption?");
-            alert.setHeaderText("An interruption of " + interruption + " was detected beginning at "
-                    + startOfInterruption + ".");
+            alert.setHeaderText(
+                    "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
             final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
             final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
             alert.getButtonTypes().setAll(addInterruption, skipInterruption);
@@ -272,16 +269,14 @@ public class JavaFxApp extends Application
 
     private TilePane createButtonBar()
     {
-        final Button startInterruptionButton = button("Start interruption",
-                e -> startManualInterruption());
+        final Button startInterruptionButton = button("Start interruption", e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
         final TilePane bottom = new TilePane(Orientation.HORIZONTAL);
         bottom.setHgap(GAP_PIXEL);
 
         bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
                 startInterruptionButton, //
-                button("Update overtime for all months",
-                        e -> appService.updatePreviousMonthOvertimeField()), //
+                button("Update overtime for all months", e -> appService.updatePreviousMonthOvertimeField()), //
                 button("Quit", e -> Platform.exit()));
         return bottom;
     }
@@ -297,11 +292,10 @@ public class JavaFxApp extends Application
             {
                 final Duration totalOvertime = month.getTotalOvertime();
                 text += ", current month: " + month.getYearMonth() //
-                        + ", overtime previous month: "
-                        + formatter.format(month.getOvertimePreviousMonth())
+                        + ", overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
                         + ", overtime this month: "
-                        + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth()))
-                        + ", total overtime: " + formatter.format(totalOvertime);
+                        + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total overtime: "
+                        + formatter.format(totalOvertime);
             }
             return text;
         }, currentTimeProperty.property(), currentMonth));
@@ -325,8 +319,7 @@ public class JavaFxApp extends Application
         }
         JavaFxUtil.runOnFxApplicationThread(() -> {
             interruption.set(appService.startInterruption());
-            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption)
-                    .show();
+            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption).show();
         });
     }
 }

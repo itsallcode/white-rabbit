@@ -26,8 +26,7 @@ public class ClockPropertyFactory
 
     public ScheduledProperty<Instant> currentTimeProperty()
     {
-        return updatingProperty(PeriodicTrigger.everySecond(),
-                () -> appService.getClock().instant());
+        return updatingProperty(PeriodicTrigger.everySecond(), () -> appService.getClock().instant());
     }
 
     public <T> ScheduledProperty<T> updatingProperty(Trigger trigger, Supplier<T> supplier)

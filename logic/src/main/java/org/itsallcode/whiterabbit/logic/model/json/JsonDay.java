@@ -86,7 +86,7 @@ public class JsonDay
     @Override
     public String toString()
     {
-        return "JsonDay [date=" + date + ", type=" + type + ", begin=" + begin + ", end=" + end
-                + ", interruption=" + interruption + ", comment=" + comment + "]";
+        return "JsonDay [date=" + date + ", type=" + type + ", begin=" + begin + ", end=" + end + ", interruption="
+                + interruption + ", comment=" + comment + "]";
     }
 }

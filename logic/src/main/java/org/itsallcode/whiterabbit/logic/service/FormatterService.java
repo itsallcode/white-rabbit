@@ -35,18 +35,16 @@ public class FormatterService
 
     public String format(DayRecord day)
     {
-        final String dayOfWeek = day.getDate().getDayOfWeek()
-                .getDisplayName(TextStyle.SHORT_STANDALONE, locale);
+        final String dayOfWeek = day.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, locale);
         final String dayType = formatDayType(day.getType());
         final String date = format("{0} {1} {2}", day.getDate(), dayOfWeek, dayType);
-        final String time = day.getBegin() != null
-                ? format("{0} - {1}", day.getBegin(), day.getEnd())
+        final String time = day.getBegin() != null ? format("{0} - {1}", day.getBegin(), day.getEnd())
                 : "             ";
         final String interruption = day.getInterruption().isZero() ? ""
                 : "interr.: " + format(day.getInterruption()) + ", ";
-        return format("{0} {1} break: {2}, {3}working time: {4}, overtime: {5}, total: {6}", date,
-                time, format(day.getMandatoryBreak()), interruption, format(day.getWorkingTime()),
-                format(day.getOvertime()), format(day.getOverallOvertime()));
+        return format("{0} {1} break: {2}, {3}working time: {4}, overtime: {5}, total: {6}", date, time,
+                format(day.getMandatoryBreak()), interruption, format(day.getWorkingTime()), format(day.getOvertime()),
+                format(day.getOverallOvertime()));
     }
 
     private String formatDayType(DayType type)
@@ -81,8 +79,7 @@ public class FormatterService
     {
         final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
         final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
-                .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(locale)
-                .withZone(timeZoneId);
+                .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(locale).withZone(timeZoneId);
         return dateTime.format(dateTimeFormatter);
     }
 }

@@ -50,8 +50,8 @@ class ReschedulingRunnableTest
     @BeforeEach
     void setUp()
     {
-        reschedulingRunnable = new ReschedulingRunnable(commandMock, triggerMock,
-                executorServiceMock, clockMock, errorHandlerMock);
+        reschedulingRunnable = new ReschedulingRunnable(commandMock, triggerMock, executorServiceMock, clockMock,
+                errorHandlerMock);
         lenient().when(clockMock.instant()).thenReturn(NOW);
     }
 
@@ -59,8 +59,7 @@ class ReschedulingRunnableTest
     void testScheduleDoesNothingForNullNextExecutionTime()
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(null);
-        assertThatThrownBy(() -> reschedulingRunnable.schedule())
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> reschedulingRunnable.schedule()).isInstanceOf(IllegalStateException.class);
         verifyZeroInteractions(commandMock, executorServiceMock);
     }
 
@@ -69,8 +68,7 @@ class ReschedulingRunnableTest
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NEXT_EXECUTION);
         assertThat(reschedulingRunnable.schedule()).isSameAs(reschedulingRunnable);
-        verify(executorServiceMock).schedule(same(reschedulingRunnable), eq(50000L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(executorServiceMock).schedule(same(reschedulingRunnable), eq(50000L), eq(TimeUnit.MILLISECONDS));
         verifyZeroInteractions(commandMock);
     }
 
@@ -95,8 +93,7 @@ class ReschedulingRunnableTest
     {
         when(triggerMock.nextExecutionTime(eq(NOW), any())).thenReturn(NEXT_EXECUTION);
 
-        doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class),
-                anyLong(), any());
+        doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class), anyLong(), any());
         reschedulingRunnable.schedule();
         reschedulingRunnable.run();
 
@@ -121,8 +118,7 @@ class ReschedulingRunnableTest
     private void scheduleExcecution()
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NEXT_EXECUTION);
-        doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class),
-                anyLong(), any());
+        doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class), anyLong(), any());
 
         reschedulingRunnable.schedule();
     }
