@@ -3,9 +3,9 @@ plugins {
 }
 
 shadowJar {
-   baseName = 'jfxui'
-   classifier = null
-   version = null
+    archiveBaseName = 'jfxui'
+    classifier = null
+    archiveVersion = null
 }
 
 ext.mainClass = 'org.itsallcode.whiterabbit.jfxui.App'

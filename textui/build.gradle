@@ -3,9 +3,9 @@ plugins {
 }
 
 shadowJar {
-   baseName = 'textui'
+   archiveBaseName = 'textui'
    classifier = null
-   version = null
+   archiveVersion = null
 }
 
 ext.mainClass = 'org.itsallcode.whiterabbit.textui.App'
@@ -27,5 +27,5 @@ task runTextui(type: JavaExec, dependsOn: shadowJar) {
 dependencies {
     implementation project(':logic')
     implementation 'org.jline:jline-terminal-jansi:3.11.0'
-    testCompile 'org.itsallcode:junit5-system-extensions:1.0.3'
+    testImplementation 'org.itsallcode:junit5-system-extensions:1.0.3'
 }
