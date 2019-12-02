@@ -43,9 +43,11 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
@@ -235,6 +237,10 @@ public class JavaFxApp extends Application
         final BorderPane pane = createMainPane();
         final Scene scene = new Scene(pane, 800, 800);
         scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
+
+        final MenuBar menuBar = new MenuBarBuilder(this).build();
+        ((Pane) scene.getRoot()).getChildren().addAll(menuBar);
+
         primaryStage.setTitle("White Rabbit Time Recording");
         primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
 
@@ -289,8 +295,13 @@ public class JavaFxApp extends Application
         bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
                 startInterruptionButton, //
                 button("Update overtime for all months", e -> appService.updatePreviousMonthOvertimeField()), //
-                button("Quit", e -> Platform.exit()));
+                button("Quit", e -> exitApp()));
         return bottom;
+    }
+
+    public void exitApp()
+    {
+        Platform.exit();
     }
 
     private Node monthDropDownBox()
