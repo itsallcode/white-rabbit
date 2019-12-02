@@ -53,8 +53,9 @@ class AppServiceTest
     @BeforeEach
     void setUp()
     {
-        appService = new AppService(storageMock, formatterServiceMock, clockMock, schedulingServiceMock,
-                singleInstanceService);
+        final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
+        appService = new AppService(new WorkingTimeService(storageMock, clockMock, appServiceCallback), storageMock,
+                formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback);
         appService.setUpdateListener(updateListenerMock);
     }
 
