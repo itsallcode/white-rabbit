@@ -217,14 +217,26 @@ public class JavaFxApp extends Application
                     "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
             final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
             final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
-            alert.getButtonTypes().setAll(addInterruption, skipInterruption);
+            final ButtonType stopWorkForToday = new ButtonType("Stop work for today", ButtonData.FINISH);
+            alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
 
             LOG.info("User clicked button {}", selectedButton);
-            return selectedButton.map(ButtonType::getButtonData) //
-                    .filter(d -> d == ButtonData.YES) //
-                    .isPresent();
+
+            if (isButton(selectedButton, ButtonData.FINISH))
+            {
+                appService.stopWorkForToday();
+                return false;
+            }
+            return isButton(selectedButton, ButtonData.YES);
         });
+    }
+
+    private boolean isButton(Optional<ButtonType> button, ButtonData data)
+    {
+        return button.map(ButtonType::getButtonData) //
+                .filter(d -> d == data) //
+                .isPresent();
     }
 
     private void createUi()
@@ -291,7 +303,8 @@ public class JavaFxApp extends Application
         bottom.setHgap(GAP_PIXEL);
 
         bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
-                startInterruptionButton);
+                startInterruptionButton, //
+                button("Stop work for today", e -> appService.stopWorkForToday()));
         return bottom;
     }
 

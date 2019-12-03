@@ -133,8 +133,13 @@ public class AppService
         return workingTimeService.startInterruption();
     }
 
-    public DayRecord updateNow()
+    public void stopWorkForToday()
     {
-        return workingTimeService.updateNow();
+        workingTimeService.stopWorkForToday();
+    }
+
+    public void updateNow()
+    {
+        workingTimeService.updateNow();
     }
 }

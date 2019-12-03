@@ -19,6 +19,7 @@ public class WorkingTimeService
     private static final Logger LOG = LogManager.getLogger(WorkingTimeService.class);
 
     private final AtomicReference<Interruption> currentInterruption = new AtomicReference<>();
+    private final AtomicReference<LocalDate> workStoppedForToday = new AtomicReference<>();
     private final Storage storage;
     private final ClockService clock;
     private final AppServiceCallback appServiceCallback;
@@ -30,9 +31,14 @@ public class WorkingTimeService
         this.appServiceCallback = appServiceCallback;
     }
 
-    public DayRecord updateNow()
+    public void updateNow()
     {
         final LocalDate today = clock.getCurrentDate();
+        if (workStoppedForToday(today))
+        {
+            LOG.trace("Work stopped for today on {}, skipping update", today);
+            return;
+        }
         final MonthIndex month = storage.loadMonth(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         final LocalTime now = clock.getCurrentTime();
@@ -63,7 +69,23 @@ public class WorkingTimeService
         {
             LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
         }
-        return day;
+    }
+
+    private boolean workStoppedForToday(LocalDate today)
+    {
+        if (today.equals(workStoppedForToday.get()))
+        {
+            return true;
+        }
+        workStoppedForToday.set(null);
+        return false;
+    }
+
+    public void stopWorkForToday()
+    {
+        final LocalDate today = clock.getCurrentDate();
+        LOG.info("Stopping work for today {}", today);
+        this.workStoppedForToday.set(today);
     }
 
     private boolean shouldUpdateBegin(final DayRecord day, final LocalTime now)
