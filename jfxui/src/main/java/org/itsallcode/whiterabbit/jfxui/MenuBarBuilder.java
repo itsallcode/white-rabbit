@@ -22,9 +22,9 @@ public class MenuBarBuilder
     {
         LOG.info("Creating menu bar");
         final MenuBar menuBar = new MenuBar();
-        final Menu menuFile = new Menu("File");
+        final Menu menuFile = new Menu("_File");
 
-        final MenuItem quitMenueItem = new MenuItem("Quit");
+        final MenuItem quitMenueItem = new MenuItem("_Quit");
         quitMenueItem.setOnAction(event -> app.exitApp());
         menuFile.getItems().addAll(quitMenueItem);
 
