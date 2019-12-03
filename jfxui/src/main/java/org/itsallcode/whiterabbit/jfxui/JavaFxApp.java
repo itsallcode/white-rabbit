@@ -233,7 +233,7 @@ public class JavaFxApp extends Application
             appService.store(record);
             appService.updateNow();
         }, formatter);
-        final MenuBar menuBar = new MenuBarBuilder(this).build();
+        final MenuBar menuBar = new MenuBarBuilder(this, appService).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
         final Scene scene = new Scene(rootPane, 800, 800);
@@ -291,9 +291,7 @@ public class JavaFxApp extends Application
         bottom.setHgap(GAP_PIXEL);
 
         bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
-                startInterruptionButton, //
-                button("Update overtime for all months", e -> appService.updatePreviousMonthOvertimeField()), //
-                button("Quit", e -> exitApp()));
+                startInterruptionButton);
         return bottom;
     }
 
