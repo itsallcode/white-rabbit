@@ -140,6 +140,7 @@ public class AppService
 
     public void updateNow()
     {
+        LOG.debug("Update now");
         workingTimeService.updateNow();
     }
 }

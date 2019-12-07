@@ -47,6 +47,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
@@ -260,6 +261,12 @@ public class JavaFxApp extends Application
         rootPane.setTop(menuBar);
         final Scene scene = new Scene(rootPane, 800, 800);
         scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
+        scene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.F5)
+            {
+                appService.updateNow();
+            }
+        });
 
         primaryStage.setTitle("White Rabbit Time Recording");
         primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
