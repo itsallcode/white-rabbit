@@ -43,8 +43,7 @@ public class DayRecordTable
         this.editListener = editListener;
         this.formatterService = formatterService;
 
-        currentMonth
-                .addListener((observable, oldValue, newValue) -> newValue.getSortedDays().forEach(this::recordUpdated));
+        currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
     public Node initTable()
@@ -134,13 +133,19 @@ public class DayRecordTable
         };
     }
 
-    private void recordUpdated(DayRecord record)
+    private void updateTableValues(MonthIndex newValue)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            final int recordIndex = record.getDate().getDayOfMonth() - 1;
-            fillTableWithEmptyRows(recordIndex);
-            dayRecords.set(recordIndex, record);
+            dayRecords.clear();
+            newValue.getSortedDays().forEach(this::recordUpdated);
         });
+    }
+
+    private void recordUpdated(DayRecord record)
+    {
+        final int recordIndex = record.getDate().getDayOfMonth() - 1;
+        fillTableWithEmptyRows(recordIndex);
+        dayRecords.set(recordIndex, record);
     }
 
     private void fillTableWithEmptyRows(final int index)
