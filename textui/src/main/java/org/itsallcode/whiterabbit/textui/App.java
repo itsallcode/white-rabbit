@@ -122,8 +122,8 @@ public class App
 
     private void update()
     {
-        final DayRecord updatedRecord = appService.updateNow();
-        final String message = "Day: " + formatterService.format(updatedRecord);
+        appService.updateNow();
+        final String message = "Day updated";
         println(message);
         LOG.trace(message);
     }

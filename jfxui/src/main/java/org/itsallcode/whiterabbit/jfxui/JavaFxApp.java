@@ -26,7 +26,9 @@ import org.itsallcode.whiterabbit.logic.service.Interruption;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,6 +62,8 @@ public class JavaFxApp extends Application
 
     private final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
     private final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
+    private final BooleanProperty stoppedWorkingForToday = new SimpleBooleanProperty(false);
+
     private ScheduledProperty<Instant> currentTimeProperty;
     private Stage primaryStage;
 
@@ -192,6 +196,12 @@ public class JavaFxApp extends Application
             {
                 showErrorDialog(e);
             }
+
+            @Override
+            public void workStoppedForToday(boolean stopWorking)
+            {
+                JavaFxUtil.runOnFxApplicationThread(() -> stoppedWorkingForToday.setValue(stopWorking));
+            }
         });
         appService.start();
     }
@@ -223,9 +233,9 @@ public class JavaFxApp extends Application
 
             LOG.info("User clicked button {}", selectedButton);
 
-            if (isButton(selectedButton, ButtonData.FINISH))
+            if (isButton(selectedButton, ButtonData.FINISH) && !stoppedWorkingForToday.get())
             {
-                appService.stopWorkForToday();
+                appService.toggleStopWorkForToday();
                 return false;
             }
             return isButton(selectedButton, ButtonData.YES);
@@ -245,7 +255,7 @@ public class JavaFxApp extends Application
             appService.store(record);
             appService.updateNow();
         }, formatter);
-        final MenuBar menuBar = new MenuBarBuilder(this, appService).build();
+        final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
         final Scene scene = new Scene(rootPane, 800, 800);
@@ -304,8 +314,20 @@ public class JavaFxApp extends Application
 
         bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
                 startInterruptionButton, //
-                button("Stop work for today", e -> appService.stopWorkForToday()));
+                createStopWorkForTodayButton());
         return bottom;
+    }
+
+    private Button createStopWorkForTodayButton()
+    {
+        final Button button = new Button();
+        button.textProperty()
+                .bind(Bindings.createStringBinding(
+                        () -> stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",
+                        stoppedWorkingForToday));
+        button.setOnAction(e -> appService.toggleStopWorkForToday());
+        button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        return button;
     }
 
     public void exitApp()

@@ -32,12 +32,20 @@ public interface AppServiceCallback
             {
                 log.error("An error occured: {}", e.getMessage(), e);
             }
+
+            @Override
+            public void workStoppedForToday(boolean stopWorking)
+            {
+                // Ignore
+            }
         };
     }
 
     void recordUpdated(DayRecord record);
 
     boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption);
+
+    void workStoppedForToday(boolean stopWorking);
 
     void exceptionOccured(Exception e);
 }

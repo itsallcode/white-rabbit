@@ -52,4 +52,13 @@ class DelegatingAppServiceCallback implements AppServiceCallback
             LOG.error("An error occured: {}", e.getMessage(), e);
         }
     }
+
+    @Override
+    public void workStoppedForToday(boolean stopWorking)
+    {
+        if (delegate != null)
+        {
+            delegate.workStoppedForToday(stopWorking);
+        }
+    }
 }

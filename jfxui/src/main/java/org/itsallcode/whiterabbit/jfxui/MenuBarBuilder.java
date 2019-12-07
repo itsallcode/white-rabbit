@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -17,11 +19,13 @@ public class MenuBarBuilder
 
     private final JavaFxApp app;
     private final AppService appService;
+    private final BooleanProperty stoppedWorkingForToday;
 
-    MenuBarBuilder(JavaFxApp app, AppService appService)
+    MenuBarBuilder(JavaFxApp app, AppService appService, BooleanProperty stoppedWorkingForToday)
     {
         this.app = app;
         this.appService = appService;
+        this.stoppedWorkingForToday = stoppedWorkingForToday;
     }
 
     public MenuBar build()
@@ -34,13 +38,24 @@ public class MenuBarBuilder
                 menuItem("_Update", appService::updateNow), //
                 menuItem("Update overtime for _all months", appService::updatePreviousMonthOvertimeField), //
                 new SeparatorMenuItem(), //
-                menuItem("_Stop work for today", appService::stopWorkForToday), //
+                createStopWorkingForTodayMenuItem(), //
                 new SeparatorMenuItem(), //
                 menuItem("_Quit", app::exitApp) //
         );
 
         menuBar.getMenus().addAll(menuFile);
         return menuBar;
+    }
+
+    private MenuItem createStopWorkingForTodayMenuItem()
+    {
+        final MenuItem menuItem = new MenuItem();
+        menuItem.setOnAction(event -> appService.toggleStopWorkForToday());
+        menuItem.textProperty()
+                .bind(Bindings.createStringBinding(
+                        () -> this.stoppedWorkingForToday.get() ? "_Continue working" : "_Stop working for today",
+                        this.stoppedWorkingForToday));
+        return menuItem;
     }
 
     private MenuItem menuItem(String label, Runnable action)

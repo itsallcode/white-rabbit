@@ -77,15 +77,30 @@ public class WorkingTimeService
         {
             return true;
         }
+        if (workStoppedForToday.get() != null)
+        {
+            appServiceCallback.workStoppedForToday(false);
+        }
         workStoppedForToday.set(null);
         return false;
     }
 
-    public void stopWorkForToday()
+    public void toggleStopWorkForToday()
     {
         final LocalDate today = clock.getCurrentDate();
-        LOG.info("Stopping work for today {}", today);
-        this.workStoppedForToday.set(today);
+        if (workStoppedForToday(today))
+        {
+            LOG.info("Continue work for today");
+            this.workStoppedForToday.set(null);
+            appServiceCallback.workStoppedForToday(false);
+            updateNow();
+        }
+        else
+        {
+            LOG.info("Stopping work for today {}", today);
+            this.workStoppedForToday.set(today);
+            appServiceCallback.workStoppedForToday(true);
+        }
     }
 
     private boolean shouldUpdateBegin(final DayRecord day, final LocalTime now)

@@ -133,9 +133,9 @@ public class AppService
         return workingTimeService.startInterruption();
     }
 
-    public void stopWorkForToday()
+    public void toggleStopWorkForToday()
     {
-        workingTimeService.stopWorkForToday();
+        workingTimeService.toggleStopWorkForToday();
     }
 
     public void updateNow()
