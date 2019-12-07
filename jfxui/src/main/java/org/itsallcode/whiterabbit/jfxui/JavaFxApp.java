@@ -260,7 +260,6 @@ public class JavaFxApp extends Application
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
         final Scene scene = new Scene(rootPane, 800, 800);
-        scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.F5)
             {

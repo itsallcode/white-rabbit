@@ -48,6 +48,7 @@ public class DayRecordTable
 
     public Node initTable()
     {
+        table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("day-table");
