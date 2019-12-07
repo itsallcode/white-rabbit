@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class AppService
         {
             LOG.info("Updating overtime {} for month {}", totalOvertime, month.getYearMonth());
             month.setOvertimePreviousMonth(totalOvertime);
-            totalOvertime = month.getTotalOvertime();
+            totalOvertime = month.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES);
             storage.storeMonth(month);
         }
     }

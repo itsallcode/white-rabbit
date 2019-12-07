@@ -128,7 +128,7 @@ public class Storage
     {
         final YearMonth previousYearMonth = date.minus(1, ChronoUnit.MONTHS);
         final MonthIndex previousMonth = loadMonth(previousYearMonth);
-        final Duration overtime = previousMonth.getTotalOvertime();
+        final Duration overtime = previousMonth.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES);
         LOG.info("Found overtime {} for previous month {}", overtime, previousYearMonth);
         return overtime;
     }
