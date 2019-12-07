@@ -3,11 +3,11 @@ TableView#day-table {
 }
 
 #day-table #date {
-	-fx-alignment: CENTER;
+  -fx-alignment: CENTER;
 }
 
 #day-table #day-type {
-	-fx-alignment: CENTER_LEFT;
+  -fx-alignment: CENTER_LEFT;
 }
 
 #day-table #begin,
@@ -18,11 +18,19 @@ TableView#day-table {
 #day-table #overtime,
 #day-table #total-overtime
 {
-	-fx-alignment: CENTER;
-	-fx-pref-width: 4em;
+  -fx-alignment: CENTER;
+  -fx-pref-width: 4em;
 }
 
 #day-table #comment
 {
-	-fx-pref-width: 15em;
+  -fx-pref-width: 15em;
+}
+
+.working {
+  -fx-background-color: white;
+}
+
+.not-working {
+  -fx-background-color: gainsboro;
 }

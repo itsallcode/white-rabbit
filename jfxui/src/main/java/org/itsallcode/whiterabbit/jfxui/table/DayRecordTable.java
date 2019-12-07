@@ -22,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -32,8 +33,10 @@ import javafx.util.converter.LocalTimeStringConverter;
 
 public class DayRecordTable
 {
+    private static final String ROW_STYLE_CLASS_NOT_WORKING = "not-working";
+    private static final String ROW_STYLE_CLASS_WORKING = "working";
+
     private final ObservableList<DayRecord> dayRecords = FXCollections.observableArrayList();
-    private final TableView<DayRecord> table = new TableView<>(dayRecords);
     private final RecordEditListener editListener;
     private final FormatterService formatterService;
 
@@ -48,12 +51,49 @@ public class DayRecordTable
 
     public Node initTable()
     {
+        final TableView<DayRecord> table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("day-table");
+        table.setRowFactory(new Callback<TableView<DayRecord>, TableRow<DayRecord>>()
+        {
+            @Override
+            public TableRow<DayRecord> call(TableView<DayRecord> param)
+            {
+                return new TableRow<>()
+                {
+                    @Override
+                    protected void updateItem(DayRecord item, boolean empty)
+                    {
+                        super.updateItem(item, empty);
+                        if (isWorkingDay(item))
+                        {
+                            System.out.println("Working day: " + item);
+                            this.getStyleClass().add(ROW_STYLE_CLASS_WORKING);
+                            this.getStyleClass().remove(ROW_STYLE_CLASS_NOT_WORKING);
+                        }
+                        else
+                        {
+                            this.getStyleClass().add(ROW_STYLE_CLASS_NOT_WORKING);
+                            this.getStyleClass().remove(ROW_STYLE_CLASS_WORKING);
+                        }
+                    }
+
+                };
+            }
+        });
 
         return table;
+    }
+
+    private boolean isWorkingDay(DayRecord item)
+    {
+        if (item == null)
+        {
+            return false;
+        }
+        return item.isWorkingDay();
     }
 
     private List<TableColumn<DayRecord, ?>> createColumns()
