@@ -94,7 +94,7 @@ public class DayRecordTable
                 "Total Overtime", param -> new TextFieldTableCell<>(new DurationStringConverter(formatterService)),
                 data -> data.getValue().totalOvertime);
         final TableColumn<DayRecordPropertyAdapter, String> commentCol = column("comment", "Comment",
-                param -> new TextFieldTableCell<>(), data -> data.getValue().comment);
+                param -> new TextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().comment);
 
         return asList(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
