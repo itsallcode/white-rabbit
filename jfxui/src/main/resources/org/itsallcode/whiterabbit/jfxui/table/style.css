@@ -28,9 +28,9 @@ TableView#day-table {
 }
 
 .working {
-  -fx-background-color: white;
+  /* -fx-background-color: white; */
 }
 
 .not-working {
-  -fx-background-color: gainsboro;
+  /* -fx-background-color: gainsboro; */
 }
