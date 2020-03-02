@@ -189,7 +189,13 @@ public class JavaFxApp extends Application
             @Override
             public void recordUpdated(DayRecord record)
             {
-                JavaFxUtil.runOnFxApplicationThread(() -> currentMonth.setValue(record.getMonth()));
+                JavaFxUtil.runOnFxApplicationThread(() -> {
+                    final YearMonth recordMonth = YearMonth.from(record.getDate());
+                    if (currentMonth.get().getYearMonth().equals(recordMonth))
+                    {
+                        currentMonth.setValue(record.getMonth());
+                    }
+                });
             }
 
             @Override

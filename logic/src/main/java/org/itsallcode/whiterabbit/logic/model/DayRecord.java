@@ -61,7 +61,7 @@ public class DayRecord
         }
         if (getBegin() == null || getEnd() == null)
         {
-            LOG.warn("Either begin or end is missing for {}", this);
+            LOG.trace("Either begin or end is missing for {}", this);
             return Duration.ZERO;
         }
         return Duration.between(getBegin(), getEnd());
