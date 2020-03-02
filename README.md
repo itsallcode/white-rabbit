@@ -61,7 +61,7 @@ Example report:
 Total overtime: PT-7H-20M
 ```
 
-### Example data file `2019-03.json`
+### Example data file `<data>/2019/2019-03.json`
 
 This is generated automatically. The Java FX user interface allows you to edit it. When using the text ui you need to edit the file with your favorite text editor.
 
@@ -117,7 +117,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 * Won't work on weekends. To force working on a weekend, manually create an entry with `"type" = "WORK"`.
 * Public holidays are not detected automatically. Set the day type to `HOLIDAY` manually.
-* If you change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months, e.g. by clicking the `Update overtime for all months` button in the Java FX UI.
+* If you change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months` in the Java FX UI.
 
 ## Usage
 

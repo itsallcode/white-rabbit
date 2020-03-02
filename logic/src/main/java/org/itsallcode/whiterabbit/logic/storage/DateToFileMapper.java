@@ -31,6 +31,11 @@ public class DateToFileMapper
 
     public Path getPathForDate(YearMonth date)
     {
+        return dataDir.resolve(String.valueOf(date.getYear())).resolve(getFileName(date));
+    }
+
+    public Path getLegacyPathForDate(YearMonth date)
+    {
         return dataDir.resolve(getFileName(date));
     }
 

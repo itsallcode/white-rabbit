@@ -110,6 +110,12 @@ public class Storage
             LOG.trace("Found file {} for month {}", file, date);
             return loadFromFile(file);
         }
+        final Path legacyFile = dateToFileMapper.getLegacyPathForDate(date);
+        if (legacyFile.toFile().exists())
+        {
+            LOG.trace("Found legacy file {} for month {}", file, date);
+            return loadFromFile(legacyFile);
+        }
         LOG.debug("File {} not found for month {}: create new month", file, date);
         return createNewMonth(date);
     }
