@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 
@@ -107,5 +108,12 @@ public class MonthIndex
         final Optional<DayRecord> lastDay = getSortedDays().reduce((first, second) -> second);
         return lastDay.map(DayRecord::getTotalOvertimeThisMonth) //
                 .orElse(Duration.ZERO);
+    }
+
+    public int getVacationDayCount()
+    {
+        return (int) record.getDays().stream() //
+                .filter(day -> day.getType() == DayType.VACATION) //
+                .count();
     }
 }

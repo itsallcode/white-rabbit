@@ -22,6 +22,7 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
+import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -213,6 +214,12 @@ public class JavaFxApp extends Application
         appService.start();
     }
 
+    public void showVacationReport()
+    {
+        final VacationReport vacationReport = appService.getVacationReport();
+        new VacationReportViewer(vacationReport).show();
+    }
+
     private void showErrorDialog(Throwable e)
     {
         final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
@@ -326,7 +333,8 @@ public class JavaFxApp extends Application
 
         bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
                 startInterruptionButton, //
-                createStopWorkForTodayButton());
+                createStopWorkForTodayButton(), //
+                button("Vacation report", e -> showVacationReport()));
         return bottom;
     }
 

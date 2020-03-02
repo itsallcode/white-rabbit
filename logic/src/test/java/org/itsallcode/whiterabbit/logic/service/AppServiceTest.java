@@ -18,6 +18,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.vacation.VacationService;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,8 @@ class AppServiceTest
     private AppServiceCallback updateListenerMock;
     @Mock
     private SingleInstanceService singleInstanceService;
+    @Mock
+    private VacationService vacationServiceMock;
 
     private AppService appService;
 
@@ -55,7 +58,8 @@ class AppServiceTest
     {
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         appService = new AppService(new WorkingTimeService(storageMock, clockMock, appServiceCallback), storageMock,
-                formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback);
+                formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback,
+                vacationServiceMock);
         appService.setUpdateListener(updateListenerMock);
     }
 

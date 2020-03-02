@@ -10,7 +10,7 @@ subprojects {
     apply plugin: 'jacoco'
     
     ext {
-        junitVersion = '5.4.2'
+        junitVersion = '5.6.0'
         log4jVersion = '2.11.2'
         mockitoVersion = '2.27.0'
     }
@@ -26,6 +26,7 @@ subprojects {
         testImplementation "org.mockito:mockito-core:$mockitoVersion"
         testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
     

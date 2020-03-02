@@ -38,6 +38,8 @@ public class MenuBarBuilder
                 menuItem("_Update", appService::updateNow), //
                 menuItem("Update overtime for _all months", appService::updatePreviousMonthOvertimeField), //
                 new SeparatorMenuItem(), //
+                menuItem("_Vacation report", app::showVacationReport), //
+                new SeparatorMenuItem(), //
                 createStopWorkingForTodayMenuItem(), //
                 new SeparatorMenuItem(), //
                 menuItem("_Quit", app::exitApp) //
