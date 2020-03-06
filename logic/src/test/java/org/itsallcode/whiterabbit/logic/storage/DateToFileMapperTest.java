@@ -29,7 +29,7 @@ class DateToFileMapperTest
     void testGetPathForDate(@TempDir Path tempDir)
     {
         final Path path = mapper.getPathForDate(YearMonth.of(2019, Month.MAY));
-        assertThat(path).isEqualTo(tempDir.resolve("2019-05.json"));
+        assertThat(path).isEqualTo(tempDir.resolve("2019/2019-05.json"));
     }
 
     @Test

@@ -1,5 +1,5 @@
 plugins {
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 shadowJar {
@@ -26,6 +26,6 @@ task runTextui(type: JavaExec, dependsOn: shadowJar) {
 
 dependencies {
     implementation project(':logic')
-    implementation 'org.jline:jline-terminal-jansi:3.11.0'
-    testImplementation 'org.itsallcode:junit5-system-extensions:1.0.3'
+    implementation 'org.jline:jline-terminal-jansi:3.14.0'
+    testImplementation 'org.itsallcode:junit5-system-extensions:1.1.0'
 }

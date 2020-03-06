@@ -2,6 +2,5 @@
 
 dependencies {
     implementation "javax.json.bind:javax.json.bind-api:1.0"
-    implementation "org.eclipse:yasson:1.0"
-    implementation "org.glassfish:javax.json:1.1"
+    runtimeOnly "org.eclipse:yasson:1.0.6"
 }

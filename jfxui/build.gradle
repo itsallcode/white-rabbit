@@ -1,5 +1,5 @@
 plugins {
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 shadowJar {
@@ -27,7 +27,7 @@ task runJfxui(type: JavaExec, dependsOn: shadowJar) {
 ext {
     def os = org.gradle.internal.os.OperatingSystem.current()
     ext.platform = os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
-    ext.javaFxVersion = '11.0.2'
+    ext.javaFxVersion = '13.0.2'
 }
 
 dependencies {

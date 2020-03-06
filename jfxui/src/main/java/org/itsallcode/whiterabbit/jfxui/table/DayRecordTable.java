@@ -57,15 +57,6 @@ public class DayRecordTable
         return table;
     }
 
-    private boolean isWorkingDay(DayRecord item)
-    {
-        if (item == null)
-        {
-            return false;
-        }
-        return item.isWorkingDay();
-    }
-
     private List<TableColumn<DayRecordPropertyAdapter, ?>> createColumns()
     {
         final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = readOnlyColumn("date", "Date",

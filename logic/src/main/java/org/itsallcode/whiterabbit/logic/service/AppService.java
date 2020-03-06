@@ -16,6 +16,8 @@ import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
+import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
+import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
@@ -30,10 +32,11 @@ public class AppService
     private final SchedulingService schedulingService;
     private final DelegatingAppServiceCallback appServiceCallback;
     private final SingleInstanceService singleInstanceService;
+    private final VacationReportGenerator vacationService;
 
     public AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
-            DelegatingAppServiceCallback appServiceCallback)
+            DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -42,6 +45,7 @@ public class AppService
         this.schedulingService = schedulingService;
         this.singleInstanceService = singleInstanceService;
         this.appServiceCallback = appServiceCallback;
+        this.vacationService = vacationService;
     }
 
     public static AppService create(final Config config, final FormatterService formatterService)
@@ -53,8 +57,9 @@ public class AppService
         final SchedulingService schedulingService = new SchedulingService(clockService);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
+        final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
-                singleInstanceService, appServiceCallback);
+                singleInstanceService, appServiceCallback, vacationService);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -143,5 +148,10 @@ public class AppService
     {
         LOG.debug("Update now");
         workingTimeService.updateNow();
+    }
+
+    public VacationReport getVacationReport()
+    {
+        return vacationService.generateReport();
     }
 }
