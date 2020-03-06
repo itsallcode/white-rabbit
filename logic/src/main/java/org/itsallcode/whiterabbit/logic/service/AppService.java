@@ -17,7 +17,7 @@ import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationService;
+import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
@@ -32,11 +32,11 @@ public class AppService
     private final SchedulingService schedulingService;
     private final DelegatingAppServiceCallback appServiceCallback;
     private final SingleInstanceService singleInstanceService;
-    private final VacationService vacationService;
+    private final VacationReportGenerator vacationService;
 
     public AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
-            DelegatingAppServiceCallback appServiceCallback, VacationService vacationService)
+            DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -57,7 +57,7 @@ public class AppService
         final SchedulingService schedulingService = new SchedulingService(clockService);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
-        final VacationService vacationService = new VacationService(storage);
+        final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, vacationService);
     }

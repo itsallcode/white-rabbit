@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service.vacation;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -7,6 +8,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -16,18 +18,18 @@ import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport.Vacation
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport.VacationYear;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
-public class VacationService
+public class VacationReportGenerator
 {
     private final Storage storage;
     private final AvailableVacationCalculator availableVacationCalculator;
 
-    VacationService(Storage storage, AvailableVacationCalculator availableVacationCalculator)
+    VacationReportGenerator(Storage storage, AvailableVacationCalculator availableVacationCalculator)
     {
         this.storage = storage;
         this.availableVacationCalculator = availableVacationCalculator;
     }
 
-    public VacationService(Storage storage)
+    public VacationReportGenerator(Storage storage)
     {
         this(storage, new AvailableVacationCalculator());
     }
@@ -51,12 +53,22 @@ public class VacationService
 
         private List<VacationYear> vacationDaysPerYear()
         {
-            return years.stream().map(this::calculateVacation).collect(toList());
+            final List<VacationYear> vacationYears = new ArrayList<>(years.size());
+            VacationYear previousVacationYear = null;
+            for (final Year year : years)
+            {
+                final VacationYear vacationYear = calculateVacation(year, previousVacationYear);
+                vacationYears.add(vacationYear);
+                previousVacationYear = vacationYear;
+            }
+            return vacationYears;
         }
 
-        private VacationYear calculateVacation(final Year year)
+        private VacationYear calculateVacation(final Year year, VacationYear previousVacationYear)
         {
-            return new VacationYear(year, vacationDaysCount(year), availableVacation(year), -1);
+            final int daysRemainingFromLastYear = previousVacationYear != null ? previousVacationYear.getDaysRemaining()
+                    : 0;
+            return new VacationYear(year, vacationDaysCount(year), availableVacation(year), daysRemainingFromLastYear);
         }
 
         private int vacationDaysCount(final Year year)
@@ -79,8 +91,15 @@ public class VacationService
 
         public List<VacationMonth> vacationDaysPerMonth()
         {
-            // TODO Auto-generated method stub
-            return null;
+            return monthData.values().stream() //
+                    .sorted(comparing(MonthIndex::getYearMonth)) //
+                    .map(this::calculateMonthVacation) //
+                    .collect(toList());
+        }
+
+        private VacationMonth calculateMonthVacation(MonthIndex month)
+        {
+            return new VacationMonth(month.getYearMonth(), month.getVacationDayCount());
         }
     }
 }

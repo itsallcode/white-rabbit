@@ -18,8 +18,20 @@ public class VacationReport
 
     public static class VacationMonth
     {
-        public YearMonth yearMonth;
-        public int vacationDaysUsed;
+        public VacationMonth(YearMonth yearMonth, int vacationDaysUsed)
+        {
+            this.yearMonth = yearMonth;
+            this.vacationDaysUsed = vacationDaysUsed;
+        }
+
+        public final YearMonth yearMonth;
+        public final int vacationDaysUsed;
+
+        @Override
+        public String toString()
+        {
+            return "VacationMonth [month=" + yearMonth + ", vacationDaysUsed=" + vacationDaysUsed + "]";
+        }
     }
 
     public static class VacationYear
@@ -42,6 +54,11 @@ public class VacationReport
         {
             return "VacationYear [year=" + year + ", daysUsed=" + daysUsed + ", daysAvailable=" + daysAvailable
                     + ", daysRemaingFromLastYear=" + daysRemaingFromLastYear + "]";
+        }
+
+        public int getDaysRemaining()
+        {
+            return daysRemaingFromLastYear + daysAvailable - daysUsed;
         }
     }
 }

@@ -18,7 +18,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationService;
+import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class AppServiceTest
     @Mock
     private SingleInstanceService singleInstanceService;
     @Mock
-    private VacationService vacationServiceMock;
+    private VacationReportGenerator vacationServiceMock;
 
     private AppService appService;
 
