@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
@@ -60,7 +60,7 @@ class ReschedulingRunnableTest
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(null);
         assertThatThrownBy(() -> reschedulingRunnable.schedule()).isInstanceOf(IllegalStateException.class);
-        verifyZeroInteractions(commandMock, executorServiceMock);
+        verifyNoInteractions(commandMock, executorServiceMock);
     }
 
     @Test
@@ -69,7 +69,7 @@ class ReschedulingRunnableTest
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NEXT_EXECUTION);
         assertThat(reschedulingRunnable.schedule()).isSameAs(reschedulingRunnable);
         verify(executorServiceMock).schedule(same(reschedulingRunnable), eq(50000L), eq(TimeUnit.MILLISECONDS));
-        verifyZeroInteractions(commandMock);
+        verifyNoInteractions(commandMock);
     }
 
     @Test
@@ -77,7 +77,7 @@ class ReschedulingRunnableTest
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NOW.minusMillis(1));
         assertThrows(IllegalStateException.class, () -> reschedulingRunnable.schedule());
-        verifyZeroInteractions(commandMock);
+        verifyNoInteractions(commandMock);
     }
 
     @Test

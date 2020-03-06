@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
@@ -93,7 +93,7 @@ class AppServiceTest
 
         updateNow(now, day);
 
-        verifyZeroInteractions(updateListenerMock);
+        verifyNoInteractions(updateListenerMock);
     }
 
     @Test
