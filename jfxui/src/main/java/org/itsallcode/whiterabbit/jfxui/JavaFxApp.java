@@ -165,7 +165,8 @@ public class JavaFxApp extends Application
 
     private void loadMonth(final YearMonth month)
     {
-        currentMonth.setValue(appService.getMonth(month));
+        final MonthIndex record = appService.getOrCreateMonth(month);
+        currentMonth.setValue(record);
     }
 
     @Override

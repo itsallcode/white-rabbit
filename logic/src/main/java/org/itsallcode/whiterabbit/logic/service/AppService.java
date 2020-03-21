@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
@@ -7,6 +8,7 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -113,7 +115,9 @@ public class AppService
 
     public List<DayRecord> getRecords(YearMonth yearMonth)
     {
-        return getMonth(yearMonth).getSortedDays().collect(toList());
+        return getMonth(yearMonth) //
+                .map(record -> record.getSortedDays().collect(toList())) //
+                .orElse(emptyList());
     }
 
     public List<YearMonth> getAvailableDataYearMonth()
@@ -121,16 +125,21 @@ public class AppService
         return storage.getAvailableDataYearMonth();
     }
 
-    public MonthIndex getMonth(YearMonth yearMonth)
+    public Optional<MonthIndex> getMonth(YearMonth yearMonth)
     {
         return storage.loadMonth(yearMonth);
     }
 
+    public MonthIndex getOrCreateMonth(YearMonth yearMonth)
+    {
+        return storage.loadOrCreate(yearMonth);
+    }
+
     public void store(DayRecord record)
     {
-        final MonthIndex month = storage.loadMonth(YearMonth.from(record.getDate()));
-        month.put(record);
-        storage.storeMonth(month);
+        final MonthIndex monthRecord = storage.loadOrCreate(YearMonth.from(record.getDate()));
+        monthRecord.put(record);
+        storage.storeMonth(monthRecord);
         appServiceCallback.recordUpdated(record);
     }
 

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -45,9 +46,29 @@ public class Storage
         this(dateToFileMapper, JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
     }
 
-    public MonthIndex loadMonth(YearMonth date)
+    public Optional<MonthIndex> loadMonth(YearMonth date)
     {
-        return MonthIndex.create(loadMonthRecord(date));
+        return loadMonthRecord(date).map(MonthIndex::create);
+    }
+
+    public MonthIndex loadOrCreate(final YearMonth yearMonth)
+    {
+        final Optional<MonthIndex> month = loadMonth(yearMonth);
+        if (month.isPresent())
+        {
+            return month.get();
+        }
+        return createNewMonth(yearMonth);
+    }
+
+    private MonthIndex createNewMonth(YearMonth date)
+    {
+        final JsonMonth month = new JsonMonth();
+        month.setYear(date.getYear());
+        month.setMonth(date.getMonth());
+        month.setDays(new ArrayList<>());
+        month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
+        return MonthIndex.create(month);
     }
 
     public void storeMonth(MonthIndex month)
@@ -73,7 +94,7 @@ public class Storage
     private void writeToFile(MonthIndex month)
     {
         final Path file = dateToFileMapper.getPathForDate(month.getYearMonth());
-        LOG.trace("Write month {} to file {}", month.getYearMonth(), file);
+        LOG.info("Write month {} to file {}", month.getYearMonth(), file);
         createDirectory(file.getParent());
         try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING))
@@ -102,39 +123,30 @@ public class Storage
         }
     }
 
-    private JsonMonth loadMonthRecord(YearMonth date)
+    private Optional<JsonMonth> loadMonthRecord(YearMonth date)
     {
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
         {
             LOG.trace("Found file {} for month {}", file, date);
-            return loadFromFile(file);
+            return Optional.of(loadFromFile(file));
         }
         final Path legacyFile = dateToFileMapper.getLegacyPathForDate(date);
         if (legacyFile.toFile().exists())
         {
             LOG.trace("Found legacy file {} for month {}", file, date);
-            return loadFromFile(legacyFile);
+            return Optional.of(loadFromFile(legacyFile));
         }
-        LOG.debug("File {} not found for month {}: create new month", file, date);
-        return createNewMonth(date);
+        LOG.debug("File {} not found for month {}", file, date);
+        return Optional.empty();
     }
 
-    private JsonMonth createNewMonth(YearMonth date)
-    {
-        final JsonMonth month = new JsonMonth();
-        month.setYear(date.getYear());
-        month.setMonth(date.getMonth());
-        month.setDays(new ArrayList<>());
-        month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
-        return month;
-    }
-
-    private Duration loadPreviousMonthOvertime(YearMonth date)
+    public Duration loadPreviousMonthOvertime(YearMonth date)
     {
         final YearMonth previousYearMonth = date.minus(1, ChronoUnit.MONTHS);
-        final MonthIndex previousMonth = loadMonth(previousYearMonth);
-        final Duration overtime = previousMonth.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES);
+        final Duration overtime = loadMonth(previousYearMonth) //
+                .map(m -> m.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES)) //
+                .orElse(Duration.ZERO);
         LOG.info("Found overtime {} for previous month {}", overtime, previousYearMonth);
         return overtime;
     }

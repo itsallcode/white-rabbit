@@ -310,7 +310,7 @@ class AppServiceTest
     {
         when(clockMock.getCurrentDate()).thenReturn(day.getDate());
         when(clockMock.getCurrentTime()).thenReturn(now);
-        when(storageMock.loadMonth(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
+        when(storageMock.loadOrCreate(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
         final DayRecord dayRecord = new DayRecord(day, null, monthIndexMock);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(dayRecord);
 

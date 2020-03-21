@@ -39,7 +39,7 @@ public class WorkingTimeService
             LOG.trace("Work stopped for today on {}, skipping update", today);
             return;
         }
-        final MonthIndex month = storage.loadMonth(YearMonth.from(today));
+        final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         final LocalTime now = clock.getCurrentTime();
         if (day.isWorkingDay())
@@ -163,7 +163,7 @@ public class WorkingTimeService
             return;
         }
         final LocalDate today = clock.getCurrentDate();
-        final MonthIndex month = storage.loadMonth(YearMonth.from(today));
+        final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         addToInterruption(day, additionalInterruption);
         storage.storeMonth(month);

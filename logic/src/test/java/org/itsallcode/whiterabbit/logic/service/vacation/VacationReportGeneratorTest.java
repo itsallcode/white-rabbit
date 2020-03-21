@@ -10,6 +10,7 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport.VacationMonth;
@@ -237,7 +238,7 @@ class VacationReportGeneratorTest
 
         for (final MonthIndex monthIndex : months)
         {
-            when(storageMock.loadMonth(monthIndex.getYearMonth())).thenReturn(monthIndex);
+            when(storageMock.loadMonth(monthIndex.getYearMonth())).thenReturn(Optional.of(monthIndex));
         }
     }
 }

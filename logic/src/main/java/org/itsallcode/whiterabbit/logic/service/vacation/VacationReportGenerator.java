@@ -45,6 +45,7 @@ public class VacationReportGenerator
         final List<YearMonth> availableDataYearMonth = storage.getAvailableDataYearMonth();
         final Map<YearMonth, MonthIndex> monthData = availableDataYearMonth.stream() //
                 .map(storage::loadMonth) //
+                .map(optional -> optional.orElseThrow()) //
                 .collect(toMap(MonthIndex::getYearMonth, Function.identity()));
         final Map<Year, Long> workingMonthCountByYear = availableDataYearMonth.stream() //
                 .map(Year::from) //
