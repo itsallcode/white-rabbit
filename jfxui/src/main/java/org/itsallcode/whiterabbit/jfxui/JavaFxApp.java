@@ -65,6 +65,7 @@ public class JavaFxApp extends Application
     private final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
     private final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
     private final BooleanProperty stoppedWorkingForToday = new SimpleBooleanProperty(false);
+    private final ObservableList<YearMonth> availableMonths = FXCollections.observableArrayList();
 
     private ScheduledProperty<Instant> currentTimeProperty;
     private Stage primaryStage;
@@ -193,6 +194,10 @@ public class JavaFxApp extends Application
             {
                 JavaFxUtil.runOnFxApplicationThread(() -> {
                     final YearMonth recordMonth = YearMonth.from(record.getDate());
+                    if (!availableMonths.isEmpty() && !availableMonths.contains(recordMonth))
+                    {
+                        availableMonths.add(recordMonth);
+                    }
                     if (currentMonth.get().getYearMonth().equals(recordMonth))
                     {
                         currentMonth.setValue(record.getMonth());
@@ -358,9 +363,8 @@ public class JavaFxApp extends Application
 
     private Node monthDropDownBox()
     {
-        final ObservableList<YearMonth> items = FXCollections
-                .observableArrayList(appService.getAvailableDataYearMonth());
-        final ComboBox<YearMonth> comboBox = new ComboBox<>(items);
+        availableMonths.addAll(appService.getAvailableDataYearMonth());
+        final ComboBox<YearMonth> comboBox = new ComboBox<>(availableMonths);
 
         currentMonth.addListener(
                 (observable, oldValue, newValue) -> comboBox.getSelectionModel().select(newValue.getYearMonth()));
