@@ -3,11 +3,13 @@ TableView#day-table {
 }
 
 #day-table #date {
-  -fx-alignment: CENTER;
+  -fx-alignment: CENTER_RIGHT;
+  -fx-pref-width: 6em;
 }
 
 #day-table #day-type {
   -fx-alignment: CENTER_LEFT;
+  -fx-pref-width: 6em;
 }
 
 #day-table #begin,
