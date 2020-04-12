@@ -6,8 +6,10 @@ import static java.util.stream.Collectors.toList;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -28,6 +30,7 @@ import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.LocalDateStringConverter;
 import javafx.util.converter.LocalTimeStringConverter;
 
 public class DayRecordTable
@@ -36,12 +39,14 @@ public class DayRecordTable
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
     private final RecordEditListener editListener;
     private final FormatterService formatterService;
+    private final Locale locale;
 
-    public DayRecordTable(ObjectProperty<MonthIndex> currentMonth, RecordEditListener editListener,
+    public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, RecordEditListener editListener,
             FormatterService formatterService)
     {
         this.editListener = editListener;
         this.formatterService = formatterService;
+        this.locale = locale;
         fillTableWith31EmptyRows();
         currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
@@ -60,7 +65,9 @@ public class DayRecordTable
     private List<TableColumn<DayRecordPropertyAdapter, ?>> createColumns()
     {
         final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = readOnlyColumn("date", "Date",
-                param -> new TextFieldTableCell<>(), data -> data.getValue().date);
+                param -> new TextFieldTableCell<>(
+                        new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
+                data -> data.getValue().date);
         final TableColumn<DayRecordPropertyAdapter, DayType> dayTypeCol = column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);

@@ -19,12 +19,11 @@ public class FormatterService
     private static final int MAX_DAY_TYPE_LENGTH = getMaxDayTypeLength();
 
     private final Locale locale;
-
     private final ZoneId timeZoneId;
 
-    public FormatterService()
+    public FormatterService(Locale locale)
     {
-        this(Locale.UK, ZoneId.systemDefault());
+        this(locale, ZoneId.systemDefault());
     }
 
     private FormatterService(Locale locale, ZoneId timeZoneId)

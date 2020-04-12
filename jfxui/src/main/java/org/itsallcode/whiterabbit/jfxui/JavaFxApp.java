@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +74,7 @@ public class JavaFxApp extends Application
     private FormatterService formatter;
 
     private Tray tray;
+    private Locale locale;
 
     @Override
     public void init() throws Exception
@@ -92,7 +94,8 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        this.formatter = new FormatterService();
+        this.locale = Locale.getDefault();
+        this.formatter = new FormatterService(locale);
         final Path configFile = Paths.get("time.properties").toAbsolutePath();
         LOG.info("Loading config from {}", configFile);
         final Config config = Config.read(configFile);
@@ -271,7 +274,7 @@ public class JavaFxApp extends Application
 
     private void createUi()
     {
-        dayRecordTable = new DayRecordTable(currentMonth, record -> {
+        dayRecordTable = new DayRecordTable(locale, currentMonth, record -> {
             appService.store(record);
             appService.updateNow();
         }, formatter);
