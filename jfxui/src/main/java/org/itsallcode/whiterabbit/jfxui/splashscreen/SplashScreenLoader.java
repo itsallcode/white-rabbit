@@ -60,16 +60,4 @@ public class SplashScreenLoader extends Preloader
                     "Got unexpected notification of type " + notification.getClass() + ": " + notification);
         }
     }
-
-    @Override
-    public void handleProgressNotification(ProgressNotification info)
-    {
-        LOG.debug("Preloader progress: {}", info.getProgress());
-    }
-
-    @Override
-    public void handleStateChangeNotification(StateChangeNotification info)
-    {
-        LOG.debug("Preloader state changed: {}", info.getType());
-    }
 }
