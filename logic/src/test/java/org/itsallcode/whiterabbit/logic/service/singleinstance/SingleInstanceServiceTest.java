@@ -34,7 +34,7 @@ class SingleInstanceServiceTest
         final SingleInstanceService service = create();
         try (var result = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(result.isOtherInstanceRunning()).isFalse();
+            assertOtherInstanceIsNotRunning(result);
         }
     }
 
@@ -44,11 +44,11 @@ class SingleInstanceServiceTest
         final SingleInstanceService service = create();
         try (RegistrationResult firstResult = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(firstResult.isOtherInstanceRunning()).isFalse();
+            assertOtherInstanceIsNotRunning(firstResult);
 
             try (var second = service.tryToRegisterInstance(callbackMock))
             {
-                assertThat(second.isOtherInstanceRunning()).isTrue();
+                assertOtherInstanceIsRunning(second);
             }
         }
     }
@@ -59,15 +59,38 @@ class SingleInstanceServiceTest
         final SingleInstanceService service = create();
         try (final RegistrationResult firstResult = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(firstResult.isOtherInstanceRunning()).isFalse();
+            assertOtherInstanceIsNotRunning(firstResult);
             try (var secondResult = service.tryToRegisterInstance(callbackMock))
             {
-                assertThat(secondResult.isOtherInstanceRunning()).isTrue();
+                assertOtherInstanceIsRunning(secondResult);
             }
         }
+        waitUntilSocketClosed();
         try (RegistrationResult secondResult = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(secondResult.isOtherInstanceRunning()).isFalse();
+            assertOtherInstanceIsNotRunning(secondResult);
+        }
+    }
+
+    private void assertOtherInstanceIsRunning(RegistrationResult secondResult)
+    {
+        assertThat(secondResult.isOtherInstanceRunning()).as("other instance is running").isTrue();
+    }
+
+    private void assertOtherInstanceIsNotRunning(RegistrationResult secondResult)
+    {
+        assertThat(secondResult.isOtherInstanceRunning()).as("other instance is running").isFalse();
+    }
+
+    private void waitUntilSocketClosed()
+    {
+        try
+        {
+            Thread.sleep(500);
+        }
+        catch (final InterruptedException e)
+        {
+            // Ignore
         }
     }
 
@@ -80,7 +103,7 @@ class SingleInstanceServiceTest
             assertThat(first.isOtherInstanceRunning()).isFalse();
             try (var remote = service.tryToRegisterInstance(callbackMock))
             {
-                assertThat(remote.isOtherInstanceRunning()).isTrue();
+                assertOtherInstanceIsRunning(remote);
                 remote.sendMessage("msg");
             }
             Thread.sleep(500);
