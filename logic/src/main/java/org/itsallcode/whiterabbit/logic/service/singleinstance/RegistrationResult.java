@@ -1,6 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
-public class RegistrationResult implements AutoCloseable
+public class RegistrationResult implements OtherInstance, AutoCloseable
 {
     private final Server server;
     private final ClientConnection client;
@@ -26,6 +26,7 @@ public class RegistrationResult implements AutoCloseable
         return client != null;
     }
 
+    @Override
     public void sendMessage(String message)
     {
         if (client == null)

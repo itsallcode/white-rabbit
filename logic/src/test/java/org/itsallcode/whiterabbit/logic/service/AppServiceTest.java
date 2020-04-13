@@ -18,7 +18,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ class AppServiceTest
     @Mock
     private AppServiceCallback updateListenerMock;
     @Mock
-    private RegistrationResult singleInstanceRegistration;
+    private SingleInstanceService singleInstanceService;
     @Mock
     private VacationReportGenerator vacationServiceMock;
 
@@ -59,7 +59,7 @@ class AppServiceTest
     {
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         appService = new AppService(new WorkingTimeService(storageMock, clockMock, appServiceCallback), storageMock,
-                formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceRegistration, appServiceCallback,
+                formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback,
                 vacationServiceMock);
         appService.setUpdateListener(updateListenerMock);
     }
@@ -292,13 +292,6 @@ class AppServiceTest
     {
         appService.close();
         verify(schedulingServiceMock).close();
-    }
-
-    @Test
-    void shutdownClosesSingleInstanceRegistration()
-    {
-        appService.close();
-        verify(singleInstanceRegistration).close();
     }
 
     @Test

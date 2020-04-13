@@ -9,6 +9,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,9 +22,7 @@ class Server
     private static final Logger LOG = LogManager.getLogger(Server.class);
 
     private final ServerSocketChannel serverSocket;
-
     private final RunningInstanceCallback callback;
-
     private final ExecutorService executorService;
 
     public Server(ServerSocketChannel serverSocket, RunningInstanceCallback callback)
@@ -35,7 +34,7 @@ class Server
     {
         this.executorService = executorService;
         this.serverSocket = serverSocket;
-        this.callback = callback;
+        this.callback = Objects.requireNonNull(callback);
     }
 
     public void start()

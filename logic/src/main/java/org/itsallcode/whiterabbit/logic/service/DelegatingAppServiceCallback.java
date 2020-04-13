@@ -25,6 +25,10 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         {
             this.delegate.recordUpdated(record);
         }
+        else
+        {
+            throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -36,7 +40,7 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         }
         else
         {
-            return true;
+            throw new IllegalStateException();
         }
     }
 
@@ -59,6 +63,23 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         if (delegate != null)
         {
             delegate.workStoppedForToday(stopWorking);
+        }
+        else
+        {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public void messageFromOtherInstanceReceived(String message)
+    {
+        if (delegate != null)
+        {
+            delegate.messageFromOtherInstanceReceived(message);
+        }
+        else
+        {
+            throw new IllegalStateException();
         }
     }
 }

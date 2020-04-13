@@ -25,6 +25,7 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 
 import javafx.application.Application;
@@ -61,6 +62,7 @@ public class JavaFxApp extends Application
 {
     private static final Logger LOG = LogManager.getLogger(JavaFxApp.class);
     private static final int GAP_PIXEL = 10;
+    private static final String MESSAGE_BRING_TO_FRONT = "bringToFront";
 
     private AppService appService;
     private DayRecordTable dayRecordTable;
@@ -113,18 +115,7 @@ public class JavaFxApp extends Application
             @Override
             public void showMainWindow()
             {
-                Platform.runLater(() -> {
-                    if (primaryStage.isShowing())
-                    {
-                        LOG.debug("Request focus");
-                        primaryStage.requestFocus();
-                    }
-                    else
-                    {
-                        LOG.debug("Show primary stage");
-                        primaryStage.show();
-                    }
-                });
+                bringWindowToFront();
             }
 
             @Override
@@ -137,6 +128,22 @@ public class JavaFxApp extends Application
             public void exit()
             {
                 Platform.exit();
+            }
+        });
+    }
+
+    private void bringWindowToFront()
+    {
+        Platform.runLater(() -> {
+            if (primaryStage.isShowing())
+            {
+                LOG.debug("Request focus");
+                primaryStage.requestFocus();
+            }
+            else
+            {
+                LOG.debug("Show primary stage");
+                primaryStage.show();
             }
         });
     }
@@ -172,7 +179,7 @@ public class JavaFxApp extends Application
         createUi();
         primaryStage.show();
 
-        configureAppService();
+        startAppService();
 
         loadInitialData();
     }
@@ -198,45 +205,20 @@ public class JavaFxApp extends Application
         appService.close();
     }
 
-    private void configureAppService()
+    private void startAppService()
     {
-        appService.setUpdateListener(new AppServiceCallback()
+        appService.setUpdateListener(new AppServiceCallbackImplementation());
+        final Optional<OtherInstance> otherInstance = appService.registerSingleInstance();
+        if (otherInstance.isPresent())
         {
-            @Override
-            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
-            {
-                return showAutomaticInterruptionDialog(startOfInterruption, interruption);
-            }
-
-            @Override
-            public void recordUpdated(DayRecord record)
-            {
-                JavaFxUtil.runOnFxApplicationThread(() -> {
-                    final YearMonth recordMonth = YearMonth.from(record.getDate());
-                    if (!availableMonths.isEmpty() && !availableMonths.contains(recordMonth))
-                    {
-                        availableMonths.add(recordMonth);
-                    }
-                    if (currentMonth.get().getYearMonth().equals(recordMonth))
-                    {
-                        currentMonth.setValue(record.getMonth());
-                    }
-                });
-            }
-
-            @Override
-            public void exceptionOccured(Exception e)
-            {
-                showErrorDialog(e);
-            }
-
-            @Override
-            public void workStoppedForToday(boolean stopWorking)
-            {
-                JavaFxUtil.runOnFxApplicationThread(() -> stoppedWorkingForToday.setValue(stopWorking));
-            }
-        });
-        appService.start();
+            LOG.info("Another instance is already running: bring it to front and exit");
+            otherInstance.get().sendMessage(MESSAGE_BRING_TO_FRONT);
+            exitApp();
+        }
+        else
+        {
+            appService.start();
+        }
     }
 
     public void showVacationReport()
@@ -249,6 +231,11 @@ public class JavaFxApp extends Application
     {
         final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
         LOG.error(message, e);
+        showErrorDialog(message);
+    }
+
+    private void showErrorDialog(final String message)
+    {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
             alert.show();
@@ -433,5 +420,51 @@ public class JavaFxApp extends Application
             interruption.set(appService.startInterruption());
             new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption).show();
         });
+    }
+
+    private final class AppServiceCallbackImplementation implements AppServiceCallback
+    {
+        @Override
+        public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
+        {
+            return showAutomaticInterruptionDialog(startOfInterruption, interruption);
+        }
+
+        @Override
+        public void recordUpdated(DayRecord record)
+        {
+            JavaFxUtil.runOnFxApplicationThread(() -> {
+                final YearMonth recordMonth = YearMonth.from(record.getDate());
+                if (!availableMonths.isEmpty() && !availableMonths.contains(recordMonth))
+                {
+                    availableMonths.add(recordMonth);
+                }
+                if (currentMonth.get().getYearMonth().equals(recordMonth))
+                {
+                    currentMonth.setValue(record.getMonth());
+                }
+            });
+        }
+
+        @Override
+        public void exceptionOccured(Exception e)
+        {
+            showErrorDialog(e);
+        }
+
+        @Override
+        public void workStoppedForToday(boolean stopWorking)
+        {
+            JavaFxUtil.runOnFxApplicationThread(() -> stoppedWorkingForToday.setValue(stopWorking));
+        }
+
+        @Override
+        public void messageFromOtherInstanceReceived(String message)
+        {
+            if (MESSAGE_BRING_TO_FRONT.equals(message))
+            {
+                bringWindowToFront();
+            }
+        }
     }
 }
