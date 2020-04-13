@@ -1,9 +1,11 @@
 package org.itsallcode.whiterabbit.logic.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -18,6 +20,8 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
@@ -295,8 +299,22 @@ class AppServiceTest
     }
 
     @Test
+    void startFailsWhenInstancenNotRegistered()
+    {
+        assertThatThrownBy(() -> appService.start()).isInstanceOf(IllegalStateException.class)
+                .hasMessage("Single instance not registered. Call registerSingleInstance() before starting.");
+
+    }
+
+    @Test
     void testStartAutoUpdate()
     {
+        final RunningInstanceCallback callbackMock = mock(RunningInstanceCallback.class);
+        final RegistrationResult registrationMock = mock(RegistrationResult.class);
+        when(registrationMock.isOtherInstanceRunning()).thenReturn(false);
+        when(singleInstanceService.tryToRegisterInstance(callbackMock)).thenReturn(registrationMock);
+
+        appService.registerSingleInstance(callbackMock);
         appService.start();
         verify(schedulingServiceMock).schedule(any(), ArgumentMatchers.any(Runnable.class));
     }

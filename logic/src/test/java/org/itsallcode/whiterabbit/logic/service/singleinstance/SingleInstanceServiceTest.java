@@ -65,7 +65,7 @@ class SingleInstanceServiceTest
                 assertThat(secondResult.isOtherInstanceRunning()).isTrue();
             }
         }
-        try (RegistrationResult secondResult = service.tryToRegisterInstance(null))
+        try (RegistrationResult secondResult = service.tryToRegisterInstance(callbackMock))
         {
             assertThat(secondResult.isOtherInstanceRunning()).isFalse();
         }
@@ -78,7 +78,7 @@ class SingleInstanceServiceTest
         try (var first = service.tryToRegisterInstance(callbackMock))
         {
             assertThat(first.isOtherInstanceRunning()).isFalse();
-            try (var remote = service.tryToRegisterInstance(null))
+            try (var remote = service.tryToRegisterInstance(callbackMock))
             {
                 assertThat(remote.isOtherInstanceRunning()).isTrue();
                 remote.sendMessage("msg");
