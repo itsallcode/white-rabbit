@@ -6,6 +6,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
 
 public class Config
@@ -44,13 +46,19 @@ public class Config
         return Paths.get(getMandatoryValue("data")).toAbsolutePath();
     }
 
+    public Locale getLocale()
+    {
+        return getOptionalValue("locale").map(Locale::forLanguageTag).orElseGet(Locale::getDefault);
+    }
+
     private String getMandatoryValue(String param)
     {
-        final String value = this.properties.getProperty(param);
-        if (value == null)
-        {
-            throw new IllegalStateException("Property '" + param + "' not found in config file " + configFile);
-        }
-        return value;
+        return getOptionalValue(param).orElseThrow(
+                () -> new IllegalStateException("Property '" + param + "' not found in config file " + configFile));
+    }
+
+    private Optional<String> getOptionalValue(String param)
+    {
+        return Optional.ofNullable(this.properties.getProperty(param));
     }
 }

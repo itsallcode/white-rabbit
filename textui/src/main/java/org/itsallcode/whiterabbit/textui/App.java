@@ -4,7 +4,6 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,8 +40,8 @@ public class App
 
     public static void main(String[] args)
     {
-        final FormatterService formatterService = new FormatterService(Locale.getDefault());
         final Config config = Config.read(Paths.get("time.properties"));
+        final FormatterService formatterService = new FormatterService(config.getLocale());
         final AppService appService = AppService.create(config, formatterService);
         final UiTerminal terminal = UiTerminal.create();
         new App(appService, formatterService, terminal).run();

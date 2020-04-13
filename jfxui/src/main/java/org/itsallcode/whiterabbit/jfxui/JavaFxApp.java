@@ -94,11 +94,9 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        this.locale = Locale.getDefault();
+        final Config config = readConfig();
+        this.locale = config.getLocale();
         this.formatter = new FormatterService(locale);
-        final Path configFile = Paths.get("time.properties").toAbsolutePath();
-        LOG.info("Loading config from {}", configFile);
-        final Config config = Config.read(configFile);
         this.appService = AppService.create(config, formatter);
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
         tray = Tray.create(new TrayCallback()
@@ -132,6 +130,13 @@ public class JavaFxApp extends Application
                 Platform.exit();
             }
         });
+    }
+
+    private Config readConfig()
+    {
+        final Path configFile = Paths.get("time.properties").toAbsolutePath();
+        LOG.info("Loading config from {}", configFile);
+        return Config.read(configFile);
     }
 
     @Override

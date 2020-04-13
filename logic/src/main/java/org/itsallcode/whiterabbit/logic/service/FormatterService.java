@@ -20,6 +20,7 @@ public class FormatterService
 
     private final Locale locale;
     private final ZoneId timeZoneId;
+    private final DateTimeFormatter dateTimeFormatter;
 
     public FormatterService(Locale locale)
     {
@@ -30,6 +31,8 @@ public class FormatterService
     {
         this.locale = locale;
         this.timeZoneId = timeZoneId;
+        dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
+                .withLocale(locale).withZone(timeZoneId);
     }
 
     public String format(DayRecord day)
@@ -77,8 +80,6 @@ public class FormatterService
     public String formatDateAndtime(Instant instant)
     {
         final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
-                .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(locale).withZone(timeZoneId);
         return dateTime.format(dateTimeFormatter);
     }
 }

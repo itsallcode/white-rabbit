@@ -133,6 +133,10 @@ Create file `time.properties` in the current working directory with the followin
 data = <path-to-data-dir> # e.g.: ../time-recording-data/
 ```
 
+#### Optional configuration settings
+
+* `locale`: format of date and time values, e.g. `de` or `en`. Default: system locale.
+
 ### Clone, configure and build
 
 ```bash
