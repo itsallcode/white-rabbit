@@ -26,7 +26,7 @@ TableView#day-table {
 
 #day-table #comment
 {
-  -fx-pref-width: 15em;
+  -fx-pref-width: 20em;
 }
 
 .working {
