@@ -38,12 +38,6 @@ public interface AppServiceCallback
             {
                 // Ignore
             }
-
-            @Override
-            public void messageFromOtherInstanceReceived(String message)
-            {
-                log.info("Message received from other instance: '{}': ignore.", message);
-            }
         };
     }
 
@@ -54,6 +48,4 @@ public interface AppServiceCallback
     void workStoppedForToday(boolean stopWorking);
 
     void exceptionOccured(Exception e);
-
-    void messageFromOtherInstanceReceived(String message);
 }

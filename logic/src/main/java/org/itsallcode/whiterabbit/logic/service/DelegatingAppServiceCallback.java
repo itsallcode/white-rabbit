@@ -69,17 +69,4 @@ class DelegatingAppServiceCallback implements AppServiceCallback
             throw new IllegalStateException();
         }
     }
-
-    @Override
-    public void messageFromOtherInstanceReceived(String message)
-    {
-        if (delegate != null)
-        {
-            delegate.messageFromOtherInstanceReceived(message);
-        }
-        else
-        {
-            throw new IllegalStateException();
-        }
-    }
 }

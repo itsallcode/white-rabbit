@@ -21,6 +21,7 @@ import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
@@ -74,10 +75,9 @@ public class AppService implements Closeable
         this.appServiceCallback.setDelegate(callback);
     }
 
-    public Optional<OtherInstance> registerSingleInstance()
+    public Optional<OtherInstance> registerSingleInstance(RunningInstanceCallback callback)
     {
-        singleInstanceRegistration = singleInstanceService
-                .tryToRegisterInstance(appServiceCallback::messageFromOtherInstanceReceived);
+        singleInstanceRegistration = singleInstanceService.tryToRegisterInstance(callback);
         if (singleInstanceRegistration.isOtherInstanceRunning())
         {
             return Optional.of(singleInstanceRegistration);

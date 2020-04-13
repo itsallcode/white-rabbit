@@ -88,7 +88,7 @@ class Server
 
                     final SocketChannel client = (SocketChannel) key.channel();
                     final ByteBuffer buffer = ByteBuffer.allocate(256);
-                    final int readBytes = client.read(buffer);
+                    final int readBytes = read(client, buffer);
                     if (readBytes < 0)
                     {
                         LOG.info("Client connection closed, read bytes = {}. close client {}", readBytes, client);
@@ -107,6 +107,19 @@ class Server
                 }
                 selectionKeys.remove();
             }
+        }
+    }
+
+    private int read(final SocketChannel client, final ByteBuffer buffer) throws IOException
+    {
+        try
+        {
+            return client.read(buffer);
+        }
+        catch (final IOException e)
+        {
+            LOG.info("Error reading from socket. Close client {}", client, e);
+            return -2;
         }
     }
 

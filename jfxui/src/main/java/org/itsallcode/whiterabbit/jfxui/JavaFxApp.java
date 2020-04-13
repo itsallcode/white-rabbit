@@ -92,7 +92,6 @@ public class JavaFxApp extends Application
         catch (final Exception e)
         {
             LOG.error("Exception during initialization: " + e.getMessage(), e);
-            showErrorDialog(e);
             Platform.exit();
         }
         notifyPreloaderProgress(Type.AFTER_INIT);
@@ -105,10 +104,19 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
+
         final Config config = readConfig();
         this.locale = config.getLocale();
         this.formatter = new FormatterService(locale);
         this.appService = AppService.create(config, formatter);
+        final Optional<OtherInstance> otherInstance = appService
+                .registerSingleInstance(this::messageFromOtherInstanceReceived);
+        if (otherInstance.isPresent())
+        {
+            otherInstance.get().sendMessage(MESSAGE_BRING_TO_FRONT);
+            throw new IllegalStateException("Other instance already running");
+        }
+
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
         tray = Tray.create(new TrayCallback()
         {
@@ -208,16 +216,14 @@ public class JavaFxApp extends Application
     private void startAppService()
     {
         appService.setUpdateListener(new AppServiceCallbackImplementation());
-        final Optional<OtherInstance> otherInstance = appService.registerSingleInstance();
-        if (otherInstance.isPresent())
+        appService.start();
+    }
+
+    private void messageFromOtherInstanceReceived(String message)
+    {
+        if (MESSAGE_BRING_TO_FRONT.equals(message))
         {
-            LOG.info("Another instance is already running: bring it to front and exit");
-            otherInstance.get().sendMessage(MESSAGE_BRING_TO_FRONT);
-            exitApp();
-        }
-        else
-        {
-            appService.start();
+            bringWindowToFront();
         }
     }
 
@@ -456,15 +462,6 @@ public class JavaFxApp extends Application
         public void workStoppedForToday(boolean stopWorking)
         {
             JavaFxUtil.runOnFxApplicationThread(() -> stoppedWorkingForToday.setValue(stopWorking));
-        }
-
-        @Override
-        public void messageFromOtherInstanceReceived(String message)
-        {
-            if (MESSAGE_BRING_TO_FRONT.equals(message))
-            {
-                bringWindowToFront();
-            }
         }
     }
 }

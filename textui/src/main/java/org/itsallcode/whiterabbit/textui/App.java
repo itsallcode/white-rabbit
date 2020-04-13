@@ -14,6 +14,7 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 
 public class App
 {
@@ -49,7 +50,13 @@ public class App
 
     void run()
     {
-        this.appService.setUpdateListener(AppServiceCallback.createOnlyUpdate(this::dayRecordUpdated));
+        final Optional<OtherInstance> otherInstance = appService.registerSingleInstance(this::messageReceived);
+        if (otherInstance.isPresent())
+        {
+            otherInstance.get().sendMessage("bringToFront");
+            throw new IllegalStateException("Another instance is already running");
+        }
+        appService.setUpdateListener(AppServiceCallback.createOnlyUpdate(this::dayRecordUpdated));
         appService.start();
 
         while (running)
@@ -63,6 +70,11 @@ public class App
             final char commandChar = Character.toLowerCase(c);
             executeCommand(commandChar);
         }
+    }
+
+    private void messageReceived(String message)
+    {
+        // Ignore
     }
 
     private void executeCommand(final char command)
