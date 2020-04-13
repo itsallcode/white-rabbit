@@ -28,6 +28,8 @@ A time recording tool
     * Computer sleeps for the rest of the day
   * Interruptions detected when computer sleeps for more than 2 minutes
 * Keeps track of the overtime in previous months to speed up reports
+* Generates vacation report (no UI yet, written to standard out)
+* Detects when a second instance is started to avoid data corruption
 * Assumptions:
   * Working time of 8h Monday to Friday
   * Mandatory break of 45 minutes after 6 hours of working
