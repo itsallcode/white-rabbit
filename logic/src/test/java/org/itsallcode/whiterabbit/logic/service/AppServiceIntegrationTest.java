@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,9 +55,23 @@ class AppServiceIntegrationTest
 
     private void assumeNoOtherInstanceIsRunning()
     {
+        System.out.println("Check if another instance is running");
         final var singleInstance = new SingleInstanceService();
-        final Optional<OtherInstance> otherInstance = singleInstance.tryToRegisterInstance(null);
-        singleInstance.close();
-        assumeTrue(otherInstance.isEmpty(), "Another instance is already running");
+        try (var result = singleInstance.tryToRegisterInstance(null))
+        {
+            final boolean noOtherInstanceRunning = !result.isOtherInstanceRunning();
+            System.out.println("Result: " + noOtherInstanceRunning);
+            assumeTrue(noOtherInstanceRunning, "Another instance is already running");
+        }
+        try
+        {
+            Thread.sleep(100);
+        }
+        catch (final InterruptedException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("No other instance running, continue with test");
     }
 }

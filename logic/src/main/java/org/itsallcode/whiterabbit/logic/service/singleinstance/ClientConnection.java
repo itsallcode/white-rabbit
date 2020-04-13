@@ -9,19 +9,20 @@ import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class OtherInstance implements AutoCloseable
+public class ClientConnection implements AutoCloseable
 {
-    private static final Logger LOG = LogManager.getLogger(OtherInstance.class);
+    private static final Logger LOG = LogManager.getLogger(ClientConnection.class);
 
     private final SocketChannel clientSocket;
 
-    public OtherInstance(SocketChannel clientSocket)
+    public ClientConnection(SocketChannel clientSocket)
     {
         this.clientSocket = clientSocket;
     }
 
     public void sendMessage(String message)
     {
+        LOG.debug("Sending message '{}' to {}", message, clientSocket);
         final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
         try
         {
@@ -38,9 +39,16 @@ public class OtherInstance implements AutoCloseable
     }
 
     @Override
-    public void close() throws IOException
+    public void close()
     {
         LOG.info("Closing client socket {}", clientSocket);
-        clientSocket.close();
+        try
+        {
+            clientSocket.close();
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error closing client socket", e);
+        }
     }
 }

@@ -2,11 +2,10 @@ package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,80 +23,73 @@ class SingleInstanceServiceTest
     @Test
     void registerInvalidPortFails()
     {
-        final SingleInstanceService service = new SingleInstanceService(9999999, null);
+        final SingleInstanceService service = new SingleInstanceService(9999999);
         assertThatThrownBy(() -> service.tryToRegisterInstance(callbackMock))
                 .isInstanceOf(IllegalArgumentException.class).hasMessage("port out of range:9999999");
     }
 
     @Test
-    void registerSuccessfulWhenNoOtherServiceRunning()
+    void registerSuccessfulWhenNoOtherServiceRunning() throws IOException
     {
         final SingleInstanceService service = create();
-        assertThat(service.tryToRegisterInstance(callbackMock)).isNotPresent();
-        service.close();
-    }
-
-    @Test
-    void registerReturnsOtherInstanceWhenNoOtherServiceRunning()
-    {
-        final SingleInstanceService first = create();
-        assertThat(first.tryToRegisterInstance(callbackMock)).isNotPresent();
-
-        final SingleInstanceService second = create();
-        assertThat(second.tryToRegisterInstance(callbackMock)).isPresent();
-
-        first.close();
-    }
-
-    @Test
-    void registerPossibleWhenOtherServiceClosed()
-    {
-        final SingleInstanceService first = create();
-        SingleInstanceService second;
-        try
+        try (var result = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(first.tryToRegisterInstance(callbackMock)).isNotPresent();
-            second = create();
-            assertThat(second.tryToRegisterInstance(callbackMock)).isPresent();
-        }
-        finally
-        {
-            first.close();
-        }
-        try
-        {
-            assertThat(second.tryToRegisterInstance(callbackMock)).isNotPresent();
-        }
-        finally
-        {
-            second.close();
+            assertThat(result.isOtherInstanceRunning()).isFalse();
         }
     }
 
     @Test
-    void sendMessageToRunningInstance() throws IOException
+    void registerReturnsOtherInstanceWhenNoOtherServiceRunning() throws IOException
     {
-        final SingleInstanceService first = create();
-        try
+        final SingleInstanceService service = create();
+        try (RegistrationResult firstResult = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(first.tryToRegisterInstance(callbackMock)).isNotPresent();
+            assertThat(firstResult.isOtherInstanceRunning()).isFalse();
 
-            final SingleInstanceService second = create();
-            final Optional<OtherInstance> remote = second.tryToRegisterInstance(null);
-            assertThat(remote).isPresent();
-            remote.get().sendMessage("msg");
-            remote.get().close();
-
-            verify(callbackMock).messageReceived("msg");
+            try (var second = service.tryToRegisterInstance(callbackMock))
+            {
+                assertThat(second.isOtherInstanceRunning()).isTrue();
+            }
         }
-        finally
+    }
+
+    @Test
+    void registerPossibleWhenOtherServiceClosed() throws IOException
+    {
+        final SingleInstanceService service = create();
+        try (final RegistrationResult firstResult = service.tryToRegisterInstance(callbackMock))
         {
-            first.close();
+            assertThat(firstResult.isOtherInstanceRunning()).isFalse();
+            try (var secondResult = service.tryToRegisterInstance(callbackMock))
+            {
+                assertThat(secondResult.isOtherInstanceRunning()).isTrue();
+            }
         }
+        try (RegistrationResult secondResult = service.tryToRegisterInstance(null))
+        {
+            assertThat(secondResult.isOtherInstanceRunning()).isFalse();
+        }
+    }
+
+    @Test
+    void sendMessageToRunningInstance() throws IOException, InterruptedException
+    {
+        final SingleInstanceService service = create();
+        try (var first = service.tryToRegisterInstance(callbackMock))
+        {
+            assertThat(first.isOtherInstanceRunning()).isFalse();
+            try (var remote = service.tryToRegisterInstance(null))
+            {
+                assertThat(remote.isOtherInstanceRunning()).isTrue();
+                remote.sendMessage("msg");
+            }
+            Thread.sleep(500);
+        }
+        verify(callbackMock, timeout(50).atLeastOnce()).messageReceived("msg");
     }
 
     private SingleInstanceService create()
     {
-        return new SingleInstanceService(PORT, Executors.newFixedThreadPool(1));
+        return new SingleInstanceService(PORT);
     }
 }

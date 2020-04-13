@@ -19,7 +19,7 @@ import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
-import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
@@ -36,11 +36,11 @@ public class AppService implements Closeable
     private final FormatterService formatterService;
     private final SchedulingService schedulingService;
     private final DelegatingAppServiceCallback appServiceCallback;
-    private final SingleInstanceService singleInstanceService;
+    private final RegistrationResult singleInstanceRegistration;
     private final VacationReportGenerator vacationService;
 
     public AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
-            ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
+            ClockService clock, SchedulingService schedulingService, RegistrationResult singleInstanceRegistration,
             DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService)
     {
         this.workingTimeService = workingTimeService;
@@ -48,7 +48,7 @@ public class AppService implements Closeable
         this.formatterService = formatterService;
         this.clock = clock;
         this.schedulingService = schedulingService;
-        this.singleInstanceService = singleInstanceService;
+        this.singleInstanceRegistration = singleInstanceRegistration;
         this.appServiceCallback = appServiceCallback;
         this.vacationService = vacationService;
     }
@@ -56,10 +56,10 @@ public class AppService implements Closeable
     public static AppService create(final Config config, final FormatterService formatterService)
     {
         final SingleInstanceService singleInstanceService = new SingleInstanceService();
-        final Optional<OtherInstance> otherInstance = singleInstanceService.tryToRegisterInstance(null);
-        if (otherInstance.isPresent())
+        final RegistrationResult result = singleInstanceService.tryToRegisterInstance(null);
+        if (result.isOtherInstanceRunning())
         {
-            singleInstanceService.close();
+            result.sendMessage("bringToFront");
             throw new IllegalStateException("Another instance is already running");
         }
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
@@ -68,8 +68,8 @@ public class AppService implements Closeable
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
         final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
-        return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
-                singleInstanceService, appServiceCallback, vacationService);
+        return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService, result,
+                appServiceCallback, vacationService);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -169,7 +169,7 @@ public class AppService implements Closeable
     public void close()
     {
         LOG.debug("Shutting down...");
-        singleInstanceService.close();
+        singleInstanceRegistration.close();
         schedulingService.close();
     }
 }

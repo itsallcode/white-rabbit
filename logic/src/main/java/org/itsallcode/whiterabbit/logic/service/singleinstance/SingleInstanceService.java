@@ -6,13 +6,9 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,52 +16,41 @@ import org.apache.logging.log4j.Logger;
 public class SingleInstanceService
 {
     private static final Logger LOG = LogManager.getLogger(SingleInstanceService.class);
-
     private static final int DEFAULT_PORT = 13373;
 
     private final int port;
 
-    private final ExecutorService executorService;
-
-    private Server server;
-
     public SingleInstanceService()
     {
-        this(DEFAULT_PORT, Executors.newFixedThreadPool(1));
+        this(DEFAULT_PORT);
     }
 
-    SingleInstanceService(int port, ExecutorService executorService)
+    SingleInstanceService(int port)
     {
         this.port = port;
-        this.executorService = executorService;
     }
 
-    public Optional<OtherInstance> tryToRegisterInstance(RunningInstanceCallback callback)
+    public RegistrationResult tryToRegisterInstance(RunningInstanceCallback callback)
     {
         try
         {
             final Optional<ServerSocketChannel> serverSocketOptional = bindServerSocket();
             if (serverSocketOptional.isEmpty())
             {
-                return Optional.of(connectToOtherInstance());
+                return RegistrationResult.of(connectToOtherInstance());
             }
 
-            ServerSocketChannel serverSocket = serverSocketOptional.get();
-            final int ops = serverSocket.validOps();
-            final Selector selector = Selector.open();
-            final SelectionKey selectKey = serverSocket.register(selector, ops, null);
-            LOG.debug("Got seleciton key {} for ops {}", selectKey, ops);
+            final ServerSocketChannel serverSocket = serverSocketOptional.get();
+            final Server server = new Server(serverSocket, callback);
+            server.start();
 
-            server = new Server(serverSocket, selector, callback);
-            executorService.execute(server);
-
-            LOG.info("Opened server socket {}", serverSocket);
+            LOG.info("Opened server socket to {}", serverSocket.getLocalAddress());
+            return RegistrationResult.of(server);
         }
         catch (final IOException e)
         {
             throw new UncheckedIOException("Unexpected exception when creating socket", e);
         }
-        return Optional.empty();
     }
 
     private Optional<ServerSocketChannel> bindServerSocket() throws IOException
@@ -73,6 +58,7 @@ public class SingleInstanceService
         final ServerSocketChannel serverSocket = ServerSocketChannel.open();
         serverSocket.configureBlocking(false);
         final InetSocketAddress addr = new InetSocketAddress(createLocalhostAddress(), port);
+        LOG.debug("Trying to open server socket at {}", addr);
         try
         {
             serverSocket.bind(addr);
@@ -97,43 +83,20 @@ public class SingleInstanceService
         }
     }
 
-    private OtherInstance connectToOtherInstance()
+    private ClientConnection connectToOtherInstance()
     {
         final InetSocketAddress addr = new InetSocketAddress(createLocalhostAddress(), port);
         SocketChannel clientSocket;
         try
         {
-            LOG.info("Connecting to Server {}", addr);
+            LOG.info("Connecting to server {}", addr);
             clientSocket = SocketChannel.open(addr);
             clientSocket.configureBlocking(false);
-            LOG.info("Connecting to Server {}, blocking = {}", addr, clientSocket.isBlocking());
-            return new OtherInstance(clientSocket);
+            return new ClientConnection(clientSocket);
         }
         catch (final IOException e)
         {
             throw new UncheckedIOException("Error connectiong to " + addr, e);
         }
-    }
-
-    private void shutdown()
-    {
-        executorService.shutdownNow();
-        if (server == null)
-        {
-            return;
-        }
-        try
-        {
-            server.close();
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Unexpected exception when closing socket", e);
-        }
-    }
-
-    public void close()
-    {
-        shutdown();
     }
 }
