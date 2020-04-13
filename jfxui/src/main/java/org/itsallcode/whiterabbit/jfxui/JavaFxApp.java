@@ -195,7 +195,7 @@ public class JavaFxApp extends Application
         LOG.info("Stopping application");
         tray.removeTrayIcon();
         currentTimeProperty.cancel();
-        appService.shutdown();
+        appService.close();
     }
 
     private void configureAppService()

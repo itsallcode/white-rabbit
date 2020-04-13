@@ -9,7 +9,7 @@ import org.itsallcode.whiterabbit.logic.service.scheduling.ReschedulingRunnable;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 
-public class SchedulingService
+public class SchedulingService implements AutoCloseable
 {
     private final ScheduledExecutorService executorService;
     private final ClockService clockService;
@@ -31,7 +31,8 @@ public class SchedulingService
         return new ReschedulingRunnable(command, trigger, executorService, clockService, errorHandler).schedule();
     }
 
-    public void shutdown()
+    @Override
+    public void close()
     {
         this.executorService.shutdownNow();
     }

@@ -94,7 +94,7 @@ public class App
 
     private void shutdown()
     {
-        this.appService.shutdown();
+        this.appService.close();
         this.running = false;
     }
 

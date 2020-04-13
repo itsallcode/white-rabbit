@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import java.io.Closeable;
 import java.time.Duration;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -18,12 +19,14 @@ import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
-public class AppService
+public class AppService implements Closeable
 {
     private static final Logger LOG = LogManager.getLogger(AppService.class);
 
@@ -53,7 +56,12 @@ public class AppService
     public static AppService create(final Config config, final FormatterService formatterService)
     {
         final SingleInstanceService singleInstanceService = new SingleInstanceService();
-        singleInstanceService.registerInstance();
+        final Optional<OtherInstance> otherInstance = singleInstanceService.tryToRegisterInstance(null);
+        if (otherInstance.isPresent())
+        {
+            singleInstanceService.close();
+            throw new IllegalStateException("Another instance is already running");
+        }
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
         final ClockService clockService = new ClockService();
         final SchedulingService schedulingService = new SchedulingService(clockService);
@@ -99,13 +107,6 @@ public class AppService
             totalOvertime = month.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES);
             storage.storeMonth(month);
         }
-    }
-
-    public void shutdown()
-    {
-        LOG.debug("Shutting down...");
-        singleInstanceService.shutdown();
-        this.schedulingService.shutdown();
     }
 
     public ClockService getClock()
@@ -162,5 +163,13 @@ public class AppService
     public VacationReport getVacationReport()
     {
         return vacationService.generateReport();
+    }
+
+    @Override
+    public void close()
+    {
+        LOG.debug("Shutting down...");
+        singleInstanceService.close();
+        schedulingService.close();
     }
 }

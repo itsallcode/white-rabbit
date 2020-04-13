@@ -120,7 +120,7 @@ class AppTest
     void testQuitShutsdownAppService()
     {
         runCommand('q');
-        verify(appServiceMock).shutdown();
+        verify(appServiceMock).close();
     }
 
     @Test

@@ -1,10 +1,11 @@
-package org.itsallcode.whiterabbit.logic.service;
+package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +17,7 @@ public class SingleInstanceService
     private static final int PORT = 13373;
     private ServerSocket serverSocket;
 
-    public void registerInstance()
+    public Optional<OtherInstance> tryToRegisterInstance(RunningInstanceCallback callback)
     {
         try
         {
@@ -25,13 +26,14 @@ public class SingleInstanceService
         }
         catch (final BindException e)
         {
-            LOG.error("Another instance is already running");
-            throw new IllegalStateException("Another instance is already running", e);
+            LOG.error("Another instance is already running", e);
+            return Optional.of(new OtherInstance());
         }
         catch (final IOException e)
         {
             throw new UncheckedIOException("Unexpected exception when creating socket", e);
         }
+        return Optional.empty();
     }
 
     @SuppressWarnings("squid:S4818") // Socket is used safely here
@@ -40,8 +42,12 @@ public class SingleInstanceService
         return new ServerSocket(port, 0, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
     }
 
-    public void shutdown()
+    private void shutdown()
     {
+        if (serverSocket == null)
+        {
+            return;
+        }
         try
         {
             serverSocket.close();
@@ -50,5 +56,10 @@ public class SingleInstanceService
         {
             throw new UncheckedIOException("Unexpected exception when closing socket", e);
         }
+    }
+
+    public void close()
+    {
+        shutdown();
     }
 }
