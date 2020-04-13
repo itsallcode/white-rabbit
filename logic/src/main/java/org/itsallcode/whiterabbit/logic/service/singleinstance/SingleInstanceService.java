@@ -25,8 +25,6 @@ public class SingleInstanceService
 
     private final int port;
 
-    private ServerSocketChannel serverSocket;
-
     private final ExecutorService executorService;
 
     private Server server;
@@ -46,11 +44,13 @@ public class SingleInstanceService
     {
         try
         {
-            serverSocket = ServerSocketChannel.open();
-            final InetSocketAddress addr = new InetSocketAddress(createLocalhostAddress(), port);
-            serverSocket.configureBlocking(false);
-            serverSocket.bind(addr);
+            final Optional<ServerSocketChannel> serverSocketOptional = bindServerSocket();
+            if (serverSocketOptional.isEmpty())
+            {
+                return Optional.of(connectToOtherInstance());
+            }
 
+            ServerSocketChannel serverSocket = serverSocketOptional.get();
             final int ops = serverSocket.validOps();
             final Selector selector = Selector.open();
             final SelectionKey selectKey = serverSocket.register(selector, ops, null);
@@ -61,16 +61,28 @@ public class SingleInstanceService
 
             LOG.info("Opened server socket {}", serverSocket);
         }
-        catch (final BindException e)
-        {
-            LOG.error("Another instance is already running: {}", e.getMessage());
-            return Optional.of(connectToOtherInstance());
-        }
         catch (final IOException e)
         {
             throw new UncheckedIOException("Unexpected exception when creating socket", e);
         }
         return Optional.empty();
+    }
+
+    private Optional<ServerSocketChannel> bindServerSocket() throws IOException
+    {
+        final ServerSocketChannel serverSocket = ServerSocketChannel.open();
+        serverSocket.configureBlocking(false);
+        final InetSocketAddress addr = new InetSocketAddress(createLocalhostAddress(), port);
+        try
+        {
+            serverSocket.bind(addr);
+        }
+        catch (final BindException e)
+        {
+            LOG.error("Another instance is already running on port {}: {}", port, e.getMessage());
+            return Optional.empty();
+        }
+        return Optional.of(serverSocket);
     }
 
     private InetAddress createLocalhostAddress()

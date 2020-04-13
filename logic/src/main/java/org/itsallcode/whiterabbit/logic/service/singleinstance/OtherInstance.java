@@ -22,7 +22,7 @@ public class OtherInstance implements AutoCloseable
 
     public void sendMessage(String message)
     {
-        final ByteBuffer buffer = ByteBuffer.wrap((message + "\n").getBytes(StandardCharsets.UTF_8));
+        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
         try
         {
             clientSocket.write(buffer);
@@ -40,7 +40,6 @@ public class OtherInstance implements AutoCloseable
     @Override
     public void close() throws IOException
     {
-        // sendMessage(Server.EXIT_COMMAND);
         LOG.info("Closing client socket {}", clientSocket);
         clientSocket.close();
     }

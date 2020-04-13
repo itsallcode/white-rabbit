@@ -13,10 +13,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Server implements Runnable
+class Server implements Runnable
 {
-    public static final String EXIT_COMMAND = "exit";
-
     private static final Logger LOG = LogManager.getLogger(Server.class);
 
     private final Selector selector;
