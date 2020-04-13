@@ -13,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
+import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
+import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 import org.itsallcode.whiterabbit.jfxui.table.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
@@ -79,6 +81,7 @@ public class JavaFxApp extends Application
     @Override
     public void init() throws Exception
     {
+        notifyPreloaderProgress(Type.BEFORE_INIT);
         Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> showErrorDialog(exception));
         try
         {
@@ -90,6 +93,12 @@ public class JavaFxApp extends Application
             showErrorDialog(e);
             Platform.exit();
         }
+        notifyPreloaderProgress(Type.AFTER_INIT);
+    }
+
+    private void notifyPreloaderProgress(Type notificationType)
+    {
+        notifyPreloader(new ProgressPreloaderNotification(this, notificationType));
     }
 
     private void doInitialize()
@@ -142,6 +151,7 @@ public class JavaFxApp extends Application
     @Override
     public void start(Stage primaryStage)
     {
+        notifyPreloaderProgress(Type.BEFORE_START);
         this.primaryStage = primaryStage;
         LOG.info("Starting UI");
         try
@@ -154,6 +164,7 @@ public class JavaFxApp extends Application
             showErrorDialog(e);
             Platform.exit();
         }
+        notifyPreloaderProgress(Type.AFTER_START);
     }
 
     private void doStart(Stage primaryStage)
@@ -279,6 +290,7 @@ public class JavaFxApp extends Application
 
     private void createUi()
     {
+        LOG.debug("Creating user interface");
         dayRecordTable = new DayRecordTable(locale, currentMonth, record -> {
             appService.store(record);
             appService.updateNow();
@@ -299,10 +311,10 @@ public class JavaFxApp extends Application
 
         if (tray.isSupported())
         {
-            LOG.debug("System tray is supported: allow hiding primary stage");
+            LOG.trace("System tray is supported: allow hiding primary stage");
             Platform.setImplicitExit(false);
             primaryStage.setOnCloseRequest(event -> {
-                LOG.info("Hiding primary stage");
+                LOG.debug("Hiding primary stage");
                 event.consume();
                 primaryStage.hide();
             });
@@ -313,6 +325,7 @@ public class JavaFxApp extends Application
         }
 
         primaryStage.setScene(scene);
+        LOG.debug("User interface finished");
     }
 
     private BorderPane createMainPane()
