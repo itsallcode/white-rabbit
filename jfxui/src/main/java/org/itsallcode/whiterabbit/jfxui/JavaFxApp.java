@@ -291,7 +291,7 @@ public class JavaFxApp extends Application
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
-        final Scene scene = new Scene(rootPane, 780, 910);
+        final Scene scene = new Scene(rootPane, 780, 800);
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.F5)
             {
