@@ -9,19 +9,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 
 public class DayRecord
 {
     private static final Logger LOG = LogManager.getLogger(DayRecord.class);
 
-    private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
-
+    private final ContractTermsService contractTerms;
     private final JsonDay day;
     private final MonthIndex month;
     private final DayRecord previousDay;
 
-    public DayRecord(JsonDay day, DayRecord previousDay, MonthIndex month)
+    public DayRecord(ContractTermsService contractTerms, JsonDay day, DayRecord previousDay, MonthIndex month)
     {
+        this.contractTerms = contractTerms;
         this.day = day;
         this.previousDay = previousDay;
         this.month = month;
@@ -29,32 +30,15 @@ public class DayRecord
 
     public Duration getMandatoryBreak()
     {
-        if (!isWorkingDay())
-        {
-            return Duration.ZERO;
-        }
-        final Duration workingTime = getRawWorkingTime();
-        if (workingTime.compareTo(Duration.ofHours(6)) > 0)
-        {
-            return BASIC_BREAK;
-        }
-        return Duration.ZERO;
+        return contractTerms.getMandatoryBreak(this);
     }
 
     public Duration getMandatoryWorkingTime()
     {
-        if (isDummyDay())
-        {
-            return Duration.ZERO;
-        }
-        if (isWorkingDay())
-        {
-            return Duration.ofHours(8);
-        }
-        return Duration.ZERO;
+        return contractTerms.getMandatoryWorkingTime(this);
     }
 
-    private Duration getRawWorkingTime()
+    public Duration getRawWorkingTime()
     {
         if (getBegin() == null && getEnd() == null)
         {
@@ -70,29 +54,17 @@ public class DayRecord
 
     public Duration getWorkingTime()
     {
-        return getRawWorkingTime() //
-                .minus(getMandatoryBreak()) //
-                .minus(getInterruption());
+        return contractTerms.getWorkingTime(this);
     }
 
     public Duration getOvertime()
     {
-        return getWorkingTime() //
-                .minus(getMandatoryWorkingTime());
+        return contractTerms.getOvertime(this);
     }
 
     public Duration getOverallOvertime()
     {
-        return getTotalOvertimeThisMonth().plus(getOvertimePreviousMonth());
-    }
-
-    private Duration getOvertimePreviousMonth()
-    {
-        if (month != null && month.getOvertimePreviousMonth() != null)
-        {
-            return month.getOvertimePreviousMonth();
-        }
-        return Duration.ZERO;
+        return contractTerms.getOverallOvertime(this);
     }
 
     public Duration getTotalOvertimeThisMonth()
@@ -101,7 +73,7 @@ public class DayRecord
                 .plus(getOvertime());
     }
 
-    private Duration getPreviousDayOvertime()
+    public Duration getPreviousDayOvertime()
     {
         return previousDay != null ? previousDay.getTotalOvertimeThisMonth() : Duration.ZERO;
     }
@@ -124,9 +96,16 @@ public class DayRecord
         return DayType.WORK;
     }
 
-    public boolean isWorkingDay()
+    private boolean isWeekend()
     {
-        return getType().isWorkDay();
+        switch (day.getDate().getDayOfWeek())
+        {
+        case SATURDAY:
+        case SUNDAY:
+            return true;
+        default:
+            return false;
+        }
     }
 
     public LocalTime getBegin()
@@ -162,18 +141,6 @@ public class DayRecord
     JsonDay getJsonDay()
     {
         return day;
-    }
-
-    private boolean isWeekend()
-    {
-        switch (day.getDate().getDayOfWeek())
-        {
-        case SATURDAY:
-        case SUNDAY:
-            return true;
-        default:
-            return false;
-        }
     }
 
     public String getComment()

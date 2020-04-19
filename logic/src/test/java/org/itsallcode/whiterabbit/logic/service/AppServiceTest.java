@@ -20,6 +20,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
@@ -324,7 +325,7 @@ class AppServiceTest
         when(clockMock.getCurrentDate()).thenReturn(day.getDate());
         when(clockMock.getCurrentTime()).thenReturn(now);
         when(storageMock.loadOrCreate(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
-        final DayRecord dayRecord = new DayRecord(day, null, monthIndexMock);
+        final DayRecord dayRecord = new DayRecord(new ContractTermsService(), day, null, monthIndexMock);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(dayRecord);
 
         appService.updateNow();

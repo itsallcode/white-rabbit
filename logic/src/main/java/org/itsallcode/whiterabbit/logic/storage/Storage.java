@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 
 public class Storage
 {
@@ -35,20 +36,23 @@ public class Storage
     private final Jsonb jsonb;
     private final DateToFileMapper dateToFileMapper;
 
-    private Storage(DateToFileMapper dateToFileMapper, Jsonb jsonb)
+    private final ContractTermsService contractTerms;
+
+    private Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms, Jsonb jsonb)
     {
         this.dateToFileMapper = dateToFileMapper;
+        this.contractTerms = contractTerms;
         this.jsonb = jsonb;
     }
 
     public Storage(DateToFileMapper dateToFileMapper)
     {
-        this(dateToFileMapper, JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
+        this(dateToFileMapper, new ContractTermsService(), JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
     }
 
     public Optional<MonthIndex> loadMonth(YearMonth date)
     {
-        return loadMonthRecord(date).map(MonthIndex::create);
+        return loadMonthRecord(date).map(month -> MonthIndex.create(contractTerms, month));
     }
 
     public MonthIndex loadOrCreate(final YearMonth yearMonth)
@@ -68,7 +72,7 @@ public class Storage
         month.setMonth(date.getMonth());
         month.setDays(new ArrayList<>());
         month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
-        return MonthIndex.create(month);
+        return MonthIndex.create(contractTerms, month);
     }
 
     public void storeMonth(MonthIndex month)
@@ -82,7 +86,7 @@ public class Storage
         for (final Path file : dateToFileMapper.getAllFiles().collect(toList()))
         {
             final JsonMonth jsonMonth = loadFromFile(file);
-            final MonthIndex month = MonthIndex.create(jsonMonth);
+            final MonthIndex month = MonthIndex.create(contractTerms, jsonMonth);
             months.add(month);
         }
 

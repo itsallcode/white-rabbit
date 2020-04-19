@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.junit.jupiter.api.Test;
 
 class DayRecordTest
@@ -331,7 +332,7 @@ class DayRecordTest
     void getJsonDayReturnsMonth()
     {
         final JsonDay jsonDay = new JsonDay();
-        final DayRecord day = new DayRecord(jsonDay, null, null);
+        final DayRecord day = new DayRecord(null, jsonDay, null, null);
         assertThat(day.getJsonDay()).isSameAs(jsonDay);
     }
 
@@ -342,7 +343,7 @@ class DayRecordTest
         jsonMonth.setMonth(date.getMonth());
         jsonMonth.setYear(date.getYear());
         jsonMonth.setOvertimePreviousMonth(overtimePreviousMonth);
-        return MonthIndex.create(jsonMonth);
+        return MonthIndex.create(new ContractTermsService(), jsonMonth);
     }
 
     private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
@@ -377,7 +378,7 @@ class DayRecordTest
 
     private void assertWorkingDay(LocalDate date, boolean expected)
     {
-        assertThat(createDay(date).isWorkingDay()).isEqualTo(expected);
+        assertThat(createDay(date).getType().isWorkDay()).isEqualTo(expected);
     }
 
     private void assertType(LocalDate date, DayType expected)
@@ -427,6 +428,6 @@ class DayRecordTest
         day.setType(type);
         day.setInterruption(interruption);
         day.setComment(null);
-        return new DayRecord(day, previousDay, month);
+        return new DayRecord(new ContractTermsService(), day, previousDay, month);
     }
 }

@@ -42,7 +42,7 @@ public class WorkingTimeService
         final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         final LocalTime now = clock.getCurrentTime();
-        if (day.isWorkingDay())
+        if (day.getType().isWorkDay())
         {
             boolean updated = false;
             if (shouldUpdateBegin(day, now))

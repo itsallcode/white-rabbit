@@ -100,7 +100,7 @@ class SingleInstanceServiceTest
         final SingleInstanceService service = create();
         try (var first = service.tryToRegisterInstance(callbackMock))
         {
-            assertThat(first.isOtherInstanceRunning()).isFalse();
+            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
             try (var remote = service.tryToRegisterInstance(callbackMock))
             {
                 assertOtherInstanceIsRunning(remote);
