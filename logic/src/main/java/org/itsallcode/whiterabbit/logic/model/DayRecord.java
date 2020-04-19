@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.model;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -135,7 +136,7 @@ public class DayRecord
 
     public void setBegin(LocalTime begin)
     {
-        day.setBegin(begin);
+        day.setBegin(Objects.requireNonNull(begin, "begin"));
     }
 
     public LocalTime getEnd()
@@ -145,7 +146,7 @@ public class DayRecord
 
     public void setEnd(LocalTime end)
     {
-        day.setEnd(end);
+        day.setEnd(Objects.requireNonNull(end, "end"));
     }
 
     public Duration getInterruption()
@@ -155,7 +156,7 @@ public class DayRecord
 
     public void setInterruption(Duration interruption)
     {
-        day.setInterruption(interruption);
+        day.setInterruption(Objects.requireNonNull(interruption, "interruption"));
     }
 
     JsonDay getJsonDay()
@@ -185,9 +186,9 @@ public class DayRecord
         day.setComment(comment);
     }
 
-    public void setType(DayType newValue)
+    public void setType(DayType type)
     {
-        day.setType(newValue);
+        day.setType(Objects.requireNonNull(type, "type"));
     }
 
     public MonthIndex getMonth()
