@@ -396,6 +396,26 @@ class DayRecordTest
         assertThat(day.getJsonDay()).isSameAs(jsonDay);
     }
 
+    @Test
+    void getCustomWorkingTimeReturnsEmptyOptionalByDefault()
+    {
+        final JsonDay jsonDay = new JsonDay();
+        jsonDay.setWorkingHours(null);
+
+        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        assertThat(day.getCustomWorkingTime()).isEmpty();
+    }
+
+    @Test
+    void getCustomWorkingTimeReturnsRealValue()
+    {
+        final JsonDay jsonDay = new JsonDay();
+        jsonDay.setWorkingHours(Duration.ofHours(5));
+
+        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
+    }
+
     private MonthIndex month(LocalDate date, Duration overtimePreviousMonth, JsonDay... days)
     {
         final JsonMonth jsonMonth = new JsonMonth();

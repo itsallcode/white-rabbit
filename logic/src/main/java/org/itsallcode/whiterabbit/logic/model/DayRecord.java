@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +37,11 @@ public class DayRecord
     public Duration getMandatoryWorkingTime()
     {
         return contractTerms.getMandatoryWorkingTime(this);
+    }
+
+    public Optional<Duration> getCustomWorkingTime()
+    {
+        return Optional.ofNullable(day.getWorkingHours());
     }
 
     public Duration getRawWorkingTime()

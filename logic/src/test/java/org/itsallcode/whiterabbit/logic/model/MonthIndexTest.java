@@ -7,7 +7,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.YearMonth;
 
+import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
@@ -87,6 +89,71 @@ class MonthIndexTest
         assertThat(jsonMonth.getOvertimePreviousMonth()).isEqualTo(Duration.ofHours(2));
     }
 
+    @Test
+    void gettingNewDayReturnsEmptyDay()
+    {
+        final LocalDate date = LocalDate.of(2020, 5, 4);
+        final MonthIndex monthIndex = create(TestingConfig.builder().build(), jsonMonth(YearMonth.from(date), null));
+
+        final DayRecord day = monthIndex.getDay(date);
+
+        assertThat(day.getDate()).isEqualTo(date);
+        assertThat(day.getBegin()).isNull();
+        assertThat(day.getEnd()).isNull();
+        assertThat(day.getCustomWorkingTime()).isEmpty();
+        assertThat(day.getComment()).isNull();
+        assertThat(day.getInterruption()).isZero();
+        assertThat(day.getMandatoryBreak()).isZero();
+        assertThat(day.getMandatoryWorkingTime()).isZero();
+        assertThat(day.getOverallOvertime()).isZero();
+        assertThat(day.getOvertime()).isZero();
+        assertThat(day.getPreviousDayOvertime()).isZero();
+        assertThat(day.getRawWorkingTime()).isZero();
+        assertThat(day.getTotalOvertimeThisMonth()).isZero();
+        assertThat(day.getType()).isEqualTo(DayType.WORK);
+        assertThat(day.getWorkingTime()).isZero();
+        assertThat(day.getMonth()).isSameAs(monthIndex);
+    }
+
+    @Test
+    void gettingDaysDoesNotAddThemToJson()
+    {
+        final LocalDate date = LocalDate.of(2020, 5, 4);
+        final JsonMonth jsonMonth = jsonMonth(YearMonth.from(date), null);
+        final MonthIndex monthIndex = create(TestingConfig.builder().build(), jsonMonth);
+
+        final DayRecord day = monthIndex.getDay(date);
+
+        assertThat(day.getDate()).isEqualTo(date);
+
+        assertThat(jsonMonth.getDays()).isEmpty();
+    }
+
+    @Test
+    void newDaysHaveNoCustomWorkingTime()
+    {
+        final LocalDate date = LocalDate.of(2020, 5, 4);
+        final MonthIndex monthIndex = create(TestingConfig.builder().withCurrentHoursPerDay(null).build(),
+                jsonMonth(YearMonth.from(date), null));
+
+        final DayRecord day = monthIndex.getDay(date);
+
+        assertThat(day.getCustomWorkingTime()).isEmpty();
+    }
+
+    @Test
+    void newDaysHaveCustomWorkingTimeWhenCurrentHoursPerDayAreConfigured()
+    {
+        final LocalDate date = LocalDate.of(2020, 5, 4);
+        final MonthIndex monthIndex = create(
+                TestingConfig.builder().withCurrentHoursPerDay(Duration.ofHours(5)).build(),
+                jsonMonth(YearMonth.from(date), null));
+
+        final DayRecord day = monthIndex.getDay(date);
+
+        assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
+    }
+
     private Duration calculateTotalOvertime(JsonDay... days)
     {
         return calculateTotalOvertime(null, days);
@@ -99,9 +166,14 @@ class MonthIndexTest
 
     private JsonMonth jsonMonth(Duration overtimePreviousMonth, JsonDay... days)
     {
+        return jsonMonth(YearMonth.of(2019, Month.MAY), overtimePreviousMonth, days);
+    }
+
+    private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth, JsonDay... days)
+    {
         final JsonMonth month = new JsonMonth();
-        month.setYear(2019);
-        month.setMonth(Month.MAY);
+        month.setYear(yearMonth.getYear());
+        month.setMonth(yearMonth.getMonth());
         month.setDays(asList(days));
         month.setOvertimePreviousMonth(overtimePreviousMonth != null ? overtimePreviousMonth : Duration.ZERO);
         return month;
@@ -122,6 +194,11 @@ class MonthIndexTest
 
     private MonthIndex create(JsonMonth record)
     {
-        return MonthIndex.create(new ContractTermsService(TestingConfig.builder().build()), record);
+        return create(TestingConfig.builder().build(), record);
+    }
+
+    private MonthIndex create(Config config, JsonMonth record)
+    {
+        return MonthIndex.create(new ContractTermsService(config), record);
     }
 }

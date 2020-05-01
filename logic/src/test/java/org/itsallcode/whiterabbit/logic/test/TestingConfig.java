@@ -1,7 +1,9 @@
 package org.itsallcode.whiterabbit.logic.test;
 
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.Config;
 
@@ -9,11 +11,13 @@ public class TestingConfig implements Config
 {
     private final Path dataDir;
     private final Locale locale;
+    private final Duration currentHoursPerDay;
 
     private TestingConfig(Builder builder)
     {
         this.dataDir = builder.dataDir;
         this.locale = builder.locale;
+        this.currentHoursPerDay = builder.currentHoursPerDay;
     }
 
     @Override
@@ -28,6 +32,12 @@ public class TestingConfig implements Config
         return locale;
     }
 
+    @Override
+    public Optional<Duration> getCurrentHoursPerDay()
+    {
+        return Optional.ofNullable(currentHoursPerDay);
+    }
+
     public static Builder builder()
     {
         return new Builder();
@@ -36,7 +46,8 @@ public class TestingConfig implements Config
     public static final class Builder
     {
         private Path dataDir;
-        private Locale locale = Locale.ENGLISH;
+        private Locale locale;
+        private Duration currentHoursPerDay;
 
         private Builder()
         {
@@ -51,6 +62,12 @@ public class TestingConfig implements Config
         public Builder withLocale(Locale locale)
         {
             this.locale = locale;
+            return this;
+        }
+
+        public Builder withCurrentHoursPerDay(Duration currentHoursPerDay)
+        {
+            this.currentHoursPerDay = currentHoursPerDay;
             return this;
         }
 

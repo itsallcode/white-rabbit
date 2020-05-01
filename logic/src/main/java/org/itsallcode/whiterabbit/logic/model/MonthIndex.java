@@ -32,9 +32,9 @@ public class MonthIndex
 
     public static MonthIndex create(ContractTermsService contractTerms, JsonMonth record)
     {
-        final Map<LocalDate, DayRecord> days = new HashMap<>();
         final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
                 .collect(toMap(JsonDay::getDate, Function.identity()));
+        final Map<LocalDate, DayRecord> days = new HashMap<>();
         final MonthIndex monthIndex = new MonthIndex(record, days);
 
         final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
@@ -43,7 +43,7 @@ public class MonthIndex
         for (int day = 1; day <= yearMonth.lengthOfMonth(); day++)
         {
             final LocalDate date = yearMonth.atDay(day);
-            final JsonDay jsonDay = jsonDays.computeIfAbsent(date, MonthIndex::createDummyDay);
+            final JsonDay jsonDay = jsonDays.computeIfAbsent(date, d -> createDummyDay(d, contractTerms));
             final DayRecord dayRecord = new DayRecord(contractTerms, jsonDay, previousDay, monthIndex);
             days.put(dayRecord.getDate(), dayRecord);
             previousDay = dayRecord;
@@ -52,10 +52,14 @@ public class MonthIndex
         return monthIndex;
     }
 
-    private static JsonDay createDummyDay(LocalDate date)
+    private static JsonDay createDummyDay(LocalDate date, ContractTermsService contractTerms)
     {
         final JsonDay day = new JsonDay();
         day.setDate(date);
+        if (!contractTerms.getContractedWorkingTimePerDay().equals(contractTerms.getCurrentWorkingTimePerDay()))
+        {
+            day.setWorkingHours(contractTerms.getCurrentWorkingTimePerDay());
+        }
         return day;
     }
 

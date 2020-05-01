@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
-@JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "comment" })
+@JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "workingHours", "comment" })
 public class JsonDay
 {
     @JsonbProperty("date")
@@ -20,6 +20,8 @@ public class JsonDay
     private LocalTime end;
     @JsonbProperty("interruption")
     private Duration interruption;
+    @JsonbProperty("workingHours")
+    private Duration workingHours;
     @JsonbProperty("comment")
     private String comment;
 
@@ -48,6 +50,11 @@ public class JsonDay
         return interruption;
     }
 
+    public Duration getWorkingHours()
+    {
+        return workingHours;
+    }
+
     public String getComment()
     {
         return comment;
@@ -73,6 +80,11 @@ public class JsonDay
         this.end = end;
     }
 
+    public void setWorkingHours(Duration workingHours)
+    {
+        this.workingHours = workingHours;
+    }
+
     public void setComment(String comment)
     {
         this.comment = comment;
@@ -87,6 +99,6 @@ public class JsonDay
     public String toString()
     {
         return "JsonDay [date=" + date + ", type=" + type + ", begin=" + begin + ", end=" + end + ", interruption="
-                + interruption + ", comment=" + comment + "]";
+                + interruption + ", workingHours=" + workingHours + ", comment=" + comment + "]";
     }
 }

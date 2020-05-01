@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
@@ -50,6 +51,12 @@ class ConfigFile implements Config
     public Locale getLocale()
     {
         return getOptionalValue("locale").map(Locale::forLanguageTag).orElseGet(Locale::getDefault);
+    }
+
+    @Override
+    public Optional<Duration> getCurrentHoursPerDay()
+    {
+        return getOptionalValue("current_hours_per_day").map(Integer::parseInt).map(Duration::ofHours);
     }
 
     private String getMandatoryValue(String param)

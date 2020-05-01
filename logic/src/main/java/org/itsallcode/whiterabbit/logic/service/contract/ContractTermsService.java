@@ -11,9 +11,11 @@ public class ContractTermsService
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
     private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
+    private final Config config;
+
     public ContractTermsService(Config config)
     {
-
+        this.config = config;
     }
 
     public Duration getMandatoryBreak(DayRecord day)
@@ -30,6 +32,16 @@ public class ContractTermsService
         return Duration.ZERO;
     }
 
+    public Duration getContractedWorkingTimePerDay()
+    {
+        return CONTRACTED_HOURS_PER_DAY;
+    }
+
+    public Duration getCurrentWorkingTimePerDay()
+    {
+        return config.getCurrentHoursPerDay().orElse(getContractedWorkingTimePerDay());
+    }
+
     public Duration getMandatoryWorkingTime(DayRecord day)
     {
         if (day.isDummyDay())
@@ -38,7 +50,7 @@ public class ContractTermsService
         }
         if (day.getType().isWorkDay())
         {
-            return CONTRACTED_HOURS_PER_DAY;
+            return day.getCustomWorkingTime().orElse(getContractedWorkingTimePerDay());
         }
         return Duration.ZERO;
     }

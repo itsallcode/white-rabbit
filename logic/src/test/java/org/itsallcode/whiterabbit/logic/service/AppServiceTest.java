@@ -305,7 +305,6 @@ class AppServiceTest
     {
         assertThatThrownBy(() -> appService.start()).isInstanceOf(IllegalStateException.class)
                 .hasMessage("Single instance not registered. Call registerSingleInstance() before starting.");
-
     }
 
     @Test
