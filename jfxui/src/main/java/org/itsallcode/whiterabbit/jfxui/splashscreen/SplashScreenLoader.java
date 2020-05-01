@@ -1,5 +1,9 @@
 package org.itsallcode.whiterabbit.jfxui.splashscreen;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
@@ -34,8 +38,7 @@ public class SplashScreenLoader extends Preloader
 
     public Scene createScene()
     {
-        final Image image = new Image(this.getClass().getResourceAsStream("/icon.png"));
-        final ImageView splashScreenImage = new ImageView(image);
+        final ImageView splashScreenImage = new ImageView(loadImage("/icon.png"));
         splashScreenImage.setX(0);
         splashScreenImage.setY(0);
         splashScreenImage.setFitHeight(300);
@@ -43,6 +46,18 @@ public class SplashScreenLoader extends Preloader
         splashScreenImage.setPreserveRatio(true);
         final Group root = new Group(splashScreenImage);
         return new Scene(root, 300, 300);
+    }
+
+    private Image loadImage(String resourceName)
+    {
+        try (InputStream iconStream = getClass().getResourceAsStream(resourceName))
+        {
+            return new Image(iconStream);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error loading icon from resource '" + resourceName + "'", e);
+        }
     }
 
     @Override
