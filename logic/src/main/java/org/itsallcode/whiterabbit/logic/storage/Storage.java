@@ -45,9 +45,9 @@ public class Storage
         this.jsonb = jsonb;
     }
 
-    public Storage(DateToFileMapper dateToFileMapper)
+    public Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms)
     {
-        this(dateToFileMapper, new ContractTermsService(), JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
+        this(dateToFileMapper, contractTerms, JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
     }
 
     public Optional<MonthIndex> loadMonth(YearMonth date)

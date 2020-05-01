@@ -8,10 +8,12 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.Test;
 
 class DayRecordTest
@@ -313,7 +315,7 @@ class DayRecordTest
     {
         final JsonDay day1 = new JsonDay();
         day1.setInterruption(Duration.ofHours(1));
-        final DayRecord day = new DayRecord(new ContractTermsService(), day1, null, null);
+        final DayRecord day = dayRecord(day1, null, null);
 
         day.setInterruption(Duration.ZERO);
 
@@ -326,7 +328,7 @@ class DayRecordTest
     {
         final JsonDay day1 = new JsonDay();
         day1.setComment("comment");
-        final DayRecord day = new DayRecord(new ContractTermsService(), day1, null, null);
+        final DayRecord day = dayRecord(day1, null, null);
 
         day.setComment("");
 
@@ -338,7 +340,7 @@ class DayRecordTest
     void setCommentToValueSetsCommentForJsonRecord()
     {
         final JsonDay day1 = new JsonDay();
-        final DayRecord day = new DayRecord(new ContractTermsService(), day1, null, null);
+        final DayRecord day = dayRecord(day1, null, null);
 
         day.setComment("comment");
 
@@ -401,7 +403,7 @@ class DayRecordTest
         jsonMonth.setMonth(date.getMonth());
         jsonMonth.setYear(date.getYear());
         jsonMonth.setOvertimePreviousMonth(overtimePreviousMonth);
-        return MonthIndex.create(new ContractTermsService(), jsonMonth);
+        return MonthIndex.create(contractTerms(), jsonMonth);
     }
 
     private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
@@ -492,6 +494,18 @@ class DayRecordTest
         day.setType(type);
         day.setInterruption(interruption);
         day.setComment(null);
-        return new DayRecord(new ContractTermsService(), day, previousDay, month);
+        return dayRecord(day, previousDay, month);
+    }
+
+    private DayRecord dayRecord(JsonDay day, DayRecord previousDay, MonthIndex month)
+    {
+        final ContractTermsService contractTerms = contractTerms();
+        return new DayRecord(contractTerms, day, previousDay, month);
+    }
+
+    private ContractTermsService contractTerms()
+    {
+        final Config config = TestingConfig.builder().build();
+        return new ContractTermsService(config);
     }
 }

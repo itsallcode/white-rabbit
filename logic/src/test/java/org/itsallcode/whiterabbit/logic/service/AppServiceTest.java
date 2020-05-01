@@ -26,6 +26,7 @@ import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCa
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
+import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -325,7 +326,8 @@ class AppServiceTest
         when(clockMock.getCurrentDate()).thenReturn(day.getDate());
         when(clockMock.getCurrentTime()).thenReturn(now);
         when(storageMock.loadOrCreate(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
-        final DayRecord dayRecord = new DayRecord(new ContractTermsService(), day, null, monthIndexMock);
+        final DayRecord dayRecord = new DayRecord(new ContractTermsService(TestingConfig.builder().build()), day, null,
+                monthIndexMock);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(dayRecord);
 
         appService.updateNow();

@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic.service.contract;
 
 import java.time.Duration;
 
+import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public class ContractTermsService
@@ -9,6 +10,11 @@ public class ContractTermsService
     private static final Duration CONTRACTED_HOURS_PER_DAY = Duration.ofHours(8);
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
     private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
+
+    public ContractTermsService(Config config)
+    {
+
+    }
 
     public Duration getMandatoryBreak(DayRecord day)
     {

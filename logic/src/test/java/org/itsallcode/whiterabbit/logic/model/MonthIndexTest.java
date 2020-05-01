@@ -12,6 +12,7 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.Test;
 
 class MonthIndexTest
@@ -66,7 +67,7 @@ class MonthIndexTest
     void testSetOvertimePreviousMonthUpdatesJsonRecord()
     {
         final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
-        final MonthIndex monthIndex = MonthIndex.create(new ContractTermsService(), jsonMonth);
+        final MonthIndex monthIndex = create(jsonMonth);
         monthIndex.setOvertimePreviousMonth(Duration.ofHours(2));
 
         assertThat(jsonMonth.getOvertimePreviousMonth()).isEqualTo(Duration.ofHours(2));
@@ -76,7 +77,7 @@ class MonthIndexTest
     void testSetOvertimePreviousMonthUpdatesTotalOvertime()
     {
         final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
-        final MonthIndex monthIndex = MonthIndex.create(new ContractTermsService(), jsonMonth);
+        final MonthIndex monthIndex = create(jsonMonth);
 
         assertThat(monthIndex.getTotalOvertime()).isEqualTo(Duration.ofHours(1));
 
@@ -93,7 +94,7 @@ class MonthIndexTest
 
     private Duration calculateTotalOvertime(Duration overtimePreviousMonth, JsonDay... days)
     {
-        return MonthIndex.create(new ContractTermsService(), jsonMonth(overtimePreviousMonth, days)).getTotalOvertime();
+        return create(jsonMonth(overtimePreviousMonth, days)).getTotalOvertime();
     }
 
     private JsonMonth jsonMonth(Duration overtimePreviousMonth, JsonDay... days)
@@ -117,5 +118,10 @@ class MonthIndexTest
         day.setEnd(end);
         day.setType(DayType.WORK);
         return day;
+    }
+
+    private MonthIndex create(JsonMonth record)
+    {
+        return MonthIndex.create(new ContractTermsService(TestingConfig.builder().build()), record);
     }
 }

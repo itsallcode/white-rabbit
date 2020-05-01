@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
@@ -60,7 +61,8 @@ public class AppService implements Closeable
     public static AppService create(final Config config, final FormatterService formatterService)
     {
         final SingleInstanceService singleInstanceService = new SingleInstanceService();
-        final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()));
+        final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()),
+                new ContractTermsService(config));
         final ClockService clockService = new ClockService();
         final SchedulingService schedulingService = new SchedulingService(clockService);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
