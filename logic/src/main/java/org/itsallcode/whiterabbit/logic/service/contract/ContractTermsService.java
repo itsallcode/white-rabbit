@@ -16,7 +16,8 @@ public class ContractTermsService
         {
             return Duration.ZERO;
         }
-        if (day.getRawWorkingTime().compareTo(MIN_WORKING_TIME_WITHOUT_BREAK) > 0)
+        Duration workingTime = day.getRawWorkingTime().minus(day.getInterruption());
+        if (workingTime.compareTo(MIN_WORKING_TIME_WITHOUT_BREAK) > 0)
         {
             return BASIC_BREAK;
         }

@@ -25,7 +25,7 @@ class DurationStringConverter extends StringConverter<Duration>
     @Override
     public Duration fromString(String string)
     {
-        if (string.isBlank())
+        if (string.isBlank() || string.trim().equals("0"))
         {
             return Duration.ZERO;
         }

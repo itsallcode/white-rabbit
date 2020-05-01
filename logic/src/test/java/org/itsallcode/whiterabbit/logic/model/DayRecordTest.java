@@ -284,8 +284,45 @@ class DayRecordTest
     void setInterruptionFailsForNullValue()
     {
         final DayRecord day = createDay(LocalDate.of(2020, 4, 22));
-        assertThatThrownBy(() -> day.setInterruption(null)).isInstanceOf(NullPointerException.class)
-                .hasMessage("interruption");
+        assertThatThrownBy(() -> day.setInterruption(null)).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void setInterruptionToZeroUsesNullForJsonRecord()
+    {
+        final JsonDay day1 = new JsonDay();
+        day1.setInterruption(Duration.ofHours(1));
+        final DayRecord day = new DayRecord(new ContractTermsService(), day1, null, null);
+
+        day.setInterruption(Duration.ZERO);
+
+        assertThat(day.getInterruption()).isEqualTo(Duration.ZERO);
+        assertThat(day1.getInterruption()).isNull();
+    }
+
+    @Test
+    void setCommentToEmptyStringUsesNullForJsonRecord()
+    {
+        final JsonDay day1 = new JsonDay();
+        day1.setComment("comment");
+        final DayRecord day = new DayRecord(new ContractTermsService(), day1, null, null);
+
+        day.setComment("");
+
+        assertThat(day.getComment()).isNull();
+        assertThat(day1.getComment()).isNull();
+    }
+
+    @Test
+    void setCommentToValueSetsCommentForJsonRecord()
+    {
+        final JsonDay day1 = new JsonDay();
+        final DayRecord day = new DayRecord(new ContractTermsService(), day1, null, null);
+
+        day.setComment("comment");
+
+        assertThat(day.getComment()).isEqualTo("comment");
+        assertThat(day1.getComment()).isEqualTo("comment");
     }
 
     @Test

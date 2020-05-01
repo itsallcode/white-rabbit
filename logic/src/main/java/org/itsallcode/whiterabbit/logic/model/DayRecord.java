@@ -135,7 +135,7 @@ public class DayRecord
 
     public void setInterruption(Duration interruption)
     {
-        day.setInterruption(Objects.requireNonNull(interruption, "interruption"));
+        day.setInterruption(interruption.isZero() ? null : interruption);
     }
 
     JsonDay getJsonDay()
@@ -150,7 +150,7 @@ public class DayRecord
 
     public void setComment(String comment)
     {
-        day.setComment(comment);
+        day.setComment(comment.isEmpty() ? null : comment);
     }
 
     public void setType(DayType type)
