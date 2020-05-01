@@ -27,6 +27,7 @@ A time recording tool
     * Program shutdown
     * Computer sleeps for the rest of the day
   * Interruptions detected when computer sleeps for more than 2 minutes
+* Supports reduced working hours / short-time work
 * Keeps track of the overtime in previous months to speed up reports
 * Generates vacation report (no UI yet, written to standard out)
 * Detects when a second instance is started to avoid data corruption
@@ -110,7 +111,14 @@ This is generated automatically. The Java FX user interface allows you to edit i
             "date": "2019-03-09",
             "type": "WEEKEND",
             "comment": "Saturday and Sunday automatically detected, no need to add them here."
-        }
+        },
+        {
+            "date": "2019-03-11",
+            "begin": "08:00:00",
+            "end": "15:00:00",
+            "workingHours": "PT6H",
+            "comment": "Working short time, 6 hours per day"
+        },
     ]
 }
 ```
@@ -120,6 +128,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
 * Won't work on weekends. To force working on a weekend, manually create an entry with `"type" = "WORK"`.
 * Public holidays are not detected automatically. Set the day type to `HOLIDAY` manually.
 * If you change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months` in the Java FX UI.
+* When you modify config file `time.properties` you need to restart WhiteRabbit manually.
 
 ## Usage
 
@@ -135,9 +144,12 @@ Create file `time.properties` in the current working directory with the followin
 data = <path-to-data-dir> # e.g.: ../time-recording-data/
 ```
 
+Restart WhiteRabbit after changing `time.properties`.
+
 #### Optional configuration settings
 
 * `locale`: format of date and time values, e.g. `de` or `en`. Default: system locale.
+* `current_working_time_per_day`: custom working time per day differing from the default of 8 hours. Format: see [Duration.parse()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)), e.g. `PT5H` for 5 hours or `PT5H30M` for 5 hours and 30 minutes. This setting will only affect the future.
 
 ### Clone, configure and build
 
