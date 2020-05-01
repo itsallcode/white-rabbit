@@ -56,7 +56,7 @@ class ConfigFile implements Config
     @Override
     public Optional<Duration> getCurrentHoursPerDay()
     {
-        return getOptionalValue("current_hours_per_day").map(Integer::parseInt).map(Duration::ofHours);
+        return getOptionalValue("current_working_time_per_day").map(Duration::parse);
     }
 
     private String getMandatoryValue(String param)
