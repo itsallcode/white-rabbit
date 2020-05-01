@@ -7,6 +7,9 @@ import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotificati
 import javafx.application.Preloader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -49,7 +52,7 @@ public class SplashScreenLoader extends Preloader
         {
             final ProgressPreloaderNotification progressNotification = (ProgressPreloaderNotification) notification;
             LOG.debug("Preloader application notification: {}", progressNotification.getNotificationType());
-            if (progressNotification.getNotificationType() == Type.AFTER_START)
+            if (progressNotification.getNotificationType() == Type.STARTUP_FINISHED)
             {
                 splashScreen.hide();
             }
@@ -59,5 +62,17 @@ public class SplashScreenLoader extends Preloader
             throw new IllegalStateException(
                     "Got unexpected notification of type " + notification.getClass() + ": " + notification);
         }
+    }
+
+    @Override
+    public boolean handleErrorNotification(ErrorNotification info)
+    {
+        splashScreen.hide();
+        final String location = info.getLocation() != null ? info.getLocation() + "\n" : "";
+        final String message = "Error during initialization: " + location + info.getDetails() + "\n" + info.getCause();
+        LOG.error(message, info.getCause());
+        final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+        alert.showAndWait();
+        return false;
     }
 }

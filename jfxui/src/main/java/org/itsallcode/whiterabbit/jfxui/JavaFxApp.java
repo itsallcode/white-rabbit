@@ -83,18 +83,15 @@ public class JavaFxApp extends Application
     @Override
     public void init() throws Exception
     {
-        notifyPreloaderProgress(Type.BEFORE_INIT);
-        Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> showErrorDialog(exception));
         try
         {
             doInitialize();
         }
         catch (final Exception e)
         {
-            LOG.error("Exception during initialization: " + e.getMessage(), e);
-            Platform.exit();
+            stop();
+            throw e;
         }
-        notifyPreloaderProgress(Type.AFTER_INIT);
     }
 
     private void notifyPreloaderProgress(Type notificationType)
@@ -104,7 +101,6 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-
         final Config config = readConfig();
         this.locale = config.getLocale();
         this.formatter = new FormatterService(locale);
@@ -166,20 +162,10 @@ public class JavaFxApp extends Application
     @Override
     public void start(Stage primaryStage)
     {
-        notifyPreloaderProgress(Type.BEFORE_START);
         this.primaryStage = primaryStage;
         LOG.info("Starting UI");
-        try
-        {
-            doStart(primaryStage);
-        }
-        catch (final Exception e)
-        {
-            LOG.error("Exception during start: " + e.getMessage(), e);
-            showErrorDialog(e);
-            Platform.exit();
-        }
-        notifyPreloaderProgress(Type.AFTER_START);
+        doStart(primaryStage);
+        notifyPreloaderProgress(Type.STARTUP_FINISHED);
     }
 
     private void doStart(Stage primaryStage)
@@ -208,9 +194,16 @@ public class JavaFxApp extends Application
     public void stop()
     {
         LOG.info("Stopping application");
-        tray.removeTrayIcon();
-        currentTimeProperty.cancel();
+        if (tray != null)
+        {
+            tray.removeTrayIcon();
+        }
+        if (currentTimeProperty != null)
+        {
+            currentTimeProperty.cancel();
+        }
         appService.close();
+        Platform.exit();
     }
 
     private void startAppService()

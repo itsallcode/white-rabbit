@@ -8,7 +8,7 @@ public class ProgressPreloaderNotification implements PreloaderNotification
 {
     public enum Type
     {
-        BEFORE_INIT, BEFORE_START, AFTER_START, AFTER_INIT
+        STARTUP_FINISHED
     }
 
     private final Type notificationType;

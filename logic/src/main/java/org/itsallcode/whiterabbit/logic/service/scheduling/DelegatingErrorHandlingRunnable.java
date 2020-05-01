@@ -4,7 +4,6 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 public class DelegatingErrorHandlingRunnable implements Runnable
 {
-
     private final Runnable delegate;
 
     private final ErrorHandler errorHandler;

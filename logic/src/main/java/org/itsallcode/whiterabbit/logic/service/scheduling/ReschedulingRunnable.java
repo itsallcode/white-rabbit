@@ -56,7 +56,10 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
             {
                 LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime, delay);
             }
-            this.currentFuture = this.executorService.schedule(this, delay.toMillis(), TimeUnit.MILLISECONDS);
+            if (!executorService.isShutdown())
+            {
+                this.currentFuture = this.executorService.schedule(this, delay.toMillis(), TimeUnit.MILLISECONDS);
+            }
             return this;
         }
     }
