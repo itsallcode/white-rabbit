@@ -81,9 +81,30 @@ class DayRecordTest
     }
 
     @Test
-    void testWorkingTimeThrowsExceptionForMissingBeginTime()
+    void testWorkingTimeDoesNotThrowExceptionForMissingBeginTime()
     {
         assertMandatoryBreak(LocalDate.of(2018, 10, 1), null, LocalTime.of(16, 0), Duration.ZERO);
+    }
+
+    @Test
+    void testMandatoryBreakConsidersZeroInterruption()
+    {
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ZERO,
+                Duration.ofMinutes(45));
+    }
+
+    @Test
+    void testMandatoryBreakConsidersNonZeroInterruption()
+    {
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofHours(1),
+                Duration.ofMinutes(45));
+    }
+
+    @Test
+    void testMandatoryBreakConsidersInterruptionLessThan6hours()
+    {
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofHours(3),
+                Duration.ZERO);
     }
 
     @Test
@@ -391,7 +412,13 @@ class DayRecordTest
 
     private void assertMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration expectedDuration)
     {
-        assertThat(getMandatoryBreak(date, begin, end)).as("mandatory break").isEqualTo(expectedDuration);
+        assertMandatoryBreak(date, begin, end, Duration.ZERO, expectedDuration);
+    }
+
+    private void assertMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration interruption,
+            Duration expectedDuration)
+    {
+        assertThat(getMandatoryBreak(date, begin, end, interruption)).as("mandatory break").isEqualTo(expectedDuration);
     }
 
     private void assertMandatoryWorkingTime(LocalDate date, LocalTime begin, LocalTime end,
@@ -407,9 +434,9 @@ class DayRecordTest
         return day.getMandatoryWorkingTime();
     }
 
-    private Duration getMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end)
+    private Duration getMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration interruption)
     {
-        final DayRecord day = createDay(date, begin, end, null, null);
+        final DayRecord day = createDay(date, begin, end, null, interruption);
         return day.getMandatoryBreak();
     }
 

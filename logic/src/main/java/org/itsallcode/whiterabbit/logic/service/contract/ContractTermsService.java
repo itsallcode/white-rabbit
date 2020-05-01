@@ -6,7 +6,7 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public class ContractTermsService
 {
-    private static final Duration WORKING_TIME_PER_DAY = Duration.ofHours(8);
+    private static final Duration CONTRACTED_HOURS_PER_DAY = Duration.ofHours(8);
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
     private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
@@ -16,7 +16,7 @@ public class ContractTermsService
         {
             return Duration.ZERO;
         }
-        Duration workingTime = day.getRawWorkingTime().minus(day.getInterruption());
+        final Duration workingTime = day.getRawWorkingTime().minus(day.getInterruption());
         if (workingTime.compareTo(MIN_WORKING_TIME_WITHOUT_BREAK) > 0)
         {
             return BASIC_BREAK;
@@ -32,7 +32,7 @@ public class ContractTermsService
         }
         if (day.getType().isWorkDay())
         {
-            return WORKING_TIME_PER_DAY;
+            return CONTRACTED_HOURS_PER_DAY;
         }
         return Duration.ZERO;
     }
