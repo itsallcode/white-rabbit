@@ -5,7 +5,6 @@ import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
@@ -36,10 +35,11 @@ public class SingleInstanceService
             final Optional<ServerSocket> serverSocket = bindServerSocket();
             if (serverSocket.isEmpty())
             {
-                return RegistrationResult.of(connectToOtherInstance());
+                final ClientConnection clientConnection = ClientConnection.connect(createLocalhostAddress(), port);
+                return RegistrationResult.of(clientConnection);
             }
 
-            final Server server = new Server(serverSocket.get(), callback);
+            final SingleInstanceServer server = new SingleInstanceServer(serverSocket.get(), callback);
             server.start();
 
             LOG.info("Opened server socket to {}", serverSocket.get().getLocalSocketAddress());
@@ -82,21 +82,6 @@ public class SingleInstanceService
         catch (final UnknownHostException e)
         {
             throw new UncheckedIOException(e);
-        }
-    }
-
-    private ClientConnection connectToOtherInstance()
-    {
-        final InetAddress address = createLocalhostAddress();
-        try
-        {
-            LOG.info("Creating client connection to server {}", address);
-            final Socket socket = new Socket(address, port);
-            return new ClientConnection(socket);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error connectiong to " + address, e);
         }
     }
 }

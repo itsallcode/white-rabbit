@@ -5,21 +5,36 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ClientConnection implements AutoCloseable
+class ClientConnection implements AutoCloseable
 {
     private static final Logger LOG = LogManager.getLogger(ClientConnection.class);
 
     private final Socket clientSocket;
 
-    public ClientConnection(Socket clientSocket)
+    private ClientConnection(Socket clientSocket)
     {
         this.clientSocket = clientSocket;
+    }
+
+    static ClientConnection connect(InetAddress address, int port)
+    {
+        try
+        {
+            LOG.info("Creating client connection to server {}", address);
+            final Socket socket = new Socket(address, port);
+            return new ClientConnection(socket);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error connectiong to " + address, e);
+        }
     }
 
     public void sendMessage(String message)

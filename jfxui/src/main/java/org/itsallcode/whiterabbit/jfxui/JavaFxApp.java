@@ -243,54 +243,6 @@ public class JavaFxApp extends Application
         new VacationReportViewer(vacationReport).show();
     }
 
-    private void showErrorDialog(Throwable e)
-    {
-        final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
-        LOG.error(message, e);
-        showErrorDialog(message);
-    }
-
-    private void showErrorDialog(final String message)
-    {
-        JavaFxUtil.runOnFxApplicationThread(() -> {
-            final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
-            alert.show();
-        });
-    }
-
-    private boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption, Duration interruption)
-    {
-        return JavaFxUtil.runOnFxApplicationThread(() -> {
-            LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
-                    interruption);
-            final Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Add automatic interruption?");
-            alert.setHeaderText(
-                    "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
-            final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
-            final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
-            final ButtonType stopWorkForToday = new ButtonType("Stop work for today", ButtonData.FINISH);
-            alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
-            final Optional<ButtonType> selectedButton = alert.showAndWait();
-
-            LOG.info("User clicked button {}", selectedButton);
-
-            if (isButton(selectedButton, ButtonData.FINISH) && !stoppedWorkingForToday.get())
-            {
-                appService.toggleStopWorkForToday();
-                return false;
-            }
-            return isButton(selectedButton, ButtonData.YES);
-        });
-    }
-
-    private boolean isButton(Optional<ButtonType> button, ButtonData data)
-    {
-        return button.map(ButtonType::getButtonData) //
-                .filter(d -> d == data) //
-                .isPresent();
-    }
-
     private void createUi()
     {
         LOG.debug("Creating user interface");
@@ -443,7 +395,40 @@ public class JavaFxApp extends Application
         @Override
         public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
         {
-            return showAutomaticInterruptionDialog(startOfInterruption, interruption);
+            return JavaFxUtil.runOnFxApplicationThread(() -> {
+                return showAutomaticInterruptionDialog(startOfInterruption, interruption);
+            });
+        }
+
+        private Boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption, Duration interruption)
+        {
+            LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
+                    interruption);
+            final Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Add automatic interruption?");
+            alert.setHeaderText("An interruption of " + interruption + " was detected beginning at "
+                    + startOfInterruption + ".");
+            final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
+            final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
+            final ButtonType stopWorkForToday = new ButtonType("Stop work for today", ButtonData.FINISH);
+            alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
+            final Optional<ButtonType> selectedButton = alert.showAndWait();
+
+            LOG.info("User clicked button {}", selectedButton);
+
+            if (isButton(selectedButton, ButtonData.FINISH) && !stoppedWorkingForToday.get())
+            {
+                appService.toggleStopWorkForToday();
+                return false;
+            }
+            return isButton(selectedButton, ButtonData.YES);
+        }
+
+        private boolean isButton(Optional<ButtonType> button, ButtonData data)
+        {
+            return button.map(ButtonType::getButtonData) //
+                    .filter(d -> d == data) //
+                    .isPresent();
         }
 
         @Override
@@ -466,6 +451,16 @@ public class JavaFxApp extends Application
         public void exceptionOccured(Exception e)
         {
             showErrorDialog(e);
+        }
+
+        private void showErrorDialog(Throwable e)
+        {
+            final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
+            LOG.error(message, e);
+            JavaFxUtil.runOnFxApplicationThread(() -> {
+                final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+                alert.show();
+            });
         }
 
         @Override

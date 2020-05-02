@@ -171,6 +171,7 @@ class SingleInstanceServiceTest
         assertThat(result.isOtherInstanceRunning()).as("other instance is running").isFalse();
     }
 
+    @SuppressWarnings("java:S2925") // Sleep required to make tests stable
     private void waitUntilSocketClosed()
     {
         try

@@ -2,10 +2,10 @@ package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
 public class RegistrationResult implements OtherInstance, AutoCloseable
 {
-    private final Server server;
+    private final SingleInstanceServer server;
     private final ClientConnection client;
 
-    private RegistrationResult(Server server, ClientConnection client)
+    private RegistrationResult(SingleInstanceServer server, ClientConnection client)
     {
         this.server = server;
         this.client = client;
@@ -16,7 +16,7 @@ public class RegistrationResult implements OtherInstance, AutoCloseable
         return new RegistrationResult(null, client);
     }
 
-    public static RegistrationResult of(Server server)
+    public static RegistrationResult of(SingleInstanceServer server)
     {
         return new RegistrationResult(server, null);
     }

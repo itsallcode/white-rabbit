@@ -14,12 +14,12 @@ import java.util.Properties;
 class ConfigFile implements Config
 {
     private final Properties properties;
-    private final Path configFile;
+    private final Path file;
 
     private ConfigFile(Properties properties, Path configFile)
     {
         this.properties = properties;
-        this.configFile = configFile;
+        this.file = configFile;
     }
 
     static ConfigFile read(Path configFile)
@@ -62,7 +62,7 @@ class ConfigFile implements Config
     private String getMandatoryValue(String param)
     {
         return getOptionalValue(param).orElseThrow(
-                () -> new IllegalStateException("Property '" + param + "' not found in config file " + configFile));
+                () -> new IllegalStateException("Property '" + param + "' not found in config file " + file));
     }
 
     private Optional<String> getOptionalValue(String param)

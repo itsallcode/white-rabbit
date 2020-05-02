@@ -16,9 +16,9 @@ import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class Server
+class SingleInstanceServer
 {
-    private static final Logger LOG = LogManager.getLogger(Server.class);
+    private static final Logger LOG = LogManager.getLogger(SingleInstanceServer.class);
 
     private final ServerSocket serverSocket;
     private final RunningInstanceCallback callback;
@@ -26,12 +26,13 @@ class Server
     private final CountDownLatch serverRunning = new CountDownLatch(1);
     private final CountDownLatch serverStopped = new CountDownLatch(1);
 
-    public Server(ServerSocket serverSocket, RunningInstanceCallback callback)
+    public SingleInstanceServer(ServerSocket serverSocket, RunningInstanceCallback callback)
     {
         this(Executors.newCachedThreadPool(), serverSocket, callback);
     }
 
-    private Server(ExecutorService executorService, ServerSocket serverSocket, RunningInstanceCallback callback)
+    private SingleInstanceServer(ExecutorService executorService, ServerSocket serverSocket,
+            RunningInstanceCallback callback)
     {
         this.executorService = executorService;
         this.serverSocket = serverSocket;
@@ -54,7 +55,7 @@ class Server
         }
         catch (final InterruptedException ignored)
         {
-            // ignore
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -146,7 +147,7 @@ class Server
         }
         catch (final InterruptedException ignore)
         {
-            // ignore
+            Thread.currentThread().interrupt();
         }
         LOG.info("Shutdown complete");
     }
