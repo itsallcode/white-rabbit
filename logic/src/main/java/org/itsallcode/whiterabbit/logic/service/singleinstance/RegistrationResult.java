@@ -37,6 +37,16 @@ public class RegistrationResult implements OtherInstance, AutoCloseable
     }
 
     @Override
+    public String sendMessageWithResponse(String message)
+    {
+        if (client == null)
+        {
+            throw new IllegalStateException("Running as server: can't send message");
+        }
+        return client.sendMessageWithResponse(message);
+    }
+
+    @Override
     public void close()
     {
         if (server != null)

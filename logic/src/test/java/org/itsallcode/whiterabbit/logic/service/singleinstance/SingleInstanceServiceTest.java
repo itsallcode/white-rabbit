@@ -2,12 +2,18 @@ package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,10 +21,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class SingleInstanceServiceTest
 {
-    private static final int PORT = 34567;
+    private static final Logger LOG = LogManager.getLogger(SingleInstanceServiceTest.class);
+
+    private static final int PORT = 34568;
 
     @Mock
     private RunningInstanceCallback callbackMock;
+
+    @BeforeEach
+    void setup(TestInfo testInfo)
+    {
+        waitUntilSocketClosed();
+        LOG.debug("\n=== {} ===", testInfo.getDisplayName());
+    }
 
     @Test
     void registerInvalidPortFails()
@@ -72,14 +87,18 @@ class SingleInstanceServiceTest
         }
     }
 
-    private void assertOtherInstanceIsRunning(RegistrationResult secondResult)
+    private void assertOtherInstanceIsRunning(RegistrationResult result)
     {
-        assertThat(secondResult.isOtherInstanceRunning()).as("other instance is running").isTrue();
+        LOG.debug("Assert that no other instance is running: "
+                + (result.isOtherInstanceRunning() ? "success" : "failed"));
+        assertThat(result.isOtherInstanceRunning()).as("other instance is running").isTrue();
     }
 
-    private void assertOtherInstanceIsNotRunning(RegistrationResult secondResult)
+    private void assertOtherInstanceIsNotRunning(RegistrationResult result)
     {
-        assertThat(secondResult.isOtherInstanceRunning()).as("other instance is running").isFalse();
+        LOG.debug("Assert that no other instance is running: "
+                + (result.isOtherInstanceRunning() ? "failed" : "success"));
+        assertThat(result.isOtherInstanceRunning()).as("other instance is running").isFalse();
     }
 
     private void waitUntilSocketClosed()
@@ -106,9 +125,27 @@ class SingleInstanceServiceTest
                 assertOtherInstanceIsRunning(remote);
                 remote.sendMessage("msg");
             }
-            Thread.sleep(500);
+            waitUntilSocketClosed();
         }
-        verify(callbackMock, timeout(50).atLeastOnce()).messageReceived("msg");
+        verify(callbackMock, timeout(50).atLeastOnce()).messageReceived(eq("msg"),
+                any(RunningInstanceCallback.ClientConnection.class));
+    }
+
+    @Test
+    void sendMessageWithResponse() throws IOException, InterruptedException
+    {
+        final SingleInstanceService service = create();
+        final RunningInstanceCallback echoCallback = (message, client) -> client.sendMessage("echo " + message);
+        try (var first = service.tryToRegisterInstance(echoCallback))
+        {
+            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
+            try (var remote = service.tryToRegisterInstance(callbackMock))
+            {
+                assertOtherInstanceIsRunning(remote);
+                assertThat(remote.sendMessageWithResponse("msg")).isEqualTo("echo msg");
+            }
+            waitUntilSocketClosed();
+        }
     }
 
     private SingleInstanceService create()

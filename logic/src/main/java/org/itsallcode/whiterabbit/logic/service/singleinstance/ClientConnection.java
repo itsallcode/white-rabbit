@@ -20,13 +20,43 @@ public class ClientConnection implements AutoCloseable
         this.clientSocket = clientSocket;
     }
 
+    public String sendMessageWithResponse(String message)
+    {
+        sendMessage(message);
+        return readResponse();
+    }
+
+    private String readResponse()
+    {
+        final ByteBuffer buffer = ByteBuffer.allocate(250);
+        try
+        {
+            final int read = clientSocket.read(buffer);
+            LOG.debug("Read {} bytes: {}", read, buffer);
+            if (read <= 0)
+            {
+                return null;
+            }
+
+            final String response = new String(buffer.array(), StandardCharsets.UTF_8).trim();
+            LOG.debug("Got response '{}'", response);
+            return response;
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error reading from socket " + clientSocket, e);
+        }
+    }
+
     public void sendMessage(String message)
     {
         LOG.debug("Sending message '{}' to {}", message, clientSocket);
         final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
         try
         {
-            clientSocket.write(buffer);
+            clientSocket.configureBlocking(true);
+            final int bytes = clientSocket.write(buffer);
+            LOG.debug("Sent {} bytes for message '{}'", bytes, message);
         }
         catch (final IOException e)
         {

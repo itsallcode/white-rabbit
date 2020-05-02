@@ -1,11 +1,13 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.lang.ProcessHandle.Info;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 
 import javafx.application.Application;
@@ -63,6 +66,7 @@ public class JavaFxApp extends Application
     private static final Logger LOG = LogManager.getLogger(JavaFxApp.class);
     private static final int GAP_PIXEL = 10;
     private static final String MESSAGE_BRING_TO_FRONT = "bringToFront";
+    private static final String MESSAGE_GET_PROCESS_INFO = "getPid";
 
     private AppService appService;
     private DayRecordTable dayRecordTable;
@@ -109,8 +113,9 @@ public class JavaFxApp extends Application
                 .registerSingleInstance(this::messageFromOtherInstanceReceived);
         if (otherInstance.isPresent())
         {
+            final String response = otherInstance.get().sendMessageWithResponse(MESSAGE_GET_PROCESS_INFO);
             otherInstance.get().sendMessage(MESSAGE_BRING_TO_FRONT);
-            throw new IllegalStateException("Other instance already running");
+            throw new IllegalStateException("Other instance already running: " + response);
         }
 
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
@@ -212,11 +217,23 @@ public class JavaFxApp extends Application
         appService.start();
     }
 
-    private void messageFromOtherInstanceReceived(String message)
+    private void messageFromOtherInstanceReceived(String message, RunningInstanceCallback.ClientConnection client)
     {
         if (MESSAGE_BRING_TO_FRONT.equals(message))
         {
             bringWindowToFront();
+        }
+        if (MESSAGE_GET_PROCESS_INFO.equals(message))
+        {
+            final Info info = ProcessHandle.current().info();
+            final String response = "PID: " + ProcessHandle.current().pid() //
+                    + ", user: " + info.user().orElse("n/a") //
+                    + ", command: " + info.command().orElse("n/a") //
+                    + ", arguments: " + Arrays.toString(info.arguments().orElse(new String[0])) //
+                    + ", startup: " + info.startInstant().orElse(null) //
+                    + ", uptime: "
+                    + info.startInstant().map(start -> Duration.between(start, Instant.now())).orElse(null);
+            client.sendMessage(response);
         }
     }
 

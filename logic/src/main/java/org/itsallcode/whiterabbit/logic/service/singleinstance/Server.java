@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,6 +25,8 @@ class Server
     private final ServerSocketChannel serverSocket;
     private final RunningInstanceCallback callback;
     private final ExecutorService executorService;
+    private final CountDownLatch serverRunning = new CountDownLatch(1);
+    private final CountDownLatch serverStopped = new CountDownLatch(1);
 
     public Server(ServerSocketChannel serverSocket, RunningInstanceCallback callback)
     {
@@ -39,7 +42,22 @@ class Server
 
     public void start()
     {
+        LOG.info("Executing server thread using {}", executorService);
         executorService.execute(this::run);
+        waitUntilServerRunning();
+        LOG.info("Server thread is running");
+    }
+
+    private void waitUntilServerRunning()
+    {
+        try
+        {
+            serverRunning.await();
+        }
+        catch (final InterruptedException ignored)
+        {
+            // ignore
+        }
     }
 
     private void run()
@@ -51,7 +69,13 @@ class Server
         }
         catch (final Exception e)
         {
-            LOG.error("Error running server: {}", e.getMessage(), e);
+            LOG.error("Error running server: close server socket", e);
+            close();
+        }
+        finally
+        {
+            LOG.debug("Server loop finished");
+            serverStopped.countDown();
         }
     }
 
@@ -61,7 +85,7 @@ class Server
         final Selector selector = Selector.open();
         final SelectionKey selectKey = serverSocket.register(selector, ops, null);
         LOG.info("Got selection key {} for ops {}", selectKey, ops);
-
+        serverRunning.countDown();
         while (selector.isOpen() && serverSocket.isOpen())
         {
             selector.select();
@@ -98,7 +122,7 @@ class Server
                     {
                         final String message = new String(buffer.array(), StandardCharsets.UTF_8).trim();
                         LOG.info("Message received: '{}'", message);
-                        callback.messageReceived(message);
+                        callback.messageReceived(message, new Client(client));
                     }
                 }
                 else
@@ -106,6 +130,30 @@ class Server
                     LOG.info("Got invalid key {}", key);
                 }
                 selectionKeys.remove();
+            }
+        }
+    }
+
+    private static class Client implements RunningInstanceCallback.ClientConnection
+    {
+        private final SocketChannel client;
+
+        public Client(SocketChannel client)
+        {
+            this.client = client;
+        }
+
+        @Override
+        public void sendMessage(String message)
+        {
+            try
+            {
+                LOG.debug("Sending message '{}' to client {}", message, client);
+                client.write(ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8)));
+            }
+            catch (final IOException e)
+            {
+                throw new UncheckedIOException("Error sending message " + message + " to client " + client, e);
             }
         }
     }
@@ -125,7 +173,7 @@ class Server
 
     public void close()
     {
-        LOG.info("Shutting down server");
+        LOG.info("Shutting down server for socket {}", serverSocket);
         executorService.shutdownNow();
         try
         {
@@ -134,6 +182,14 @@ class Server
         catch (final IOException e)
         {
             throw new UncheckedIOException("Error closing server socket", e);
+        }
+        try
+        {
+            serverStopped.await();
+        }
+        catch (final InterruptedException ignore)
+        {
+            // ignore
         }
         LOG.info("Shutdown complete");
     }

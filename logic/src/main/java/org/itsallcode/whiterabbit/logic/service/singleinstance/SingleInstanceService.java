@@ -34,17 +34,16 @@ public class SingleInstanceService
     {
         try
         {
-            final Optional<ServerSocketChannel> serverSocketOptional = bindServerSocket();
-            if (serverSocketOptional.isEmpty())
+            final Optional<ServerSocketChannel> serverSocket = bindServerSocket();
+            if (serverSocket.isEmpty())
             {
                 return RegistrationResult.of(connectToOtherInstance());
             }
 
-            final ServerSocketChannel serverSocket = serverSocketOptional.get();
-            final Server server = new Server(serverSocket, callback);
+            final Server server = new Server(serverSocket.get(), callback);
             server.start();
 
-            LOG.info("Opened server socket to {}", serverSocket.getLocalAddress());
+            LOG.info("Opened server socket to {}", serverSocket.get().getLocalAddress());
             return RegistrationResult.of(server);
         }
         catch (final IOException e)
@@ -89,7 +88,7 @@ public class SingleInstanceService
         SocketChannel clientSocket;
         try
         {
-            LOG.info("Connecting to server {}", addr);
+            LOG.info("Creating client connection to server {}", addr);
             clientSocket = SocketChannel.open(addr);
             clientSocket.configureBlocking(false);
             return new ClientConnection(clientSocket);
