@@ -23,6 +23,8 @@ class ClientConnection implements AutoCloseable
         this.clientSocket = clientSocket;
     }
 
+    // Socket will be closed when client connection is closed.
+    @SuppressWarnings("java:S2095")
     static ClientConnection connect(InetAddress address, int port)
     {
         try

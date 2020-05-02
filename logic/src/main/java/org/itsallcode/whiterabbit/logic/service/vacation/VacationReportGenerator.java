@@ -11,6 +11,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -45,7 +46,7 @@ public class VacationReportGenerator
         final List<YearMonth> availableDataYearMonth = storage.getAvailableDataYearMonth();
         final Map<YearMonth, MonthIndex> monthData = availableDataYearMonth.stream() //
                 .map(storage::loadMonth) //
-                .map(optional -> optional.orElseThrow()) //
+                .map(Optional::orElseThrow) //
                 .collect(toMap(MonthIndex::getYearMonth, Function.identity()));
         final Map<Year, Long> workingMonthCountByYear = availableDataYearMonth.stream() //
                 .map(Year::from) //
@@ -65,11 +66,11 @@ public class VacationReportGenerator
             return vacationYears;
         }
 
-        private VacationYear calculateVacation(final Year year, VacationYear previousVacationYear)
+        private VacationYear calculateVacation(final Year year, VacationYear previousYear)
         {
-            final int daysRemainingFromLastYear = previousVacationYear != null ? previousVacationYear.getDaysRemaining()
-                    : 0;
-            return new VacationYear(year, vacationDaysCount(year), availableVacation(year), daysRemainingFromLastYear);
+            final int daysRemainingFromPreviousYear = previousYear != null ? previousYear.getDaysRemaining() : 0;
+            return new VacationYear(year, vacationDaysCount(year), availableVacation(year),
+                    daysRemainingFromPreviousYear);
         }
 
         private int vacationDaysCount(final Year year)

@@ -44,6 +44,7 @@ public class AppService implements Closeable
 
     private RegistrationResult singleInstanceRegistration;
 
+    @SuppressWarnings("java:S107") // Large number of parameters is ok here.
     public AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService)

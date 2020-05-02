@@ -395,9 +395,8 @@ public class JavaFxApp extends Application
         @Override
         public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
         {
-            return JavaFxUtil.runOnFxApplicationThread(() -> {
-                return showAutomaticInterruptionDialog(startOfInterruption, interruption);
-            });
+            return JavaFxUtil
+                    .runOnFxApplicationThread(() -> showAutomaticInterruptionDialog(startOfInterruption, interruption));
         }
 
         private Boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption, Duration interruption)
@@ -406,8 +405,8 @@ public class JavaFxApp extends Application
                     interruption);
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Add automatic interruption?");
-            alert.setHeaderText("An interruption of " + interruption + " was detected beginning at "
-                    + startOfInterruption + ".");
+            alert.setHeaderText(
+                    "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
             final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
             final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
             final ButtonType stopWorkForToday = new ButtonType("Stop work for today", ButtonData.FINISH);
