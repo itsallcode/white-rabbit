@@ -66,7 +66,7 @@ public class JavaFxApp extends Application
     private static final Logger LOG = LogManager.getLogger(JavaFxApp.class);
     private static final int GAP_PIXEL = 10;
     private static final String MESSAGE_BRING_TO_FRONT = "bringToFront";
-    private static final String MESSAGE_GET_PROCESS_INFO = "getPid";
+    private static final String MESSAGE_GET_PROCESS_INFO = "getProcessInfo";
 
     private AppService appService;
     private DayRecordTable dayRecordTable;

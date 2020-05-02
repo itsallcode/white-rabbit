@@ -15,6 +15,7 @@ import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
+import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback.ClientConnection;
 
 public class App
 {
@@ -72,9 +73,9 @@ public class App
         }
     }
 
-    private void messageReceived(String message)
+    private void messageReceived(String message, ClientConnection client)
     {
-        // Ignore
+        LOG.debug("Recieved message '{}': ignore", message);
     }
 
     private void executeCommand(final char command)

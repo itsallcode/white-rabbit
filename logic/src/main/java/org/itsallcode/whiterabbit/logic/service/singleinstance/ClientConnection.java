@@ -1,9 +1,11 @@
 package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,11 +15,31 @@ public class ClientConnection implements AutoCloseable
 {
     private static final Logger LOG = LogManager.getLogger(ClientConnection.class);
 
-    private final SocketChannel clientSocket;
+    private final Socket clientSocket;
 
-    public ClientConnection(SocketChannel clientSocket)
+    public ClientConnection(Socket clientSocket)
     {
         this.clientSocket = clientSocket;
+    }
+
+    public void sendMessage(String message)
+    {
+        if (message.contains("\n"))
+        {
+            throw new IllegalArgumentException("Message '" + message + "' must not contain \\n");
+        }
+        LOG.debug("Sending message '{}' to {}", message, clientSocket);
+        try
+        {
+            final OutputStream output = clientSocket.getOutputStream();
+            output.write(message.getBytes(StandardCharsets.UTF_8));
+            output.write('\n');
+            output.flush();
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error writing to client socket", e);
+        }
     }
 
     public String sendMessageWithResponse(String message)
@@ -28,43 +50,18 @@ public class ClientConnection implements AutoCloseable
 
     private String readResponse()
     {
-        final ByteBuffer buffer = ByteBuffer.allocate(250);
         try
         {
-            final int read = clientSocket.read(buffer);
-            LOG.debug("Read {} bytes: {}", read, buffer);
-            if (read <= 0)
-            {
-                return null;
-            }
+            LOG.debug("Reading response...");
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            final String response = new String(buffer.array(), StandardCharsets.UTF_8).trim();
-            LOG.debug("Got response '{}'", response);
+            final String response = reader.readLine();
+            LOG.debug("Read response '{}'", response);
             return response;
         }
         catch (final IOException e)
         {
             throw new UncheckedIOException("Error reading from socket " + clientSocket, e);
-        }
-    }
-
-    public void sendMessage(String message)
-    {
-        LOG.debug("Sending message '{}' to {}", message, clientSocket);
-        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
-        try
-        {
-            clientSocket.configureBlocking(true);
-            final int bytes = clientSocket.write(buffer);
-            LOG.debug("Sent {} bytes for message '{}'", bytes, message);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error writing to client socket", e);
-        }
-        finally
-        {
-            buffer.clear();
         }
     }
 

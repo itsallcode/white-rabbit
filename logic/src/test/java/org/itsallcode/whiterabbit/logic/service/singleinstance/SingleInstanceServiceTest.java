@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -31,7 +32,6 @@ class SingleInstanceServiceTest
     @BeforeEach
     void setup(TestInfo testInfo)
     {
-        waitUntilSocketClosed();
         LOG.debug("\n=== {} ===", testInfo.getDisplayName());
     }
 
@@ -40,7 +40,7 @@ class SingleInstanceServiceTest
     {
         final SingleInstanceService service = new SingleInstanceService(9999999);
         assertThatThrownBy(() -> service.tryToRegisterInstance(callbackMock))
-                .isInstanceOf(IllegalArgumentException.class).hasMessage("port out of range:9999999");
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("Port value out of range: 9999999");
     }
 
     @Test
@@ -87,6 +87,76 @@ class SingleInstanceServiceTest
         }
     }
 
+    @Test
+    void sendMessageToRunningInstance() throws IOException, InterruptedException
+    {
+        final SingleInstanceService service = create();
+        try (var first = service.tryToRegisterInstance(callbackMock))
+        {
+            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
+            try (var remote = service.tryToRegisterInstance(callbackMock))
+            {
+                assertOtherInstanceIsRunning(remote);
+                remote.sendMessage("msg");
+            }
+            waitUntilSocketClosed();
+        }
+        verify(callbackMock, timeout(50).atLeastOnce()).messageReceived(eq("msg"), any());
+    }
+
+    @Test
+    void sendingMessageWithNewlineFails() throws IOException, InterruptedException
+    {
+        final SingleInstanceService service = create();
+        try (var first = service.tryToRegisterInstance(callbackMock))
+        {
+            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
+            try (var remote = service.tryToRegisterInstance(callbackMock))
+            {
+                assertOtherInstanceIsRunning(remote);
+                assertThatThrownBy(() -> remote.sendMessage("msgWithNewline\n"))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("Message 'msgWithNewline\n' must not contain \\n");
+            }
+            waitUntilSocketClosed();
+        }
+        verify(callbackMock, never()).messageReceived(any(), any());
+    }
+
+    @Test
+    void sendMessageWithResponse() throws IOException, InterruptedException
+    {
+        final SingleInstanceService service = create();
+        final RunningInstanceCallback echoCallback = (message, client) -> client.sendMessage("echo " + message);
+        try (var first = service.tryToRegisterInstance(echoCallback))
+        {
+            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
+            try (var remote = service.tryToRegisterInstance(callbackMock))
+            {
+                assertOtherInstanceIsRunning(remote);
+                assertThat(remote.sendMessageWithResponse("msg")).isEqualTo("echo msg");
+            }
+            waitUntilSocketClosed();
+        }
+    }
+
+    @Test
+    void responseWithNewlineFails() throws IOException, InterruptedException
+    {
+        final SingleInstanceService service = create();
+        final RunningInstanceCallback echoCallback = (message, client) -> client.sendMessage("echo newline\n");
+        try (var first = service.tryToRegisterInstance(echoCallback))
+        {
+            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
+            try (var remote = service.tryToRegisterInstance(callbackMock))
+            {
+                assertOtherInstanceIsRunning(remote);
+                assertThat(remote.sendMessageWithResponse("msg")).isNull();
+            }
+            waitUntilSocketClosed();
+        }
+    }
+
     private void assertOtherInstanceIsRunning(RegistrationResult result)
     {
         LOG.debug("Assert that no other instance is running: "
@@ -105,46 +175,11 @@ class SingleInstanceServiceTest
     {
         try
         {
-            Thread.sleep(500);
+            Thread.sleep(0);
         }
         catch (final InterruptedException e)
         {
             // Ignore
-        }
-    }
-
-    @Test
-    void sendMessageToRunningInstance() throws IOException, InterruptedException
-    {
-        final SingleInstanceService service = create();
-        try (var first = service.tryToRegisterInstance(callbackMock))
-        {
-            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
-            try (var remote = service.tryToRegisterInstance(callbackMock))
-            {
-                assertOtherInstanceIsRunning(remote);
-                remote.sendMessage("msg");
-            }
-            waitUntilSocketClosed();
-        }
-        verify(callbackMock, timeout(50).atLeastOnce()).messageReceived(eq("msg"),
-                any(RunningInstanceCallback.ClientConnection.class));
-    }
-
-    @Test
-    void sendMessageWithResponse() throws IOException, InterruptedException
-    {
-        final SingleInstanceService service = create();
-        final RunningInstanceCallback echoCallback = (message, client) -> client.sendMessage("echo " + message);
-        try (var first = service.tryToRegisterInstance(echoCallback))
-        {
-            assertThat(first.isOtherInstanceRunning()).as("other instance running").isFalse();
-            try (var remote = service.tryToRegisterInstance(callbackMock))
-            {
-                assertOtherInstanceIsRunning(remote);
-                assertThat(remote.sendMessageWithResponse("msg")).isEqualTo("echo msg");
-            }
-            waitUntilSocketClosed();
         }
     }
 

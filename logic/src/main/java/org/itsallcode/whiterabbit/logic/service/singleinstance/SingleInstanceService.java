@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.BindException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,7 @@ public class SingleInstanceService
     {
         try
         {
-            final Optional<ServerSocketChannel> serverSocket = bindServerSocket();
+            final Optional<ServerSocket> serverSocket = bindServerSocket();
             if (serverSocket.isEmpty())
             {
                 return RegistrationResult.of(connectToOtherInstance());
@@ -43,7 +42,7 @@ public class SingleInstanceService
             final Server server = new Server(serverSocket.get(), callback);
             server.start();
 
-            LOG.info("Opened server socket to {}", serverSocket.get().getLocalAddress());
+            LOG.info("Opened server socket to {}", serverSocket.get().getLocalSocketAddress());
             return RegistrationResult.of(server);
         }
         catch (final IOException e)
@@ -52,22 +51,26 @@ public class SingleInstanceService
         }
     }
 
-    private Optional<ServerSocketChannel> bindServerSocket() throws IOException
+    private Optional<ServerSocket> bindServerSocket() throws IOException
     {
-        final ServerSocketChannel serverSocket = ServerSocketChannel.open();
-        serverSocket.configureBlocking(false);
-        final InetSocketAddress addr = new InetSocketAddress(createLocalhostAddress(), port);
-        LOG.debug("Trying to open server socket at {}", addr);
+        final InetAddress address = InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 });
         try
         {
-            serverSocket.bind(addr);
+            final ServerSocket serverSocket = new ServerSocket(port, 0, address);
+            LOG.info("Opened server socket {}", serverSocket);
+            return Optional.of(serverSocket);
         }
         catch (final BindException e)
         {
-            LOG.error("Another instance is already running on port {}: {}", port, e.getMessage());
+            LOG.debug("Another instance is already running on address {}, port {}: '{}'", address, port,
+                    e.getMessage());
+            LOG.trace("Root cause", e);
             return Optional.empty();
         }
-        return Optional.of(serverSocket);
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Unexpected exception when creating socket", e);
+        }
     }
 
     private InetAddress createLocalhostAddress()
@@ -84,18 +87,16 @@ public class SingleInstanceService
 
     private ClientConnection connectToOtherInstance()
     {
-        final InetSocketAddress addr = new InetSocketAddress(createLocalhostAddress(), port);
-        SocketChannel clientSocket;
+        final InetAddress address = createLocalhostAddress();
         try
         {
-            LOG.info("Creating client connection to server {}", addr);
-            clientSocket = SocketChannel.open(addr);
-            clientSocket.configureBlocking(false);
-            return new ClientConnection(clientSocket);
+            LOG.info("Creating client connection to server {}", address);
+            final Socket socket = new Socket(address, port);
+            return new ClientConnection(socket);
         }
         catch (final IOException e)
         {
-            throw new UncheckedIOException("Error connectiong to " + addr, e);
+            throw new UncheckedIOException("Error connectiong to " + address, e);
         }
     }
 }
