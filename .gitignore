@@ -5,6 +5,5 @@
 **/bin/
 **/build/
 /time.properties
-**/logs/white-rabbit.log
-**/logs/white-rabbit-*.log.gz
+**/logs/
 /.idea
