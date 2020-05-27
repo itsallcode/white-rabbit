@@ -27,7 +27,7 @@ task runJfxui(type: JavaExec, dependsOn: shadowJar) {
 ext {
     def os = org.gradle.internal.os.OperatingSystem.current()
     ext.platform = os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
-    ext.javaFxVersion = '14'
+    ext.javaFxVersion = '14.0.1'
 }
 
 dependencies {
