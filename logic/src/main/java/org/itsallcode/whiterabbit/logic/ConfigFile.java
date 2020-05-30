@@ -11,8 +11,13 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 class ConfigFile implements Config
 {
+    private static final Logger LOG = LogManager.getLogger(ConfigFile.class);
+
     private final Properties properties;
     private final Path file;
 
@@ -29,6 +34,10 @@ class ConfigFile implements Config
 
     private static Properties loadProperties(Path configFile)
     {
+        if (!Files.exists(configFile))
+        {
+            throw new IllegalStateException("Config file not found at '" + configFile + "'");
+        }
         try (InputStream stream = Files.newInputStream(configFile))
         {
             final Properties props = new Properties();
@@ -37,6 +46,7 @@ class ConfigFile implements Config
         }
         catch (final IOException e)
         {
+            LOG.error("Error reading config file {}", configFile, e);
             throw new UncheckedIOException("Error reading " + configFile, e);
         }
     }

@@ -207,7 +207,10 @@ public class JavaFxApp extends Application
         {
             currentTimeProperty.cancel();
         }
-        appService.close();
+        if(appService != null)
+        {
+            appService.close();
+        }
         Platform.exit();
     }
 
