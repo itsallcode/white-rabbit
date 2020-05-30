@@ -8,7 +8,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -63,10 +62,11 @@ class AppTest
     }
 
     @Test
-    void testRunMainThrowsIoException()
+    void startupFailsWhenConfigFileIsMissing()
     {
-        final UncheckedIOException exception = assertThrows(UncheckedIOException.class, () -> App.main(new String[0]));
-        assertThat(exception).hasMessage("Error reading time.properties");
+        final IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> App.main(new String[0]));
+        assertThat(exception).hasMessage("Config file not found at 'time.properties'");
     }
 
     @Test
