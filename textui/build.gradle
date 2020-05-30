@@ -1,27 +1,26 @@
 plugins {
-  id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 shadowJar {
-   archiveBaseName = 'textui'
-   classifier = null
-   archiveVersion = null
+    archiveBaseName = 'textui'
+    archiveVersion = null
 }
 
 ext.mainClass = 'org.itsallcode.whiterabbit.textui.App'
 
 jar {
     manifest {
-        attributes 'Main-Class': mainClass 
+        attributes 'Main-Class': mainClass
     }
 }
 
 build.dependsOn shadowJar
 
 task runTextui(type: JavaExec, dependsOn: shadowJar) {
-   classpath = shadowJar.outputs.files
-   main = mainClass
-   workingDir = rootProject.projectDir
+    classpath = shadowJar.outputs.files
+    main = mainClass
+    workingDir = rootProject.projectDir
 }
 
 dependencies {
