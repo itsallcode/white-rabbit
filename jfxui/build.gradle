@@ -7,7 +7,7 @@ shadowJar {
     archiveVersion = null
 }
 
-ext.mainClass = 'org.itsallcode.whiterabbit.jfxui.App'
+def mainClass = 'org.itsallcode.whiterabbit.jfxui.App'
 
 jar {
     manifest {
