@@ -1,22 +1,25 @@
-
 plugins {
   id "org.sonarqube" version "3.0"
 }
 
+ext {
+    junitVersion = '5.6.2'
+    log4jVersion = '2.13.3'
+    mockitoVersion = '3.3.3'
+}
+
 version = '0.0.1'
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'jacoco'
-    
-    ext {
-        junitVersion = '5.6.2'
-        log4jVersion = '2.13.3'
-        mockitoVersion = '3.3.3'
-    }
+allprojects {
+    apply plugin: "java"
+    apply plugin: "jacoco"
 
     sourceCompatibility = 11
     targetCompatibility = 11
+
+    repositories {
+        jcenter()
+    }
 
     dependencies {
         implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
@@ -29,7 +32,7 @@ subprojects {
         testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
-    
+
     test {
         useJUnitPlatform()
     }
@@ -38,10 +41,6 @@ subprojects {
         reports {
             xml.enabled true
         }
-    }
-
-    repositories {
-        jcenter()
     }
 }
 
