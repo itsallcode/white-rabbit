@@ -42,5 +42,7 @@ allprojects {
             xml.enabled true
         }
     }
+
+    rootProject.tasks["sonarqube"].dependsOn(tasks["jacocoTestReport"])
 }
 
