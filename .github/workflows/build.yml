@@ -35,7 +35,7 @@ jobs:
           ${{ runner.os }}-gradle-
     - name: Build with Gradle
       run: |
-        ./gradlew build sonarqube -Dsonar.host.url=https://sonarcloud.io\
+        ./gradlew build -Dsonar.host.url=https://sonarcloud.io \
                                   -Dsonar.organization=itsallcode \
                                   -Dsonar.login=$SONAR_TOKEN \
                                   --info --stacktrace --warning-mode=summary
