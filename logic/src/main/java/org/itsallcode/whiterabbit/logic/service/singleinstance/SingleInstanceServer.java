@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -88,6 +89,17 @@ class SingleInstanceServer
                 {
                     LOG.debug("Got message '{}' from client socket {}", message, socket);
                     callback.messageReceived(message, new Client(socket));
+                }
+            }
+            catch (final SocketException e)
+            {
+                if (serverSocket.isClosed())
+                {
+                    LOG.debug("Accept failed during shutdown: ignore.");
+                }
+                else
+                {
+                    LOG.error("Error in server loop: continue", e);
                 }
             }
             catch (final Exception e)
