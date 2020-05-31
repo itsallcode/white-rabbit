@@ -45,3 +45,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Archive jfxui binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: jfxui
+        path: jfxui/build/libs/jfxui-all.jar
+    - name: Archive textui binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: textui
+        path: textui/build/libs/textui-all.jar
