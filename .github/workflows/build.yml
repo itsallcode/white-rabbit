@@ -53,4 +53,6 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: test-results
-        path: '**/build/reports/tests/**'
+        path: |
+          logic/build/reports/tests/**
+          textui/build/reports/tests/**
