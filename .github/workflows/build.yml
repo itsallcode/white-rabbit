@@ -49,3 +49,8 @@ jobs:
       with:
         name: textui
         path: textui/build/libs/textui-all.jar
+    - name: Archive test results
+      uses: actions/upload-artifact@v1
+      with:
+        name: test-results
+        path: '**/build/reports/tests/**'
