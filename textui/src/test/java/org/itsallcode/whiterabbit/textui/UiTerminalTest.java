@@ -71,7 +71,7 @@ class UiTerminalTest
     }
 
     @Test
-    void testNextCommandEmptyWhenWaitTimeExeeded() throws IOException
+    void testNextCommandEmptyWhenWaitTimeExceeded() throws IOException
     {
         simulateCharacterRead(-2);
         assertThat(term.getNextCommand()).isEmpty();

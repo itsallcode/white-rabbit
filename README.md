@@ -20,11 +20,11 @@ A time recording tool
   * vacation (won't deduct overtime): `VACATION`
   * flex time (will deduct overtime): `FLEX_TIME`
   * sickness (won't deduct overtime): `SICK`
-* Automatic update in the background: just keep it running and it will record your working time
+* Automatic update in the background: just keep it running, and it will record your working time
   * Start of work is detected via
     * Program start
     * Computer resumes from sleep in the morning
-  * End of work is detected via
+  * Detects the end of work via
     * Program shutdown
     * Computer sleeps for the rest of the day
   * Interruptions detected when computer sleeps for more than 2 minutes
@@ -119,7 +119,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
             "end": "15:00:00",
             "workingHours": "PT6H",
             "comment": "Working short time, 6 hours per day"
-        },
+        }
     ]
 }
 ```

@@ -5,8 +5,7 @@ import java.util.function.Consumer;
 
 public interface InterruptionCallback
 {
-    public static InterruptionCallback create(Consumer<Duration> addInterruptionCallback,
-            Runnable cancelInterruptionCallback)
+    static InterruptionCallback create(Consumer<Duration> addInterruptionCallback, Runnable cancelInterruptionCallback)
     {
         return new InterruptionCallback()
         {

@@ -26,7 +26,7 @@ public class SplashScreenLoader extends Preloader
     private Stage splashScreen;
 
     @Override
-    public void start(Stage stage) throws Exception
+    public void start(Stage stage)
     {
         splashScreen = stage;
         splashScreen.initStyle(StageStyle.UNDECORATED);

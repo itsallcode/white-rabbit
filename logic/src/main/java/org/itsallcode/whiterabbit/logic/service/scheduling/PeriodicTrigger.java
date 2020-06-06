@@ -28,7 +28,7 @@ public class PeriodicTrigger implements Trigger
     @Override
     public Instant nextExecutionTime(Instant now, Optional<TriggerContext> context)
     {
-        if (!context.isPresent())
+        if (context.isEmpty())
         {
             return now;
         }

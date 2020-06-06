@@ -77,7 +77,7 @@ public class FormatterService
                 .max().getAsInt();
     }
 
-    public String formatDateAndtime(Instant instant)
+    public String formatDateAndTime(Instant instant)
     {
         final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
         return dateTime.format(dateTimeFormatter);

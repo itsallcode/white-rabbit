@@ -84,7 +84,7 @@ class SingleInstanceServer
                 LOG.debug("Client connected on {}: reading from socket", socket);
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                String message = null;
+                String message;
                 while ((message = reader.readLine()) != null)
                 {
                     LOG.debug("Got message '{}' from client socket {}", message, socket);

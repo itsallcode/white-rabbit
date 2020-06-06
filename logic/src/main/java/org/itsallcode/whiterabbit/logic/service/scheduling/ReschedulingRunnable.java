@@ -50,7 +50,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
             if (delay.isNegative())
             {
                 throw new IllegalStateException(
-                        "Next executiontion time from trigger " + trigger + " is " + delay + " in the past");
+                        "Next execution time from trigger " + trigger + " is " + delay + " in the past");
             }
             if (!delay.minus(Duration.ofSeconds(2)).isNegative())
             {

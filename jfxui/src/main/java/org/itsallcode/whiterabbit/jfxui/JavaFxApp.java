@@ -85,7 +85,7 @@ public class JavaFxApp extends Application
     private Locale locale;
 
     @Override
-    public void init() throws Exception
+    public void init()
     {
         try
         {
@@ -207,7 +207,7 @@ public class JavaFxApp extends Application
         {
             currentTimeProperty.cancel();
         }
-        if(appService != null)
+        if (appService != null)
         {
             appService.close();
         }
@@ -357,7 +357,7 @@ public class JavaFxApp extends Application
         final Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(() -> {
             final Instant now = currentTimeProperty.property().getValue();
-            String text = formatter.formatDateAndtime(now);
+            String text = formatter.formatDateAndTime(now);
             final MonthIndex month = currentMonth.get();
             if (month != null && month.getOvertimePreviousMonth() != null)
             {
@@ -450,7 +450,7 @@ public class JavaFxApp extends Application
         }
 
         @Override
-        public void exceptionOccured(Exception e)
+        public void exceptionOccurred(Exception e)
         {
             showErrorDialog(e);
         }

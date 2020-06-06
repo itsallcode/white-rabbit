@@ -50,16 +50,15 @@ class DayRecordPropertyAdapter
         this.editListener = editListener;
 
         date = readOnlyPropertyField("date", DayRecord::getDate);
-        dayType = propertyField("dayType", DayRecord::getType, (r, newDayType) -> r.setType(newDayType));
-        begin = propertyField("begin", DayRecord::getBegin, (r, newBegin) -> r.setBegin(newBegin));
-        end = propertyField("end", DayRecord::getEnd, (r, newEnd) -> r.setEnd(newEnd));
+        dayType = propertyField("dayType", DayRecord::getType, DayRecord::setType);
+        begin = propertyField("begin", DayRecord::getBegin, DayRecord::setBegin);
+        end = propertyField("end", DayRecord::getEnd, DayRecord::setEnd);
         mandatoryBreak = readOnlyPropertyField("mandatoryBreak", DayRecord::getMandatoryBreak);
-        interruption = propertyField("interruption", DayRecord::getInterruption,
-                (r, newInterruption) -> r.setInterruption(newInterruption));
+        interruption = propertyField("interruption", DayRecord::getInterruption, DayRecord::setInterruption);
         workingTime = readOnlyPropertyField("workingTime", DayRecord::getWorkingTime);
         overtime = readOnlyPropertyField("overtime", DayRecord::getOvertime);
         totalOvertime = readOnlyPropertyField("totalOvertime", DayRecord::getOverallOvertime);
-        comment = propertyField("comment", DayRecord::getComment, (r, newComment) -> r.setComment(newComment));
+        comment = propertyField("comment", DayRecord::getComment, DayRecord::setComment);
     }
 
     void update(DayRecord record)

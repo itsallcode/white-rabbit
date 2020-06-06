@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface Config
 {
 
-    public static Config read(Path configFile)
+    static Config read(Path configFile)
     {
         return ConfigFile.read(configFile);
     }

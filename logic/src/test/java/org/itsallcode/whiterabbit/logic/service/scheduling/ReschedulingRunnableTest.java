@@ -109,13 +109,13 @@ class ReschedulingRunnableTest
     @Test
     void testIsCancelled()
     {
-        scheduleExcecution();
+        scheduleExecution();
         when(scheduledFutureMock.isCancelled()).thenReturn(true);
 
         assertTrue(reschedulingRunnable.isCancelled());
     }
 
-    private void scheduleExcecution()
+    private void scheduleExecution()
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NEXT_EXECUTION);
         doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class), anyLong(), any());
@@ -126,7 +126,7 @@ class ReschedulingRunnableTest
     @Test
     void testIsDoneThrowsNullPointerExceptionWhenNoExecutionScheduled()
     {
-        scheduleExcecution();
+        scheduleExecution();
         when(scheduledFutureMock.isDone()).thenReturn(true);
 
         assertThat(reschedulingRunnable.isDone()).isTrue();
@@ -135,7 +135,7 @@ class ReschedulingRunnableTest
     @Test
     void testCancelThrowsNullPointerExceptionWhenNoExecutionScheduled()
     {
-        scheduleExcecution();
+        scheduleExecution();
         reschedulingRunnable.cancel();
         verify(scheduledFutureMock).cancel(false);
     }

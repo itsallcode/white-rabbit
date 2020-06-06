@@ -3,7 +3,7 @@ package org.itsallcode.whiterabbit.logic.service.singleinstance;
 @FunctionalInterface
 public interface RunningInstanceCallback
 {
-    public interface ClientConnection
+    interface ClientConnection
     {
         void sendMessage(String message);
     }

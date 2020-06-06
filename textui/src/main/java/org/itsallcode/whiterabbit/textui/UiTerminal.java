@@ -52,7 +52,7 @@ public class UiTerminal
         case END_OF_FILE:
             return Optional.of(App.COMMAND_QUIT);
         default:
-            return Optional.ofNullable((char) result);
+            return Optional.of((char) result);
         }
     }
 

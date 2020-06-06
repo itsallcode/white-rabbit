@@ -35,7 +35,7 @@ class ClientConnection implements AutoCloseable
         }
         catch (final IOException e)
         {
-            throw new UncheckedIOException("Error connectiong to " + address, e);
+            throw new UncheckedIOException("Error connecting to " + address, e);
         }
     }
 

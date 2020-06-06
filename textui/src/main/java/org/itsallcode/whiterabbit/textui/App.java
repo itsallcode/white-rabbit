@@ -63,11 +63,11 @@ public class App
         while (running)
         {
             final Optional<Character> command = promptUser();
-            if (!command.isPresent())
+            if (command.isEmpty())
             {
                 continue;
             }
-            final char c = command.get().charValue();
+            final char c = command.get();
             final char commandChar = Character.toLowerCase(c);
             executeCommand(commandChar);
         }
@@ -75,7 +75,7 @@ public class App
 
     private void messageReceived(String message, ClientConnection client)
     {
-        LOG.debug("Recieved message '{}': ignore", message);
+        LOG.debug("Received message '{}': ignore", message);
     }
 
     private void executeCommand(final char command)

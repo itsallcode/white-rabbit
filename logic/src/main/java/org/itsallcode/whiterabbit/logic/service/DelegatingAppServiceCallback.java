@@ -45,15 +45,15 @@ class DelegatingAppServiceCallback implements AppServiceCallback
     }
 
     @Override
-    public void exceptionOccured(Exception e)
+    public void exceptionOccurred(Exception e)
     {
         if (delegate != null)
         {
-            delegate.exceptionOccured(e);
+            delegate.exceptionOccurred(e);
         }
         else
         {
-            LOG.error("An error occured: {}", e.getMessage(), e);
+            LOG.error("An error occurred: {}", e.getMessage(), e);
         }
     }
 

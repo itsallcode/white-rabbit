@@ -117,7 +117,7 @@ class AppTest
     }
 
     @Test
-    void testQuitShutsdownAppService()
+    void testQuitShutsDownAppService()
     {
         runCommand('q');
         verify(appServiceMock).close();

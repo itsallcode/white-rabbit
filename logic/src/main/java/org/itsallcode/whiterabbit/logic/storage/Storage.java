@@ -58,11 +58,7 @@ public class Storage
     public MonthIndex loadOrCreate(final YearMonth yearMonth)
     {
         final Optional<MonthIndex> month = loadMonth(yearMonth);
-        if (month.isPresent())
-        {
-            return month.get();
-        }
-        return createNewMonth(yearMonth);
+        return month.orElseGet(() -> createNewMonth(yearMonth));
     }
 
     private MonthIndex createNewMonth(YearMonth date)
@@ -90,7 +86,7 @@ public class Storage
             months.add(month);
         }
 
-        Collections.sort(months, Comparator.comparing(MonthIndex::getYearMonth));
+        months.sort(Comparator.comparing(MonthIndex::getYearMonth));
 
         return new MultiMonthIndex(months);
     }

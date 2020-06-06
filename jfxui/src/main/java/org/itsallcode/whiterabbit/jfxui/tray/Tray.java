@@ -5,7 +5,7 @@ import java.awt.TrayIcon.MessageType;
 
 public interface Tray
 {
-    public static Tray create(TrayCallback callback)
+    static Tray create(TrayCallback callback)
     {
         return SwingUtil.runOnSwingThread(() -> {
             if (!SystemTray.isSupported())

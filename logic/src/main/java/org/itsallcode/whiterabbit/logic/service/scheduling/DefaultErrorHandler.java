@@ -10,6 +10,6 @@ public class DefaultErrorHandler implements ErrorHandler
     @Override
     public void handleError(Throwable t)
     {
-        LOG.error("Error occured: {}", t.getMessage(), t);
+        LOG.error("Error occurred: {}", t.getMessage(), t);
     }
 }

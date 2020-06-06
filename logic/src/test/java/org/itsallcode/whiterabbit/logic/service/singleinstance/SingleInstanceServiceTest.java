@@ -44,7 +44,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void registerSuccessfulWhenNoOtherServiceRunning() throws IOException
+    void registerSuccessfulWhenNoOtherServiceRunning()
     {
         final SingleInstanceService service = create();
         try (var result = service.tryToRegisterInstance(callbackMock))
@@ -54,7 +54,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void registerReturnsOtherInstanceWhenNoOtherServiceRunning() throws IOException
+    void registerReturnsOtherInstanceWhenNoOtherServiceRunning()
     {
         final SingleInstanceService service = create();
         try (RegistrationResult firstResult = service.tryToRegisterInstance(callbackMock))
@@ -69,7 +69,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void registerPossibleWhenOtherServiceClosed() throws IOException
+    void registerPossibleWhenOtherServiceClosed()
     {
         final SingleInstanceService service = create();
         try (final RegistrationResult firstResult = service.tryToRegisterInstance(callbackMock))
@@ -88,7 +88,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void sendMessageToRunningInstance() throws IOException, InterruptedException
+    void sendMessageToRunningInstance()
     {
         final SingleInstanceService service = create();
         try (var first = service.tryToRegisterInstance(callbackMock))
@@ -105,7 +105,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void sendingMessageWithNewlineFails() throws IOException, InterruptedException
+    void sendingMessageWithNewlineFails()
     {
         final SingleInstanceService service = create();
         try (var first = service.tryToRegisterInstance(callbackMock))
@@ -124,7 +124,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void sendMessageWithResponse() throws IOException, InterruptedException
+    void sendMessageWithResponse()
     {
         final SingleInstanceService service = create();
         final RunningInstanceCallback echoCallback = (message, client) -> client.sendMessage("echo " + message);
@@ -141,7 +141,7 @@ class SingleInstanceServiceTest
     }
 
     @Test
-    void responseWithNewlineFails() throws IOException, InterruptedException
+    void responseWithNewlineFails()
     {
         final SingleInstanceService service = create();
         final RunningInstanceCallback echoCallback = (message, client) -> client.sendMessage("echo newline\n");
