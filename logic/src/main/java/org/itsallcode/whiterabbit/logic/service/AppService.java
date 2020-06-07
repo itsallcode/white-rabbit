@@ -41,13 +41,15 @@ public class AppService implements Closeable
     private final DelegatingAppServiceCallback appServiceCallback;
     private final SingleInstanceService singleInstanceService;
     private final VacationReportGenerator vacationService;
+    private final ActivityService activityService;
 
     private RegistrationResult singleInstanceRegistration;
 
     @SuppressWarnings("java:S107") // Large number of parameters is ok here.
-    public AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
+    AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
-            DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService)
+            DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService,
+            ActivityService activityService)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -57,6 +59,7 @@ public class AppService implements Closeable
         this.singleInstanceService = singleInstanceService;
         this.appServiceCallback = appServiceCallback;
         this.vacationService = vacationService;
+        this.activityService = activityService;
     }
 
     public static AppService create(final Config config, final FormatterService formatterService)
@@ -69,8 +72,9 @@ public class AppService implements Closeable
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
         final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
+        final ActivityService activityService = new ActivityService(storage, appServiceCallback);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
-                singleInstanceService, appServiceCallback, vacationService);
+                singleInstanceService, appServiceCallback, vacationService, activityService);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -191,6 +195,11 @@ public class AppService implements Closeable
     public VacationReport getVacationReport()
     {
         return vacationService.generateReport();
+    }
+
+    public ActivityService activities()
+    {
+        return activityService;
     }
 
     @Override

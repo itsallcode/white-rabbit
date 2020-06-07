@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
@@ -70,6 +71,7 @@ public class JavaFxApp extends Application
 
     private AppService appService;
     private DayRecordTable dayRecordTable;
+    private ActivitiesTable activitiesTable;
 
     private final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
     private final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
@@ -253,6 +255,8 @@ public class JavaFxApp extends Application
             appService.store(record);
             appService.updateNow();
         }, formatter);
+
+        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay());
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
@@ -306,6 +310,8 @@ public class JavaFxApp extends Application
 
         pane.setBottom(buttonBar);
         BorderPane.setMargin(buttonBar, insets);
+
+        activitiesTable.initTable();
         return pane;
     }
 

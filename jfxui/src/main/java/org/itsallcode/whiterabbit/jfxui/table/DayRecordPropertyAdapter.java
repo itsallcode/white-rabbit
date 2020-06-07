@@ -27,7 +27,7 @@ class DayRecordPropertyAdapter
 {
     private static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
 
-    private final ObjectProperty<DayRecord> recordProperty = new ReadOnlyObjectWrapper<>();
+    final ObjectProperty<DayRecord> recordProperty = new ReadOnlyObjectWrapper<>();
     private final RecordEditListener editListener;
 
     private final List<PropertyField<?>> fields = new ArrayList<>();
