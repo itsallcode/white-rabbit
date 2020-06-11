@@ -17,7 +17,6 @@ public class JsonActivity
 
     public JsonActivity()
     {
-
     }
 
     public JsonActivity(String projectId)

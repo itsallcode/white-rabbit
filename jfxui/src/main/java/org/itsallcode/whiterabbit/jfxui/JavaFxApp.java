@@ -60,6 +60,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class JavaFxApp extends Application
@@ -271,23 +272,26 @@ public class JavaFxApp extends Application
         primaryStage.setTitle("White Rabbit Time Recording");
         primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
 
-        if (tray.isSupported())
-        {
-            LOG.trace("System tray is supported: allow hiding primary stage");
-            Platform.setImplicitExit(false);
-            primaryStage.setOnCloseRequest(event -> {
-                LOG.debug("Hiding primary stage");
-                event.consume();
-                primaryStage.hide();
-            });
-        }
-        else
-        {
-            LOG.debug("System tray is not supported: don't allow hiding primary stage");
-        }
+        createTrayIcon();
 
         primaryStage.setScene(scene);
         LOG.debug("User interface finished");
+    }
+
+    private void createTrayIcon()
+    {
+        if (!tray.isSupported())
+        {
+            LOG.debug("System tray is not supported: don't allow hiding primary stage");
+            return;
+        }
+        LOG.trace("System tray is supported: allow hiding primary stage");
+        Platform.setImplicitExit(false);
+        primaryStage.setOnCloseRequest(event -> {
+            LOG.debug("Hiding primary stage");
+            event.consume();
+            primaryStage.hide();
+        });
     }
 
     private BorderPane createMainPane()
@@ -306,12 +310,22 @@ public class JavaFxApp extends Application
         pane.setTop(topPane);
         BorderPane.setMargin(topPane, insets);
 
-        final Node buttonBar = createButtonBar();
+        final Node activitiesTab = activitiesTable.initTable();
 
-        pane.setBottom(buttonBar);
-        BorderPane.setMargin(buttonBar, insets);
+        final TilePane buttonBar = createButtonBar();
+        activitiesTab.maxHeight(50);
+        activitiesTab.minHeight(50);
+        activitiesTab.prefHeight(50);
+        final VBox bottom = new VBox(GAP_PIXEL, activitiesTab, buttonBar);
 
-        activitiesTable.initTable();
+        // VBox.setMargin(activitiesTab, insets);
+        // VBox.setMargin(buttonBar, insets);
+
+        // bottom.getChildren().add(buttonBar);
+        // bottom.getChildren().add(activitiesTab);
+        pane.setBottom(bottom);
+        BorderPane.setMargin(bottom, insets);
+
         return pane;
     }
 
@@ -319,14 +333,25 @@ public class JavaFxApp extends Application
     {
         final Button startInterruptionButton = button("Start interruption", e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
-        final TilePane bottom = new TilePane(Orientation.HORIZONTAL);
-        bottom.setHgap(GAP_PIXEL);
+        final TilePane buttonPane = new TilePane(Orientation.HORIZONTAL);
+        buttonPane.setHgap(GAP_PIXEL);
 
-        bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
-                startInterruptionButton, //
-                createStopWorkForTodayButton(), //
-                button("Vacation report", e -> showVacationReport()));
-        return bottom;
+        buttonPane.getChildren().addAll(button("Update", e -> appService.updateNow()),
+                startInterruptionButton,
+                createStopWorkForTodayButton(),
+                button("Vacation report", e -> showVacationReport()),
+                button("Add activity", e -> addActivity()));
+        return buttonPane;
+    }
+
+    private void addActivity()
+    {
+        final DayRecord selectedDay = dayRecordTable.selectedDay().getValue();
+        if (selectedDay == null)
+        {
+            return;
+        }
+        appService.activities().addActivity(selectedDay.getDate(), null);
     }
 
     private Button createStopWorkForTodayButton()

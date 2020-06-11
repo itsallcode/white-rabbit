@@ -57,6 +57,8 @@ class AppServiceTest
     private SingleInstanceService singleInstanceService;
     @Mock
     private VacationReportGenerator vacationServiceMock;
+    @Mock
+    private ActivityService activityService;
 
     private AppService appService;
 
@@ -66,7 +68,7 @@ class AppServiceTest
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         appService = new AppService(new WorkingTimeService(storageMock, clockMock, appServiceCallback), storageMock,
                 formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback,
-                vacationServiceMock);
+                vacationServiceMock, activityService);
         appService.setUpdateListener(updateListenerMock);
     }
 
