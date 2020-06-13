@@ -28,7 +28,7 @@ public class ActivityService
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(date)).orElseThrow();
         final DayRecord day = monthIndex.getDay(date);
 
-        day.addActivity(projectId);
+        day.activities().add(projectId);
 
         storage.storeMonth(monthIndex);
         appServiceCallback.recordUpdated(day);
@@ -39,7 +39,7 @@ public class ActivityService
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(activity.getDay().getDate())).orElseThrow();
         final DayRecord day = monthIndex.getDay(activity.getDay().getDate());
 
-        final Activity activityToUpdate = day.getActivity(index)
+        final Activity activityToUpdate = day.activities().get(index)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No activity with index " + index + " found for day " + day.getDate()));
 
@@ -54,7 +54,7 @@ public class ActivityService
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(date)).orElseThrow();
         final DayRecord day = monthIndex.getDay(date);
 
-        day.removeActivity(index);
+        day.activities().remove(index);
 
         storage.storeMonth(monthIndex);
         appServiceCallback.recordUpdated(day);

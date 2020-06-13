@@ -51,7 +51,7 @@ public class ActivitiesTable
             activities.clear();
             if (day != null)
             {
-                final List<Activity> selectedDayActivities = day.getActivities();
+                final List<Activity> selectedDayActivities = day.activities().getAll();
                 LOG.debug("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
                 activities.addAll(selectedDayActivities);
             }

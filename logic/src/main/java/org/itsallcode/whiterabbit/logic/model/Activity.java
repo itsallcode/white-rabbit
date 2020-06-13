@@ -7,9 +7,9 @@ import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 public class Activity
 {
     private final JsonActivity jsonActivity;
-    private final DayRecord day;
+    private final DayActivities day;
 
-    public Activity(JsonActivity jsonActivity, DayRecord day)
+    public Activity(JsonActivity jsonActivity, DayActivities day)
     {
         this.jsonActivity = jsonActivity;
         this.day = day;
@@ -17,7 +17,7 @@ public class Activity
 
     public DayRecord getDay()
     {
-        return day;
+        return day.dayRecord;
     }
 
     public void updateValuesFrom(Activity activity)

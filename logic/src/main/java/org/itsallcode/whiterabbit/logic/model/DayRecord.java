@@ -1,21 +1,14 @@
 package org.itsallcode.whiterabbit.logic.model;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 
@@ -182,45 +175,9 @@ public class DayRecord
                 && day.getType() == null && day.getComment() == null && day.getInterruption() == null;
     }
 
-    public Activity addActivity(String projectId)
+    public DayActivities activities()
     {
-        if (day.getActivities() == null)
-        {
-            day.setActivities(new ArrayList<>());
-        }
-        final JsonActivity jsonActivity = new JsonActivity(projectId);
-        day.getActivities().add(jsonActivity);
-        return new Activity(jsonActivity, this);
-    }
-
-    public List<Activity> getActivities()
-    {
-        return Optional.ofNullable(day.getActivities())
-                .orElse(emptyList())
-                .stream().map(wrapActivity())
-                .collect(toList());
-    }
-
-    private Function<JsonActivity, Activity> wrapActivity()
-    {
-        return a -> new Activity(a, this);
-    }
-
-    public Optional<Activity> getActivity(int index)
-    {
-        return Optional.ofNullable(day.getActivities())
-                .filter(list -> list.size() > index)
-                .map(list -> list.get(index))
-                .map(wrapActivity());
-    }
-
-    public void removeActivity(int index)
-    {
-        if (day.getActivities() == null)
-        {
-            return;
-        }
-        day.getActivities().remove(index);
+        return new DayActivities(day, this);
     }
 
     @Override
