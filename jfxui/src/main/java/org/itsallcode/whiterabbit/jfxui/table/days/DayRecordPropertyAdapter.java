@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -13,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.table.DelegatingChangeListener;
 import org.itsallcode.whiterabbit.jfxui.table.PropertyField;
+import org.itsallcode.whiterabbit.jfxui.table.RecordChangeListener;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
@@ -22,7 +22,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 class DayRecordPropertyAdapter
 {
@@ -99,43 +98,5 @@ class DayRecordPropertyAdapter
                 property, getter);
         this.fields.add(field);
         return property;
-    }
-
-    private static class RecordChangeListener<T> implements ChangeListener<T>
-    {
-        private final ObjectProperty<DayRecord> record;
-        private final DayRecordEditListener editListener;
-        private final BiConsumer<DayRecord, T> setter;
-        private final Function<DayRecord, T> getter;
-        private final String fieldName;
-
-        private RecordChangeListener(ObjectProperty<DayRecord> record, String fieldName,
-                DayRecordEditListener editListener, Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter)
-        {
-            this.record = record;
-            this.fieldName = fieldName;
-            this.getter = getter;
-            this.setter = setter;
-            this.editListener = editListener;
-        }
-
-        @Override
-        public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue)
-        {
-            if (record.get() == null)
-            {
-                return;
-            }
-            final T currentRecordValue = getter.apply(record.get());
-            if (Objects.equals(currentRecordValue, newValue))
-            {
-                LOG.debug("Value {} was not changed: ignore update", currentRecordValue);
-                return;
-            }
-            LOG.debug("Value updated for {}, field {}: {} -> {}: trigger edit listener", record.getValue().getDate(),
-                    fieldName, oldValue, newValue);
-            setter.accept(record.get(), newValue);
-            this.editListener.recordUpdated(record.get());
-        }
     }
 }
