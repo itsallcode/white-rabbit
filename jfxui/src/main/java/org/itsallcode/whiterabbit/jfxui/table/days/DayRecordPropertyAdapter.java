@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.table.DelegatingChangeListener;
 import org.itsallcode.whiterabbit.jfxui.table.PropertyField;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
@@ -98,27 +99,6 @@ class DayRecordPropertyAdapter
                 property, getter);
         this.fields.add(field);
         return property;
-    }
-
-    private static class DelegatingChangeListener<T> implements ChangeListener<T>
-    {
-        private final ChangeListener<T> delegate;
-        private final BooleanProperty currentlyUpdating;
-
-        public DelegatingChangeListener(ChangeListener<T> delegate, BooleanProperty currentlyUpdating)
-        {
-            this.delegate = delegate;
-            this.currentlyUpdating = currentlyUpdating;
-        }
-
-        @Override
-        public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue)
-        {
-            if (!currentlyUpdating.get())
-            {
-                delegate.changed(observable, oldValue, newValue);
-            }
-        }
     }
 
     private static class RecordChangeListener<T> implements ChangeListener<T>
