@@ -16,6 +16,9 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -23,6 +26,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -51,7 +55,7 @@ public class ActivitiesTable
             if (day != null)
             {
                 final List<Activity> selectedDayActivities = day.activities().getAll();
-                LOG.debug("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
+                LOG.trace("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
                 activities.addAll(selectedDayActivities);
             }
         });
@@ -68,12 +72,45 @@ public class ActivitiesTable
 
     private List<TableColumn<Activity, ?>> createColumns()
     {
+        final Callback<TableColumn<Activity, Boolean>, TableCell<Activity, Boolean>> cellFactory = new Callback<TableColumn<Activity, Boolean>, TableCell<Activity, Boolean>>()
+        {
+            @Override
+            public TableCell<Activity, Boolean> call(TableColumn<Activity, Boolean> tableColumn)
+            {
+                final Callback<Integer, ObservableValue<Boolean>> getSelectedProperty = new Callback<Integer, ObservableValue<Boolean>>()
+                {
+                    @Override
+                    public ObservableValue<Boolean> call(Integer index)
+                    {
+                        final Activity activity = tableColumn.getTableView().getItems().get(index);
+                        final SimpleBooleanProperty property = new SimpleBooleanProperty(
+                                activity.isRemainderActivity());
+                        property.addListener(new ChangeListener<Boolean>()
+                        {
+                            @Override
+                            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+                                    Boolean newValue)
+                            {
+                                activity.setRemainderActivity(newValue);
+                            }
+                        });
+                        return property;
+                    }
+                };
+                return new CheckBoxTableCell<>(getSelectedProperty);
+            }
+        };
         return asList(createEditableColumn("projectId", "Project", Activity::getProjectId,
                 (activity, projectId) -> activity.setProjectId(projectId), new DefaultStringConverter()),
 
                 createEditableColumn("duration", "Duration", Activity::getDuration,
                         (activity, duration) -> activity.setDuration(duration),
                         param -> new TextFieldTableCell<>(new DurationStringConverter(formatterService))),
+
+                createEditableColumn("remainder", "Remainder",
+                        Activity::isRemainderActivity,
+                        (activity, remainder) -> activity.setRemainderActivity(remainder),
+                        cellFactory),
 
                 createEditableColumn("comment", "Comment", Activity::getComment,
                         (activity, comment) -> activity.setComment(comment), new DefaultStringConverter()));
@@ -88,20 +125,14 @@ public class ActivitiesTable
     private <T> TableColumn<Activity, T> createEditableColumn(String id, String label, Function<Activity, T> getter,
             BiConsumer<Activity, T> setter, Callback<TableColumn<Activity, T>, TableCell<Activity, T>> cellFactory)
     {
-        final TableColumn<Activity, T> column = createColumn(id, label);
+        final TableColumn<Activity, T> column = new TableColumn<>(label);
+        column.setId(id);
         column.setCellFactory(cellFactory);
         column.setCellValueFactory(
                 data -> new ReadOnlyObjectWrapper<>(data.getValue() != null ? getter.apply(data.getValue()) : null));
         column.setOnEditCommit(editCommitHandler(setter));
         column.setEditable(true);
-        return column;
-    }
-
-    private <T> TableColumn<Activity, T> createColumn(String id, String label)
-    {
-        final TableColumn<Activity, T> column = new TableColumn<>(label);
         column.setSortable(false);
-        column.setId(id);
         return column;
     }
 

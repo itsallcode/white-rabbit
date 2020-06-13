@@ -41,6 +41,11 @@ public class JsonActivity
         return duration;
     }
 
+    public boolean isRemainder()
+    {
+        return getDuration() == null;
+    }
+
     public void setDuration(Duration duration)
     {
         this.duration = duration;
@@ -54,5 +59,11 @@ public class JsonActivity
     public void setComment(String comment)
     {
         this.comment = comment;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "JsonActivity [projectId=" + projectId + ", duration=" + duration + ", comment=" + comment + "]";
     }
 }

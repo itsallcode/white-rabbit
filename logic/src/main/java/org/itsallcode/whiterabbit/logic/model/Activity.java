@@ -56,4 +56,14 @@ public class Activity
     {
         jsonActivity.setComment(comment);
     }
+
+    public boolean isRemainderActivity()
+    {
+        return jsonActivity.getDuration() == null;
+    }
+
+    public void setRemainderActivity(boolean remainder)
+    {
+        day.setRemainderActivity(jsonActivity, remainder);
+    }
 }
