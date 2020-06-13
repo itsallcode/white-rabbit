@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -18,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -26,6 +29,8 @@ import javafx.util.StringConverter;
 
 public class ActivitiesTable
 {
+    private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
+
     private final ObservableList<Activity> activities = FXCollections.observableArrayList();
     private final ActivityEditListener editListener;
 
@@ -35,11 +40,16 @@ public class ActivitiesTable
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
-    private void updateTableValues(DayRecord day)
+    public void updateTableValues(DayRecord day)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             activities.clear();
-            activities.addAll(day.getActivities());
+            if (day != null)
+            {
+                final List<Activity> selectedDayActivities = day.getActivities();
+                LOG.debug("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
+                activities.addAll(selectedDayActivities);
+            }
         });
     }
 
@@ -85,10 +95,21 @@ public class ActivitiesTable
             Function<Activity, T> getter, Function<T, String> formatter)
     {
         final TableColumn<Activity, String> column = createColumn(id, label);
-        column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(
-                data.getValue() != null ? formatter.apply(getter.apply(data.getValue())) : null));
+        column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(formatValue(data, getter, formatter)));
         column.setEditable(false);
         return column;
+    }
+
+    private <T> String formatValue(CellDataFeatures<Activity, String> data, Function<Activity, T> getter,
+            Function<T, String> formatter)
+    {
+        final Activity value = data.getValue();
+        if (value == null)
+        {
+            return null;
+        }
+        final T rawValue = getter.apply(value);
+        return rawValue != null ? formatter.apply(rawValue) : null;
     }
 
     private <T> TableColumn<Activity, T> createColumn(String id, String label)

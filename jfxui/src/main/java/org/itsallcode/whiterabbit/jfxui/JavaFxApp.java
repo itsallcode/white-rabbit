@@ -315,16 +315,8 @@ public class JavaFxApp extends Application
         final Node activitiesTab = activitiesTable.initTable();
 
         final TilePane buttonBar = createButtonBar();
-        activitiesTab.maxHeight(50);
-        activitiesTab.minHeight(50);
-        activitiesTab.prefHeight(50);
         final VBox bottom = new VBox(GAP_PIXEL, activitiesTab, buttonBar);
 
-        // VBox.setMargin(activitiesTab, insets);
-        // VBox.setMargin(buttonBar, insets);
-
-        // bottom.getChildren().add(buttonBar);
-        // bottom.getChildren().add(activitiesTab);
         pane.setBottom(bottom);
         BorderPane.setMargin(bottom, insets);
 
@@ -342,8 +334,15 @@ public class JavaFxApp extends Application
                 startInterruptionButton,
                 createStopWorkForTodayButton(),
                 button("Vacation report", e -> showVacationReport()),
-                button("Add activity", e -> addActivity()));
+                createAddActivityButton());
         return buttonPane;
+    }
+
+    private Button createAddActivityButton()
+    {
+        final Button button = button("Add activity", e -> addActivity());
+        // button.disableProperty().bind(Bindings.isNull(dayRecordTable.selectedDay()));
+        return button;
     }
 
     private void addActivity()
@@ -353,7 +352,7 @@ public class JavaFxApp extends Application
         {
             return;
         }
-        appService.activities().addActivity(selectedDay.getDate(), null);
+        appService.activities().addActivity(selectedDay.getDate(), "my project");
     }
 
     private Button createStopWorkForTodayButton()
@@ -478,6 +477,10 @@ public class JavaFxApp extends Application
                 if (currentMonth.get().getYearMonth().equals(recordMonth))
                 {
                     currentMonth.setValue(record.getMonth());
+                    if (dayRecordTable.selectedDay().getValue() != null)
+                    {
+                        activitiesTable.updateTableValues(record);
+                    }
                 }
             });
         }
