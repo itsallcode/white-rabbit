@@ -19,7 +19,6 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -58,7 +57,7 @@ public class ActivitiesTable
         });
     }
 
-    public Node initTable()
+    public TableView<Activity> initTable()
     {
         final TableView<Activity> table = new TableView<>(activities);
         table.setEditable(true);

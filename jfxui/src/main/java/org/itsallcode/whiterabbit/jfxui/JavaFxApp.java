@@ -22,6 +22,7 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
@@ -55,12 +56,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class JavaFxApp extends Application
@@ -298,12 +300,17 @@ public class JavaFxApp extends Application
 
     private BorderPane createMainPane()
     {
+        final Node daysTable = dayRecordTable.initTable();
+        final TableView<Activity> activitiesTab = activitiesTable.initTable();
+        final SplitPane mainPane = new SplitPane(daysTable, activitiesTab);
+        mainPane.setOrientation(Orientation.VERTICAL);
+        mainPane.setDividerPositions(0.8);
+
         final BorderPane pane = new BorderPane();
-        final Node table = dayRecordTable.initTable();
-        pane.setCenter(table);
+        pane.setCenter(mainPane);
 
         final Insets insets = new Insets(GAP_PIXEL);
-        BorderPane.setMargin(table, insets);
+        BorderPane.setMargin(mainPane, insets);
 
         final FlowPane topPane = new FlowPane();
         topPane.getChildren().add(new Label("Month:"));
@@ -312,13 +319,9 @@ public class JavaFxApp extends Application
         pane.setTop(topPane);
         BorderPane.setMargin(topPane, insets);
 
-        final Node activitiesTab = activitiesTable.initTable();
-
         final TilePane buttonBar = createButtonBar();
-        final VBox bottom = new VBox(GAP_PIXEL, activitiesTab, buttonBar);
-
-        pane.setBottom(bottom);
-        BorderPane.setMargin(bottom, insets);
+        BorderPane.setMargin(buttonBar, insets);
+        pane.setBottom(buttonBar);
 
         return pane;
     }

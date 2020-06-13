@@ -25,7 +25,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -57,7 +56,7 @@ public class DayRecordTable
         currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
-    public Node initTable()
+    public TableView<DayRecordPropertyAdapter> initTable()
     {
         table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
