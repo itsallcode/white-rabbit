@@ -40,7 +40,8 @@ public class ActivityService
         final DayRecord day = monthIndex.getDay(activity.getDay().getDate());
 
         final Activity activityToUpdate = day.getActivity(index)
-                .orElseThrow(() -> new IllegalArgumentException("No activity with index " + index + " found"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No activity with index " + index + " found for day " + day.getDate()));
 
         activityToUpdate.updateValuesFrom(activity);
 

@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.activities;
+package org.itsallcode.whiterabbit.jfxui.table.activities;
 
 import static java.util.Arrays.asList;
 
@@ -9,8 +9,10 @@ import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
+import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
@@ -20,12 +22,12 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 
 public class ActivitiesTable
 {
@@ -33,10 +35,13 @@ public class ActivitiesTable
 
     private final ObservableList<Activity> activities = FXCollections.observableArrayList();
     private final ActivityEditListener editListener;
+    private final FormatterService formatterService;
 
-    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, ActivityEditListener editListener)
+    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, ActivityEditListener editListener,
+            FormatterService formatterService)
     {
         this.editListener = editListener;
+        this.formatterService = formatterService;
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
@@ -64,7 +69,15 @@ public class ActivitiesTable
 
     private List<TableColumn<Activity, ?>> createColumns()
     {
-        return asList(createReadonlyColumn("projectId", "Project", Activity::getProjectId));
+        return asList(createEditableColumn("projectId", "Project", Activity::getProjectId,
+                (activity, projectId) -> activity.setProjectId(projectId), new DefaultStringConverter()),
+
+                createEditableColumn("duration", "Duration", Activity::getDuration,
+                        (activity, duration) -> activity.setDuration(duration),
+                        param -> new TextFieldTableCell<>(new DurationStringConverter(formatterService))),
+
+                createEditableColumn("comment", "Comment", Activity::getComment,
+                        (activity, comment) -> activity.setComment(comment), new DefaultStringConverter()));
     }
 
     private <T> TableColumn<Activity, T> createEditableColumn(String id, String label, Function<Activity, T> getter,
@@ -85,33 +98,6 @@ public class ActivitiesTable
         return column;
     }
 
-    private <T> TableColumn<Activity, String> createReadonlyColumn(String id, String label,
-            Function<Activity, T> getter)
-    {
-        return createReadonlyColumn(id, label, getter, T::toString);
-    }
-
-    private <T> TableColumn<Activity, String> createReadonlyColumn(String id, String label,
-            Function<Activity, T> getter, Function<T, String> formatter)
-    {
-        final TableColumn<Activity, String> column = createColumn(id, label);
-        column.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(formatValue(data, getter, formatter)));
-        column.setEditable(false);
-        return column;
-    }
-
-    private <T> String formatValue(CellDataFeatures<Activity, String> data, Function<Activity, T> getter,
-            Function<T, String> formatter)
-    {
-        final Activity value = data.getValue();
-        if (value == null)
-        {
-            return null;
-        }
-        final T rawValue = getter.apply(value);
-        return rawValue != null ? formatter.apply(rawValue) : null;
-    }
-
     private <T> TableColumn<Activity, T> createColumn(String id, String label)
     {
         final TableColumn<Activity, T> column = new TableColumn<>(label);
@@ -123,13 +109,14 @@ public class ActivitiesTable
     private <T> EventHandler<CellEditEvent<Activity, T>> editCommitHandler(BiConsumer<Activity, T> setter)
     {
         return event -> {
+            final int row = event.getTablePosition().getRow();
             final Activity rowValue = event.getRowValue();
             if (rowValue == null)
             {
                 return;
             }
             setter.accept(rowValue, event.getNewValue());
-            editListener.recordUpdated(rowValue);
+            editListener.recordUpdated(row, rowValue);
         };
     }
 }

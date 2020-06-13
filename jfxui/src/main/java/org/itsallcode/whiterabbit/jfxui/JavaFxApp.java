@@ -13,12 +13,12 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.jfxui.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
-import org.itsallcode.whiterabbit.jfxui.table.DayRecordTable;
+import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -257,9 +257,9 @@ public class JavaFxApp extends Application
             appService.updateNow();
         }, formatter);
 
-        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), updatedActivity -> {
-            appService.activities().updateActivity(0, updatedActivity);
-        });
+        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), (row, updatedActivity) -> {
+            appService.activities().updateActivity(row, updatedActivity);
+        }, formatter);
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);

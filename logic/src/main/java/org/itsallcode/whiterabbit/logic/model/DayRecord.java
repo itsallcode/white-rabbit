@@ -209,7 +209,7 @@ public class DayRecord
     public Optional<Activity> getActivity(int index)
     {
         return Optional.ofNullable(day.getActivities())
-                .filter(list -> list.size() <= index)
+                .filter(list -> list.size() > index)
                 .map(list -> list.get(index))
                 .map(wrapActivity());
     }

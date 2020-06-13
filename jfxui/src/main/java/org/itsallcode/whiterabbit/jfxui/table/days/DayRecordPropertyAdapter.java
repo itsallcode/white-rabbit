@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.table;
+package org.itsallcode.whiterabbit.jfxui.table.days;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ class DayRecordPropertyAdapter
     private static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
 
     final ObjectProperty<DayRecord> recordProperty = new ReadOnlyObjectWrapper<>();
-    private final RecordEditListener editListener;
+    private final DayRecordEditListener editListener;
 
     private final List<PropertyField<?>> fields = new ArrayList<>();
 
@@ -45,7 +45,7 @@ class DayRecordPropertyAdapter
     final ObjectProperty<Duration> totalOvertime;
     final ObjectProperty<String> comment;
 
-    DayRecordPropertyAdapter(RecordEditListener editListener)
+    DayRecordPropertyAdapter(DayRecordEditListener editListener)
     {
         this.editListener = editListener;
 
@@ -147,13 +147,13 @@ class DayRecordPropertyAdapter
     private static class RecordChangeListener<T> implements ChangeListener<T>
     {
         private final ObjectProperty<DayRecord> record;
-        private final RecordEditListener editListener;
+        private final DayRecordEditListener editListener;
         private final BiConsumer<DayRecord, T> setter;
         private final Function<DayRecord, T> getter;
         private final String fieldName;
 
         private RecordChangeListener(ObjectProperty<DayRecord> record, String fieldName,
-                RecordEditListener editListener, Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter)
+                DayRecordEditListener editListener, Function<DayRecord, T> getter, BiConsumer<DayRecord, T> setter)
         {
             this.record = record;
             this.fieldName = fieldName;
