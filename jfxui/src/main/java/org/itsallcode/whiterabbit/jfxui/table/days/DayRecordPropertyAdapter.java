@@ -11,12 +11,12 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.table.PropertyField;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,12 +25,12 @@ import javafx.beans.value.ObservableValue;
 
 class DayRecordPropertyAdapter
 {
-    private static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
+    static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
 
     final ObjectProperty<DayRecord> recordProperty = new ReadOnlyObjectWrapper<>();
     private final DayRecordEditListener editListener;
 
-    private final List<PropertyField<?>> fields = new ArrayList<>();
+    private final List<PropertyField<DayRecord, ?>> fields = new ArrayList<>();
 
     private final BooleanProperty currentlyUpdating = new SimpleBooleanProperty(false);
 
@@ -94,33 +94,10 @@ class DayRecordPropertyAdapter
         final ChangeListener<T> updatingChangeListener = new RecordChangeListener<>(this.recordProperty, fieldName,
                 this.editListener, getter, setter);
         property.addListener(new DelegatingChangeListener<>(updatingChangeListener, this.currentlyUpdating));
-        final PropertyField<T> field = new PropertyField<>(this.recordProperty, fieldName, property, getter);
+        final PropertyField<DayRecord, T> field = new PropertyField<>(this.recordProperty, fieldName,
+                property, getter);
         this.fields.add(field);
         return property;
-    }
-
-    private static class PropertyField<T>
-    {
-        private final ObjectProperty<DayRecord> recordProperty;
-        private final Property<T> property;
-        private final Function<DayRecord, T> getter;
-        private final String fieldName;
-
-        private PropertyField(ObjectProperty<DayRecord> recordProperty, String fieldName, Property<T> property,
-                Function<DayRecord, T> getter)
-        {
-            this.recordProperty = recordProperty;
-            this.fieldName = fieldName;
-            this.property = property;
-            this.getter = getter;
-        }
-
-        void update()
-        {
-            final T newValue = recordProperty.get() != null ? getter.apply(recordProperty.get()) : null;
-            LOG.trace("Field {} updated, new value: {}", fieldName, newValue);
-            property.setValue(newValue);
-        }
     }
 
     private static class DelegatingChangeListener<T> implements ChangeListener<T>
