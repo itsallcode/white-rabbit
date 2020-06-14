@@ -506,12 +506,18 @@ public class JavaFxApp extends Application
                 if (currentMonth.get().getYearMonth().equals(recordMonth))
                 {
                     currentMonth.setValue(record.getMonth());
-                    if (dayRecordTable.selectedDay().getValue() != null)
+                    if (daySelected(record))
                     {
                         activitiesTable.updateTableValues(record);
                     }
                 }
             });
+        }
+
+        private boolean daySelected(DayRecord record)
+        {
+            final DayRecord selectedDay = dayRecordTable.selectedDay().getValue();
+            return selectedDay != null && selectedDay.getDate().equals(record.getDate());
         }
 
         @Override
