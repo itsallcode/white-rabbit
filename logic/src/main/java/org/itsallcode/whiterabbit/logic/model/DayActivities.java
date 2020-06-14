@@ -30,13 +30,15 @@ public class DayActivities
         this.dayRecord = dayRecord;
     }
 
-    public Activity add(String projectId)
+    public Activity add()
     {
         if (day.getActivities() == null)
         {
             day.setActivities(new ArrayList<>());
         }
-        final JsonActivity jsonActivity = new JsonActivity(projectId);
+        final JsonActivity jsonActivity = new JsonActivity();
+        jsonActivity.setProjectId("");
+        jsonActivity.setDuration(Duration.ZERO);
         final int newRowIndex = day.getActivities().size();
         day.getActivities().add(jsonActivity);
         return new Activity(newRowIndex, jsonActivity, this);

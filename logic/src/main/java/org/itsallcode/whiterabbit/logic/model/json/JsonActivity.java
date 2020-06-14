@@ -9,7 +9,6 @@ import javax.json.bind.annotation.JsonbVisibility;
 import org.eclipse.yasson.FieldAccessStrategy;
 
 @JsonbPropertyOrder({ "projectId", "duration", "comment" })
-
 @JsonbVisibility(FieldAccessStrategy.class)
 public class JsonActivity
 {
@@ -22,11 +21,7 @@ public class JsonActivity
 
     public JsonActivity()
     {
-    }
-
-    public JsonActivity(String projectId)
-    {
-        this.projectId = projectId;
+        this.projectId = null;
         this.duration = null;
         this.comment = null;
     }

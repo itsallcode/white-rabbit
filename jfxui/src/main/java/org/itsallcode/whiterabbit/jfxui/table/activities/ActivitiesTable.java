@@ -17,6 +17,7 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,12 +29,15 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 public class ActivitiesTable
 {
     private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
 
     private final ObservableList<ActivityPropertyAdapter> activities = FXCollections.observableArrayList();
+    private final SimpleObjectProperty<Activity> selectedActivity = new SimpleObjectProperty<>(null);
+
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
 
@@ -64,31 +68,26 @@ public class ActivitiesTable
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("activities-table");
+        table.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> selectedActivity
+                        .set(newValue != null ? newValue.getRecord() : null));
         return table;
     }
 
     private List<TableColumn<ActivityPropertyAdapter, ?>> createColumns()
     {
-        final Callback<TableColumn<ActivityPropertyAdapter, Boolean>, TableCell<ActivityPropertyAdapter, Boolean>> cellFactory = new Callback<TableColumn<ActivityPropertyAdapter, Boolean>, TableCell<ActivityPropertyAdapter, Boolean>>()
-        {
-            @Override
-            public TableCell<ActivityPropertyAdapter, Boolean> call(
-                    TableColumn<ActivityPropertyAdapter, Boolean> tableColumn)
-            {
-                final Callback<Integer, ObservableValue<Boolean>> getSelectedProperty = new Callback<Integer, ObservableValue<Boolean>>()
-                {
-                    @Override
-                    public ObservableValue<Boolean> call(Integer index)
-                    {
-                        final ActivityPropertyAdapter activity = tableColumn.getTableView().getItems().get(index);
-                        final SimpleBooleanProperty prop = new SimpleBooleanProperty(activity.remainder.get());
-                        Bindings.bindBidirectional(activity.remainder, prop);
-                        return prop;
-                    }
-                };
-                return new CheckBoxTableCell<>(getSelectedProperty);
-            }
+        final Callback<TableColumn<ActivityPropertyAdapter, Boolean>, TableCell<ActivityPropertyAdapter, Boolean>> cellFactory = tableColumn -> {
+            return new CheckBoxTableCell<>(index -> {
+                final ActivityPropertyAdapter activity = tableColumn.getTableView().getItems().get(index);
+                final SimpleBooleanProperty prop = new SimpleBooleanProperty(activity.remainder.get());
+                Bindings.bindBidirectional(activity.remainder, prop);
+                return prop;
+            });
         };
+
+        final TableColumn<ActivityPropertyAdapter, Integer> indexCol = column("index", "Index",
+                param -> new TextFieldTableCell<>(new IntegerStringConverter()),
+                data -> data.getValue().index);
         final TableColumn<ActivityPropertyAdapter, String> projectCol = column("project", "Project",
                 param -> new TextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().projectId);
         final TableColumn<ActivityPropertyAdapter, Duration> durationCol = column("duration", "Duration",
@@ -99,7 +98,7 @@ public class ActivitiesTable
         final TableColumn<ActivityPropertyAdapter, String> commentCol = column("comment", "Comment",
                 param -> new TextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().comment);
 
-        return asList(projectCol, durationCol, remainderCol, commentCol);
+        return asList(indexCol, projectCol, durationCol, remainderCol, commentCol);
     }
 
     private <T> TableColumn<ActivityPropertyAdapter, T> column(String id, String label,
@@ -127,5 +126,10 @@ public class ActivitiesTable
     public void refresh()
     {
         activities.forEach(ActivityPropertyAdapter::update);
+    }
+
+    public SimpleObjectProperty<Activity> selectedActivity()
+    {
+        return selectedActivity;
     }
 }

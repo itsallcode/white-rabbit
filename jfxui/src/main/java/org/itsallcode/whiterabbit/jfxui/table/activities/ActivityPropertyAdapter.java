@@ -13,11 +13,13 @@ import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 
 class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
 {
     private static final Logger LOG = LogManager.getLogger(ActivityPropertyAdapter.class);
 
+    public ReadOnlyObjectProperty<Integer> index;
     final ObjectProperty<String> projectId;
     final ObjectProperty<Duration> duration;
     final ObjectProperty<Boolean> remainder;
@@ -28,6 +30,7 @@ class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
     {
         super(record -> editListener.recordUpdated(record.getDay()));
         setRecord(act);
+        index = readOnlyPropertyField("index", Activity::getRow);
         projectId = propertyField("projectId", Activity::getProjectId, Activity::setProjectId);
         duration = propertyField("duration", Activity::getDuration, Activity::setDuration);
         comment = propertyField("comment", Activity::getComment, Activity::setComment);

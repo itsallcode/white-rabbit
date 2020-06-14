@@ -23,33 +23,23 @@ public class ActivityService
         this.appServiceCallback = appServiceCallback;
     }
 
-    public void addActivity(LocalDate date, String projectId)
+    public void addActivity(LocalDate date)
     {
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(date)).orElseThrow();
         final DayRecord day = monthIndex.getDay(date);
 
-        day.activities().add(projectId);
+        day.activities().add();
 
         storage.storeMonth(monthIndex);
         appServiceCallback.recordUpdated(day);
     }
 
-    private void updateActivity(Activity activity)
+    public void removeActivity(Activity activity)
     {
-        final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(activity.getDay().getDate())).orElseThrow();
-        final DayRecord day = monthIndex.getDay(activity.getDay().getDate());
-
-        final Activity activityToUpdate = day.activities().get(activity.getRow())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No activity with index " + activity.getRow() + " found for day " + day.getDate()));
-
-        activityToUpdate.updateValuesFrom(activity);
-
-        storage.storeMonth(monthIndex);
-        appServiceCallback.recordUpdated(day);
+        removeActivity(activity.getDay().getDate(), activity.getRow());
     }
 
-    public void removeActivity(int index, LocalDate date)
+    private void removeActivity(LocalDate date, int index)
     {
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(date)).orElseThrow();
         final DayRecord day = monthIndex.getDay(date);

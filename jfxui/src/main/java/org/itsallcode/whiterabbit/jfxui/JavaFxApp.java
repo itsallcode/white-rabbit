@@ -56,11 +56,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class JavaFxApp extends Application
@@ -300,16 +305,26 @@ public class JavaFxApp extends Application
 
     private BorderPane createMainPane()
     {
+        final Insets insets = new Insets(GAP_PIXEL);
         final Node daysTable = dayRecordTable.initTable();
         final Node activitiesTab = activitiesTable.initTable();
-        final SplitPane mainPane = new SplitPane(daysTable, activitiesTab);
+        final Button addActivityButton = button("+", "Add activity", e -> addActivity());
+        final Button removeActivityButton = button("-", "Remove activity", e -> removeActivity());
+        final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
+                addActivityButton,
+                removeActivityButton);
+        // VBox.setMargin(addActivityButton, insets);
+        // VBox.setMargin(removeActivityButton, insets);
+        final SplitPane mainPane = new SplitPane(daysTable,
+                new TitledPane("Activities", new HBox(GAP_PIXEL, activitiesButtonPane, activitiesTab)));
+        HBox.setHgrow(activitiesTab, Priority.ALWAYS);
+        // HBox.setMargin(activitiesTab, insets);
         mainPane.setOrientation(Orientation.VERTICAL);
         mainPane.setDividerPositions(0.8);
 
         final BorderPane pane = new BorderPane();
         pane.setCenter(mainPane);
 
-        final Insets insets = new Insets(GAP_PIXEL);
         BorderPane.setMargin(mainPane, insets);
 
         final FlowPane topPane = new FlowPane();
@@ -336,16 +351,8 @@ public class JavaFxApp extends Application
         buttonPane.getChildren().addAll(button("Update", e -> appService.updateNow()),
                 startInterruptionButton,
                 createStopWorkForTodayButton(),
-                button("Vacation report", e -> showVacationReport()),
-                createAddActivityButton());
+                button("Vacation report", e -> showVacationReport()));
         return buttonPane;
-    }
-
-    private Button createAddActivityButton()
-    {
-        final Button button = button("Add activity", e -> addActivity());
-        // button.disableProperty().bind(Bindings.isNull(dayRecordTable.selectedDay()));
-        return button;
     }
 
     private void addActivity()
@@ -355,7 +362,17 @@ public class JavaFxApp extends Application
         {
             return;
         }
-        appService.activities().addActivity(selectedDay.getDate(), "my project");
+        appService.activities().addActivity(selectedDay.getDate());
+    }
+
+    private void removeActivity()
+    {
+        if (activitiesTable.selectedActivity().get() == null)
+        {
+            LOG.info("No activity selected to be removed");
+            return;
+        }
+        appService.activities().removeActivity(activitiesTable.selectedActivity().get());
     }
 
     private Button createStopWorkForTodayButton()
@@ -409,9 +426,18 @@ public class JavaFxApp extends Application
 
     private Button button(String label, EventHandler<ActionEvent> action)
     {
+        return button(label, null, action);
+    }
+
+    private Button button(String label, String tooltip, EventHandler<ActionEvent> action)
+    {
         final Button button = new Button(label);
         button.setOnAction(action);
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        if (tooltip != null)
+        {
+            button.setTooltip(new Tooltip(tooltip));
+        }
         return button;
     }
 

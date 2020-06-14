@@ -22,7 +22,6 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -66,9 +65,7 @@ public class DayRecordTable
         table.setId("day-table");
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
-                .addListener((ChangeListener<DayRecordPropertyAdapter>) (observable, oldValue, newValue) -> {
-                    selectedDay.set(newValue.getRecord());
-                });
+                .addListener((observable, oldValue, newValue) -> selectedDay.set(newValue.getRecord()));
         return table;
     }
 
