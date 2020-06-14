@@ -34,14 +34,14 @@ public class ActivityService
         appServiceCallback.recordUpdated(day);
     }
 
-    public void updateActivity(int index, Activity activity)
+    public void updateActivity(Activity activity)
     {
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(activity.getDay().getDate())).orElseThrow();
         final DayRecord day = monthIndex.getDay(activity.getDay().getDate());
 
-        final Activity activityToUpdate = day.activities().get(index)
+        final Activity activityToUpdate = day.activities().get(activity.getRow())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "No activity with index " + index + " found for day " + day.getDate()));
+                        "No activity with index " + activity.getRow() + " found for day " + day.getDate()));
 
         activityToUpdate.updateValuesFrom(activity);
 

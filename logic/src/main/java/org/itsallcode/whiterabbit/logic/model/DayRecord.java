@@ -12,7 +12,7 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 
-public class DayRecord
+public class DayRecord implements RowRecord
 {
     private static final Logger LOG = LogManager.getLogger(DayRecord.class);
 
@@ -186,4 +186,9 @@ public class DayRecord
         return "DayRecord [day=" + day + "]";
     }
 
+    @Override
+    public int getRow()
+    {
+        return getDate().getDayOfMonth() - 1;
+    }
 }

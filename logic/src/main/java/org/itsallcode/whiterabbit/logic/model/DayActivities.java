@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,14 +36,16 @@ public class DayActivities
             day.setActivities(new ArrayList<>());
         }
         final JsonActivity jsonActivity = new JsonActivity(projectId);
+        final int newRowIndex = day.getActivities().size();
         day.getActivities().add(jsonActivity);
-        return new Activity(jsonActivity, this);
+        return new Activity(newRowIndex, jsonActivity, this);
     }
 
     public List<Activity> getAll()
     {
-        return getActivities()
-                .map(wrapActivity())
+        final List<JsonActivity> jsonActivities = getActivities().collect(toList());
+        return IntStream.range(0, jsonActivities.size())
+                .mapToObj(i -> wrapActivity(i).apply(jsonActivities.get(i)))
                 .collect(toList());
     }
 
@@ -53,9 +56,9 @@ public class DayActivities
                 .stream();
     }
 
-    private Function<JsonActivity, Activity> wrapActivity()
+    private Function<JsonActivity, Activity> wrapActivity(int index)
     {
-        return a -> new Activity(a, this);
+        return a -> new Activity(index, a, this);
     }
 
     public Optional<Activity> get(int index)
@@ -63,7 +66,7 @@ public class DayActivities
         return Optional.ofNullable(day.getActivities())
                 .filter(list -> list.size() > index)
                 .map(list -> list.get(index))
-                .map(wrapActivity());
+                .map(wrapActivity(index));
     }
 
     public void remove(int index)

@@ -6,12 +6,13 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.logic.model.RowRecord;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class RecordChangeListener<R, T> implements ChangeListener<T>
+public class RecordChangeListener<R extends RowRecord, T> implements ChangeListener<T>
 {
     private static final Logger LOG = LogManager.getLogger(RecordChangeListener.class);
 

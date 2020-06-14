@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
@@ -37,10 +38,10 @@ public class ActivitiesTable
     private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
 
     private final ObservableList<Activity> activities = FXCollections.observableArrayList();
-    private final ActivityEditListener editListener;
+    private final EditListener<Activity> editListener;
     private final FormatterService formatterService;
 
-    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, ActivityEditListener editListener,
+    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, EditListener<Activity> editListener,
             FormatterService formatterService)
     {
         this.editListener = editListener;
@@ -139,14 +140,13 @@ public class ActivitiesTable
     private <T> EventHandler<CellEditEvent<Activity, T>> editCommitHandler(BiConsumer<Activity, T> setter)
     {
         return event -> {
-            final int row = event.getTablePosition().getRow();
             final Activity rowValue = event.getRowValue();
             if (rowValue == null)
             {
                 return;
             }
             setter.accept(rowValue, event.getNewValue());
-            editListener.recordUpdated(row, rowValue);
+            editListener.recordUpdated(rowValue);
         };
     }
 }

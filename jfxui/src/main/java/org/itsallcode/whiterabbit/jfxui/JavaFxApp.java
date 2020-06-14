@@ -259,8 +259,8 @@ public class JavaFxApp extends Application
             appService.updateNow();
         }, formatter);
 
-        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), (row, updatedActivity) -> {
-            appService.activities().updateActivity(row, updatedActivity);
+        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), updatedActivity -> {
+            appService.activities().updateActivity(updatedActivity);
         }, formatter);
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());

@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
@@ -40,13 +41,13 @@ import javafx.util.converter.LocalTimeStringConverter;
 public class DayRecordTable
 {
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
-    private final DayRecordEditListener editListener;
+    private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final Locale locale;
     private final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
     private TableView<DayRecordPropertyAdapter> table;
 
-    public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, DayRecordEditListener editListener,
+    public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
             FormatterService formatterService)
     {
         this.editListener = editListener;

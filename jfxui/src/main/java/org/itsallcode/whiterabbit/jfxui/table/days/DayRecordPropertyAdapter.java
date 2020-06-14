@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.table.DelegatingChangeListener;
+import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.PropertyField;
 import org.itsallcode.whiterabbit.jfxui.table.RecordChangeListener;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -25,10 +26,10 @@ import javafx.beans.value.ChangeListener;
 
 class DayRecordPropertyAdapter
 {
-    static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
+    private static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
 
     final ObjectProperty<DayRecord> recordProperty = new ReadOnlyObjectWrapper<>();
-    private final DayRecordEditListener editListener;
+    private final EditListener<DayRecord> editListener;
 
     private final List<PropertyField<DayRecord, ?>> fields = new ArrayList<>();
 
@@ -45,7 +46,7 @@ class DayRecordPropertyAdapter
     final ObjectProperty<Duration> totalOvertime;
     final ObjectProperty<String> comment;
 
-    DayRecordPropertyAdapter(DayRecordEditListener editListener)
+    DayRecordPropertyAdapter(EditListener<DayRecord> editListener)
     {
         this.editListener = editListener;
 

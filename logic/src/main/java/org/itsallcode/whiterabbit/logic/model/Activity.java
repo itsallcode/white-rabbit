@@ -4,13 +4,15 @@ import java.time.Duration;
 
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 
-public class Activity
+public class Activity implements RowRecord
 {
     private final JsonActivity jsonActivity;
     private final DayActivities day;
+    private final int index;
 
-    public Activity(JsonActivity jsonActivity, DayActivities day)
+    public Activity(int index, JsonActivity jsonActivity, DayActivities day)
     {
+        this.index = index;
         this.jsonActivity = jsonActivity;
         this.day = day;
     }
@@ -65,5 +67,11 @@ public class Activity
     public void setRemainderActivity(boolean remainder)
     {
         day.setRemainderActivity(jsonActivity, remainder);
+    }
+
+    @Override
+    public int getRow()
+    {
+        return index;
     }
 }
