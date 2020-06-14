@@ -67,7 +67,7 @@ public class DayRecordTable
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
                 .addListener((ChangeListener<DayRecordPropertyAdapter>) (observable, oldValue, newValue) -> {
-                    selectedDay.set(newValue.recordProperty.get());
+                    selectedDay.set(newValue.getRecord());
                 });
         return table;
     }
