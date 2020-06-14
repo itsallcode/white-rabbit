@@ -6,7 +6,7 @@ import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 
 public class Activity implements RowRecord
 {
-    private final JsonActivity jsonActivity;
+    final JsonActivity jsonActivity;
     private final DayActivities day;
     private final int index;
 
@@ -41,7 +41,7 @@ public class Activity implements RowRecord
 
     public Duration getDuration()
     {
-        return jsonActivity.getDuration();
+        return day.getDuration(this);
     }
 
     public void setDuration(Duration duration)

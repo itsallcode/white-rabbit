@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.RowRecord;
 
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -16,13 +16,13 @@ public class RecordChangeListener<R extends RowRecord, T> implements ChangeListe
 {
     private static final Logger LOG = LogManager.getLogger(RecordChangeListener.class);
 
-    private final ObjectProperty<R> record;
+    private final ReadOnlyObjectProperty<R> record;
     private final EditListener<R> editListener;
     private final BiConsumer<R, T> setter;
     private final Function<R, T> getter;
     private final String fieldName;
 
-    public RecordChangeListener(ObjectProperty<R> record, String fieldName,
+    public RecordChangeListener(ReadOnlyObjectProperty<R> record, String fieldName,
             EditListener<R> editListener, Function<R, T> getter, BiConsumer<R, T> setter)
     {
         this.record = record;

@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -108,7 +109,7 @@ public class DayActivities
     private Duration getUnallocatedDuration()
     {
         final Duration allocatedDuration = getActivities().map(JsonActivity::getDuration)
-                .filter(d -> d != null)
+                .filter(Objects::nonNull)
                 .reduce((d1, d2) -> d1.plus(d2)).orElse(Duration.ZERO);
         return dayRecord.getWorkingTime().minus(allocatedDuration);
     }
@@ -118,7 +119,7 @@ public class DayActivities
         final List<JsonActivity> remainderActivities = getActivities()
                 .filter(a -> a.getDuration() == null)
                 .collect(toList());
-        if (remainderActivities.size() >= 2)
+        if (remainderActivities.size() > 1)
         {
             LOG.warn("Found {} remainder activities for day {}: {}", remainderActivities.size(), dayRecord.getDate(),
                     remainderActivities);
@@ -130,7 +131,7 @@ public class DayActivities
             LOG.warn("More working time allocated to activites than available: {}", unallocatedDuration.negated());
             return false;
         }
-        if (remainderActivities.size() == 0 && !unallocatedDuration.isZero())
+        if (remainderActivities.isEmpty() && !unallocatedDuration.isZero())
         {
             LOG.warn("No remainder activity but {} of working time is not allocated", unallocatedDuration);
             return false;
@@ -141,5 +142,14 @@ public class DayActivities
     private List<JsonActivity> getRemainderActivities()
     {
         return getActivities().filter(a -> a.getDuration() == null).collect(toList());
+    }
+
+    public Duration getDuration(Activity activity)
+    {
+        if (activity.jsonActivity.getDuration() != null)
+        {
+            return activity.jsonActivity.getDuration();
+        }
+        return getUnallocatedDuration();
     }
 }

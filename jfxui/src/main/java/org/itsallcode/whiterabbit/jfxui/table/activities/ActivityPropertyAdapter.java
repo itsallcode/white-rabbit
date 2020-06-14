@@ -19,6 +19,8 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -27,7 +29,7 @@ class ActivityPropertyAdapter
 {
     private static final Logger LOG = LogManager.getLogger(ActivityPropertyAdapter.class);
 
-    private final SimpleObjectProperty<Activity> activityProperty;
+    private final ReadOnlyObjectProperty<Activity> activityProperty;
     private final EditListener<DayRecord> editListener;
 
     private final List<PropertyField<Activity, ?>> fields = new ArrayList<>();
@@ -40,10 +42,10 @@ class ActivityPropertyAdapter
     final ObjectProperty<String> comment;
 
     private ActivityPropertyAdapter(EditListener<DayRecord> editListener,
-            SimpleObjectProperty<Activity> activityProperty)
+            Activity act)
     {
         this.editListener = editListener;
-        this.activityProperty = activityProperty;
+        this.activityProperty = new ReadOnlyObjectWrapper<>(act);
 
         projectId = propertyField("projectId", Activity::getProjectId, Activity::setProjectId);
         duration = propertyField("duration", Activity::getDuration, Activity::setDuration);
@@ -84,7 +86,7 @@ class ActivityPropertyAdapter
     public static List<ActivityPropertyAdapter> wrap(EditListener<DayRecord> editListener, List<Activity> activities)
     {
         return activities.stream()
-                .map(a -> new ActivityPropertyAdapter(editListener, new SimpleObjectProperty<>(a)))
+                .map(a -> new ActivityPropertyAdapter(editListener, a))
                 .collect(toList());
     }
 }
