@@ -34,7 +34,7 @@ public class ActivityService
         appServiceCallback.recordUpdated(day);
     }
 
-    public void updateActivity(Activity activity)
+    private void updateActivity(Activity activity)
     {
         final MonthIndex monthIndex = storage.loadMonth(YearMonth.from(activity.getDay().getDate())).orElseThrow();
         final DayRecord day = monthIndex.getDay(activity.getDay().getDate());

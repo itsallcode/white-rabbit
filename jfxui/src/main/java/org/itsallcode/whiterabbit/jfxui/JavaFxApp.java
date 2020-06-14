@@ -22,7 +22,6 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
@@ -57,7 +56,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
@@ -259,8 +257,10 @@ public class JavaFxApp extends Application
             appService.updateNow();
         }, formatter);
 
-        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), updatedActivity -> {
-            appService.activities().updateActivity(updatedActivity);
+        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
+            appService.store(record);
+            // appService.activities().updateActivity(updatedActivity);
+            activitiesTable.refresh();
         }, formatter);
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
@@ -301,7 +301,7 @@ public class JavaFxApp extends Application
     private BorderPane createMainPane()
     {
         final Node daysTable = dayRecordTable.initTable();
-        final TableView<Activity> activitiesTab = activitiesTable.initTable();
+        final Node activitiesTab = activitiesTable.initTable();
         final SplitPane mainPane = new SplitPane(daysTable, activitiesTab);
         mainPane.setOrientation(Orientation.VERTICAL);
         mainPane.setDividerPositions(0.8);

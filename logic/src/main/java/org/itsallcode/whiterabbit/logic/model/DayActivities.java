@@ -85,19 +85,21 @@ public class DayActivities
             LOG.debug("Remainder unchanged for {} / {}", activity, remainder);
             return;
         }
-        final Duration unallocatedDuration = getUnallocatedDuration();
         if (!remainder)
         {
+            final Duration unallocatedDuration = getUnallocatedDuration();
             activity.setDuration(unallocatedDuration);
             LOG.debug("Set unallocated time {} for {}", unallocatedDuration, activity);
             return;
         }
 
-        final Optional<JsonActivity> currentRemainder = getRemainderActivity();
-        if (currentRemainder.isPresent())
+        final List<JsonActivity> currentRemainders = getRemainderActivities();
+        LOG.debug("Found {} remainder activities: deactivate them", currentRemainders.size());
+        for (final JsonActivity remainderActivity : currentRemainders)
         {
-            LOG.debug("Set unallocated time {} for other activity {}", unallocatedDuration, currentRemainder.get());
-            currentRemainder.get().setDuration(unallocatedDuration);
+            final Duration unallocatedDuration = getUnallocatedDuration();
+            remainderActivity.setDuration(unallocatedDuration);
+            LOG.debug("Set unallocated time {} for other activity {}", unallocatedDuration, remainderActivity);
         }
         activity.setDuration(null);
         LOG.debug("Make {} remainder activity", activity);
@@ -136,8 +138,8 @@ public class DayActivities
         return true;
     }
 
-    private Optional<JsonActivity> getRemainderActivity()
+    private List<JsonActivity> getRemainderActivities()
     {
-        return getActivities().filter(a -> a.getDuration() == null).findFirst();
+        return getActivities().filter(a -> a.getDuration() == null).collect(toList());
     }
 }

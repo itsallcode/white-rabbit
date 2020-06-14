@@ -74,4 +74,10 @@ public class Activity implements RowRecord
     {
         return index;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Activity [activity=" + jsonActivity + ", index=" + index + "]";
+    }
 }
