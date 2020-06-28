@@ -5,6 +5,11 @@ A time recording tool
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=white-rabbit)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=white-rabbit)
 
+## Recent changes
+
+* Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
+* Supports reduced working hours / short-time work, see [configuration option `current_working_time_per_day`](#optional_config)
+
 ## Features
 
 * Two user interfaces:
@@ -28,7 +33,6 @@ A time recording tool
     * Program shutdown
     * Computer sleeps for the rest of the day
   * Interruptions detected when computer sleeps for more than 2 minutes
-* Supports reduced working hours / short-time work
 * Keeps track of the overtime in previous months to speed up reports
 * Generates vacation report (no UI yet, written to standard out)
 * Detects when a second instance is started to avoid data corruption
@@ -147,10 +151,41 @@ data = <path-to-data-dir> # e.g.: ../time-recording-data/
 
 Restart WhiteRabbit after changing `time.properties`.
 
-#### Optional configuration settings
+#### <a name="optional_config"></a>Optional configuration settings
 
 * `locale`: format of date and time values, e.g. `de` or `en`. Default: system locale.
 * `current_working_time_per_day`: custom working time per day differing from the default of 8 hours. Format: see [Duration.parse()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)), e.g. `PT5H` for 5 hours or `PT5H30M` for 5 hours and 30 minutes. This setting will only affect the future.
+
+#### <a name="project_config"></a>Project configuration
+
+To use activity tracking, create file `projects.json` in your data directory with the following content:
+
+```json
+{
+    "projects": [
+        {
+            "projectId": "p1",
+            "label": "Project 1",
+            "costCarrier": "P1001"
+        },
+        {
+            "projectId": "p2",
+            "label": "Project 2",
+            "costCarrier": "P1002"
+        },
+        {
+            "projectId": "general",
+            "label": "General",
+            "costCarrier": "P0001"
+        },
+        {
+            "projectId": "training",
+            "label": "Training",
+            "costCarrier": "P0002"
+        }
+    ]
+}
+```
 
 ### Clone, configure and build
 
