@@ -3,8 +3,6 @@ package org.itsallcode.whiterabbit.logic.service;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -12,8 +10,6 @@ import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class ActivityService
 {
-    private static final Logger LOG = LogManager.getLogger(ActivityService.class);
-
     private final Storage storage;
     private final AppServiceCallback appServiceCallback;
 

@@ -1,20 +1,30 @@
 package org.itsallcode.whiterabbit.logic.model;
 
 import java.time.Duration;
+import java.util.Objects;
+import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
+import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class Activity implements RowRecord
 {
+    private static final Logger LOG = LogManager.getLogger(Activity.class);
+
     final JsonActivity jsonActivity;
     private final DayActivities day;
     private final int index;
+    private final ProjectService projectService;
 
-    public Activity(int index, JsonActivity jsonActivity, DayActivities day)
+    public Activity(int index, JsonActivity jsonActivity, DayActivities day, ProjectService projectService)
     {
         this.index = index;
         this.jsonActivity = jsonActivity;
         this.day = day;
+        this.projectService = Objects.requireNonNull(projectService);
     }
 
     public DayRecord getDay()
@@ -29,14 +39,21 @@ public class Activity implements RowRecord
         this.jsonActivity.setDuration(activity.jsonActivity.getDuration());
     }
 
-    public String getProjectId()
+    public Project getProject()
     {
-        return jsonActivity.getProjectId();
+        final String projectId = jsonActivity.getProjectId();
+        final Optional<Project> project = projectService.getProjectById(projectId);
+        if (project.isEmpty())
+        {
+            LOG.warn("No project found for id {}", projectId);
+            return null;
+        }
+        return project.get();
     }
 
-    public void setProjectId(String id)
+    public void setProject(Project project)
     {
-        this.jsonActivity.setProjectId(id);
+        this.jsonActivity.setProjectId(project.getProjectId());
     }
 
     public Duration getDuration()

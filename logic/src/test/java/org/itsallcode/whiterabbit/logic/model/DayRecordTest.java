@@ -392,7 +392,7 @@ class DayRecordTest
     void getJsonDayReturnsMonth()
     {
         final JsonDay jsonDay = new JsonDay();
-        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        final DayRecord day = createDay(jsonDay);
         assertThat(day.getJsonDay()).isSameAs(jsonDay);
     }
 
@@ -402,7 +402,7 @@ class DayRecordTest
         final JsonDay jsonDay = new JsonDay();
         jsonDay.setWorkingHours(null);
 
-        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        final DayRecord day = createDay(jsonDay);
         assertThat(day.getCustomWorkingTime()).isEmpty();
     }
 
@@ -412,7 +412,7 @@ class DayRecordTest
         final JsonDay jsonDay = new JsonDay();
         jsonDay.setWorkingHours(Duration.ofHours(5));
 
-        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        final DayRecord day = createDay(jsonDay);
         assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
     }
 
@@ -423,7 +423,7 @@ class DayRecordTest
         jsonMonth.setMonth(date.getMonth());
         jsonMonth.setYear(date.getYear());
         jsonMonth.setOvertimePreviousMonth(overtimePreviousMonth);
-        return MonthIndex.create(contractTerms(), jsonMonth);
+        return MonthIndex.create(contractTerms(), jsonMonth, null);
     }
 
     private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
@@ -517,10 +517,15 @@ class DayRecordTest
         return dayRecord(day, previousDay, month);
     }
 
+    private DayRecord createDay(final JsonDay jsonDay)
+    {
+        return new DayRecord(null, jsonDay, null, null, null);
+    }
+
     private DayRecord dayRecord(JsonDay day, DayRecord previousDay, MonthIndex month)
     {
         final ContractTermsService contractTerms = contractTerms();
-        return new DayRecord(contractTerms, day, previousDay, month);
+        return new DayRecord(contractTerms, day, previousDay, month, null);
     }
 
     private ContractTermsService contractTerms()

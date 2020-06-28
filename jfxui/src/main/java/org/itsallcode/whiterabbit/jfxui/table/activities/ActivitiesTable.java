@@ -13,6 +13,8 @@ import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
+import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyProperty;
@@ -26,6 +28,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
@@ -40,12 +43,14 @@ public class ActivitiesTable
 
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
+    private final ProjectService projectService;
 
     public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, EditListener<DayRecord> editListener,
-            FormatterService formatterService)
+            FormatterService formatterService, ProjectService projectService)
     {
         this.editListener = editListener;
         this.formatterService = formatterService;
+        this.projectService = projectService;
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
@@ -88,8 +93,10 @@ public class ActivitiesTable
         final TableColumn<ActivityPropertyAdapter, Integer> indexCol = column("index", "Index",
                 param -> new TextFieldTableCell<>(new IntegerStringConverter()),
                 data -> data.getValue().index);
-        final TableColumn<ActivityPropertyAdapter, String> projectCol = column("project", "Project",
-                param -> new TextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().projectId);
+        final TableColumn<ActivityPropertyAdapter, Project> projectCol = column("project", "Project",
+                param -> new ChoiceBoxTableCell<>(new ProjectStringConverter(projectService),
+                        projectService.getAvailableProjects().toArray(new Project[0])),
+                data -> data.getValue().projectId);
         final TableColumn<ActivityPropertyAdapter, Duration> durationCol = column("duration", "Duration",
                 param -> new TextFieldTableCell<>(new DurationStringConverter(formatterService)),
                 data -> data.getValue().duration);

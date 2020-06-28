@@ -18,6 +18,7 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class MonthIndex
 {
@@ -30,7 +31,7 @@ public class MonthIndex
         this.days = days;
     }
 
-    public static MonthIndex create(ContractTermsService contractTerms, JsonMonth record)
+    public static MonthIndex create(ContractTermsService contractTerms, JsonMonth record, ProjectService projectService)
     {
         final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
                 .collect(toMap(JsonDay::getDate, Function.identity()));
@@ -44,7 +45,7 @@ public class MonthIndex
         {
             final LocalDate date = yearMonth.atDay(day);
             final JsonDay jsonDay = jsonDays.computeIfAbsent(date, d -> createDummyDay(d, contractTerms));
-            final DayRecord dayRecord = new DayRecord(contractTerms, jsonDay, previousDay, monthIndex);
+            final DayRecord dayRecord = new DayRecord(contractTerms, jsonDay, previousDay, monthIndex, projectService);
             days.put(dayRecord.getDate(), dayRecord);
             previousDay = dayRecord;
         }

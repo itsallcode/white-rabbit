@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -16,18 +15,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class DayActivities
 {
     private static final Logger LOG = LogManager.getLogger(DayActivities.class);
 
+    private final ProjectService projectService;
     private final JsonDay day;
     final DayRecord dayRecord;
 
-    public DayActivities(JsonDay jsonDay, DayRecord dayRecord)
+    public DayActivities(JsonDay jsonDay, DayRecord dayRecord, ProjectService projectService)
     {
         this.day = jsonDay;
         this.dayRecord = dayRecord;
+        this.projectService = Objects.requireNonNull(projectService);
     }
 
     public Activity add()
@@ -41,14 +43,15 @@ public class DayActivities
         jsonActivity.setDuration(Duration.ZERO);
         final int newRowIndex = day.getActivities().size();
         day.getActivities().add(jsonActivity);
-        return new Activity(newRowIndex, jsonActivity, this);
+
+        return wrapActivity(jsonActivity, newRowIndex);
     }
 
     public List<Activity> getAll()
     {
         final List<JsonActivity> jsonActivities = getActivities().collect(toList());
         return IntStream.range(0, jsonActivities.size())
-                .mapToObj(i -> wrapActivity(i).apply(jsonActivities.get(i)))
+                .mapToObj(i -> wrapActivity(jsonActivities.get(i), i))
                 .collect(toList());
     }
 
@@ -59,9 +62,9 @@ public class DayActivities
                 .stream();
     }
 
-    private Function<JsonActivity, Activity> wrapActivity(int index)
+    private Activity wrapActivity(JsonActivity a, int index)
     {
-        return a -> new Activity(index, a, this);
+        return new Activity(index, a, this, projectService);
     }
 
     public Optional<Activity> get(int index)
@@ -69,7 +72,7 @@ public class DayActivities
         return Optional.ofNullable(day.getActivities())
                 .filter(list -> list.size() > index)
                 .map(list -> list.get(index))
-                .map(wrapActivity(index));
+                .map(a -> wrapActivity(a, index));
     }
 
     public void remove(int index)

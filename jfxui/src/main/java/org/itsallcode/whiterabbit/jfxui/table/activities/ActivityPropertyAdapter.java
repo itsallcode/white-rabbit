@@ -11,6 +11,7 @@ import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.RecordPropertyAdapter;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.service.project.Project;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -20,7 +21,7 @@ class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
     private static final Logger LOG = LogManager.getLogger(ActivityPropertyAdapter.class);
 
     public ReadOnlyObjectProperty<Integer> index;
-    final ObjectProperty<String> projectId;
+    final ObjectProperty<Project> projectId;
     final ObjectProperty<Duration> duration;
     final ObjectProperty<Boolean> remainder;
     final ObjectProperty<String> comment;
@@ -31,7 +32,7 @@ class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
         super(record -> editListener.recordUpdated(record.getDay()));
         setRecord(act);
         index = readOnlyPropertyField("index", Activity::getRow);
-        projectId = propertyField("projectId", Activity::getProjectId, Activity::setProjectId);
+        projectId = propertyField("projectId", Activity::getProject, Activity::setProject);
         duration = propertyField("duration", Activity::getDuration, Activity::setDuration);
         comment = propertyField("comment", Activity::getComment, Activity::setComment);
         remainder = propertyField("remainder", Activity::isRemainderActivity, Activity::setRemainderActivity);

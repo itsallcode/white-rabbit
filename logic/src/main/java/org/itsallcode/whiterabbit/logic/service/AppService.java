@@ -17,6 +17,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
@@ -42,6 +43,7 @@ public class AppService implements Closeable
     private final SingleInstanceService singleInstanceService;
     private final VacationReportGenerator vacationService;
     private final ActivityService activityService;
+    private final ProjectService projectService;
 
     private RegistrationResult singleInstanceRegistration;
 
@@ -49,7 +51,7 @@ public class AppService implements Closeable
     AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService,
-            ActivityService activityService)
+            ActivityService activityService, ProjectService projectService)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -60,13 +62,15 @@ public class AppService implements Closeable
         this.appServiceCallback = appServiceCallback;
         this.vacationService = vacationService;
         this.activityService = activityService;
+        this.projectService = projectService;
     }
 
     public static AppService create(final Config config, final FormatterService formatterService)
     {
         final SingleInstanceService singleInstanceService = new SingleInstanceService();
+        final ProjectService projectService = new ProjectService(config);
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()),
-                new ContractTermsService(config));
+                new ContractTermsService(config), projectService);
         final ClockService clockService = new ClockService();
         final SchedulingService schedulingService = new SchedulingService(clockService);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
@@ -74,7 +78,7 @@ public class AppService implements Closeable
         final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
         final ActivityService activityService = new ActivityService(storage, appServiceCallback);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
-                singleInstanceService, appServiceCallback, vacationService, activityService);
+                singleInstanceService, appServiceCallback, vacationService, activityService, projectService);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -200,6 +204,11 @@ public class AppService implements Closeable
     public ActivityService activities()
     {
         return activityService;
+    }
+
+    public ProjectService projects()
+    {
+        return projectService;
     }
 
     @Override

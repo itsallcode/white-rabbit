@@ -266,7 +266,7 @@ public class JavaFxApp extends Application
             appService.store(record);
             // appService.activities().updateActivity(updatedActivity);
             activitiesTable.refresh();
-        }, formatter);
+        }, formatter, appService.projects());
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
