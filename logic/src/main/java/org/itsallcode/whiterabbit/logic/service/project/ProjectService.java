@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service.project;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
@@ -26,7 +27,6 @@ public class ProjectService
     private static final Logger LOG = LogManager.getLogger(ProjectService.class);
 
     private final Jsonb jsonb;
-    private final Config config;
 
     private final Map<String, Project> projectsById;
     private final Map<String, Project> projectsByLabel;
@@ -39,10 +39,20 @@ public class ProjectService
     ProjectService(Jsonb jsonb, Config config)
     {
         this.jsonb = jsonb;
-        this.config = config;
-        final List<Project> allProjects = loadAvailableProjects();
-        projectsById = groupBy(allProjects, Project::getProjectId);
-        projectsByLabel = groupBy(allProjects, Project::getLabel);
+
+        final Path projectConfigFile = config.getDataDir().resolve("projects.json");
+        if (Files.exists(projectConfigFile))
+        {
+            final List<Project> allProjects = loadAvailableProjects(projectConfigFile);
+            projectsById = groupBy(allProjects, Project::getProjectId);
+            projectsByLabel = groupBy(allProjects, Project::getLabel);
+        }
+        else
+        {
+            LOG.warn("Project config file not found at {}", projectConfigFile);
+            projectsById = emptyMap();
+            projectsByLabel = emptyMap();
+        }
     }
 
     private LinkedHashMap<String, Project> groupBy(final List<Project> allProjects,
@@ -67,9 +77,8 @@ public class ProjectService
         return projectsById.values();
     }
 
-    private List<Project> loadAvailableProjects()
+    private List<Project> loadAvailableProjects(Path projectConfigFile)
     {
-        final Path projectConfigFile = config.getDataDir().resolve("projects.json");
         final List<Project> projectList = readProjectConfig(projectConfigFile)
                 .map(ProjectConfig::getProjects)
                 .orElse(emptyList());
