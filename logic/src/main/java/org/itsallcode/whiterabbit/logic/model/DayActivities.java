@@ -25,9 +25,9 @@ public class DayActivities
     private final JsonDay day;
     final DayRecord dayRecord;
 
-    public DayActivities(JsonDay jsonDay, DayRecord dayRecord, ProjectService projectService)
+    DayActivities(DayRecord dayRecord, ProjectService projectService)
     {
-        this.day = jsonDay;
+        this.day = dayRecord.getJsonDay();
         this.dayRecord = dayRecord;
         this.projectService = Objects.requireNonNull(projectService);
     }
@@ -62,9 +62,9 @@ public class DayActivities
                 .stream();
     }
 
-    private Activity wrapActivity(JsonActivity a, int index)
+    private Activity wrapActivity(JsonActivity activity, int index)
     {
-        return new Activity(index, a, this, projectService);
+        return new Activity(index, activity, this, projectService);
     }
 
     public Optional<Activity> get(int index)
@@ -115,7 +115,8 @@ public class DayActivities
     {
         final Duration allocatedDuration = getActivities().map(JsonActivity::getDuration)
                 .filter(Objects::nonNull)
-                .reduce((d1, d2) -> d1.plus(d2)).orElse(Duration.ZERO);
+                .reduce((d1, d2) -> d1.plus(d2))
+                .orElse(Duration.ZERO);
         return dayRecord.getWorkingTime().minus(allocatedDuration);
     }
 

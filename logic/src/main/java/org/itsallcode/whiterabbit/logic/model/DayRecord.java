@@ -30,7 +30,7 @@ public class DayRecord implements RowRecord
         this.day = day;
         this.previousDay = previousDay;
         this.month = month;
-        this.projectService = projectService;
+        this.projectService = Objects.requireNonNull(projectService);
     }
 
     public Duration getMandatoryBreak()
@@ -181,7 +181,7 @@ public class DayRecord implements RowRecord
 
     public DayActivities activities()
     {
-        return new DayActivities(day, this, projectService);
+        return new DayActivities(this, projectService);
     }
 
     @Override

@@ -57,7 +57,8 @@ public class MonthIndex
     {
         final JsonDay day = new JsonDay();
         day.setDate(date);
-        if (!contractTerms.getContractedWorkingTimePerDay().equals(contractTerms.getCurrentWorkingTimePerDay()))
+        if (contractTerms.getContractedWorkingTimePerDay() != null
+                && !contractTerms.getContractedWorkingTimePerDay().equals(contractTerms.getCurrentWorkingTimePerDay()))
         {
             day.setWorkingHours(contractTerms.getCurrentWorkingTimePerDay());
         }
