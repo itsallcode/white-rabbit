@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.RecordPropertyAdapter;
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -44,7 +45,7 @@ class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
         });
     }
 
-    static List<ActivityPropertyAdapter> wrap(EditListener<DayRecord> editListener, List<Activity> activities)
+    static List<@NonNull ActivityPropertyAdapter> wrap(EditListener<DayRecord> editListener, List<Activity> activities)
     {
         return activities.stream()
                 .map(a -> new ActivityPropertyAdapter(editListener, a))

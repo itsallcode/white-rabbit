@@ -11,6 +11,7 @@ import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
@@ -80,7 +81,7 @@ public class DayRecordTable
                 param -> new TextFieldTableCell<>(
                         new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
                 data -> data.getValue().date);
-        final TableColumn<DayRecordPropertyAdapter, DayType> dayTypeCol = column("day-type", "Type",
+        final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);
         final TableColumn<DayRecordPropertyAdapter, LocalTime> beginCol = column("begin", "Begin",
