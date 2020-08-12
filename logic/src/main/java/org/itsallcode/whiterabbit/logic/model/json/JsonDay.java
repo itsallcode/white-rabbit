@@ -3,11 +3,12 @@ package org.itsallcode.whiterabbit.logic.model.json;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
-@JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "workingHours", "comment" })
+@JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "workingHours", "comment", "activities" })
 public class JsonDay
 {
     @JsonbProperty("date")
@@ -24,6 +25,8 @@ public class JsonDay
     private Duration workingHours;
     @JsonbProperty("comment")
     private String comment;
+    @JsonbProperty("activities")
+    private List<JsonActivity> activities;
 
     public LocalDate getDate()
     {
@@ -95,10 +98,21 @@ public class JsonDay
         this.interruption = interruption;
     }
 
+    public List<JsonActivity> getActivities()
+    {
+        return activities;
+    }
+
+    public void setActivities(List<JsonActivity> activities)
+    {
+        this.activities = activities;
+    }
+
     @Override
     public String toString()
     {
         return "JsonDay [date=" + date + ", type=" + type + ", begin=" + begin + ", end=" + end + ", interruption="
-                + interruption + ", workingHours=" + workingHours + ", comment=" + comment + "]";
+                + interruption + ", workingHours=" + workingHours + ", comment=" + comment + ", activities="
+                + activities + "]";
     }
 }

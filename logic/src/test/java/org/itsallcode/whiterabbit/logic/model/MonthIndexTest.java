@@ -14,11 +14,19 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class MonthIndexTest
 {
+    @Mock
+    private ProjectService projectServiceMock;
+
     @Test
     void testCalculateTotalOvertimeOvertimeNoDays()
     {
@@ -199,6 +207,6 @@ class MonthIndexTest
 
     private MonthIndex create(Config config, JsonMonth record)
     {
-        return MonthIndex.create(new ContractTermsService(config), record);
+        return MonthIndex.create(new ContractTermsService(config), record, projectServiceMock);
     }
 }

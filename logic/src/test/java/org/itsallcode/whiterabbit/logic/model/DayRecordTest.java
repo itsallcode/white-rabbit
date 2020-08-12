@@ -13,11 +13,19 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class DayRecordTest
 {
+    @Mock
+    private ProjectService projectServiceMock;
+
     @Test
     void mandatoryWorkingTimeIsZeroOnWeekend()
     {
@@ -392,7 +400,7 @@ class DayRecordTest
     void getJsonDayReturnsMonth()
     {
         final JsonDay jsonDay = new JsonDay();
-        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        final DayRecord day = createDay(jsonDay);
         assertThat(day.getJsonDay()).isSameAs(jsonDay);
     }
 
@@ -402,7 +410,7 @@ class DayRecordTest
         final JsonDay jsonDay = new JsonDay();
         jsonDay.setWorkingHours(null);
 
-        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        final DayRecord day = createDay(jsonDay);
         assertThat(day.getCustomWorkingTime()).isEmpty();
     }
 
@@ -412,7 +420,7 @@ class DayRecordTest
         final JsonDay jsonDay = new JsonDay();
         jsonDay.setWorkingHours(Duration.ofHours(5));
 
-        final DayRecord day = new DayRecord(null, jsonDay, null, null);
+        final DayRecord day = createDay(jsonDay);
         assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
     }
 
@@ -423,7 +431,7 @@ class DayRecordTest
         jsonMonth.setMonth(date.getMonth());
         jsonMonth.setYear(date.getYear());
         jsonMonth.setOvertimePreviousMonth(overtimePreviousMonth);
-        return MonthIndex.create(contractTerms(), jsonMonth);
+        return MonthIndex.create(contractTerms(), jsonMonth, projectServiceMock);
     }
 
     private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
@@ -517,10 +525,15 @@ class DayRecordTest
         return dayRecord(day, previousDay, month);
     }
 
+    private DayRecord createDay(final JsonDay jsonDay)
+    {
+        return new DayRecord(null, jsonDay, null, null, projectServiceMock);
+    }
+
     private DayRecord dayRecord(JsonDay day, DayRecord previousDay, MonthIndex month)
     {
         final ContractTermsService contractTerms = contractTerms();
-        return new DayRecord(contractTerms, day, previousDay, month);
+        return new DayRecord(contractTerms, day, previousDay, month, projectServiceMock);
     }
 
     private ContractTermsService contractTerms()

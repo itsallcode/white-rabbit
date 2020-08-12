@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.table;
+package org.itsallcode.whiterabbit.jfxui.table.days;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -11,17 +11,22 @@ import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
+import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -35,13 +40,13 @@ import javafx.util.converter.LocalTimeStringConverter;
 
 public class DayRecordTable
 {
-
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
-    private final RecordEditListener editListener;
+    private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final Locale locale;
+    private final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
 
-    public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, RecordEditListener editListener,
+    public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
             FormatterService formatterService)
     {
         this.editListener = editListener;
@@ -51,15 +56,23 @@ public class DayRecordTable
         currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
-    public Node initTable()
+    public TableView<DayRecordPropertyAdapter> initTable()
     {
-        final TableView<DayRecordPropertyAdapter> table = new TableView<>(dayRecords);
+        TableView<DayRecordPropertyAdapter> table;
+        table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("day-table");
-
+        table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        table.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> selectedDay.set(newValue.getRecord()));
         return table;
+    }
+
+    public ReadOnlyProperty<DayRecord> selectedDay()
+    {
+        return selectedDay;
     }
 
     private List<TableColumn<DayRecordPropertyAdapter, ?>> createColumns()
@@ -68,7 +81,7 @@ public class DayRecordTable
                 param -> new TextFieldTableCell<>(
                         new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
                 data -> data.getValue().date);
-        final TableColumn<DayRecordPropertyAdapter, DayType> dayTypeCol = column("day-type", "Type",
+        final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);
         final TableColumn<DayRecordPropertyAdapter, LocalTime> beginCol = column("begin", "Begin",

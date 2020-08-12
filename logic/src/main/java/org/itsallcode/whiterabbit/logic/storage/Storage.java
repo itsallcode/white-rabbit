@@ -13,7 +13,6 @@ import java.time.Duration;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +27,7 @@ import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class Storage
 {
@@ -37,22 +37,26 @@ public class Storage
     private final DateToFileMapper dateToFileMapper;
 
     private final ContractTermsService contractTerms;
+    private final ProjectService projectService;
 
-    private Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms, Jsonb jsonb)
+    private Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms,
+            ProjectService projectService, Jsonb jsonb)
     {
         this.dateToFileMapper = dateToFileMapper;
         this.contractTerms = contractTerms;
+        this.projectService = projectService;
         this.jsonb = jsonb;
     }
 
-    public Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms)
+    public Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms, ProjectService projectService)
     {
-        this(dateToFileMapper, contractTerms, JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
+        this(dateToFileMapper, contractTerms, projectService,
+                JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
     }
 
     public Optional<MonthIndex> loadMonth(YearMonth date)
     {
-        return loadMonthRecord(date).map(month -> MonthIndex.create(contractTerms, month));
+        return loadMonthRecord(date).map(this::createMonthIndex);
     }
 
     public MonthIndex loadOrCreate(final YearMonth yearMonth)
@@ -68,7 +72,12 @@ public class Storage
         month.setMonth(date.getMonth());
         month.setDays(new ArrayList<>());
         month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
-        return MonthIndex.create(contractTerms, month);
+        return createMonthIndex(month);
+    }
+
+    private MonthIndex createMonthIndex(final JsonMonth month)
+    {
+        return MonthIndex.create(contractTerms, month, projectService);
     }
 
     public void storeMonth(MonthIndex month)
@@ -82,8 +91,7 @@ public class Storage
         for (final Path file : dateToFileMapper.getAllFiles().collect(toList()))
         {
             final JsonMonth jsonMonth = loadFromFile(file);
-            final MonthIndex month = MonthIndex.create(contractTerms, jsonMonth);
-            months.add(month);
+            months.add(createMonthIndex(jsonMonth));
         }
 
         months.sort(Comparator.comparing(MonthIndex::getYearMonth));

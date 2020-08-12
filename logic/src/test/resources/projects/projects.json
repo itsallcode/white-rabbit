@@ -1,0 +1,24 @@
+{
+    "projects": [
+        {
+            "projectId": "p1",
+            "label": "Project 1",
+            "costCarrier": "P1001"
+        },
+        {
+            "projectId": "p2",
+            "label": "Project 2",
+            "costCarrier": "P1002"
+        },
+        {
+            "projectId": "general",
+            "label": "General",
+            "costCarrier": "P0001"
+        },
+        {
+            "projectId": "training",
+            "label": "Training",
+            "costCarrier": "P0002"
+        }
+    ]
+}

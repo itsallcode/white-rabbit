@@ -21,6 +21,7 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
@@ -57,6 +58,10 @@ class AppServiceTest
     private SingleInstanceService singleInstanceService;
     @Mock
     private VacationReportGenerator vacationServiceMock;
+    @Mock
+    private ActivityService activityService;
+    @Mock
+    private ProjectService projectServiceMock;
 
     private AppService appService;
 
@@ -66,7 +71,7 @@ class AppServiceTest
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         appService = new AppService(new WorkingTimeService(storageMock, clockMock, appServiceCallback), storageMock,
                 formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback,
-                vacationServiceMock);
+                vacationServiceMock, activityService, projectServiceMock);
         appService.setUpdateListener(updateListenerMock);
     }
 
@@ -224,7 +229,7 @@ class AppServiceTest
 
         updateNow(now, day);
 
-        assertThat(day.getInterruption()).isEqualTo(null);
+        assertThat(day.getInterruption()).isNull();
     }
 
     @Test
@@ -326,7 +331,7 @@ class AppServiceTest
         when(clockMock.getCurrentTime()).thenReturn(now);
         when(storageMock.loadOrCreate(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
         final DayRecord dayRecord = new DayRecord(new ContractTermsService(TestingConfig.builder().build()), day, null,
-                monthIndexMock);
+                monthIndexMock, projectServiceMock);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(dayRecord);
 
         appService.updateNow();

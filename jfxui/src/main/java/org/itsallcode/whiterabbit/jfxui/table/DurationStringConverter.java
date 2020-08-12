@@ -7,11 +7,11 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.util.StringConverter;
 
-class DurationStringConverter extends StringConverter<Duration>
+public class DurationStringConverter extends StringConverter<Duration>
 {
     private final FormatterService formatter;
 
-    DurationStringConverter(FormatterService formatter)
+    public DurationStringConverter(FormatterService formatter)
     {
         this.formatter = formatter;
     }

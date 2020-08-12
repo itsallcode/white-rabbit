@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jdt.annotation.NonNull;
 
 class AwtTrayIcon implements Tray
 {
@@ -32,7 +33,7 @@ class AwtTrayIcon implements Tray
         this.trayIcon = trayIcon;
     }
 
-    static Tray createAwtTray(TrayCallback callback)
+    static @NonNull Tray createAwtTray(TrayCallback callback)
     {
         try
         {

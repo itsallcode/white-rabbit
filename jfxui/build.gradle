@@ -34,4 +34,6 @@ dependencies {
     implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
     implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
     implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
+    
+    implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
 }

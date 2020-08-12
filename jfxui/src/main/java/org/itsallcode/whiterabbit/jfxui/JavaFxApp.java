@@ -1,5 +1,8 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.ProcessHandle.Info;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,7 +20,8 @@ import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
-import org.itsallcode.whiterabbit.jfxui.table.DayRecordTable;
+import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -54,11 +58,17 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class JavaFxApp extends Application
@@ -70,6 +80,7 @@ public class JavaFxApp extends Application
 
     private AppService appService;
     private DayRecordTable dayRecordTable;
+    private ActivitiesTable activitiesTable;
 
     private final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
     private final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
@@ -253,6 +264,11 @@ public class JavaFxApp extends Application
             appService.store(record);
             appService.updateNow();
         }, formatter);
+
+        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
+            appService.store(record);
+            activitiesTable.refresh();
+        }, formatter, appService.projects());
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
@@ -265,35 +281,57 @@ public class JavaFxApp extends Application
         });
 
         primaryStage.setTitle("White Rabbit Time Recording");
-        primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
+        try (InputStream resourceStream = JavaFxApp.class.getResourceAsStream("/icon.png"))
+        {
+            primaryStage.getIcons().add(new Image(resourceStream));
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error loading image from resource", e);
+        }
 
-        if (tray.isSupported())
-        {
-            LOG.trace("System tray is supported: allow hiding primary stage");
-            Platform.setImplicitExit(false);
-            primaryStage.setOnCloseRequest(event -> {
-                LOG.debug("Hiding primary stage");
-                event.consume();
-                primaryStage.hide();
-            });
-        }
-        else
-        {
-            LOG.debug("System tray is not supported: don't allow hiding primary stage");
-        }
+        createTrayIcon();
 
         primaryStage.setScene(scene);
         LOG.debug("User interface finished");
     }
 
+    private void createTrayIcon()
+    {
+        if (!tray.isSupported())
+        {
+            LOG.debug("System tray is not supported: don't allow hiding primary stage");
+            return;
+        }
+        LOG.trace("System tray is supported: allow hiding primary stage");
+        Platform.setImplicitExit(false);
+        primaryStage.setOnCloseRequest(event -> {
+            LOG.debug("Hiding primary stage");
+            event.consume();
+            primaryStage.hide();
+        });
+    }
+
     private BorderPane createMainPane()
     {
-        final BorderPane pane = new BorderPane();
-        final Node table = dayRecordTable.initTable();
-        pane.setCenter(table);
-
         final Insets insets = new Insets(GAP_PIXEL);
-        BorderPane.setMargin(table, insets);
+        final Node daysTable = dayRecordTable.initTable();
+        final Node activitiesTab = activitiesTable.initTable();
+        final Button addActivityButton = button("+", "Add activity", e -> addActivity());
+        final Button removeActivityButton = button("-", "Remove activity", e -> removeActivity());
+        final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
+                addActivityButton,
+                removeActivityButton);
+        final SplitPane mainPane = new SplitPane(daysTable,
+                new TitledPane("Activities", new HBox(GAP_PIXEL, activitiesButtonPane, activitiesTab)));
+        HBox.setHgrow(activitiesTab, Priority.ALWAYS);
+        mainPane.setOrientation(Orientation.VERTICAL);
+        mainPane.setDividerPositions(0.8);
+
+        final BorderPane pane = new BorderPane();
+        pane.setCenter(mainPane);
+
+        BorderPane.setMargin(mainPane, insets);
 
         final FlowPane topPane = new FlowPane();
         topPane.getChildren().add(new Label("Month:"));
@@ -302,10 +340,10 @@ public class JavaFxApp extends Application
         pane.setTop(topPane);
         BorderPane.setMargin(topPane, insets);
 
-        final Node buttonBar = createButtonBar();
-
-        pane.setBottom(buttonBar);
+        final TilePane buttonBar = createButtonBar();
         BorderPane.setMargin(buttonBar, insets);
+        pane.setBottom(buttonBar);
+
         return pane;
     }
 
@@ -313,14 +351,34 @@ public class JavaFxApp extends Application
     {
         final Button startInterruptionButton = button("Start interruption", e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
-        final TilePane bottom = new TilePane(Orientation.HORIZONTAL);
-        bottom.setHgap(GAP_PIXEL);
+        final TilePane buttonPane = new TilePane(Orientation.HORIZONTAL);
+        buttonPane.setHgap(GAP_PIXEL);
 
-        bottom.getChildren().addAll(button("Update", e -> appService.updateNow()), //
-                startInterruptionButton, //
-                createStopWorkForTodayButton(), //
+        buttonPane.getChildren().addAll(button("Update", e -> appService.updateNow()),
+                startInterruptionButton,
+                createStopWorkForTodayButton(),
                 button("Vacation report", e -> showVacationReport()));
-        return bottom;
+        return buttonPane;
+    }
+
+    private void addActivity()
+    {
+        final DayRecord selectedDay = dayRecordTable.selectedDay().getValue();
+        if (selectedDay == null)
+        {
+            return;
+        }
+        appService.activities().addActivity(selectedDay.getDate());
+    }
+
+    private void removeActivity()
+    {
+        if (activitiesTable.selectedActivity().get() == null)
+        {
+            LOG.info("No activity selected to be removed");
+            return;
+        }
+        appService.activities().removeActivity(activitiesTable.selectedActivity().get());
     }
 
     private Button createStopWorkForTodayButton()
@@ -374,9 +432,18 @@ public class JavaFxApp extends Application
 
     private Button button(String label, EventHandler<ActionEvent> action)
     {
+        return button(label, null, action);
+    }
+
+    private Button button(String label, String tooltip, EventHandler<ActionEvent> action)
+    {
         final Button button = new Button(label);
         button.setOnAction(action);
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        if (tooltip != null)
+        {
+            button.setTooltip(new Tooltip(tooltip));
+        }
         return button;
     }
 
@@ -445,8 +512,18 @@ public class JavaFxApp extends Application
                 if (currentMonth.get().getYearMonth().equals(recordMonth))
                 {
                     currentMonth.setValue(record.getMonth());
+                    if (daySelected(record))
+                    {
+                        activitiesTable.updateTableValues(record);
+                    }
                 }
             });
+        }
+
+        private boolean daySelected(DayRecord record)
+        {
+            final DayRecord selectedDay = dayRecordTable.selectedDay().getValue();
+            return selectedDay != null && selectedDay.getDate().equals(record.getDate());
         }
 
         @Override

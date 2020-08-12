@@ -11,22 +11,26 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
-public class DayRecord
+public class DayRecord implements RowRecord
 {
     private static final Logger LOG = LogManager.getLogger(DayRecord.class);
 
     private final ContractTermsService contractTerms;
+    private final ProjectService projectService;
     private final JsonDay day;
     private final MonthIndex month;
     private final DayRecord previousDay;
 
-    public DayRecord(ContractTermsService contractTerms, JsonDay day, DayRecord previousDay, MonthIndex month)
+    public DayRecord(ContractTermsService contractTerms, JsonDay day, DayRecord previousDay, MonthIndex month,
+            ProjectService projectService)
     {
         this.contractTerms = contractTerms;
         this.day = day;
         this.previousDay = previousDay;
         this.month = month;
+        this.projectService = Objects.requireNonNull(projectService);
     }
 
     public Duration getMandatoryBreak()
@@ -175,9 +179,20 @@ public class DayRecord
                 && day.getType() == null && day.getComment() == null && day.getInterruption() == null;
     }
 
+    public DayActivities activities()
+    {
+        return new DayActivities(this, projectService);
+    }
+
     @Override
     public String toString()
     {
         return "DayRecord [day=" + day + "]";
+    }
+
+    @Override
+    public int getRow()
+    {
+        return getDate().getDayOfMonth() - 1;
     }
 }
