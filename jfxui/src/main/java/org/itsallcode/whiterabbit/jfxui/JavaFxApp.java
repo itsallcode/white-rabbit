@@ -1,5 +1,8 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.ProcessHandle.Info;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -278,7 +281,14 @@ public class JavaFxApp extends Application
         });
 
         primaryStage.setTitle("White Rabbit Time Recording");
-        primaryStage.getIcons().add(new Image(JavaFxApp.class.getResourceAsStream("/icon.png")));
+        try (InputStream resourceStream = JavaFxApp.class.getResourceAsStream("/icon.png"))
+        {
+            primaryStage.getIcons().add(new Image(resourceStream));
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error loading image from resource", e);
+        }
 
         createTrayIcon();
 
