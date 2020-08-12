@@ -264,7 +264,6 @@ public class JavaFxApp extends Application
 
         activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
             appService.store(record);
-            // appService.activities().updateActivity(updatedActivity);
             activitiesTable.refresh();
         }, formatter, appService.projects());
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
@@ -313,12 +312,9 @@ public class JavaFxApp extends Application
         final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
                 addActivityButton,
                 removeActivityButton);
-        // VBox.setMargin(addActivityButton, insets);
-        // VBox.setMargin(removeActivityButton, insets);
         final SplitPane mainPane = new SplitPane(daysTable,
                 new TitledPane("Activities", new HBox(GAP_PIXEL, activitiesButtonPane, activitiesTab)));
         HBox.setHgrow(activitiesTab, Priority.ALWAYS);
-        // HBox.setMargin(activitiesTab, insets);
         mainPane.setOrientation(Orientation.VERTICAL);
         mainPane.setDividerPositions(0.8);
 

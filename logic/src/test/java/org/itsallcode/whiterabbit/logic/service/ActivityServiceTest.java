@@ -58,7 +58,7 @@ class ActivityServiceTest
         when(storageMock.loadMonth(YearMonth.from(DATE)))
                 .thenReturn(Optional.of(month));
 
-        assertThat(month.getDay(DATE).activities().getAll()).hasSize(0);
+        assertThat(month.getDay(DATE).activities().getAll()).isEmpty();
 
         service.addActivity(DATE);
 
@@ -75,7 +75,7 @@ class ActivityServiceTest
         when(storageMock.loadMonth(YearMonth.from(DATE)))
                 .thenReturn(Optional.of(month));
 
-        assertThat(month.getDay(DATE).activities().getAll()).hasSize(0);
+        assertThat(month.getDay(DATE).activities().getAll()).isEmpty();
 
         service.addActivity(DATE);
 
@@ -84,7 +84,7 @@ class ActivityServiceTest
         verify(storageMock, times(2)).storeMonth(same(month));
         verify(appServiceCallbackMock, times(2)).recordUpdated(same(month.getDay(DATE)));
 
-        assertThat(month.getDay(DATE).activities().getAll()).hasSize(0);
+        assertThat(month.getDay(DATE).activities().getAll()).isEmpty();
     }
 
     private MonthIndex createMonth()

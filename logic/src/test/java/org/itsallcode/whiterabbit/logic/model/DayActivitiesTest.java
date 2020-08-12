@@ -76,7 +76,7 @@ class DayActivitiesTest
         final Activity firstActivity = activities.add();
         final Activity secondActivity = activities.add();
 
-        assertThat(firstActivity.getRow()).isEqualTo(0);
+        assertThat(firstActivity.getRow()).isZero();
         assertThat(secondActivity.getRow()).isEqualTo(1);
         assertThat(jsonDay.getActivities()).hasSize(2);
     }

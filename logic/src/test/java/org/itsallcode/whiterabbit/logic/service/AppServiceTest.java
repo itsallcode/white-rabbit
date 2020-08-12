@@ -229,7 +229,7 @@ class AppServiceTest
 
         updateNow(now, day);
 
-        assertThat(day.getInterruption()).isEqualTo(null);
+        assertThat(day.getInterruption()).isNull();
     }
 
     @Test

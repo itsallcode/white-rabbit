@@ -32,7 +32,6 @@ import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.IntegerStringConverter;
 
 public class ActivitiesTable
 {
@@ -81,18 +80,14 @@ public class ActivitiesTable
 
     private List<TableColumn<ActivityPropertyAdapter, ?>> createColumns()
     {
-        final Callback<TableColumn<ActivityPropertyAdapter, Boolean>, TableCell<ActivityPropertyAdapter, Boolean>> cellFactory = tableColumn -> {
-            return new CheckBoxTableCell<>(index -> {
-                final ActivityPropertyAdapter activity = tableColumn.getTableView().getItems().get(index);
-                final SimpleBooleanProperty prop = new SimpleBooleanProperty(activity.remainder.get());
-                Bindings.bindBidirectional(activity.remainder, prop);
-                return prop;
-            });
-        };
+        final Callback<TableColumn<ActivityPropertyAdapter, Boolean>, TableCell<ActivityPropertyAdapter, Boolean>> cellFactory = tableColumn -> new CheckBoxTableCell<>(
+                index -> {
+                    final ActivityPropertyAdapter activity = tableColumn.getTableView().getItems().get(index);
+                    final SimpleBooleanProperty prop = new SimpleBooleanProperty(activity.remainder.get());
+                    Bindings.bindBidirectional(activity.remainder, prop);
+                    return prop;
+                });
 
-        final TableColumn<ActivityPropertyAdapter, Integer> indexCol = column("index", "Index",
-                param -> new TextFieldTableCell<>(new IntegerStringConverter()),
-                data -> data.getValue().index);
         final TableColumn<ActivityPropertyAdapter, Project> projectCol = column("project", "Project",
                 param -> new ChoiceBoxTableCell<>(new ProjectStringConverter(projectService),
                         projectService.getAvailableProjects().toArray(new Project[0])),
@@ -105,7 +100,7 @@ public class ActivitiesTable
         final TableColumn<ActivityPropertyAdapter, String> commentCol = column("comment", "Comment",
                 param -> new TextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().comment);
 
-        return asList(indexCol, projectCol, durationCol, remainderCol, commentCol);
+        return asList(projectCol, durationCol, remainderCol, commentCol);
     }
 
     private <T> TableColumn<ActivityPropertyAdapter, T> column(String id, String label,

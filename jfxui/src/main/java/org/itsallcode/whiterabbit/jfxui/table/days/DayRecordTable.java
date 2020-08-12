@@ -44,7 +44,6 @@ public class DayRecordTable
     private final FormatterService formatterService;
     private final Locale locale;
     private final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
-    private TableView<DayRecordPropertyAdapter> table;
 
     public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
             FormatterService formatterService)
@@ -58,6 +57,7 @@ public class DayRecordTable
 
     public TableView<DayRecordPropertyAdapter> initTable()
     {
+        TableView<DayRecordPropertyAdapter> table;
         table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);

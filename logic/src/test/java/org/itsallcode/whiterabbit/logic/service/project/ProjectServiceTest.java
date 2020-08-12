@@ -16,7 +16,7 @@ class ProjectServiceTest
     {
         final Collection<Project> availableProjects = create(Paths.get("no-such-dir"))
                 .getAvailableProjects();
-        assertThat(availableProjects).hasSize(0);
+        assertThat(availableProjects).isEmpty();
     }
 
     @Test
