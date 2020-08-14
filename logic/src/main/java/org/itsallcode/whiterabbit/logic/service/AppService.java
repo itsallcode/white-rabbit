@@ -4,12 +4,15 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,18 +68,24 @@ public class AppService implements Closeable
         this.projectService = projectService;
     }
 
-    public static AppService create(final Config config, final FormatterService formatterService)
+    public static AppService create(final Config config)
+    {
+        return create(config, Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1));
+    }
+
+    public static AppService create(final Config config, Clock clock, ScheduledExecutorService scheduledExecutor)
     {
         final SingleInstanceService singleInstanceService = new SingleInstanceService();
         final ProjectService projectService = new ProjectService(config);
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()),
                 new ContractTermsService(config), projectService);
-        final ClockService clockService = new ClockService();
-        final SchedulingService schedulingService = new SchedulingService(clockService);
+        final ClockService clockService = new ClockService(clock);
+        final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
         final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
         final ActivityService activityService = new ActivityService(storage, appServiceCallback);
+        final FormatterService formatterService = new FormatterService(config.getLocale());
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, vacationService, activityService, projectService);
     }
@@ -209,6 +218,11 @@ public class AppService implements Closeable
     public ProjectService projects()
     {
         return projectService;
+    }
+
+    public FormatterService formatter()
+    {
+        return formatterService;
     }
 
     @Override

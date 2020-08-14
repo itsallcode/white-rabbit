@@ -29,6 +29,18 @@ ext {
     ext.javaFxVersion = '14.0.1'
 }
 
+sourceSets {
+    uiTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    uiTestImplementation.extendsFrom testImplementation
+    uiTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
 dependencies {
     implementation project(':logic')
     implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
@@ -36,4 +48,18 @@ dependencies {
     implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
     
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
+    
+    testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
 }
+
+task uiTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.uiTest.output.classesDirs
+    classpath = sourceSets.uiTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn uiTest

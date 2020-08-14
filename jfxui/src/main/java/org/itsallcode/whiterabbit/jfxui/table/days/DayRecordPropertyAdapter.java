@@ -11,7 +11,7 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 import javafx.beans.property.ObjectProperty;
 
-class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
+public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
 {
     final ObjectProperty<LocalDate> date;
     final ObjectProperty<DayType> dayType;

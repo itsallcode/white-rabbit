@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.ProcessHandle.Info;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
@@ -13,6 +12,8 @@ import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,8 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
+import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
@@ -90,10 +93,24 @@ public class JavaFxApp extends Application
     private ScheduledProperty<Instant> currentTimeProperty;
     private Stage primaryStage;
 
-    private FormatterService formatter;
-
     private Tray tray;
     private Locale locale;
+
+    private final WorkingDirProvider workingDirProvider;
+    private final Clock clock;
+    private final ScheduledExecutorService scheduledExecutor;
+
+    public JavaFxApp()
+    {
+        this(new DefaultWorkingDirProvider(), Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1));
+    }
+
+    JavaFxApp(WorkingDirProvider workingDirProvider, Clock clock, ScheduledExecutorService executorService)
+    {
+        this.workingDirProvider = workingDirProvider;
+        this.clock = clock;
+        this.scheduledExecutor = executorService;
+    }
 
     @Override
     public void init()
@@ -116,10 +133,9 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        final Config config = readConfig();
+        final Config config = Config.read(workingDirProvider);
         this.locale = config.getLocale();
-        this.formatter = new FormatterService(locale);
-        this.appService = AppService.create(config, formatter);
+        this.appService = AppService.create(config, clock, scheduledExecutor);
         final Optional<OtherInstance> otherInstance = appService
                 .registerSingleInstance(this::messageFromOtherInstanceReceived);
         if (otherInstance.isPresent())
@@ -166,13 +182,6 @@ public class JavaFxApp extends Application
                 primaryStage.show();
             }
         });
-    }
-
-    private Config readConfig()
-    {
-        final Path configFile = Paths.get("time.properties").toAbsolutePath();
-        LOG.info("Loading config from {}", configFile);
-        return Config.read(configFile);
     }
 
     @Override
@@ -263,12 +272,12 @@ public class JavaFxApp extends Application
         dayRecordTable = new DayRecordTable(locale, currentMonth, record -> {
             appService.store(record);
             appService.updateNow();
-        }, formatter);
+        }, appService.formatter());
 
         activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
             appService.store(record);
             activitiesTable.refresh();
-        }, formatter, appService.projects());
+        }, appService.formatter(), appService.projects());
         final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
         rootPane.setTop(menuBar);
@@ -412,6 +421,7 @@ public class JavaFxApp extends Application
 
     private Node currentTimeLabel()
     {
+        final FormatterService formatter = appService.formatter();
         final Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(() -> {
             final Instant now = currentTimeProperty.property().getValue();

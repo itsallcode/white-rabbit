@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service;
 
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.itsallcode.whiterabbit.logic.service.scheduling.DefaultErrorHandler;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ErrorHandler;
@@ -13,11 +12,6 @@ public class SchedulingService implements AutoCloseable
 {
     private final ScheduledExecutorService executorService;
     private final ClockService clockService;
-
-    public SchedulingService(ClockService clockService)
-    {
-        this(clockService, new ScheduledThreadPoolExecutor(1));
-    }
 
     SchedulingService(ClockService clockService, ScheduledExecutorService executorService)
     {

@@ -57,8 +57,9 @@ class AppTest
     @BeforeEach
     void setUp()
     {
-        app = new App(appServiceMock, formatterServiceMock, terminalMock);
+        app = new App(appServiceMock, terminalMock);
         lenient().when(appServiceMock.getClock()).thenReturn(clockMock);
+        lenient().when(appServiceMock.formatter()).thenReturn(formatterServiceMock);
     }
 
     @Test
