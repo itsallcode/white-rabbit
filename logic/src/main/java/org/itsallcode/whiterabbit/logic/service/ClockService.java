@@ -17,7 +17,7 @@ public class ClockService
         this.clock = clock;
     }
 
-    public ClockService()
+    ClockService()
     {
         this(Clock.systemDefaultZone());
     }
