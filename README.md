@@ -10,14 +10,12 @@ A time recording tool
 
 ## Recent changes
 
+* Text UI is now deprecated, please use the new Java FX UI.
 * Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
 * Supports reduced working hours / short-time work, see [configuration option `current_working_time_per_day`](#optional_config)
 
 ## <a name="features"></a>Features
 
-* Two user interfaces:
-  * Simple text user interface for running in a console window
-  * Java FX based user interface
 * Records begin, end and interruption of your working day
 * Data storage in human readable json files, one file per month
   * Backup data by creating a git repository for the data folder and commit every day
@@ -50,27 +48,6 @@ A time recording tool
 * Close the window to minimize in the task bar: <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/>
   * Double click <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/> to open the window again
   * Right click on <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/> to add an interruption or exit the program
-
-### Text interface
-
-Usage:
-
-* Manual interruptions: press `i` to start and stop interruptions
-* Manual updates: press `u`
-* Reporting of total overtime: press `r`
-
-Example report:
-
-```
-2019-03-01 Fri WORK      08:00 - 17:00 break: 00:45, working time: 08:15, overtime: 00:15, Acc. overtime: 00:15, First working day (type WORK is optional)
-2019-03-04 Mon VACATION                break: 00:00, working time: 00:00, overtime: 00:00, Acc. overtime: 00:15, Vacation day, no change to working time
-2019-03-05 Tue FLEX_TIME               break: 00:00, working time: 00:00, overtime: -08:00, Acc. overtime: -07:45, Flex time, deducts 8h from your time
-2019-03-06 Wed HOLIDAY                 break: 00:00, working time: 00:00, overtime: 00:00, Acc. overtime: -07:45, A public holiday, not working
-2019-03-07 Thu SICK                    break: 00:00, working time: 00:00, overtime: 00:00, Acc. overtime: -07:45, Sick day, no change to working time
-2019-03-08 Fri WORK      08:00 - 18:30 break: 00:45, interr.: 01:20, working time: 08:25, overtime: 00:25, Acc. overtime: -07:20, 1h 20min of interruption
-2019-03-09 Sat WEEKEND                 break: 00:00, working time: 00:00, overtime: 00:00, Acc. overtime: -07:20, Saturday and Sunday automatically detected, no need to add them here.
-Total overtime: PT-7H-20M
-```
 
 ### Example data file `<data>/2019/2019-03.json`
 
@@ -206,9 +183,6 @@ echo "data = ../time-recording-data/" > time.properties
 
 ```bash
 ./gradlew build
-# Run text ui
-java -jar textui/build/libs/textui.jar
-# or run JavaFX UI
 java -jar jfxui/build/libs/jfxui.jar
 ```
 
