@@ -1,4 +1,4 @@
 dependencies {
     implementation "javax.json.bind:javax.json.bind-api:1.0"
-    runtimeOnly "org.eclipse:yasson:1.0.7"
+    runtimeOnly "org.eclipse:yasson:1.0.8"
 }
