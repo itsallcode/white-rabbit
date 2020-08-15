@@ -50,13 +50,26 @@ dependencies {
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
     
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
+    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-11+26" 
 }
+
+OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
 
 task uiTest(type: Test) {
     description = 'Runs integration tests.'
     group = 'verification'
 
     useJUnitPlatform()
+
+    if(!os.isWindows()) {
+        systemProperty 'java.awt.headless', 'true'
+        systemProperty 'testfx.headless', 'true'
+        systemProperty 'testfx.robot', 'glass'
+        systemProperty 'glass.platform', 'Monocle'
+        systemProperty 'monocle.platform', 'Headless'
+        systemProperty 'prism.order', 'sw'
+    }    
+
     testClassesDirs = sourceSets.uiTest.output.classesDirs
     classpath = sourceSets.uiTest.runtimeClasspath
     shouldRunAfter test
