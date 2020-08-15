@@ -23,6 +23,7 @@ import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
+import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;

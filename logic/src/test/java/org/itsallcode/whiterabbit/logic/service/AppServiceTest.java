@@ -22,6 +22,7 @@ import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;

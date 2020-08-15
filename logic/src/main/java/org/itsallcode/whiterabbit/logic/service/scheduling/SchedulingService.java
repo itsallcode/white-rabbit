@@ -1,19 +1,15 @@
-package org.itsallcode.whiterabbit.logic.service;
+package org.itsallcode.whiterabbit.logic.service.scheduling;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.itsallcode.whiterabbit.logic.service.scheduling.DefaultErrorHandler;
-import org.itsallcode.whiterabbit.logic.service.scheduling.ErrorHandler;
-import org.itsallcode.whiterabbit.logic.service.scheduling.ReschedulingRunnable;
-import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
-import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
+import org.itsallcode.whiterabbit.logic.service.ClockService;
 
 public class SchedulingService implements AutoCloseable
 {
     private final ScheduledExecutorService executorService;
     private final ClockService clockService;
 
-    SchedulingService(ClockService clockService, ScheduledExecutorService executorService)
+    public SchedulingService(ClockService clockService, ScheduledExecutorService executorService)
     {
         this.clockService = clockService;
         this.executorService = executorService;
