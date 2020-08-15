@@ -12,7 +12,6 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
-import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback.ClientConnection;
@@ -28,25 +27,22 @@ public class App
 
     private final AppService appService;
     private final UiTerminal terminal;
-    private final FormatterService formatterService;
 
     private Interruption interruption;
     private boolean running = true;
 
-    public App(AppService appService, FormatterService formatterService, UiTerminal terminal)
+    public App(AppService appService, UiTerminal terminal)
     {
         this.appService = appService;
-        this.formatterService = formatterService;
         this.terminal = terminal;
     }
 
     public static void main(String[] args)
     {
         final Config config = Config.read(Paths.get("time.properties"));
-        final FormatterService formatterService = new FormatterService(config.getLocale());
-        final AppService appService = AppService.create(config, formatterService);
+        final AppService appService = AppService.create(config);
         final UiTerminal terminal = UiTerminal.create();
-        new App(appService, formatterService, terminal).run();
+        new App(appService, terminal).run();
     }
 
     void run()
@@ -115,7 +111,7 @@ public class App
     {
         final Instant now = appService.getClock().instant();
         final Instant displayTime = now.truncatedTo(ChronoUnit.SECONDS);
-        final String message = "Update: " + formatterService.format(day);
+        final String message = "Update: " + appService.formatter().format(day);
         LOG.trace(message);
         println(displayTime + " " + message);
     }
@@ -164,7 +160,7 @@ public class App
                 COMMAND_TOGGLE_INTERRUPT, COMMAND_REPORT, COMMAND_QUIT);
         if (interruption != null)
         {
-            final String currentInterruption = formatterService
+            final String currentInterruption = appService.formatter()
                     .format(interruption.currentDuration(appService.getClock().instant()));
             prompt += " (interruption " + currentInterruption + ")";
         }

@@ -12,9 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 
-public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements ScheduledTaskFuture
+class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements ScheduledTaskFuture
 {
-
     private static final Logger LOG = LogManager.getLogger(ReschedulingRunnable.class);
 
     private final Trigger trigger;
@@ -26,7 +25,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
     private final ClockService clock;
     private ScheduledFuture<?> currentFuture;
 
-    public ReschedulingRunnable(Runnable command, Trigger trigger, ScheduledExecutorService executorService,
+    ReschedulingRunnable(Runnable command, Trigger trigger, ScheduledExecutorService executorService,
             ClockService clock, ErrorHandler errorHandler)
     {
         super(command, errorHandler);
@@ -35,7 +34,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
         this.clock = clock;
     }
 
-    public ScheduledTaskFuture schedule()
+    ScheduledTaskFuture schedule()
     {
         synchronized (this.triggerContextMonitor)
         {
@@ -52,10 +51,7 @@ public class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implem
                 throw new IllegalStateException(
                         "Next execution time from trigger " + trigger + " is " + delay + " in the past");
             }
-            if (!delay.minus(Duration.ofSeconds(2)).isNegative())
-            {
-                LOG.trace("Schedule next execution at {} in {}", this.scheduledExecutionTime, delay);
-            }
+            System.out.println("Schedule " + this + " with delay " + delay);
             if (!executorService.isShutdown())
             {
                 this.currentFuture = this.executorService.schedule(this, delay.toMillis(), TimeUnit.MILLISECONDS);

@@ -7,6 +7,11 @@ import java.util.Optional;
 
 public interface Config
 {
+    static Config read(WorkingDirProvider workingDirProvider)
+    {
+        return read(workingDirProvider.getWorkingDir().resolve("time.properties"));
+    }
+
     static Config read(Path configFile)
     {
         return ConfigFile.read(configFile);

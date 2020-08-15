@@ -38,6 +38,7 @@ class ConfigFile implements Config
         {
             throw new IllegalStateException("Config file not found at '" + configFile + "'");
         }
+        LOG.info("Reading config file from {}", configFile);
         try (InputStream stream = Files.newInputStream(configFile))
         {
             final Properties props = new Properties();
@@ -47,7 +48,7 @@ class ConfigFile implements Config
         catch (final IOException e)
         {
             LOG.error("Error reading config file {}", configFile, e);
-            throw new UncheckedIOException("Error reading " + configFile, e);
+            throw new UncheckedIOException("Error reading config file " + configFile, e);
         }
     }
 
