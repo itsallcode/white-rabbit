@@ -26,7 +26,7 @@ task runJfxui(type: JavaExec, dependsOn: shadowJar) {
 ext {
     def os = org.gradle.internal.os.OperatingSystem.current()
     ext.platform = os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
-    ext.javaFxVersion = '14.0.1'
+    ext.javaFxVersion = '11.0.1'
 }
 
 sourceSets {
@@ -53,22 +53,17 @@ dependencies {
     testRuntimeOnly "org.testfx:openjfx-monocle:jdk-11+26" 
 }
 
-OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
-
 task uiTest(type: Test) {
     description = 'Runs integration tests.'
     group = 'verification'
 
     useJUnitPlatform()
 
-    if(!os.isWindows()) {
-        systemProperty 'java.awt.headless', 'true'
-        systemProperty 'testfx.headless', 'true'
-        systemProperty 'testfx.robot', 'glass'
-        systemProperty 'glass.platform', 'Monocle'
-        systemProperty 'monocle.platform', 'Headless'
-        systemProperty 'prism.order', 'sw'
-    }    
+    systemProperty 'java.awt.headless', 'true'
+    systemProperty 'testfx.headless', 'true'
+    systemProperty 'testfx.robot', 'glass'
+    systemProperty 'glass.platform', 'Monocle'
+    systemProperty 'monocle.platform', 'Headless'
 
     testClassesDirs = sourceSets.uiTest.output.classesDirs
     classpath = sourceSets.uiTest.runtimeClasspath
