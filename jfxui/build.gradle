@@ -3,8 +3,8 @@ plugins {
 }
 
 shadowJar {
-    archiveBaseName = 'jfxui'
-    archiveVersion = null
+    archiveBaseName.set('jfxui')
+    archiveVersion.set(null)
 }
 
 def mainClass = 'org.itsallcode.whiterabbit.jfxui.App'

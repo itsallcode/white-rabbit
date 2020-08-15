@@ -3,8 +3,8 @@ plugins {
 }
 
 shadowJar {
-    archiveBaseName = 'textui'
-    archiveVersion = null
+    archiveBaseName.set('textui')
+    archiveVersion.set(null)
 }
 
 def mainClass = 'org.itsallcode.whiterabbit.textui.App'
