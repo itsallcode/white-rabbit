@@ -5,12 +5,15 @@ A time recording tool
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=white-rabbit)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=white-rabbit)
 
+* [Features](#features)
+* [Usage](#usage)
+
 ## Recent changes
 
 * Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
 * Supports reduced working hours / short-time work, see [configuration option `current_working_time_per_day`](#optional_config)
 
-## Features
+## <a name="features"></a>Features
 
 * Two user interfaces:
   * Simple text user interface for running in a console window
@@ -135,13 +138,13 @@ This is generated automatically. The Java FX user interface allows you to edit i
 * If you change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months` in the Java FX UI.
 * When you modify config file `time.properties` you need to restart WhiteRabbit manually.
 
-## Usage
+## <a name="usage"></a>Usage
 
 ### Requirements
 
 JDK 11, e.g. https://adoptopenjdk.net/
 
-### Configuration
+### <a name="configuration"></a>Configuration
 
 Create file `time.properties` in the current working directory with the following content:
 
@@ -187,24 +190,36 @@ To use activity tracking, create file `projects.json` in your data directory wit
 }
 ```
 
-### Clone, configure and build
+### <a name="running"></a>Running WhiteRabbit
+
+#### Clone and configure
 
 ```bash
 mkdir time-recording-data
 git clone https://github.com/itsallcode/white-rabbit.git
 cd white-rabbit
+# Configure
 echo "data = ../time-recording-data/" > time.properties
-./gradlew build
 ```
 
-### Launching
+#### Build and launch
+
+```bash
+./gradlew build
+# Run text ui
+java -jar textui/build/libs/textui.jar
+# or run JavaFX UI
+java -jar jfxui/build/libs/jfxui.jar
+```
+
+#### Build and launch with gradle
 
 Start text ui:
 ```bash
-java -jar textui/build/libs/textui.jar
+./gradlew runTextui
 ```
 
 Start Java FX ui:
 ```bash
-java -jar jfxui/build/libs/jfxui.jar
+./gradlew runJfxui
 ```
