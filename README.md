@@ -214,12 +214,6 @@ java -jar jfxui/build/libs/jfxui.jar
 
 #### Build and launch with gradle
 
-Start text ui:
-```bash
-./gradlew runTextui
-```
-
-Start Java FX ui:
 ```bash
 ./gradlew runJfxui
 ```
