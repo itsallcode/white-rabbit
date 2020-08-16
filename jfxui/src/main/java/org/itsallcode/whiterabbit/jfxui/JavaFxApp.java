@@ -218,6 +218,12 @@ public class JavaFxApp extends Application
     @Override
     public void stop()
     {
+        prepareShutdown();
+        Platform.exit();
+    }
+
+    void prepareShutdown()
+    {
         LOG.info("Stopping application");
         if (tray != null)
         {
@@ -231,7 +237,6 @@ public class JavaFxApp extends Application
         {
             appService.close();
         }
-        Platform.exit();
     }
 
     private void startAppService()
@@ -342,12 +347,9 @@ public class JavaFxApp extends Application
 
         BorderPane.setMargin(mainPane, insets);
 
-        final FlowPane topPane = new FlowPane();
-        topPane.getChildren().add(new Label("Month:"));
-        topPane.getChildren().add(monthDropDownBox());
-        topPane.getChildren().add(currentTimeLabel());
+        final FlowPane topPane = createTopPane();
         pane.setTop(topPane);
-        BorderPane.setMargin(topPane, insets);
+        BorderPane.setMargin(topPane, new Insets(GAP_PIXEL, GAP_PIXEL, 0, GAP_PIXEL));
 
         final TilePane buttonBar = createButtonBar();
         BorderPane.setMargin(buttonBar, insets);
@@ -407,6 +409,17 @@ public class JavaFxApp extends Application
         Platform.exit();
     }
 
+    private FlowPane createTopPane()
+    {
+        final FlowPane topPane = new FlowPane();
+        topPane.setHgap(GAP_PIXEL);
+        topPane.getChildren().add(new Label("Month:"));
+        topPane.getChildren().add(monthDropDownBox());
+        topPane.getChildren().add(currentTimeLabel());
+        topPane.getChildren().add(overtimeLabel());
+        return topPane;
+    }
+
     private Node monthDropDownBox()
     {
         availableMonths.addAll(appService.getAvailableDataYearMonth());
@@ -423,19 +436,30 @@ public class JavaFxApp extends Application
     {
         final FormatterService formatter = appService.formatter();
         final Label label = new Label();
+        label.setId("current-time-label");
         label.textProperty().bind(Bindings.createStringBinding(() -> {
             final Instant now = currentTimeProperty.property().getValue();
-            String text = formatter.formatDateAndTime(now);
+            return "Current time: " + formatter.formatDateAndTime(now);
+        }, currentTimeProperty.property()));
+        return label;
+    }
+
+    private Node overtimeLabel()
+    {
+        final FormatterService formatter = appService.formatter();
+        final Label label = new Label();
+        label.setId("overtime-label");
+        label.textProperty().bind(Bindings.createStringBinding(() -> {
             final MonthIndex month = currentMonth.get();
             if (month != null && month.getOvertimePreviousMonth() != null)
             {
                 final Duration totalOvertime = month.getTotalOvertime();
-                text += ", overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
-                        + ", overtime this month: "
-                        + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total overtime: "
+                return "Overtime: previous month: " + formatter.format(month.getOvertimePreviousMonth())
+                        + ", this month: "
+                        + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total: "
                         + formatter.format(totalOvertime);
             }
-            return text;
+            return "Overtime: (no month selected)";
         }, currentTimeProperty.property(), currentMonth));
         return label;
     }
