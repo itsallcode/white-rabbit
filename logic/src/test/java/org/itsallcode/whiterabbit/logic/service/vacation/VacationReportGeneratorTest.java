@@ -58,7 +58,7 @@ class VacationReportGeneratorTest
         assertThat(vacationYear.year).isEqualTo(Year.of(2020));
         assertThat(vacationYear.daysAvailable).isEqualTo(3);
         assertThat(vacationYear.daysUsed).isEqualTo(1);
-        assertThat(vacationYear.daysRemaingFromPreviousYear).isEqualTo(0);
+        assertThat(vacationYear.daysRemaingFromPreviousYear).isZero();
         assertThat(vacationYear.getDaysRemaining()).isEqualTo(2);
     }
 
@@ -75,7 +75,7 @@ class VacationReportGeneratorTest
         assertThat(vacationYear.year).isEqualTo(Year.of(2020));
         assertThat(vacationYear.daysAvailable).isEqualTo(5);
         assertThat(vacationYear.daysUsed).isEqualTo(4);
-        assertThat(vacationYear.daysRemaingFromPreviousYear).isEqualTo(0);
+        assertThat(vacationYear.daysRemaingFromPreviousYear).isZero();
         assertThat(vacationYear.getDaysRemaining()).isEqualTo(1);
     }
 
@@ -93,7 +93,7 @@ class VacationReportGeneratorTest
         assertThat(firstYear.year).isEqualTo(Year.of(2019));
         assertThat(firstYear.daysAvailable).isEqualTo(3);
         assertThat(firstYear.daysUsed).isEqualTo(1);
-        assertThat(firstYear.daysRemaingFromPreviousYear).isEqualTo(0);
+        assertThat(firstYear.daysRemaingFromPreviousYear).isZero();
         assertThat(firstYear.getDaysRemaining()).isEqualTo(2);
 
         assertThat(secondYear.year).isEqualTo(Year.of(2020));
@@ -118,7 +118,7 @@ class VacationReportGeneratorTest
         assertThat(firstYear.year).isEqualTo(Year.of(2019));
         assertThat(firstYear.daysAvailable).isEqualTo(3);
         assertThat(firstYear.daysUsed).isEqualTo(1);
-        assertThat(firstYear.daysRemaingFromPreviousYear).isEqualTo(0);
+        assertThat(firstYear.daysRemaingFromPreviousYear).isZero();
         assertThat(firstYear.getDaysRemaining()).isEqualTo(2);
 
         assertThat(secondYear.year).isEqualTo(Year.of(2020));
@@ -142,7 +142,7 @@ class VacationReportGeneratorTest
         assertThat(firstYear.year).isEqualTo(Year.of(2019));
         assertThat(firstYear.daysAvailable).isEqualTo(3);
         assertThat(firstYear.daysUsed).isEqualTo(1);
-        assertThat(firstYear.daysRemaingFromPreviousYear).isEqualTo(0);
+        assertThat(firstYear.daysRemaingFromPreviousYear).isZero();
         assertThat(firstYear.getDaysRemaining()).isEqualTo(2);
 
         assertThat(secondYear.year).isEqualTo(Year.of(2020));
@@ -172,7 +172,7 @@ class VacationReportGeneratorTest
         assertThat(report.months).hasSize(1);
         final VacationMonth firstMonth = report.months.get(0);
         assertThat(firstMonth.yearMonth).isEqualTo(YearMonth.of(2020, Month.JANUARY));
-        assertThat(firstMonth.vacationDaysUsed).isEqualTo(0);
+        assertThat(firstMonth.vacationDaysUsed).isZero();
     }
 
     @Test
