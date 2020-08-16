@@ -16,7 +16,6 @@ import javafx.scene.control.SeparatorMenuItem;
 public class MenuBarBuilder
 {
     private static final Logger LOG = LogManager.getLogger(MenuBarBuilder.class);
-
     private final JavaFxApp app;
     private final AppService appService;
     private final BooleanProperty stoppedWorkingForToday;
@@ -33,19 +32,16 @@ public class MenuBarBuilder
         LOG.info("Creating menu bar");
         final MenuBar menuBar = new MenuBar();
         final Menu menuFile = new Menu("_File");
-
-        menuFile.getItems().addAll( //
+        final Menu menuCalculations = new Menu("_Working hours");
+        final Menu menuReports = new Menu("_Reports");
+        menuFile.getItems().addAll(menuItem("_Quit", app::exitApp));
+        menuCalculations.getItems().addAll( //
                 menuItem("_Update", appService::updateNow), //
                 menuItem("Update overtime for _all months", appService::updatePreviousMonthOvertimeField), //
                 new SeparatorMenuItem(), //
-                menuItem("_Vacation report", app::showVacationReport), //
-                new SeparatorMenuItem(), //
-                createStopWorkingForTodayMenuItem(), //
-                new SeparatorMenuItem(), //
-                menuItem("_Quit", app::exitApp) //
-        );
-
-        menuBar.getMenus().addAll(menuFile);
+                createStopWorkingForTodayMenuItem());
+        menuReports.getItems().addAll(menuItem("_Vacation report", app::showVacationReport));
+        menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports);
         return menuBar;
     }
 
