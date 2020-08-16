@@ -28,11 +28,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testfx.framework.junit5.ApplicationExtension;
 
 import javafx.stage.Stage;
 
-@ExtendWith(ApplicationExtension.class)
 @ExtendWith(MockitoExtension.class)
 abstract class JavaFxAppUiTestBase
 {

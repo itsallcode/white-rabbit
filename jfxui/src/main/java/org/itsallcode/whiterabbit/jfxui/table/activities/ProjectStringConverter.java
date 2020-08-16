@@ -21,8 +21,8 @@ class ProjectStringConverter extends StringConverter<Project>
     }
 
     @Override
-    public Project fromString(String string)
+    public Project fromString(String label)
     {
-        return projectService.getProjectByLabel(string).orElse(null);
+        return projectService.getProjectByLabel(label).orElse(null);
     }
 }

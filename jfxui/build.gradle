@@ -71,3 +71,5 @@ task uiTest(type: Test) {
 }
 
 check.dependsOn uiTest
+
+tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jacoco/*.exec")
