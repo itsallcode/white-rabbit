@@ -81,6 +81,7 @@ public class DayRecordTable
                 param -> new TextFieldTableCell<>(
                         new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
                 data -> data.getValue().date);
+        @SuppressWarnings("null")
         final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);

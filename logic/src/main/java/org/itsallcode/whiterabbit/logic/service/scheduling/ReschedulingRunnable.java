@@ -51,7 +51,6 @@ class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements Sc
                 throw new IllegalStateException(
                         "Next execution time from trigger " + trigger + " is " + delay + " in the past");
             }
-            System.out.println("Schedule " + this + " with delay " + delay);
             if (!executorService.isShutdown())
             {
                 this.currentFuture = this.executorService.schedule(this, delay.toMillis(), TimeUnit.MILLISECONDS);

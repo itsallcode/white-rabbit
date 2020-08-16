@@ -25,6 +25,7 @@ class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
     final ObjectProperty<Boolean> remainder;
     final ObjectProperty<String> comment;
 
+    @SuppressWarnings("null")
     private ActivityPropertyAdapter(EditListener<DayRecord> editListener,
             Activity act)
     {
