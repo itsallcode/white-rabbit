@@ -22,12 +22,7 @@ public class FormatterService
     private final ZoneId timeZoneId;
     private final DateTimeFormatter dateTimeFormatter;
 
-    public FormatterService(Locale locale)
-    {
-        this(locale, ZoneId.systemDefault());
-    }
-
-    private FormatterService(Locale locale, ZoneId timeZoneId)
+    public FormatterService(Locale locale, ZoneId timeZoneId)
     {
         this.locale = locale;
         this.timeZoneId = timeZoneId;
