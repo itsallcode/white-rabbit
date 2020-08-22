@@ -121,9 +121,17 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
-    void enteredCommentPersistedAfterClickingAnotherRow()
+    void enteredCommentPersistedAfterOtherWindowFocused()
     {
         assertCommentCellPersistedAfterCommitAction(() -> {
+            // TODO: focus other window
+        });
+    }
+
+    @Test
+    void enteredCommentNotPersistedAfterClickingAnotherRow()
+    {
+        assertCommentCellNotPersistedAfterFocusLostAction(() -> {
             final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
             final TableCell<?, ?> commentCell = getTableCell(dayTable, 0, "comment");
             robot.clickOn(commentCell);
@@ -141,6 +149,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final LocalDate today = getCurrentDate();
         final LocalTime now = getCurrentTimeMinutes();
         final int rowIndex = today.getDayOfMonth() - 1;
+        final String comment = "tst";
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
@@ -150,18 +159,18 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         final TableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
 
-        robot.doubleClickOn(commentCell).type(KeyCode.A).type(KeyCode.B);
+        robot.doubleClickOn(commentCell).write(comment);
 
-        assertThat(commentCell.isEditing()).isTrue();
+        assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
 
         commitAction.run();
 
-        assertThat(commentCell.isEditing()).isFalse();
+        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
 
         assertRowContent(dayTable, rowIndex, expectedCellValues.withBegin(now).withEnd(now)
                 .withOvertimeToday(Duration.ofHours(-8))
                 .withTotalOvertime(Duration.ofHours(-8))
-                .withComment("ab").build());
+                .withComment(comment).build());
     }
 
     private void assertCommentCellNotPersistedAfterFocusLostAction(Runnable focusLossAction)
@@ -177,13 +186,13 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         final TableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
 
-        robot.doubleClickOn(commentCell).type(KeyCode.A).type(KeyCode.B);
+        robot.doubleClickOn(commentCell).write("tst");
 
-        assertThat(commentCell.isEditing()).isTrue();
+        assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
 
         focusLossAction.run();
 
-        assertThat(commentCell.isEditing()).isFalse();
+        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
 
         assertRowContent(dayTable, rowIndex, expectedCellValues.build());
     }

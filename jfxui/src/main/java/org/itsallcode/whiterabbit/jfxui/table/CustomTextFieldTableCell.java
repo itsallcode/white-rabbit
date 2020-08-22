@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.table;
 
+import java.util.Objects;
+
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Cell;
@@ -9,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
+@SuppressWarnings("java:S110") // Deep inheritance tree required by API
 public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
 {
     private final StringConverter<T> converter;
@@ -16,7 +19,7 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
 
     public CustomTextFieldTableCell(StringConverter<T> converter)
     {
-        this.converter = converter;
+        this.converter = Objects.requireNonNull(converter);
     }
 
     @Override
@@ -37,7 +40,7 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
                 textField = createTextField(this, converter);
             }
 
-            startEdit(this, converter, null, null, textField);
+            startEdit(this, converter, textField);
         }
     }
 
@@ -62,13 +65,6 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
         // Use onAction here rather than onKeyReleased (with check for Enter),
         // as otherwise we encounter RT-34685
         textField.setOnAction(event -> {
-            if (converter == null)
-            {
-                throw new IllegalStateException(
-                        "Attempting to convert text input into Object, but provided "
-                                + "StringConverter is null. Be sure to set a StringConverter "
-                                + "in your cell factory.");
-            }
             cell.commitEdit(converter.fromString(textField.getText()));
             event.consume();
         });
@@ -89,14 +85,14 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
             TextField newTextField)
     {
         final ChangeListener<Boolean> focusListener = (observable, oldSelection, newSelection) -> {
-            if (!newSelection)
+            if (!newSelection.booleanValue())
             {
                 cell.commitEdit(converter.fromString(newTextField.getText()));
             }
         };
         newTextField.focusedProperty().addListener(focusListener);
 
-        newTextField.setOnKeyPressed((keyEvent) -> {
+        newTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ESCAPE))
             {
                 newTextField.focusedProperty().removeListener(focusListener);
@@ -106,36 +102,15 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
 
     private static <T> String getItemText(Cell<T> cell, StringConverter<T> converter)
     {
-        return converter == null ? cell.getItem() == null ? "" : cell.getItem().toString()
-                : converter.toString(cell.getItem());
+        return converter.toString(cell.getItem());
     }
 
-    static <T> void startEdit(final Cell<T> cell,
-            final StringConverter<T> converter,
-            final HBox hbox,
-            final Node graphic,
-            final TextField textField)
+    static <T> void startEdit(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
     {
-        if (textField != null)
-        {
-            textField.setText(getItemText(cell, converter));
-        }
+        textField.setText(getItemText(cell, converter));
         cell.setText(null);
-
-        if (graphic != null)
-        {
-            hbox.getChildren().setAll(graphic, textField);
-            cell.setGraphic(hbox);
-        }
-        else
-        {
-            cell.setGraphic(textField);
-        }
-
+        cell.setGraphic(textField);
         textField.selectAll();
-
-        // requesting focus so that key input can immediately go into the
-        // TextField (see RT-28132)
         textField.requestFocus();
     }
 
