@@ -39,6 +39,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Lint Code Base
+      uses: github/super-linter@v3
+      env:
+        VALIDATE_ALL_CODEBASE: false
+        DEFAULT_BRANCH: develop
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Archive jfxui binary
       uses: actions/upload-artifact@v1
       with:
