@@ -44,6 +44,8 @@ jobs:
       env:
         VALIDATE_ALL_CODEBASE: false
         DEFAULT_BRANCH: develop
+        # Already checked via Eclipse code formatter and Sonar
+        VALIDATE_JAVA: false
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Archive jfxui binary
       uses: actions/upload-artifact@v1
