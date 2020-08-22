@@ -23,8 +23,8 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.control.Labeled;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
@@ -111,26 +111,32 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     @Test
     void enteredCommentPersistedAfterEnterKeyPressed()
     {
-        assertCommentCellPersistedAfterAction(() -> robot.type(KeyCode.ENTER));
+        assertCommentCellPersistedAfterCommitAction(() -> robot.type(KeyCode.ENTER));
     }
 
     @Test
     void enteredCommentPersistedAfterTabKeyPressed()
     {
-        assertCommentCellPersistedAfterAction(() -> robot.type(KeyCode.TAB));
+        assertCommentCellPersistedAfterCommitAction(() -> robot.type(KeyCode.TAB));
     }
 
     @Test
     void enteredCommentPersistedAfterClickingAnotherRow()
     {
-        assertCommentCellPersistedAfterAction(() -> {
+        assertCommentCellPersistedAfterCommitAction(() -> {
             final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
-            final TextFieldTableCell<?, ?> commentCell = getTableCell(dayTable, 0, "comment");
+            final TableCell<?, ?> commentCell = getTableCell(dayTable, 0, "comment");
             robot.clickOn(commentCell);
         });
     }
 
-    private void assertCommentCellPersistedAfterAction(Runnable persistAction)
+    @Test
+    void enteredCommentNotPersistedAfterTypingEscape()
+    {
+        assertCommentCellNotPersistedAfterFocusLostAction(() -> robot.type(KeyCode.ESCAPE));
+    }
+
+    private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)
     {
         final LocalDate today = getCurrentDate();
         final LocalTime now = getCurrentTimeMinutes();
@@ -142,15 +148,44 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         assertRowContent(dayTable, rowIndex, expectedCellValues.build());
 
-        final TextFieldTableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
+        final TableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
 
         robot.doubleClickOn(commentCell).type(KeyCode.A).type(KeyCode.B);
-        persistAction.run();
+
+        assertThat(commentCell.isEditing()).isTrue();
+
+        commitAction.run();
+
+        assertThat(commentCell.isEditing()).isFalse();
 
         assertRowContent(dayTable, rowIndex, expectedCellValues.withBegin(now).withEnd(now)
                 .withOvertimeToday(Duration.ofHours(-8))
                 .withTotalOvertime(Duration.ofHours(-8))
                 .withComment("ab").build());
+    }
+
+    private void assertCommentCellNotPersistedAfterFocusLostAction(Runnable focusLossAction)
+    {
+        final LocalDate today = getCurrentDate();
+        final int rowIndex = today.getDayOfMonth() - 1;
+
+        final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
+
+        final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
+
+        assertRowContent(dayTable, rowIndex, expectedCellValues.build());
+
+        final TableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
+
+        robot.doubleClickOn(commentCell).type(KeyCode.A).type(KeyCode.B);
+
+        assertThat(commentCell.isEditing()).isTrue();
+
+        focusLossAction.run();
+
+        assertThat(commentCell.isEditing()).isFalse();
+
+        assertRowContent(dayTable, rowIndex, expectedCellValues.build());
     }
 
     @Override

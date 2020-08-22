@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.table;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Cell;
 import javafx.scene.control.TableCell;
@@ -54,7 +55,7 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
         updateItem(this, converter, null, null, textField);
     }
 
-    static <T> TextField createTextField(final Cell<T> cell, final StringConverter<T> converter)
+    static <T> TextField createTextField(final CustomTextFieldTableCell<?, T> cell, final StringConverter<T> converter)
     {
         final TextField textField = new TextField(getItemText(cell, converter));
 
@@ -78,7 +79,29 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
                 t.consume();
             }
         });
+
+        configureFocusLossBehavior(cell, converter, textField);
         return textField;
+    }
+
+    private static <T> void configureFocusLossBehavior(CustomTextFieldTableCell<?, T> cell,
+            final StringConverter<T> converter,
+            TextField newTextField)
+    {
+        final ChangeListener<Boolean> focusListener = (observable, oldSelection, newSelection) -> {
+            if (!newSelection)
+            {
+                cell.commitEdit(converter.fromString(newTextField.getText()));
+            }
+        };
+        newTextField.focusedProperty().addListener(focusListener);
+
+        newTextField.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.getCode().equals(KeyCode.ESCAPE))
+            {
+                newTextField.focusedProperty().removeListener(focusListener);
+            }
+        });
     }
 
     private static <T> String getItemText(Cell<T> cell, StringConverter<T> converter)

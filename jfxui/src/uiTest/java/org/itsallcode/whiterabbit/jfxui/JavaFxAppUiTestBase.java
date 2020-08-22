@@ -42,9 +42,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.stage.Stage;
 
@@ -175,7 +175,7 @@ abstract class JavaFxAppUiTestBase
 
     abstract void stop();
 
-    protected TextFieldTableCell<?, ?> getTableCell(final TableView<?> table, int rowIndex, String columnId)
+    protected TableCell<?, ?> getTableCell(final TableView<?> table, int rowIndex, String columnId)
     {
         final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
                 .filter(VirtualFlow.class::isInstance)
@@ -185,7 +185,7 @@ abstract class JavaFxAppUiTestBase
         final TableRow<?> row = (TableRow<?>) virtualFlow.getCell(rowIndex);
         return row.getChildrenUnmodifiable().stream()
                 .filter(cell -> cell.getId().equals(columnId))
-                .map(TextFieldTableCell.class::cast)
+                .map(TableCell.class::cast)
                 .findFirst().orElseThrow();
     }
 
