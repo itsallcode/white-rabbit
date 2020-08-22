@@ -62,8 +62,6 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
     {
         final TextField textField = new TextField(getItemText(cell, converter));
 
-        // Use onAction here rather than onKeyReleased (with check for Enter),
-        // as otherwise we encounter RT-34685
         textField.setOnAction(event -> {
             cell.commitEdit(converter.fromString(textField.getText()));
             event.consume();
