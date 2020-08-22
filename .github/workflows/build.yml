@@ -52,8 +52,8 @@ jobs:
       with:
         name: jfxui
         path: jfxui/build/libs/jfxui-all.jar
-    - name: Archive textui binary
+    - name: Archive reports
       uses: actions/upload-artifact@v1
       with:
-        name: textui
-        path: textui/build/libs/textui-all.jar
+        name: reports
+        path: '**/build/reports/**'
