@@ -45,6 +45,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertCommentCellPersistedAfterCommitAction(() -> robot.type(KeyCode.TAB));
     }
 
+    @DisabledIfSystemProperty(named = "testfx.headless", matches = "true")
     @Test
     void commentPersistedAfterOtherWindowFocused()
     {
@@ -65,7 +66,6 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     }
 
     @Test
-    @DisabledIfSystemProperty(named = "testfx.headless", matches = "true")
     void commentNotPersistedAfterClickingAnotherRow()
     {
         assertCommentCellNotPersistedAfterFocusLostAction(() -> {
