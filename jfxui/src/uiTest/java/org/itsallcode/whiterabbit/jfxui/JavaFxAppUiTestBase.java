@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,6 +38,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
@@ -52,6 +56,7 @@ import javafx.stage.Stage;
 abstract class JavaFxAppUiTestBase
 {
     private static final Logger LOG = LogManager.getLogger(JavaFxAppUiTestBase.class);
+    private static final Jsonb JSONB = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
 
     private JavaFxApp javaFxApp;
 
@@ -89,8 +94,12 @@ abstract class JavaFxAppUiTestBase
         now = now.plus(duration);
     }
 
-    @SuppressWarnings("null")
     protected void doStart(Stage stage)
+    {
+        doStart(stage, null);
+    }
+
+    protected void doStart(Stage stage, ProjectConfig projectConfig)
     {
         LOG.info("Starting application using stage {}", stage);
 
@@ -109,7 +118,7 @@ abstract class JavaFxAppUiTestBase
         when(clockMock.getZone()).thenReturn(timeZone);
         when(clockMock.instant()).thenAnswer(invocation -> now);
 
-        prepareConfiguration();
+        prepareConfiguration(projectConfig);
 
         javaFxApp = new JavaFxApp(() -> workingDir, clockMock, executorServiceMock);
         javaFxApp.init();
@@ -135,7 +144,7 @@ abstract class JavaFxAppUiTestBase
         updateEveryMinuteRunnable = arg.getAllValues().get(1);
     }
 
-    private void prepareConfiguration()
+    private void prepareConfiguration(ProjectConfig projectConfig)
     {
         dataDir = workingDir.resolve("data");
         String configFileContent = "data = " + dataDir.toString().replace('\\', '/') + "\n";
@@ -149,6 +158,10 @@ abstract class JavaFxAppUiTestBase
         {
             throw new UncheckedIOException(e);
         }
+        if (projectConfig != null)
+        {
+            writeProjectsFile(projectConfig);
+        }
     }
 
     protected LocalDate getCurrentDate()
@@ -159,6 +172,11 @@ abstract class JavaFxAppUiTestBase
     protected LocalTime getCurrentTimeMinutes()
     {
         return LocalTime.ofInstant(now, timeZone).truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    protected int getCurrentDayRowIndex()
+    {
+        return getCurrentDate().getDayOfMonth() - 1;
     }
 
     public void setCurrentTime(Instant now)
@@ -177,16 +195,22 @@ abstract class JavaFxAppUiTestBase
 
     protected TableCell<?, ?> getTableCell(final TableView<?> table, int rowIndex, String columnId)
     {
+        final TableRow<?> row = getTableRow(table, rowIndex);
+        return row.getChildrenUnmodifiable().stream()
+                .filter(cell -> cell.getId().equals(columnId))
+                .map(TableCell.class::cast)
+                .findFirst().orElseThrow();
+    }
+
+    protected TableRow<?> getTableRow(final TableView<?> table, int rowIndex)
+    {
         final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
                 .filter(VirtualFlow.class::isInstance)
                 .map(VirtualFlow.class::cast)
                 .findFirst().orElseThrow();
         assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        final TableRow<?> row = (TableRow<?>) virtualFlow.getCell(rowIndex);
-        return row.getChildrenUnmodifiable().stream()
-                .filter(cell -> cell.getId().equals(columnId))
-                .map(TableCell.class::cast)
-                .findFirst().orElseThrow();
+        LOG.debug("Table {} has {} rows", table, virtualFlow.getCellCount());
+        return (TableRow<?>) virtualFlow.getCell(rowIndex);
     }
 
     protected void assertRowContent(final TableView<?> table, int rowIndex, TableRowExpectedContent expectedRowContent)
@@ -194,14 +218,41 @@ abstract class JavaFxAppUiTestBase
         Assertions.assertThat(table).containsRowAtIndex(rowIndex, expectedRowContent.expectedCellContent());
     }
 
+    private void writeProjectsFile(ProjectConfig projectConfig)
+    {
+        final Path projectsFile = dataDir.resolve("projects.json");
+        try (OutputStream stream = Files.newOutputStream(projectsFile))
+        {
+            JSONB.toJson(projectConfig, stream);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error writing file " + projectsFile, e);
+        }
+    }
+
+    protected ProjectConfig projectConfig(Project... projects)
+    {
+        final ProjectConfig projectConfig = new ProjectConfig();
+        projectConfig.setProjects(asList(projects));
+        return projectConfig;
+    }
+
+    protected static Project project(String id, String label)
+    {
+        final Project project = new Project();
+        project.setProjectId(id);
+        project.setLabel(label);
+        return project;
+    }
+
     protected JsonMonth loadMonth(LocalDate date)
     {
-        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
         final Path file = dataDir.resolve(String.valueOf(date.getYear()))
                 .resolve(YearMonth.from(date).toString() + ".json");
         try (InputStream stream = Files.newInputStream(file))
         {
-            return jsonb.fromJson(stream, JsonMonth.class);
+            return JSONB.fromJson(stream, JsonMonth.class);
         }
         catch (final IOException e)
         {

@@ -85,7 +85,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     {
         final LocalDate today = getCurrentDate();
         final LocalTime now = getCurrentTimeMinutes();
-        final int rowIndex = today.getDayOfMonth() - 1;
+        final int rowIndex = getCurrentDayRowIndex();
         final String comment = "tst";
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
@@ -113,7 +113,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     private void assertCommentCellNotPersistedAfterFocusLostAction(Runnable focusLossAction)
     {
         final LocalDate today = getCurrentDate();
-        final int rowIndex = today.getDayOfMonth() - 1;
+        final int rowIndex = getCurrentDayRowIndex();
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
