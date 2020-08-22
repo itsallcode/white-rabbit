@@ -49,8 +49,11 @@ dependencies {
     
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
     
+    testImplementation "javax.json.bind:javax.json.bind-api:1.0"
+    testRuntimeOnly "org.eclipse:yasson:1.0.8"
+    
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
-    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-11+26" 
+    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-11+26"
 }
 
 task uiTest(type: Test) {

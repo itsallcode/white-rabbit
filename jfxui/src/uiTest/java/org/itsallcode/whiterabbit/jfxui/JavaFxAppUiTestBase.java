@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,19 +18,34 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
+import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.stage.Stage;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +61,7 @@ abstract class JavaFxAppUiTestBase
     private Path dataDir;
     private Clock clockMock;
     private ScheduledExecutorService executorServiceMock;
+    private final ZoneId timeZone = ZoneId.of("Europe/Berlin");
     private Instant now = Instant.parse("2007-12-03T10:15:30.20Z");
     private Locale locale = Locale.GERMANY;
 
@@ -88,7 +106,7 @@ abstract class JavaFxAppUiTestBase
                     return scheduledFutureMock;
                 });
 
-        when(clockMock.getZone()).thenReturn(ZoneId.of("Europe/Berlin"));
+        when(clockMock.getZone()).thenReturn(timeZone);
         when(clockMock.instant()).thenAnswer(invocation -> now);
 
         prepareConfiguration();
@@ -133,6 +151,16 @@ abstract class JavaFxAppUiTestBase
         }
     }
 
+    protected LocalDate getCurrentDate()
+    {
+        return LocalDate.ofInstant(now, timeZone);
+    }
+
+    protected LocalTime getCurrentTimeMinutes()
+    {
+        return LocalTime.ofInstant(now, timeZone).truncatedTo(ChronoUnit.MINUTES);
+    }
+
     public void setCurrentTime(Instant now)
     {
         this.now = now;
@@ -146,4 +174,38 @@ abstract class JavaFxAppUiTestBase
     abstract void start(Stage stage);
 
     abstract void stop();
+
+    protected TextFieldTableCell<?, ?> getTableCell(final TableView<?> table, int rowIndex, String columnId)
+    {
+        final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
+                .filter(VirtualFlow.class::isInstance)
+                .map(VirtualFlow.class::cast)
+                .findFirst().orElseThrow();
+        assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
+        final TableRow<?> row = (TableRow<?>) virtualFlow.getCell(rowIndex);
+        return row.getChildrenUnmodifiable().stream()
+                .filter(cell -> cell.getId().equals(columnId))
+                .map(TextFieldTableCell.class::cast)
+                .findFirst().orElseThrow();
+    }
+
+    protected void assertRowContent(final TableView<?> table, int rowIndex, TableRowExpectedContent expectedRowContent)
+    {
+        Assertions.assertThat(table).containsRowAtIndex(rowIndex, expectedRowContent.expectedCellContent());
+    }
+
+    protected JsonMonth loadMonth(LocalDate date)
+    {
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        final Path file = dataDir.resolve(String.valueOf(date.getYear()))
+                .resolve(YearMonth.from(date).toString() + ".json");
+        try (InputStream stream = Files.newInputStream(file))
+        {
+            return jsonb.fromJson(stream, JsonMonth.class);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error reading file " + file, e);
+        }
+    }
 }
