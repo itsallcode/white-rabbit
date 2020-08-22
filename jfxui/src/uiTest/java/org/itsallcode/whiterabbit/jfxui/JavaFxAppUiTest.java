@@ -109,7 +109,28 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
-    void enterdCommentVisibleAndStored()
+    void enteredCommentPersistedAfterEnterKeyPressed()
+    {
+        assertCommentCellPersistedAfterAction(() -> robot.type(KeyCode.ENTER));
+    }
+
+    @Test
+    void enteredCommentPersistedAfterTabKeyPressed()
+    {
+        assertCommentCellPersistedAfterAction(() -> robot.type(KeyCode.TAB));
+    }
+
+    @Test
+    void enteredCommentPersistedAfterClickingAnotherRow()
+    {
+        assertCommentCellPersistedAfterAction(() -> {
+            final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
+            final TextFieldTableCell<?, ?> commentCell = getTableCell(dayTable, 0, "comment");
+            robot.clickOn(commentCell);
+        });
+    }
+
+    private void assertCommentCellPersistedAfterAction(Runnable persistAction)
     {
         final LocalDate today = getCurrentDate();
         final LocalTime now = getCurrentTimeMinutes();
@@ -123,7 +144,8 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         final TextFieldTableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
 
-        robot.doubleClickOn(commentCell).type(KeyCode.A).type(KeyCode.B).type(KeyCode.ENTER);
+        robot.doubleClickOn(commentCell).type(KeyCode.A).type(KeyCode.B);
+        persistAction.run();
 
         assertRowContent(dayTable, rowIndex, expectedCellValues.withBegin(now).withEnd(now)
                 .withOvertimeToday(Duration.ofHours(-8))
