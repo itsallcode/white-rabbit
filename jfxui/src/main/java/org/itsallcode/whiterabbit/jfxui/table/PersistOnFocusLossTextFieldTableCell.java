@@ -8,7 +8,6 @@ import javafx.scene.control.Cell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
 /**
@@ -28,7 +27,7 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
     private final StringConverter<T> converter;
     private TextField textField;
 
-    public PersistOnFocusLossTextFieldTableCell(StringConverter<T> converter)
+    public PersistOnFocusLossTextFieldTableCell(final StringConverter<T> converter)
     {
         this.converter = Objects.requireNonNull(converter);
     }
@@ -46,12 +45,12 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
 
         if (isEditing())
         {
-            if (textField == null)
+            if (this.textField == null)
             {
-                textField = createTextField(this, converter);
+                this.textField = createTextField(this, this.converter);
             }
 
-            startEdit(this, converter, textField);
+            startEdit(this, this.converter, this.textField);
         }
     }
 
@@ -76,8 +75,8 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
         return textField;
     }
 
-    private static <T> void configureFocusLossBehavior(PersistOnFocusLossTextFieldTableCell<?, T> cell,
-            final StringConverter<T> converter, TextField newTextField)
+    private static <T> void configureFocusLossBehavior(final PersistOnFocusLossTextFieldTableCell<?, T> cell,
+            final StringConverter<T> converter, final TextField newTextField)
     {
         final ChangeListener<Boolean> focusListener = (observable, oldSelection, newSelection) -> {
             if (!newSelection.booleanValue())
@@ -99,17 +98,17 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
     public void cancelEdit()
     {
         super.cancelEdit();
-        cancelEdit(this, converter, null);
+        cancelEdit(this, this.converter, null);
     }
 
     @Override
-    public void updateItem(T item, boolean empty)
+    public void updateItem(final T item, final boolean empty)
     {
         super.updateItem(item, empty);
-        updateItem(this, converter, null, null, textField);
+        updateItem(this, this.converter, this.textField);
     }
 
-    private static <T> String getItemText(Cell<T> cell, StringConverter<T> converter)
+    private static <T> String getItemText(final Cell<T> cell, final StringConverter<T> converter)
     {
         return converter.toString(cell.getItem());
     }
@@ -123,14 +122,13 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
         textField.requestFocus();
     }
 
-    private static <T> void cancelEdit(Cell<T> cell, final StringConverter<T> converter, Node graphic)
+    private static <T> void cancelEdit(final Cell<T> cell, final StringConverter<T> converter, final Node graphic)
     {
         cell.setText(getItemText(cell, converter));
         cell.setGraphic(graphic);
     }
 
-    private static <T> void updateItem(final Cell<T> cell, final StringConverter<T> converter, final HBox hbox,
-            final Node graphic, final TextField textField)
+    private static <T> void updateItem(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
     {
         if (cell.isEmpty())
         {
@@ -147,20 +145,12 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
                 }
                 cell.setText(null);
 
-                if (graphic != null)
-                {
-                    hbox.getChildren().setAll(graphic, textField);
-                    cell.setGraphic(hbox);
-                }
-                else
-                {
-                    cell.setGraphic(textField);
-                }
+                cell.setGraphic(textField);
             }
             else
             {
                 cell.setText(getItemText(cell, converter));
-                cell.setGraphic(graphic);
+                cell.setGraphic(null);
             }
         }
     }
