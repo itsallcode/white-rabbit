@@ -12,12 +12,17 @@ public class UiDebugTool
 {
     private static final Logger LOG = LogManager.getLogger(UiDebugTool.class);
 
-    public static void printNode(Node node)
+    private UiDebugTool()
+    {
+        // Not instantiable
+    }
+
+    public static void printNode(final Node node)
     {
         printChildren(node, 0);
     }
 
-    private static void printChildren(Node node, int level)
+    private static void printChildren(final Node node, final int level)
     {
         printNode(node, level);
 
@@ -30,12 +35,12 @@ public class UiDebugTool
         }
     }
 
-    private static void printNode(Node node, int level)
+    private static void printNode(final Node node, final int level)
     {
         LOG.info("{} {}", createIndentation(level), node);
     }
 
-    private static String createIndentation(int level)
+    private static String createIndentation(final int level)
     {
         return String.join("", Collections.nCopies(level, " "));
     }
