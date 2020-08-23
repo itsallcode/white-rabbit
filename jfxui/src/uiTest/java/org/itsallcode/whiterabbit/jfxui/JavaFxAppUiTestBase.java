@@ -89,17 +89,17 @@ abstract class JavaFxAppUiTestBase
         updateEveryMinuteRunnable.run();
     }
 
-    private void addTime(Duration duration)
+    private void addTime(final Duration duration)
     {
         now = now.plus(duration);
     }
 
-    protected void doStart(Stage stage)
+    protected void doStart(final Stage stage)
     {
         doStart(stage, null);
     }
 
-    protected void doStart(Stage stage, ProjectConfig projectConfig)
+    protected void doStart(final Stage stage, final ProjectConfig projectConfig)
     {
         LOG.info("Starting application using stage {}", stage);
 
@@ -144,7 +144,7 @@ abstract class JavaFxAppUiTestBase
         updateEveryMinuteRunnable = arg.getAllValues().get(1);
     }
 
-    private void prepareConfiguration(ProjectConfig projectConfig)
+    private void prepareConfiguration(final ProjectConfig projectConfig)
     {
         dataDir = workingDir.resolve("data");
         String configFileContent = "data = " + dataDir.toString().replace('\\', '/') + "\n";
@@ -179,12 +179,12 @@ abstract class JavaFxAppUiTestBase
         return getCurrentDate().getDayOfMonth() - 1;
     }
 
-    public void setCurrentTime(Instant now)
+    public void setCurrentTime(final Instant now)
     {
         this.now = now;
     }
 
-    public void setLocale(Locale locale)
+    public void setLocale(final Locale locale)
     {
         this.locale = locale;
     }
@@ -193,7 +193,7 @@ abstract class JavaFxAppUiTestBase
 
     abstract void stop();
 
-    protected TableCell<?, ?> getTableCell(final TableView<?> table, int rowIndex, String columnId)
+    protected TableCell<?, ?> getTableCell(final TableView<?> table, final int rowIndex, final String columnId)
     {
         final TableRow<?> row = getTableRow(table, rowIndex);
         return row.getChildrenUnmodifiable().stream()
@@ -202,7 +202,7 @@ abstract class JavaFxAppUiTestBase
                 .findFirst().orElseThrow();
     }
 
-    protected TableRow<?> getTableRow(final TableView<?> table, int rowIndex)
+    protected TableRow<?> getTableRow(final TableView<?> table, final int rowIndex)
     {
         final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
                 .filter(VirtualFlow.class::isInstance)
@@ -213,12 +213,13 @@ abstract class JavaFxAppUiTestBase
         return (TableRow<?>) virtualFlow.getCell(rowIndex);
     }
 
-    protected void assertRowContent(final TableView<?> table, int rowIndex, TableRowExpectedContent expectedRowContent)
+    protected void assertRowContent(final TableView<?> table, final int rowIndex,
+            final TableRowExpectedContent expectedRowContent)
     {
         Assertions.assertThat(table).containsRowAtIndex(rowIndex, expectedRowContent.expectedCellContent());
     }
 
-    private void writeProjectsFile(ProjectConfig projectConfig)
+    private void writeProjectsFile(final ProjectConfig projectConfig)
     {
         final Path projectsFile = dataDir.resolve("projects.json");
         try (OutputStream stream = Files.newOutputStream(projectsFile))
@@ -231,14 +232,14 @@ abstract class JavaFxAppUiTestBase
         }
     }
 
-    protected ProjectConfig projectConfig(Project... projects)
+    protected ProjectConfig projectConfig(final Project... projects)
     {
         final ProjectConfig projectConfig = new ProjectConfig();
         projectConfig.setProjects(asList(projects));
         return projectConfig;
     }
 
-    protected static Project project(String id, String label)
+    protected static Project project(final String id, final String label)
     {
         final Project project = new Project();
         project.setProjectId(id);
@@ -246,7 +247,7 @@ abstract class JavaFxAppUiTestBase
         return project;
     }
 
-    protected JsonMonth loadMonth(LocalDate date)
+    protected JsonMonth loadMonth(final LocalDate date)
     {
         final Path file = dataDir.resolve(String.valueOf(date.getYear()))
                 .resolve(YearMonth.from(date).toString() + ".json");
