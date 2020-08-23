@@ -29,7 +29,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     FxRobot robot;
 
     @Test
-    void addActivitiesSelectRemainder()
+    void addActivitySelectRemainder()
     {
         addActivity();
 
@@ -39,7 +39,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     }
 
     @Test
-    void addActivitiesSelectProject()
+    void addActivitySelectProject()
     {
         addActivity();
 

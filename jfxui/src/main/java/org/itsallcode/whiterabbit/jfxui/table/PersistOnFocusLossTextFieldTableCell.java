@@ -11,13 +11,24 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
+/**
+ * A class similar to {@link javafx.scene.control.cell.TextFieldTableCell} that
+ * supports persisting edit changes on focus loss.
+ * <p>
+ * Implementation based on proposed workaround for <a href=
+ * "https://bugs.openjdk.java.net/browse/JDK-8089311?focusedCommentId=13810219&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-13810219">JDK-8089311</a>.
+ * <p>
+ * Note: inheriting from {@link javafx.scene.control.cell.TextFieldTableCell} is
+ * not possible because it would require writing to private field
+ * <code>textField</code>.
+ */
 @SuppressWarnings("java:S110") // Deep inheritance tree required by API
-public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
+public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
 {
     private final StringConverter<T> converter;
     private TextField textField;
 
-    public CustomTextFieldTableCell(StringConverter<T> converter)
+    public PersistOnFocusLossTextFieldTableCell(StringConverter<T> converter)
     {
         this.converter = Objects.requireNonNull(converter);
     }
@@ -44,21 +55,8 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
         }
     }
 
-    @Override
-    public void cancelEdit()
-    {
-        super.cancelEdit();
-        cancelEdit(this, converter, null);
-    }
-
-    @Override
-    public void updateItem(T item, boolean empty)
-    {
-        super.updateItem(item, empty);
-        updateItem(this, converter, null, null, textField);
-    }
-
-    static <T> TextField createTextField(final CustomTextFieldTableCell<?, T> cell, final StringConverter<T> converter)
+    private static <T> TextField createTextField(final PersistOnFocusLossTextFieldTableCell<?, T> cell,
+            final StringConverter<T> converter)
     {
         final TextField textField = new TextField(getItemText(cell, converter));
 
@@ -78,9 +76,8 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
         return textField;
     }
 
-    private static <T> void configureFocusLossBehavior(CustomTextFieldTableCell<?, T> cell,
-            final StringConverter<T> converter,
-            TextField newTextField)
+    private static <T> void configureFocusLossBehavior(PersistOnFocusLossTextFieldTableCell<?, T> cell,
+            final StringConverter<T> converter, TextField newTextField)
     {
         final ChangeListener<Boolean> focusListener = (observable, oldSelection, newSelection) -> {
             if (!newSelection.booleanValue())
@@ -98,12 +95,26 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
         });
     }
 
+    @Override
+    public void cancelEdit()
+    {
+        super.cancelEdit();
+        cancelEdit(this, converter, null);
+    }
+
+    @Override
+    public void updateItem(T item, boolean empty)
+    {
+        super.updateItem(item, empty);
+        updateItem(this, converter, null, null, textField);
+    }
+
     private static <T> String getItemText(Cell<T> cell, StringConverter<T> converter)
     {
         return converter.toString(cell.getItem());
     }
 
-    static <T> void startEdit(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
+    private static <T> void startEdit(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
     {
         textField.setText(getItemText(cell, converter));
         cell.setText(null);
@@ -112,24 +123,14 @@ public class CustomTextFieldTableCell<S, T> extends TableCell<S, T>
         textField.requestFocus();
     }
 
-    static <T> void cancelEdit(Cell<T> cell, final StringConverter<T> converter, Node graphic)
+    private static <T> void cancelEdit(Cell<T> cell, final StringConverter<T> converter, Node graphic)
     {
         cell.setText(getItemText(cell, converter));
         cell.setGraphic(graphic);
     }
 
-    static <T> void updateItem(final Cell<T> cell,
-            final StringConverter<T> converter,
-            final TextField textField)
-    {
-        updateItem(cell, converter, null, null, textField);
-    }
-
-    static <T> void updateItem(final Cell<T> cell,
-            final StringConverter<T> converter,
-            final HBox hbox,
-            final Node graphic,
-            final TextField textField)
+    private static <T> void updateItem(final Cell<T> cell, final StringConverter<T> converter, final HBox hbox,
+            final Node graphic, final TextField textField)
     {
         if (cell.isEmpty())
         {

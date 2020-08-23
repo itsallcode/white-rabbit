@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
-import org.itsallcode.whiterabbit.jfxui.table.CustomTextFieldTableCell;
+import org.itsallcode.whiterabbit.jfxui.table.PersistOnFocusLossTextFieldTableCell;
 import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -93,12 +93,12 @@ public class ActivitiesTable
                         projectService.getAvailableProjects().toArray(new Project[0])),
                 data -> data.getValue().projectId);
         final TableColumn<ActivityPropertyAdapter, Duration> durationCol = column("duration", "Duration",
-                param -> new CustomTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
                 data -> data.getValue().duration);
         final TableColumn<ActivityPropertyAdapter, Boolean> remainderCol = column("remainder", "Remainder",
                 cellFactory, data -> data.getValue().remainder);
         final TableColumn<ActivityPropertyAdapter, String> commentCol = column("comment", "Comment",
-                param -> new CustomTextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().comment);
+                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().comment);
 
         return asList(projectCol, durationCol, remainderCol, commentCol);
     }
