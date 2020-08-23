@@ -77,21 +77,21 @@ abstract class JavaFxAppUiTestBase
     protected void tickSecond()
     {
         addTime(Duration.ofSeconds(1));
-        LOG.info("Tick second to {}", now);
-        updateEverySecondRunnable.run();
+        LOG.info("Tick second to {}", this.now);
+        this.updateEverySecondRunnable.run();
     }
 
     protected void tickMinute()
     {
         addTime(Duration.ofMinutes(1));
-        LOG.info("Tick minute to {}", now);
-        updateEverySecondRunnable.run();
-        updateEveryMinuteRunnable.run();
+        LOG.info("Tick minute to {}", this.now);
+        this.updateEverySecondRunnable.run();
+        this.updateEveryMinuteRunnable.run();
     }
 
     private void addTime(final Duration duration)
     {
-        now = now.plus(duration);
+        this.now = this.now.plus(duration);
     }
 
     protected void doStart(final Stage stage)
@@ -103,11 +103,11 @@ abstract class JavaFxAppUiTestBase
     {
         LOG.info("Starting application using stage {}", stage);
 
-        clockMock = mock(Clock.class);
-        executorServiceMock = mock(ScheduledExecutorService.class);
+        this.clockMock = mock(Clock.class);
+        this.executorServiceMock = mock(ScheduledExecutorService.class);
         final ScheduledFuture<?> scheduledFutureMock = mock(ScheduledFuture.class);
 
-        when(executorServiceMock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS)))
+        when(this.executorServiceMock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS)))
                 .thenAnswer(invocation -> {
                     final Long delayMillis = invocation.getArgument(1, Long.class);
                     final Runnable runnable = invocation.getArgument(0, Runnable.class);
@@ -115,14 +115,14 @@ abstract class JavaFxAppUiTestBase
                     return scheduledFutureMock;
                 });
 
-        when(clockMock.getZone()).thenReturn(timeZone);
-        when(clockMock.instant()).thenAnswer(invocation -> now);
+        when(this.clockMock.getZone()).thenReturn(this.timeZone);
+        when(this.clockMock.instant()).thenAnswer(invocation -> this.now);
 
         prepareConfiguration(projectConfig);
 
-        javaFxApp = new JavaFxApp(() -> workingDir, clockMock, executorServiceMock);
-        javaFxApp.init();
-        javaFxApp.start(stage);
+        this.javaFxApp = new JavaFxApp(() -> this.workingDir, this.clockMock, this.executorServiceMock);
+        this.javaFxApp.init();
+        this.javaFxApp.start(stage);
 
         captureScheduledRunnables();
         LOG.info("Application startup finished");
@@ -131,7 +131,7 @@ abstract class JavaFxAppUiTestBase
     protected void doStop()
     {
         LOG.info("Preparing application shutdown");
-        javaFxApp.prepareShutdown();
+        this.javaFxApp.prepareShutdown();
         LOG.info("Application shutdown done");
     }
 
@@ -139,20 +139,20 @@ abstract class JavaFxAppUiTestBase
     {
         @SuppressWarnings("null")
         final ArgumentCaptor<Runnable> arg = ArgumentCaptor.forClass(Runnable.class);
-        verify(executorServiceMock, times(2)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
-        updateEverySecondRunnable = arg.getAllValues().get(0);
-        updateEveryMinuteRunnable = arg.getAllValues().get(1);
+        verify(this.executorServiceMock, times(2)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
+        this.updateEverySecondRunnable = arg.getAllValues().get(0);
+        this.updateEveryMinuteRunnable = arg.getAllValues().get(1);
     }
 
     private void prepareConfiguration(final ProjectConfig projectConfig)
     {
-        dataDir = workingDir.resolve("data");
-        String configFileContent = "data = " + dataDir.toString().replace('\\', '/') + "\n";
-        configFileContent += "locale = " + locale.getLanguage() + "\n";
+        this.dataDir = this.workingDir.resolve("data");
+        String configFileContent = "data = " + this.dataDir.toString().replace('\\', '/') + "\n";
+        configFileContent += "locale = " + this.locale.getLanguage() + "\n";
         try
         {
-            Files.createDirectories(dataDir);
-            Files.write(workingDir.resolve("time.properties"), configFileContent.getBytes(StandardCharsets.UTF_8));
+            Files.createDirectories(this.dataDir);
+            Files.write(this.workingDir.resolve("time.properties"), configFileContent.getBytes(StandardCharsets.UTF_8));
         }
         catch (final IOException e)
         {
@@ -166,12 +166,12 @@ abstract class JavaFxAppUiTestBase
 
     protected LocalDate getCurrentDate()
     {
-        return LocalDate.ofInstant(now, timeZone);
+        return LocalDate.ofInstant(this.now, this.timeZone);
     }
 
     protected LocalTime getCurrentTimeMinutes()
     {
-        return LocalTime.ofInstant(now, timeZone).truncatedTo(ChronoUnit.MINUTES);
+        return LocalTime.ofInstant(this.now, this.timeZone).truncatedTo(ChronoUnit.MINUTES);
     }
 
     protected int getCurrentDayRowIndex()
@@ -221,7 +221,7 @@ abstract class JavaFxAppUiTestBase
 
     private void writeProjectsFile(final ProjectConfig projectConfig)
     {
-        final Path projectsFile = dataDir.resolve("projects.json");
+        final Path projectsFile = this.dataDir.resolve("projects.json");
         try (OutputStream stream = Files.newOutputStream(projectsFile))
         {
             JSONB.toJson(projectConfig, stream);
@@ -249,7 +249,7 @@ abstract class JavaFxAppUiTestBase
 
     protected JsonMonth loadMonth(final LocalDate date)
     {
-        final Path file = dataDir.resolve(String.valueOf(date.getYear()))
+        final Path file = this.dataDir.resolve(String.valueOf(date.getYear()))
                 .resolve(YearMonth.from(date).toString() + ".json");
         try (InputStream stream = Files.newInputStream(file))
         {
