@@ -1,11 +1,15 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import java.time.Instant;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow.Builder;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -28,12 +32,44 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
     FxRobot robot;
 
+    @Disabled("Not implemented yet, see https://github.com/itsallcode/white-rabbit/issues/23")
+    @Test
+    void addActivityButtonDisabledWhenNoDaySelected()
+    {
+        assertThat(getAddActivityButton().isDisabled()).isTrue();
+    }
+
+    @Test
+    void addActivityButtonEnabledWhenDaySelected()
+    {
+        selectCurrentDay();
+        assertThat(getAddActivityButton().isDisabled()).isFalse();
+    }
+
+    @Test
+    void activityTableEmptyByDefault()
+    {
+        selectCurrentDay();
+        tickMinute();
+        Assertions.assertThat(lookupActivitiesTable()).hasExactlyNumRows(0);
+    }
+
+    @Test
+    void clickingAddButtonAddsActivity()
+    {
+        selectCurrentDay();
+        tickMinute();
+        clickAddActivityButton();
+
+        Assertions.assertThat(lookupActivitiesTable()).hasExactlyNumRows(1);
+    }
+
     @Test
     void addActivitySelectRemainder()
     {
         addActivity();
 
-        final TableView<?> activitiesTable = robot.lookup("#activities-table").queryTableView();
+        final TableView<?> activitiesTable = lookupActivitiesTable();
         robot.clickOn(getTableCell(activitiesTable, 0, "remainder"));
         assertRowContent(activitiesTable, 0, ActivitiesTableExpectedRow.defaultRow().withRemainder(true).build());
     }
@@ -43,7 +79,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final TableView<?> activitiesTable = robot.lookup("#activities-table").queryTableView();
+        final TableView<?> activitiesTable = lookupActivitiesTable();
         final Node projectCell = getTableCell(activitiesTable, 0, "project");
 
         robot.doubleClickOn(projectCell).clickOn(projectCell).type(KeyCode.ENTER);
@@ -53,20 +89,39 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     private void addActivity()
     {
         tickMinute();
+        final TableView<?> activitiesTable = lookupActivitiesTable();
+
+        selectCurrentDay();
+
+        clickAddActivityButton();
+
+        final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow();
+
+        assertAll(() -> Assertions.assertThat(activitiesTable).hasExactlyNumRows(1),
+                () -> assertRowContent(activitiesTable, 0, expectedRowContent.build()));
+    }
+
+    private void selectCurrentDay()
+    {
         final TableView<?> dayTable = robot.lookup("#day-table").queryTableView();
-        final TableView<?> activitiesTable = robot.lookup("#activities-table").queryTableView();
-
-        Assertions.assertThat(activitiesTable).hasExactlyNumRows(0);
-
         final int dayRowIndex = getCurrentDayRowIndex();
         robot.clickOn(getTableRow(dayTable, dayRowIndex));
+    }
 
-        final Button addActivityButton = robot.lookup("#add-activity-button").queryButton();
+    private void clickAddActivityButton()
+    {
+        final Button addActivityButton = getAddActivityButton();
         robot.clickOn(addActivityButton);
+    }
 
-        Assertions.assertThat(activitiesTable).hasExactlyNumRows(1);
-        final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow();
-        assertRowContent(activitiesTable, 0, expectedRowContent.build());
+    private Button getAddActivityButton()
+    {
+        return robot.lookup("#add-activity-button").queryButton();
+    }
+
+    private TableView<Object> lookupActivitiesTable()
+    {
+        return robot.lookup("#activities-table").queryTableView();
     }
 
     @Override
