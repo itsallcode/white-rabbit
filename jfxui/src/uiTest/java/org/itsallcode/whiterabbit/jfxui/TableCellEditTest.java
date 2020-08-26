@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -102,12 +103,12 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         commitAction.run();
 
-        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
-
-        assertRowContent(dayTable, rowIndex, expectedCellValues.withBegin(now).withEnd(now)
-                .withOvertimeToday(Duration.ofHours(-8))
-                .withTotalOvertime(Duration.ofHours(-8))
-                .withComment(comment).build());
+        assertAll(
+                () -> assertThat(commentCell.isEditing()).as("cell is editing").isFalse(),
+                () -> assertRowContent(dayTable, rowIndex, expectedCellValues.withBegin(now).withEnd(now)
+                        .withOvertimeToday(Duration.ofHours(-8))
+                        .withTotalOvertime(Duration.ofHours(-8))
+                        .withComment(comment).build()));
     }
 
     private void assertCommentCellNotPersistedAfterFocusLostAction(Runnable focusLossAction)
@@ -129,9 +130,9 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         focusLossAction.run();
 
-        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
-
-        assertRowContent(dayTable, rowIndex, expectedCellValues.build());
+        assertAll(
+                () -> assertThat(commentCell.isEditing()).as("cell is editing").isFalse(),
+                () -> assertRowContent(dayTable, rowIndex, expectedCellValues.build()));
     }
 
     @Override

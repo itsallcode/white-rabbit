@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -33,19 +34,22 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final Labeled timeLabel = robot.lookup("#current-time-label").queryLabeled();
         final Labeled overtimeLabel = robot.lookup("#overtime-label").queryLabeled();
 
-        Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:30");
-        Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00");
+        assertAll(
+                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:30"),
+                () -> Assertions.assertThat(overtimeLabel)
+                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickSecond();
-        Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:31");
-        Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00");
+        assertAll(
+                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:31"),
+                () -> Assertions.assertThat(overtimeLabel)
+                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickMinute();
-        Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:16:31");
-        Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: -08:00, total: -08:00");
+        assertAll(
+                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:16:31"),
+                () -> Assertions.assertThat(overtimeLabel)
+                        .hasText("Overtime: previous month: 00:00, this month: -08:00, total: -08:00"));
 
         tickMinute();
         Assertions.assertThat(overtimeLabel)
@@ -58,19 +62,22 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final Labeled timeLabel = robot.lookup("#current-time-label").queryLabeled();
         final Labeled overtimeLabel = robot.lookup("#overtime-label").queryLabeled();
 
-        Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:30");
-        Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00");
+        assertAll(
+                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:30"),
+                () -> Assertions.assertThat(overtimeLabel)
+                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickSecond();
-        Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:31");
-        Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00");
+        assertAll(
+                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:31"),
+                () -> Assertions.assertThat(overtimeLabel)
+                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickMinute();
-        Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:16:31");
-        Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: -08:00, total: -08:00");
+        assertAll(
+                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:16:31"),
+                () -> Assertions.assertThat(overtimeLabel)
+                        .hasText("Overtime: previous month: 00:00, this month: -08:00, total: -08:00"));
 
         tickMinute();
         Assertions.assertThat(overtimeLabel)
@@ -90,9 +97,10 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         final JsonMonth month = loadMonth(today);
 
-        assertThat(month.getDays()).hasSize(1);
-        assertThat(month.getDays()).extracting(JsonDay::getBegin).containsExactly(begin);
-        assertThat(month.getDays()).extracting(JsonDay::getEnd).containsExactly(end);
+        assertAll(
+                () -> assertThat(month.getDays()).hasSize(1),
+                () -> assertThat(month.getDays()).extracting(JsonDay::getBegin).containsExactly(begin),
+                () -> assertThat(month.getDays()).extracting(JsonDay::getEnd).containsExactly(end));
     }
 
     @Test
