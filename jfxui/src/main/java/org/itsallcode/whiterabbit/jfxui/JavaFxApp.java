@@ -339,8 +339,9 @@ public class JavaFxApp extends Application
         final Insets insets = new Insets(GAP_PIXEL);
         final Node daysTable = dayRecordTable.initTable();
         final Node activitiesTab = activitiesTable.initTable();
-        final Button addActivityButton = button("+", "Add activity", e -> addActivity());
-        final Button removeActivityButton = button("-", "Remove activity", e -> removeActivity());
+        final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> addActivity());
+        final Button removeActivityButton = button("remove-activity-button", "-", "Remove activity",
+                e -> removeActivity());
         final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
                 addActivityButton,
                 removeActivityButton);
@@ -363,16 +364,17 @@ public class JavaFxApp extends Application
 
     private ToolBar createToolBar()
     {
-        final Button startInterruptionButton = button("Start interruption", e -> startManualInterruption());
+        final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
+                e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
         final ToolBar toolBar = new ToolBar(monthDropDownBox(),
                 new Separator(),
                 startInterruptionButton,
                 createStopWorkForTodayButton(),
                 new Separator(),
-                button("Update", e -> appService.updateNow()),
+                button("update-button", "Update", e -> appService.updateNow()),
                 new Separator(),
-                button("Vacation report", e -> showVacationReport()));
+                button("vacation-report-button", "Vacation report", e -> showVacationReport()));
         return toolBar;
     }
 
@@ -475,14 +477,15 @@ public class JavaFxApp extends Application
         return label;
     }
 
-    private Button button(String label, EventHandler<ActionEvent> action)
+    private Button button(String id, String label, EventHandler<ActionEvent> action)
     {
-        return button(label, null, action);
+        return button(id, label, null, action);
     }
 
-    private Button button(String label, String tooltip, EventHandler<ActionEvent> action)
+    private Button button(String id, String label, String tooltip, EventHandler<ActionEvent> action)
     {
         final Button button = new Button(label);
+        button.setId(id);
         button.setOnAction(action);
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         if (tooltip != null)
