@@ -61,16 +61,17 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -283,9 +284,8 @@ public class JavaFxApp extends Application
             appService.store(record);
             activitiesTable.refresh();
         }, appService.formatter(), appService.projects());
-        final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
         final BorderPane rootPane = new BorderPane(createMainPane());
-        rootPane.setTop(menuBar);
+        rootPane.setTop(createTopContainer());
         final Scene scene = new Scene(rootPane, 780, 800);
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.F5)
@@ -308,6 +308,14 @@ public class JavaFxApp extends Application
 
         primaryStage.setScene(scene);
         LOG.debug("User interface finished");
+    }
+
+    private VBox createTopContainer()
+    {
+        final MenuBar menuBar = new MenuBarBuilder(this, appService, this.stoppedWorkingForToday).build();
+        final VBox topContainer = new VBox();
+        topContainer.getChildren().addAll(menuBar, createToolBar());
+        return topContainer;
     }
 
     private void createTrayIcon()
@@ -348,30 +356,25 @@ public class JavaFxApp extends Application
 
         BorderPane.setMargin(mainPane, insets);
 
-        final FlowPane topPane = createTopPane();
-        pane.setTop(topPane);
-        BorderPane.setMargin(topPane, new Insets(GAP_PIXEL, GAP_PIXEL, 0, GAP_PIXEL));
-
-        final TilePane buttonBar = createButtonBar();
-        BorderPane.setMargin(buttonBar, insets);
-        pane.setBottom(buttonBar);
+        BorderPane.setMargin(createStatusBar(), new Insets(0, GAP_PIXEL, 0, GAP_PIXEL));
+        pane.setBottom(createStatusBar());
 
         return pane;
     }
 
-    private TilePane createButtonBar()
+    private ToolBar createToolBar()
     {
         final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
                 e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
-        final TilePane buttonPane = new TilePane(Orientation.HORIZONTAL);
-        buttonPane.setHgap(GAP_PIXEL);
-
-        buttonPane.getChildren().addAll(button("update-button", "Update", e -> appService.updateNow()),
+        return new ToolBar(monthDropDownBox(),
+                new Separator(),
                 startInterruptionButton,
                 createStopWorkForTodayButton(),
+                new Separator(),
+                button("update-button", "Update", e -> appService.updateNow()),
+                new Separator(),
                 button("vacation-report-button", "Vacation report", e -> showVacationReport()));
-        return buttonPane;
     }
 
     private void addActivity()
@@ -411,15 +414,17 @@ public class JavaFxApp extends Application
         Platform.exit();
     }
 
-    private FlowPane createTopPane()
+    private HBox createStatusBar()
     {
-        final FlowPane topPane = new FlowPane();
-        topPane.setHgap(GAP_PIXEL);
-        topPane.getChildren().add(new Label("Month:"));
-        topPane.getChildren().add(monthDropDownBox());
-        topPane.getChildren().add(currentTimeLabel());
-        topPane.getChildren().add(overtimeLabel());
-        return topPane;
+        final HBox status = new HBox();
+        status.setPadding(new Insets(GAP_PIXEL));
+        final Node left = overtimeLabel();
+        final Pane spacer = new Pane();
+        spacer.setMinSize(GAP_PIXEL, 1);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        final Node right = currentTimeLabel();
+        status.getChildren().addAll(left, spacer, right);
+        return status;
     }
 
     private Node monthDropDownBox()
@@ -441,7 +446,7 @@ public class JavaFxApp extends Application
         label.setId("current-time-label");
         label.textProperty().bind(Bindings.createStringBinding(() -> {
             final Instant now = currentTimeProperty.property().getValue();
-            return "Current time: " + formatter.formatDateAndTime(now);
+            return formatter.formatDateAndTime(now);
         }, currentTimeProperty.property()));
         return label;
     }
@@ -456,7 +461,7 @@ public class JavaFxApp extends Application
             if (month != null && month.getOvertimePreviousMonth() != null)
             {
                 final Duration totalOvertime = month.getTotalOvertime();
-                return "Overtime: previous month: " + formatter.format(month.getOvertimePreviousMonth())
+                return "Overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
                         + ", this month: "
                         + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total: "
                         + formatter.format(totalOvertime);
