@@ -35,25 +35,25 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final Labeled overtimeLabel = robot.lookup("#overtime-label").queryLabeled();
 
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:30"),
+                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:30"),
                 () -> Assertions.assertThat(overtimeLabel)
-                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
+                        .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickSecond();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
-                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
+                        .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickMinute();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:16:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
-                        .hasText("Overtime: previous month: 00:00, this month: -08:00, total: -08:00"));
+                        .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
         tickMinute();
         Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: -07:59, total: -07:59");
+                .hasText("Overtime previous month: 00:00, this month: -07:59, total: -07:59");
     }
 
     @Test
@@ -63,25 +63,25 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final Labeled overtimeLabel = robot.lookup("#overtime-label").queryLabeled();
 
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:30"),
+                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:30"),
                 () -> Assertions.assertThat(overtimeLabel)
-                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
+                        .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickSecond();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:15:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
-                        .hasText("Overtime: previous month: 00:00, this month: 00:00, total: 00:00"));
+                        .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         tickMinute();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("Current time: 03.12.07, 11:16:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
-                        .hasText("Overtime: previous month: 00:00, this month: -08:00, total: -08:00"));
+                        .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
         tickMinute();
         Assertions.assertThat(overtimeLabel)
-                .hasText("Overtime: previous month: 00:00, this month: -07:59, total: -07:59");
+                .hasText("Overtime previous month: 00:00, this month: -07:59, total: -07:59");
     }
 
     @Test
