@@ -35,10 +35,10 @@ public class MenuBarBuilder
         final Menu menuCalculations = new Menu("_Working hours");
         final Menu menuReports = new Menu("_Reports");
         menuFile.getItems().addAll(menuItem("_Quit", app::exitApp));
-        menuCalculations.getItems().addAll( //
-                menuItem("_Update", appService::updateNow), //
-                menuItem("Update overtime for _all months", appService::updatePreviousMonthOvertimeField), //
-                new SeparatorMenuItem(), //
+        menuCalculations.getItems().addAll(
+                menuItem("_Update", appService::updateNow),
+                menuItem("Update overtime for _all months", appService::updatePreviousMonthOvertimeField),
+                new SeparatorMenuItem(),
                 createStopWorkingForTodayMenuItem());
         menuReports.getItems().addAll(menuItem("_Vacation report", app::showVacationReport));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports);

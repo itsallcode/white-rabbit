@@ -367,7 +367,7 @@ public class JavaFxApp extends Application
         final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
                 e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
-        final ToolBar toolBar = new ToolBar(monthDropDownBox(),
+        return new ToolBar(monthDropDownBox(),
                 new Separator(),
                 startInterruptionButton,
                 createStopWorkForTodayButton(),
@@ -375,7 +375,6 @@ public class JavaFxApp extends Application
                 button("update-button", "Update", e -> appService.updateNow()),
                 new Separator(),
                 button("vacation-report-button", "Vacation report", e -> showVacationReport()));
-        return toolBar;
     }
 
     private void addActivity()
@@ -417,11 +416,6 @@ public class JavaFxApp extends Application
 
     private HBox createStatusBar()
     {
-        // final FlowPane statusPane = new FlowPane();
-        // statusPane.setHgap(GAP_PIXEL);
-        // statusPane.getChildren().add(currentTimeLabel());
-        // statusPane.getChildren().add(overtimeLabel());
-        // return statusPane;
         final HBox status = new HBox();
         status.setPadding(new Insets(GAP_PIXEL));
         final Node left = overtimeLabel();
