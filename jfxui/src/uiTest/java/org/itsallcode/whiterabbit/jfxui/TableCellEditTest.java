@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
-import org.itsallcode.whiterabbit.jfxui.testutil.JavaFxTable;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;

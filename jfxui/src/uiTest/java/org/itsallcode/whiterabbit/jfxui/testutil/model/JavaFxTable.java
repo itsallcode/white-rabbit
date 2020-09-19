@@ -1,9 +1,10 @@
-package org.itsallcode.whiterabbit.jfxui.testutil;
+package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 

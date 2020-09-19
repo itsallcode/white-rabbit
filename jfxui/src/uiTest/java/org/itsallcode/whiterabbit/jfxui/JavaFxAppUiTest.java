@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
 
-import org.itsallcode.whiterabbit.jfxui.testutil.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.junit.jupiter.api.Test;
@@ -100,14 +99,6 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> assertThat(month.getDays()).hasSize(1),
                 () -> assertThat(month.getDays()).extracting(JsonDay::getBegin).containsExactly(begin),
                 () -> assertThat(month.getDays()).extracting(JsonDay::getEnd).containsExactly(end));
-    }
-
-    @Test
-    void dayTableRowCount()
-    {
-        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
-        Assertions.assertThat(dayTable.table()).hasExactlyNumRows(31);
-    }
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow.Builder;
-import org.itsallcode.whiterabbit.jfxui.testutil.JavaFxTable;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
