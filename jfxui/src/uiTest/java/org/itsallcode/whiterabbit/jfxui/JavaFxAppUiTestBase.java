@@ -239,7 +239,7 @@ abstract class JavaFxAppUiTestBase
 
     protected void sleepShort()
     {
-        sleep(Duration.ofMillis(10));
+        sleep(Duration.ofMillis(50));
     }
 
     private void sleep(Duration duration)

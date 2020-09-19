@@ -285,7 +285,8 @@ class DayRecordTest
     void setBeginFailsForNullValue()
     {
         final DayRecord day = createDay(LocalDate.of(2020, 4, 22));
-        assertThatThrownBy(() -> day.setBegin(null)).isInstanceOf(NullPointerException.class).hasMessage("begin");
+        day.setBegin(null);
+        assertThat(day.getBegin()).isNull();
     }
 
     @Test
@@ -297,10 +298,11 @@ class DayRecordTest
     }
 
     @Test
-    void setEndFailsForNullValue()
+    void setEndAcceptsNullValue()
     {
         final DayRecord day = createDay(LocalDate.of(2020, 4, 22));
-        assertThatThrownBy(() -> day.setEnd(null)).isInstanceOf(NullPointerException.class).hasMessage("end");
+        day.setEnd(null);
+        assertThat(day.getEnd()).isNull();
     }
 
     @Test
