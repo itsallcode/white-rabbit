@@ -93,6 +93,23 @@ class DayTableTest extends JavaFxAppUiTestBase
         dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, secondTick);
     }
 
+    @Test
+    void beginAndEndDeletedWhenChangingDayTypeToSick()
+    {
+        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final DayTable dayTable = DayTable.find(robot);
+
+        tickMinute();
+        final LocalTime now = getCurrentTimeMinutes();
+        sleepShort();
+
+        dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
+
+        dayTable.selectDayType(currentDayRowIndex, DayType.SICK);
+
+        dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
+    }
+
     @Override
     @Start
     void start(Stage stage)

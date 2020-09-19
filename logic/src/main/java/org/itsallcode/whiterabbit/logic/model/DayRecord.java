@@ -125,7 +125,7 @@ public class DayRecord implements RowRecord
 
     public void setBegin(LocalTime begin)
     {
-        day.setBegin(Objects.requireNonNull(begin, "begin"));
+        day.setBegin(begin);
     }
 
     public LocalTime getEnd()
@@ -135,7 +135,7 @@ public class DayRecord implements RowRecord
 
     public void setEnd(LocalTime end)
     {
-        day.setEnd(Objects.requireNonNull(end, "end"));
+        day.setEnd(end);
     }
 
     public Duration getInterruption()
