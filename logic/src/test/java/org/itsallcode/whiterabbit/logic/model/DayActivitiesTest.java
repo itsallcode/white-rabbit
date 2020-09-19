@@ -149,6 +149,21 @@ class DayActivitiesTest
     }
 
     @Test
+    void removeLastSetsActivitiesToNull()
+    {
+        final DayActivities activities = create();
+        activities.add();
+
+        assertThat(jsonDay.getActivities()).hasSize(1);
+
+        activities.remove(0);
+
+        assertThat(jsonDay.getActivities()).isNull();
+
+        assertThat(activities.getAll()).isEmpty();
+    }
+
+    @Test
     void setRemainderActivityAlreadyNotRemainderUnchanged()
     {
         final DayActivities activities = create();
