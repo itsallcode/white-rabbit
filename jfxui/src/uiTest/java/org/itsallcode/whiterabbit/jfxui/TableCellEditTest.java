@@ -10,9 +10,9 @@ import java.time.LocalTime;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
+import org.itsallcode.whiterabbit.jfxui.testutil.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -24,7 +24,6 @@ import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.Scene;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -70,8 +69,8 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     void commentNotPersistedAfterClickingAnotherRow()
     {
         assertCommentCellNotPersistedAfterFocusLostAction(() -> {
-            final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
-            final TableCell<?, ?> commentCell = getTableCell(dayTable, 0, "comment");
+            final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+            final TableCell<?, ?> commentCell = dayTable.getTableCell(0, "comment");
             robot.clickOn(commentCell);
         });
     }
@@ -91,11 +90,11 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
-        final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
+        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
 
-        assertRowContent(dayTable, rowIndex, expectedCellValues.build());
+        dayTable.assertRowContent(rowIndex, expectedCellValues.build());
 
-        final TableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
+        final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
 
         robot.doubleClickOn(commentCell).write(comment);
 
@@ -105,7 +104,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         assertAll(
                 () -> assertThat(commentCell.isEditing()).as("cell is editing").isFalse(),
-                () -> assertRowContent(dayTable, rowIndex, expectedCellValues.withBegin(now).withEnd(now)
+                () -> dayTable.assertRowContent(rowIndex, expectedCellValues.withBegin(now).withEnd(now)
                         .withOvertimeToday(Duration.ofHours(-8))
                         .withTotalOvertime(Duration.ofHours(-8))
                         .withComment(comment).build()));
@@ -118,11 +117,11 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
-        final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
+        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
 
-        assertRowContent(dayTable, rowIndex, expectedCellValues.build());
+        dayTable.assertRowContent(rowIndex, expectedCellValues.build());
 
-        final TableCell<?, ?> commentCell = getTableCell(dayTable, rowIndex, "comment");
+        final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
 
         robot.doubleClickOn(commentCell).write("tst");
 
@@ -132,7 +131,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         assertAll(
                 () -> assertThat(commentCell.isEditing()).as("cell is editing").isFalse(),
-                () -> assertRowContent(dayTable, rowIndex, expectedCellValues.build()));
+                () -> dayTable.assertRowContent(rowIndex, expectedCellValues.build()));
     }
 
     @Override

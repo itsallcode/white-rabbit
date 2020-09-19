@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -46,10 +45,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testfx.assertions.api.Assertions;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.skin.VirtualFlow;
 import javafx.stage.Stage;
 
 @ExtendWith(MockitoExtension.class)
@@ -192,26 +188,6 @@ abstract class JavaFxAppUiTestBase
     abstract void start(Stage stage);
 
     abstract void stop();
-
-    protected TableCell<?, ?> getTableCell(final TableView<?> table, final int rowIndex, final String columnId)
-    {
-        final TableRow<?> row = getTableRow(table, rowIndex);
-        return row.getChildrenUnmodifiable().stream()
-                .filter(cell -> cell.getId().equals(columnId))
-                .map(TableCell.class::cast)
-                .findFirst().orElseThrow();
-    }
-
-    protected TableRow<?> getTableRow(final TableView<?> table, final int rowIndex)
-    {
-        final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
-                .filter(VirtualFlow.class::isInstance)
-                .map(VirtualFlow.class::cast)
-                .findFirst().orElseThrow();
-        assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        LOG.debug("Table {} has {} rows", table, virtualFlow.getCellCount());
-        return (TableRow<?>) virtualFlow.getCell(rowIndex);
-    }
 
     protected void assertRowContent(final TableView<?> table, final int rowIndex,
             final TableRowExpectedContent expectedRowContent)

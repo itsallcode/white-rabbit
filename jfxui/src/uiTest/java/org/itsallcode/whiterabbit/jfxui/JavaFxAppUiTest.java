@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
 
-import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.testutil.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.control.Labeled;
-import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
@@ -106,8 +105,9 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     @Test
     void dayTableRowCount()
     {
-        final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
-        Assertions.assertThat(dayTable).hasExactlyNumRows(31);
+        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+        Assertions.assertThat(dayTable.table()).hasExactlyNumRows(31);
+    }
     }
 
     @Override

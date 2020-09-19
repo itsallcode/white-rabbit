@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow.Builder;
+import org.itsallcode.whiterabbit.jfxui.testutil.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
@@ -51,7 +51,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         selectCurrentDay();
         tickMinute();
-        Assertions.assertThat(lookupActivitiesTable()).hasExactlyNumRows(0);
+        Assertions.assertThat(lookupActivitiesTable().table()).hasExactlyNumRows(0);
     }
 
     @Test
@@ -61,7 +61,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         tickMinute();
         clickAddActivityButton();
 
-        Assertions.assertThat(lookupActivitiesTable()).hasExactlyNumRows(1);
+        Assertions.assertThat(lookupActivitiesTable().table()).hasExactlyNumRows(1);
     }
 
     @Test
@@ -69,9 +69,9 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final TableView<?> activitiesTable = lookupActivitiesTable();
-        robot.clickOn(getTableCell(activitiesTable, 0, "remainder"));
-        assertRowContent(activitiesTable, 0, ActivitiesTableExpectedRow.defaultRow().withRemainder(true).build());
+        final JavaFxTable activitiesTable = lookupActivitiesTable();
+        robot.clickOn(activitiesTable.getTableCell(0, "remainder"));
+        activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withRemainder(true).build());
     }
 
     @Test
@@ -79,17 +79,17 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final TableView<?> activitiesTable = lookupActivitiesTable();
-        final Node projectCell = getTableCell(activitiesTable, 0, "project");
+        final JavaFxTable activitiesTable = lookupActivitiesTable();
+        final Node projectCell = activitiesTable.getTableCell(0, "project");
 
         robot.doubleClickOn(projectCell).clickOn(projectCell).type(KeyCode.ENTER);
-        assertRowContent(activitiesTable, 0, ActivitiesTableExpectedRow.defaultRow().withProject(PROJECT1).build());
+        activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withProject(PROJECT1).build());
     }
 
     private void addActivity()
     {
         tickMinute();
-        final TableView<?> activitiesTable = lookupActivitiesTable();
+        final JavaFxTable activitiesTable = lookupActivitiesTable();
 
         selectCurrentDay();
 
@@ -97,15 +97,16 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
         final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow();
 
-        assertAll(() -> Assertions.assertThat(activitiesTable).hasExactlyNumRows(1),
-                () -> assertRowContent(activitiesTable, 0, expectedRowContent.build()));
+        assertAll(() -> Assertions.assertThat(activitiesTable.table()).hasExactlyNumRows(1),
+                () -> activitiesTable.assertRowContent(0, expectedRowContent.build()));
     }
 
     private void selectCurrentDay()
     {
-        final TableView<?> dayTable = robot.lookup("#day-table").queryTableView();
+        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+
         final int dayRowIndex = getCurrentDayRowIndex();
-        robot.clickOn(getTableRow(dayTable, dayRowIndex));
+        robot.clickOn(dayTable.getTableRow(dayRowIndex));
     }
 
     private void clickAddActivityButton()
@@ -119,9 +120,9 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         return robot.lookup("#add-activity-button").queryButton();
     }
 
-    private TableView<Object> lookupActivitiesTable()
+    private JavaFxTable lookupActivitiesTable()
     {
-        return robot.lookup("#activities-table").queryTableView();
+        return JavaFxTable.findActivitiesTable(robot);
     }
 
     @Override
