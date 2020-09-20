@@ -25,6 +25,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,7 @@ import javax.json.bind.JsonbConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
@@ -43,6 +45,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
 import javafx.scene.control.TableView;
@@ -69,6 +72,17 @@ abstract class JavaFxAppUiTestBase
     private Runnable updateEverySecondRunnable;
 
     private Runnable updateEveryMinuteRunnable;
+    private ApplicationHelper applicationHelper;
+
+    protected void setRobot(FxRobot robot)
+    {
+        applicationHelper = new ApplicationHelper(Objects.requireNonNull(robot, "robot"));
+    }
+
+    protected ApplicationHelper app()
+    {
+        return Objects.requireNonNull(applicationHelper, "applicationHelper");
+    }
 
     protected void tickSecond()
     {
@@ -168,6 +182,11 @@ abstract class JavaFxAppUiTestBase
     protected LocalTime getCurrentTimeMinutes()
     {
         return LocalTime.ofInstant(this.now, this.timeZone).truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    protected LocalTime getCurrentTimeSeconds()
+    {
+        return LocalTime.ofInstant(this.now, this.timeZone).truncatedTo(ChronoUnit.SECONDS);
     }
 
     protected int getCurrentDayRowIndex()

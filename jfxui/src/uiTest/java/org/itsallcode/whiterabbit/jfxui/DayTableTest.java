@@ -28,7 +28,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void dayTableRowCount()
     {
-        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+        final JavaFxTable dayTable = app().genericDayTable();
         Assertions.assertThat(dayTable.table()).hasExactlyNumRows(31);
     }
 
@@ -37,7 +37,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     {
         final int currentDayRowIndex = getCurrentDayRowIndex();
 
-        final DayTable dayTable = DayTable.find(robot);
+        final DayTable dayTable = app().dayTable();
         dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
     }
 
@@ -49,7 +49,7 @@ class DayTableTest extends JavaFxAppUiTestBase
 
         final int currentDayRowIndex = getCurrentDayRowIndex();
         final LocalTime now = getCurrentTimeMinutes();
-        final DayTable dayTable = DayTable.find(robot);
+        final DayTable dayTable = app().dayTable();
         dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
     }
 
@@ -57,7 +57,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     void beginAndEndUpdatedEqualAfterSecondMinuteTick()
     {
         final int currentDayRowIndex = getCurrentDayRowIndex();
-        final DayTable dayTable = DayTable.find(robot);
+        final DayTable dayTable = app().dayTable();
 
         tickMinute();
         final LocalTime firstTick = getCurrentTimeMinutes();
@@ -77,7 +77,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     void beginAndEndUpdatedEveryMinute()
     {
         final int currentDayRowIndex = getCurrentDayRowIndex();
-        final DayTable dayTable = DayTable.find(robot);
+        final DayTable dayTable = app().dayTable();
 
         tickMinute();
         final LocalTime firstTick = getCurrentTimeMinutes();
@@ -98,7 +98,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     void beginAndEndDeletedWhenChangingDayTypeToSick()
     {
         final int currentDayRowIndex = getCurrentDayRowIndex();
-        final DayTable dayTable = DayTable.find(robot);
+        final DayTable dayTable = app().dayTable();
 
         tickMinute();
         final LocalTime now = getCurrentTimeMinutes();
@@ -118,6 +118,7 @@ class DayTableTest extends JavaFxAppUiTestBase
         setLocale(Locale.GERMANY);
         setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
+        setRobot(robot);
     }
 
     @Override

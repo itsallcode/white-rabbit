@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
@@ -30,12 +31,15 @@ public class InterruptionDialog
     private final Window owner;
     private final Property<Instant> currentTimeProperty;
 
+    private final Clock clock;
+
     public InterruptionDialog(Window owner, Property<Instant> currentTimeProperty,
-            ObjectProperty<Interruption> interruption)
+            ObjectProperty<Interruption> interruption, Clock clock)
     {
         this.owner = owner;
         this.currentTimeProperty = currentTimeProperty;
         this.interruption = interruption;
+        this.clock = clock;
     }
 
     public void show()
@@ -46,7 +50,8 @@ public class InterruptionDialog
         dialog.setTitle("Add interruption");
 
         final DialogPane dialogPane = dialog.getDialogPane();
-        final Instant interruptionStart = interruption.get().getStart().truncatedTo(ChronoUnit.MINUTES);
+        final Instant interruptionStartInstant = interruption.get().getStart().truncatedTo(ChronoUnit.SECONDS);
+        final LocalTime interruptionStart = LocalTime.ofInstant(interruptionStartInstant, clock.getZone());
         dialogPane.setHeaderText("Interruption started at " + interruptionStart + ". End interruption now?");
         dialogPane.contentTextProperty().bind(Bindings.createStringBinding(this::formatText, currentTimeProperty));
         final ButtonType addInterruptionButton = new ButtonType("Add interruption", ButtonData.OK_DONE);

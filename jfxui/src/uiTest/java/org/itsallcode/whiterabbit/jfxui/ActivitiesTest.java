@@ -103,7 +103,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
     private void selectCurrentDay()
     {
-        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+        final JavaFxTable dayTable = app().genericDayTable();
 
         final int dayRowIndex = getCurrentDayRowIndex();
         robot.clickOn(dayTable.getTableRow(dayRowIndex));
@@ -122,7 +122,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
     private JavaFxTable lookupActivitiesTable()
     {
-        return JavaFxTable.findActivitiesTable(robot);
+        return app().activitiesTable();
     }
 
     @Override
@@ -132,6 +132,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         setLocale(Locale.GERMANY);
         setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage, projectConfig(PROJECT1, PROJECT2));
+        setRobot(robot);
     }
 
     @Override

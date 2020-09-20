@@ -2,8 +2,6 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
@@ -15,30 +13,16 @@ import javafx.scene.control.skin.VirtualFlow;
 
 public class JavaFxTable
 {
-    private static final Logger LOG = LogManager.getLogger(JavaFxTable.class);
-
     private final TableView<?> table;
-    private final FxRobot robot;
 
-    private JavaFxTable(TableView<?> table, FxRobot robot)
+    private JavaFxTable(TableView<?> table)
     {
         this.table = table;
-        this.robot = robot;
     }
 
-    public static JavaFxTable findDayTable(FxRobot robot)
+    static JavaFxTable find(FxRobot robot, String query)
     {
-        return find(robot, "#day-table");
-    }
-
-    public static JavaFxTable findActivitiesTable(FxRobot robot)
-    {
-        return find(robot, "#activities-table");
-    }
-
-    private static JavaFxTable find(FxRobot robot, String query)
-    {
-        return new JavaFxTable(robot.lookup(query).queryTableView(), robot);
+        return new JavaFxTable(robot.lookup(query).queryTableView());
     }
 
     public void assertRowContent(final int rowIndex, final TableRowExpectedContent expectedRowContent)

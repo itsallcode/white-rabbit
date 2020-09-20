@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.Duration;
 import java.time.LocalTime;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,15 +22,15 @@ public class DayTable
     private final JavaFxTable table;
     private final FxRobot robot;
 
-    public DayTable(JavaFxTable table, FxRobot robot)
+    DayTable(JavaFxTable table, FxRobot robot)
     {
         this.table = table;
         this.robot = robot;
     }
 
-    public static DayTable find(FxRobot robot)
+    public void assertInterruption(int row, Duration expectedInterruption)
     {
-        return new DayTable(JavaFxTable.findDayTable(robot), robot);
+        assertThat(getInterruption(row)).as("interruption").isEqualTo(expectedInterruption);
     }
 
     public void assertBeginAndEnd(int row, LocalTime begin, LocalTime end)
@@ -49,6 +50,12 @@ public class DayTable
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "end");
         return (LocalTime) tableCell.getItem();
+    }
+
+    public Duration getInterruption(int row)
+    {
+        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
+        return (Duration) tableCell.getItem();
     }
 
     public void selectDayType(int row, DayType type)

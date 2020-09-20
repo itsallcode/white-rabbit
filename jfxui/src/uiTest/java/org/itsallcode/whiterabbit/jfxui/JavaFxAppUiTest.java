@@ -108,6 +108,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         setLocale(Locale.GERMANY);
         setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
+        setRobot(robot);
     }
 
     @Override

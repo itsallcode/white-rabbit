@@ -69,7 +69,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     void commentNotPersistedAfterClickingAnotherRow()
     {
         assertCommentCellNotPersistedAfterFocusLostAction(() -> {
-            final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+            final JavaFxTable dayTable = app().genericDayTable();
             final TableCell<?, ?> commentCell = dayTable.getTableCell(0, "comment");
             robot.clickOn(commentCell);
         });
@@ -90,7 +90,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
-        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+        final JavaFxTable dayTable = app().genericDayTable();
 
         dayTable.assertRowContent(rowIndex, expectedCellValues.build());
 
@@ -117,7 +117,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
-        final JavaFxTable dayTable = JavaFxTable.findDayTable(robot);
+        final JavaFxTable dayTable = app().genericDayTable();
 
         dayTable.assertRowContent(rowIndex, expectedCellValues.build());
 
@@ -141,6 +141,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         setLocale(Locale.GERMANY);
         setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
+        setRobot(robot);
     }
 
     @Override
