@@ -9,6 +9,11 @@ public class TestUtil
         // Not instantiable
     }
 
+    public static void sleepLong()
+    {
+        sleep(Duration.ofSeconds(1));
+    }
+
     public static void sleepShort()
     {
         sleep(Duration.ofMillis(100));
