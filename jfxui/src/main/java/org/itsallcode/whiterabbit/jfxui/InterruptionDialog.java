@@ -4,11 +4,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,16 +29,14 @@ public class InterruptionDialog
     private final Property<Instant> currentTimeProperty;
 
     private final Clock clock;
-    private final Locale locale;
 
     public InterruptionDialog(Window owner, Property<Instant> currentTimeProperty,
-            ObjectProperty<Interruption> interruption, Clock clock, Locale locale)
+            ObjectProperty<Interruption> interruption, Clock clock)
     {
         this.owner = owner;
         this.currentTimeProperty = currentTimeProperty;
         this.interruption = interruption;
         this.clock = clock;
-        this.locale = locale;
     }
 
     public void show()
@@ -87,8 +81,7 @@ public class InterruptionDialog
         }
         final Instant now = currentTimeProperty.getValue();
         final Duration duration = interruption.get().currentDuration(now);
-        final LocalTime currentTime = LocalTime.ofInstant(now, ZoneId.systemDefault());
-        final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
-        return "Current time: " + currentTime.format(formatter) + ". Add interruption of " + duration + "?";
+        final LocalTime currentTime = LocalTime.ofInstant(now, clock.getZone()).truncatedTo(ChronoUnit.SECONDS);
+        return "Current time: " + currentTime + ". Add interruption of " + duration + "?";
     }
 }

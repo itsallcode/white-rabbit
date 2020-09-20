@@ -498,7 +498,7 @@ public class JavaFxApp extends Application
         }
         JavaFxUtil.runOnFxApplicationThread(() -> {
             interruption.set(appService.startInterruption());
-            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption, clock, locale).show();
+            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption, clock).show();
         });
     }
 
