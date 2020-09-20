@@ -1,0 +1,23 @@
+name: Super-Linter
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Code Base
+      uses: github/super-linter@v3
+      env:
+        VALIDATE_ALL_CODEBASE: false
+        DEFAULT_BRANCH: develop
+        # Already checked via Eclipse code formatter and Sonar
+        VALIDATE_JAVA: false
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -82,6 +82,10 @@ public class DayActivities
             return;
         }
         day.getActivities().remove(index);
+        if (day.getActivities().isEmpty())
+        {
+            day.setActivities(null);
+        }
     }
 
     public void setRemainderActivity(JsonActivity activity, boolean remainder)

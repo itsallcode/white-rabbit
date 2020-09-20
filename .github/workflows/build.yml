@@ -39,14 +39,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    - name: Lint Code Base
-      uses: github/super-linter@v3
-      env:
-        VALIDATE_ALL_CODEBASE: false
-        DEFAULT_BRANCH: develop
-        # Already checked via Eclipse code formatter and Sonar
-        VALIDATE_JAVA: false
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish Test Report
+      uses: scacap/action-surefire-report@v1
+      if: always()
+      with:
+        report_paths: '**/build/test-results/*/TEST-*.xml'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Archive jfxui binary
       uses: actions/upload-artifact@v1
       with:

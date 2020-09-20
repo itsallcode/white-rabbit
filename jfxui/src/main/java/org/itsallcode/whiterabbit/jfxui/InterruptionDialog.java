@@ -1,11 +1,9 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,12 +28,15 @@ public class InterruptionDialog
     private final Window owner;
     private final Property<Instant> currentTimeProperty;
 
+    private final Clock clock;
+
     public InterruptionDialog(Window owner, Property<Instant> currentTimeProperty,
-            ObjectProperty<Interruption> interruption)
+            ObjectProperty<Interruption> interruption, Clock clock)
     {
         this.owner = owner;
         this.currentTimeProperty = currentTimeProperty;
         this.interruption = interruption;
+        this.clock = clock;
     }
 
     public void show()
@@ -46,7 +47,8 @@ public class InterruptionDialog
         dialog.setTitle("Add interruption");
 
         final DialogPane dialogPane = dialog.getDialogPane();
-        final Instant interruptionStart = interruption.get().getStart().truncatedTo(ChronoUnit.MINUTES);
+        final Instant interruptionStartInstant = interruption.get().getStart().truncatedTo(ChronoUnit.SECONDS);
+        final LocalTime interruptionStart = LocalTime.ofInstant(interruptionStartInstant, clock.getZone());
         dialogPane.setHeaderText("Interruption started at " + interruptionStart + ". End interruption now?");
         dialogPane.contentTextProperty().bind(Bindings.createStringBinding(this::formatText, currentTimeProperty));
         final ButtonType addInterruptionButton = new ButtonType("Add interruption", ButtonData.OK_DONE);
@@ -79,8 +81,7 @@ public class InterruptionDialog
         }
         final Instant now = currentTimeProperty.getValue();
         final Duration duration = interruption.get().currentDuration(now);
-        final LocalTime currentTime = LocalTime.ofInstant(now, ZoneId.systemDefault());
-        final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM);
-        return "Current time: " + currentTime.format(formatter) + ". Add interruption of " + duration + "?";
+        final LocalTime currentTime = LocalTime.ofInstant(now, clock.getZone()).truncatedTo(ChronoUnit.SECONDS);
+        return "Current time: " + currentTime + ". Add interruption of " + duration + "?";
     }
 }

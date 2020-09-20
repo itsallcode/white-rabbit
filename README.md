@@ -119,7 +119,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ### Requirements
 
-JDK 11, e.g. https://adoptopenjdk.net/
+JDK 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net/).
 
 ### <a name="configuration"></a>Configuration
 
@@ -190,4 +190,13 @@ java -jar jfxui/build/libs/jfxui.jar
 
 ```bash
 ./gradlew runJfxui
+```
+
+#### Run UI-Tests
+
+```bash
+# Headless (default)
+./gradlew  check
+# Not Headless (don't move mouse while running)
+./gradlew  check -PuiTestsHeadless=false
 ```

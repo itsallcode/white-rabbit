@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
 
-import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.control.Labeled;
-import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
@@ -39,19 +37,19 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickSecond();
+        time().tickSecond();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickMinute();
+        time().tickMinute();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
-        tickMinute();
+        time().tickMinute();
         Assertions.assertThat(overtimeLabel)
                 .hasText("Overtime previous month: 00:00, this month: -07:59, total: -07:59");
     }
@@ -67,19 +65,19 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickSecond();
+        time().tickSecond();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickMinute();
+        time().tickMinute();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
-        tickMinute();
+        time().tickMinute();
         Assertions.assertThat(overtimeLabel)
                 .hasText("Overtime previous month: 00:00, this month: -07:59, total: -07:59");
     }
@@ -87,13 +85,13 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     @Test
     void jsonFileWrittenAfterMinuteTick()
     {
-        final LocalDate today = getCurrentDate();
+        final LocalDate today = time().getCurrentDate();
 
-        tickMinute();
-        final LocalTime begin = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime begin = time().getCurrentTimeMinutes();
 
-        tickMinute();
-        final LocalTime end = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime end = time().getCurrentTimeMinutes();
 
         final JsonMonth month = loadMonth(today);
 
@@ -103,20 +101,14 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> assertThat(month.getDays()).extracting(JsonDay::getEnd).containsExactly(end));
     }
 
-    @Test
-    void dayTableRowCount()
-    {
-        final TableView<DayRecordPropertyAdapter> dayTable = robot.lookup("#day-table").queryTableView();
-        Assertions.assertThat(dayTable).hasExactlyNumRows(31);
-    }
-
     @Override
     @Start
     void start(Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
+        setRobot(robot);
     }
 
     @Override

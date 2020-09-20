@@ -1,14 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,18 +9,11 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Locale;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -37,19 +22,18 @@ import javax.json.bind.JsonbConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
+import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.skin.VirtualFlow;
 import javafx.stage.Stage;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,34 +48,26 @@ abstract class JavaFxAppUiTestBase
     Path workingDir;
 
     private Path dataDir;
-    private Clock clockMock;
-    private ScheduledExecutorService executorServiceMock;
-    private final ZoneId timeZone = ZoneId.of("Europe/Berlin");
-    private Instant now = Instant.parse("2007-12-03T10:15:30.20Z");
     private Locale locale = Locale.GERMANY;
 
-    private Runnable updateEverySecondRunnable;
+    private Instant initialTime = Instant.parse("2007-12-03T10:15:30.20Z");
 
-    private Runnable updateEveryMinuteRunnable;
+    private ApplicationHelper applicationHelper;
+    private TimeUtil timeUtil;
 
-    protected void tickSecond()
+    protected void setRobot(FxRobot robot)
     {
-        addTime(Duration.ofSeconds(1));
-        LOG.info("Tick second to {}", this.now);
-        this.updateEverySecondRunnable.run();
+        applicationHelper = new ApplicationHelper(Objects.requireNonNull(robot, "robot"));
     }
 
-    protected void tickMinute()
+    protected ApplicationHelper app()
     {
-        addTime(Duration.ofMinutes(1));
-        LOG.info("Tick minute to {}", this.now);
-        this.updateEverySecondRunnable.run();
-        this.updateEveryMinuteRunnable.run();
+        return Objects.requireNonNull(applicationHelper, "applicationHelper");
     }
 
-    private void addTime(final Duration duration)
+    protected TimeUtil time()
     {
-        this.now = this.now.plus(duration);
+        return Objects.requireNonNull(timeUtil, "timeUtil");
     }
 
     protected void doStart(final Stage stage)
@@ -99,32 +75,24 @@ abstract class JavaFxAppUiTestBase
         doStart(stage, null);
     }
 
+    protected void setInitialTime(Instant initialTime)
+    {
+        this.initialTime = initialTime;
+    }
+
     protected void doStart(final Stage stage, final ProjectConfig projectConfig)
     {
         LOG.info("Starting application using stage {}", stage);
 
-        this.clockMock = mock(Clock.class);
-        this.executorServiceMock = mock(ScheduledExecutorService.class);
-        final ScheduledFuture<?> scheduledFutureMock = mock(ScheduledFuture.class);
-
-        when(this.executorServiceMock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS)))
-                .thenAnswer(invocation -> {
-                    final Long delayMillis = invocation.getArgument(1, Long.class);
-                    final Runnable runnable = invocation.getArgument(0, Runnable.class);
-                    LOG.debug("Mock scheduler called: {} -> {}", Duration.ofMillis(delayMillis), runnable);
-                    return scheduledFutureMock;
-                });
-
-        when(this.clockMock.getZone()).thenReturn(this.timeZone);
-        when(this.clockMock.instant()).thenAnswer(invocation -> this.now);
+        timeUtil = TimeUtil.start(initialTime);
 
         prepareConfiguration(projectConfig);
 
-        this.javaFxApp = new JavaFxApp(() -> this.workingDir, this.clockMock, this.executorServiceMock);
+        this.javaFxApp = new JavaFxApp(() -> this.workingDir, timeUtil.clock(), timeUtil.executorService());
         this.javaFxApp.init();
         this.javaFxApp.start(stage);
 
-        captureScheduledRunnables();
+        timeUtil.captureScheduledRunnables();
         LOG.info("Application startup finished");
     }
 
@@ -133,15 +101,6 @@ abstract class JavaFxAppUiTestBase
         LOG.info("Preparing application shutdown");
         this.javaFxApp.prepareShutdown();
         LOG.info("Application shutdown done");
-    }
-
-    private void captureScheduledRunnables()
-    {
-        @SuppressWarnings("null")
-        final ArgumentCaptor<Runnable> arg = ArgumentCaptor.forClass(Runnable.class);
-        verify(this.executorServiceMock, times(2)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
-        this.updateEverySecondRunnable = arg.getAllValues().get(0);
-        this.updateEveryMinuteRunnable = arg.getAllValues().get(1);
     }
 
     private void prepareConfiguration(final ProjectConfig projectConfig)
@@ -164,26 +123,6 @@ abstract class JavaFxAppUiTestBase
         }
     }
 
-    protected LocalDate getCurrentDate()
-    {
-        return LocalDate.ofInstant(this.now, this.timeZone);
-    }
-
-    protected LocalTime getCurrentTimeMinutes()
-    {
-        return LocalTime.ofInstant(this.now, this.timeZone).truncatedTo(ChronoUnit.MINUTES);
-    }
-
-    protected int getCurrentDayRowIndex()
-    {
-        return getCurrentDate().getDayOfMonth() - 1;
-    }
-
-    public void setCurrentTime(final Instant now)
-    {
-        this.now = now;
-    }
-
     public void setLocale(final Locale locale)
     {
         this.locale = locale;
@@ -192,26 +131,6 @@ abstract class JavaFxAppUiTestBase
     abstract void start(Stage stage);
 
     abstract void stop();
-
-    protected TableCell<?, ?> getTableCell(final TableView<?> table, final int rowIndex, final String columnId)
-    {
-        final TableRow<?> row = getTableRow(table, rowIndex);
-        return row.getChildrenUnmodifiable().stream()
-                .filter(cell -> cell.getId().equals(columnId))
-                .map(TableCell.class::cast)
-                .findFirst().orElseThrow();
-    }
-
-    protected TableRow<?> getTableRow(final TableView<?> table, final int rowIndex)
-    {
-        final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
-                .filter(VirtualFlow.class::isInstance)
-                .map(VirtualFlow.class::cast)
-                .findFirst().orElseThrow();
-        assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        LOG.debug("Table {} has {} rows", table, virtualFlow.getCellCount());
-        return (TableRow<?>) virtualFlow.getCell(rowIndex);
-    }
 
     protected void assertRowContent(final TableView<?> table, final int rowIndex,
             final TableRowExpectedContent expectedRowContent)

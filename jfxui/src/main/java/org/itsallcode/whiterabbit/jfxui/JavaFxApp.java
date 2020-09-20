@@ -73,6 +73,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class JavaFxApp extends Application
@@ -498,7 +499,7 @@ public class JavaFxApp extends Application
         }
         JavaFxUtil.runOnFxApplicationThread(() -> {
             interruption.set(appService.startInterruption());
-            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption).show();
+            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption, clock).show();
         });
     }
 
@@ -516,7 +517,9 @@ public class JavaFxApp extends Application
             LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
                     interruption);
             final Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Add automatic interruption?");
+            alert.setTitle("Interruption detected");
+            alert.initModality(Modality.NONE);
+            alert.initOwner(primaryStage);
             alert.setHeaderText(
                     "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
             final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);

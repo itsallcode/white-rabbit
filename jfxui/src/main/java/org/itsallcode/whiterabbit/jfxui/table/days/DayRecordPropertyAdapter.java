@@ -10,6 +10,7 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 
 public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
 {
@@ -37,6 +38,15 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
         overtime = readOnlyPropertyField("overtime", DayRecord::getOvertime);
         totalOvertime = readOnlyPropertyField("totalOvertime", DayRecord::getOverallOvertime);
         comment = propertyField("comment", DayRecord::getComment, DayRecord::setComment);
+
+        dayType.addListener((ChangeListener<DayType>) (observable, oldValue, newValue) -> {
+            if (newValue != null && newValue != DayType.WORK)
+            {
+                begin.set(null);
+                end.set(null);
+                interruption.set(Duration.ZERO);
+            }
+        });
     }
 
     void update(DayRecord record)
