@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
@@ -44,7 +45,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     void beginAndEndUpdatedEqualAfterFirstMinuteTick()
     {
         tickMinute();
-        sleepShort();
+        TestUtil.sleepShort();
 
         final int currentDayRowIndex = getCurrentDayRowIndex();
         final LocalTime now = getCurrentTimeMinutes();
@@ -60,13 +61,13 @@ class DayTableTest extends JavaFxAppUiTestBase
 
         tickMinute();
         final LocalTime firstTick = getCurrentTimeMinutes();
-        sleepShort();
+        TestUtil.sleepShort();
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, firstTick);
 
         tickMinute();
 
-        sleepShort();
+        TestUtil.sleepShort();
 
         final LocalTime secondTick = getCurrentTimeMinutes();
         dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, secondTick);
@@ -88,7 +89,7 @@ class DayTableTest extends JavaFxAppUiTestBase
         final LocalTime secondTick = getCurrentTimeMinutes();
         assertThat(secondTick).isEqualTo(firstTick.plusMinutes(5));
 
-        sleepShort();
+        TestUtil.sleepShort();
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, secondTick);
     }
@@ -101,7 +102,7 @@ class DayTableTest extends JavaFxAppUiTestBase
 
         tickMinute();
         final LocalTime now = getCurrentTimeMinutes();
-        sleepShort();
+        TestUtil.sleepShort();
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
 

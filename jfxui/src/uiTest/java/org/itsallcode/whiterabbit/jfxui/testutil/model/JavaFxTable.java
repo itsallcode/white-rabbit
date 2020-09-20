@@ -62,7 +62,6 @@ public class JavaFxTable
                 .map(VirtualFlow.class::cast)
                 .findFirst().orElseThrow();
         assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        LOG.debug("Table {} has {} rows", table, virtualFlow.getCellCount());
         return (TableRow<?>) virtualFlow.getCell(rowIndex);
     }
 

@@ -236,21 +236,4 @@ abstract class JavaFxAppUiTestBase
             throw new UncheckedIOException("Error reading file " + file, e);
         }
     }
-
-    protected void sleepShort()
-    {
-        sleep(Duration.ofMillis(50));
-    }
-
-    private void sleep(Duration duration)
-    {
-        try
-        {
-            Thread.sleep(duration.toMillis());
-        }
-        catch (final InterruptedException e)
-        {
-            Thread.currentThread().interrupt();
-        }
-    }
 }
