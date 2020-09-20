@@ -42,4 +42,10 @@ public class PeriodicTrigger implements Trigger
                 .truncatedTo(roundToUnit) //
                 .plus(ADDITIONAL_WAIT);
     }
+
+    @Override
+    public String toString()
+    {
+        return "PeriodicTrigger [roundToUnit=" + roundToUnit + "]";
+    }
 }

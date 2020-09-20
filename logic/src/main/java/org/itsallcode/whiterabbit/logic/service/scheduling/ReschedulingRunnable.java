@@ -109,4 +109,13 @@ class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements Sc
             obtainCurrentFuture().cancel(false);
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return "ReschedulingRunnable [toString()=" + super.toString() + ", trigger=" + trigger + ", executorService="
+                + executorService + ", triggerContextMonitor=" + triggerContextMonitor + ", scheduledExecutionTime="
+                + scheduledExecutionTime + ", triggerContext=" + triggerContext + ", clock=" + clock
+                + ", currentFuture=" + currentFuture + "]";
+    }
 }

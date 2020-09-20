@@ -35,12 +35,38 @@ public class ClockPropertyFactory
         final T initialValue = supplier.get();
         LOG.debug("Setting initial property value {} from supplier", initialValue);
         property.set(initialValue);
-        final ScheduledTaskFuture scheduledTaskFuture = appService.schedule(trigger,
-                () -> JavaFxUtil.runOnFxApplicationThread(() -> {
-                    final T newValue = supplier.get();
-                    property.set(newValue);
-                }));
-
+        final Runnable runnable = new ClockPropertyFactoryRunnable<T>(supplier, trigger, property);
+        final ScheduledTaskFuture scheduledTaskFuture = appService.schedule(trigger, runnable);
         return new ScheduledProperty<>(property, scheduledTaskFuture);
+    }
+
+    private static class ClockPropertyFactoryRunnable<T> implements Runnable
+    {
+        private final Supplier<T> supplier;
+        private final Trigger trigger;
+        private final SimpleObjectProperty<T> property;
+
+        private ClockPropertyFactoryRunnable(Supplier<T> supplier, Trigger trigger, SimpleObjectProperty<T> property)
+        {
+            this.supplier = supplier;
+            this.trigger = trigger;
+            this.property = property;
+        }
+
+        @Override
+        public void run()
+        {
+            JavaFxUtil.runOnFxApplicationThread(() -> {
+                final T newValue = supplier.get();
+                property.set(newValue);
+            });
+        }
+
+        @Override
+        public String toString()
+        {
+            return "ClockPropertyFactoryRunnable [trigger=" + trigger + ", supplier=" + supplier + ", property="
+                    + property + "]";
+        }
     }
 }
