@@ -37,19 +37,19 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickSecond();
+        time().tickSecond();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickMinute();
+        time().tickMinute();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
-        tickMinute();
+        time().tickMinute();
         Assertions.assertThat(overtimeLabel)
                 .hasText("Overtime previous month: 00:00, this month: -07:59, total: -07:59");
     }
@@ -65,19 +65,19 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickSecond();
+        time().tickSecond();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
-        tickMinute();
+        time().tickMinute();
         assertAll(
                 () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
-        tickMinute();
+        time().tickMinute();
         Assertions.assertThat(overtimeLabel)
                 .hasText("Overtime previous month: 00:00, this month: -07:59, total: -07:59");
     }
@@ -85,13 +85,13 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     @Test
     void jsonFileWrittenAfterMinuteTick()
     {
-        final LocalDate today = getCurrentDate();
+        final LocalDate today = time().getCurrentDate();
 
-        tickMinute();
-        final LocalTime begin = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime begin = time().getCurrentTimeMinutes();
 
-        tickMinute();
-        final LocalTime end = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime end = time().getCurrentTimeMinutes();
 
         final JsonMonth month = loadMonth(today);
 
@@ -106,7 +106,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     void start(Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
         setRobot(robot);
     }

@@ -50,7 +50,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     void activityTableEmptyByDefault()
     {
         selectCurrentDay();
-        tickMinute();
+        time().tickMinute();
         Assertions.assertThat(lookupActivitiesTable().table()).hasExactlyNumRows(0);
     }
 
@@ -58,7 +58,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     void clickingAddButtonAddsActivity()
     {
         selectCurrentDay();
-        tickMinute();
+        time().tickMinute();
         clickAddActivityButton();
 
         Assertions.assertThat(lookupActivitiesTable().table()).hasExactlyNumRows(1);
@@ -88,7 +88,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
     private void addActivity()
     {
-        tickMinute();
+        time().tickMinute();
         final JavaFxTable activitiesTable = lookupActivitiesTable();
 
         selectCurrentDay();
@@ -105,7 +105,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable dayTable = app().genericDayTable();
 
-        final int dayRowIndex = getCurrentDayRowIndex();
+        final int dayRowIndex = time().getCurrentDayRowIndex();
         robot.clickOn(dayTable.getTableRow(dayRowIndex));
     }
 
@@ -130,7 +130,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     void start(Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage, projectConfig(PROJECT1, PROJECT2));
         setRobot(robot);
     }

@@ -83,9 +83,9 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
     private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)
     {
-        final LocalDate today = getCurrentDate();
-        final LocalTime now = getCurrentTimeMinutes();
-        final int rowIndex = getCurrentDayRowIndex();
+        final LocalDate today = time().getCurrentDate();
+        final LocalTime now = time().getCurrentTimeMinutes();
+        final int rowIndex = time().getCurrentDayRowIndex();
         final String comment = "tst";
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
@@ -112,8 +112,8 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
     private void assertCommentCellNotPersistedAfterFocusLostAction(Runnable focusLossAction)
     {
-        final LocalDate today = getCurrentDate();
-        final int rowIndex = getCurrentDayRowIndex();
+        final LocalDate today = time().getCurrentDate();
+        final int rowIndex = time().getCurrentDayRowIndex();
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
@@ -139,7 +139,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     void start(Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
         setRobot(robot);
     }

@@ -28,11 +28,11 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
     @Test
     void interruptionIsZeroByDefault()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
-        tickMinute();
+        time().tickMinute();
+        time().tickMinute();
 
         TestUtil.sleepShort();
 
@@ -42,19 +42,19 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
     @Test
     void interruptionDialogUpdatesLabelAfterTick()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
         final InterruptionDialog interruptionDialog = new ApplicationHelper(robot).startInterruption();
 
-        final LocalTime interruptionStartTime = getCurrentTimeSeconds();
+        final LocalTime interruptionStartTime = time().getCurrentTimeSeconds();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime, Duration.ZERO));
 
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
@@ -65,19 +65,19 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
     @Test
     void interruptionAddedWhenClickingAddButton()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
         final InterruptionDialog interruptionDialog = new ApplicationHelper(robot).startInterruption();
 
-        final LocalTime interruptionStartTime = getCurrentTimeSeconds();
+        final LocalTime interruptionStartTime = time().getCurrentTimeSeconds();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime, Duration.ZERO));
 
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
@@ -92,19 +92,19 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
     @Test
     void interruptionSkippedWhenClickingCancleButton()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
         final InterruptionDialog interruptionDialog = new ApplicationHelper(robot).startInterruption();
 
-        final LocalTime interruptionStartTime = getCurrentTimeSeconds();
+        final LocalTime interruptionStartTime = time().getCurrentTimeSeconds();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime, Duration.ZERO));
 
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
@@ -121,7 +121,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
     void start(Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
         setRobot(robot);
     }

@@ -35,7 +35,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void beginAndEndEmptyByDefault()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
 
         final DayTable dayTable = app().dayTable();
         dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
@@ -44,11 +44,11 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void beginAndEndUpdatedEqualAfterFirstMinuteTick()
     {
-        tickMinute();
+        time().tickMinute();
         TestUtil.sleepShort();
 
-        final int currentDayRowIndex = getCurrentDayRowIndex();
-        final LocalTime now = getCurrentTimeMinutes();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
+        final LocalTime now = time().getCurrentTimeMinutes();
         final DayTable dayTable = app().dayTable();
         dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
     }
@@ -56,37 +56,37 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void beginAndEndUpdatedEqualAfterSecondMinuteTick()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
-        final LocalTime firstTick = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime firstTick = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, firstTick);
 
-        tickMinute();
+        time().tickMinute();
 
         TestUtil.sleepShort();
 
-        final LocalTime secondTick = getCurrentTimeMinutes();
+        final LocalTime secondTick = time().getCurrentTimeMinutes();
         dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, secondTick);
     }
 
     @Test
     void beginAndEndUpdatedEveryMinute()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
-        final LocalTime firstTick = getCurrentTimeMinutes();
-        tickMinute();
-        tickMinute();
-        tickMinute();
-        tickMinute();
-        tickMinute();
-        final LocalTime secondTick = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime firstTick = time().getCurrentTimeMinutes();
+        time().tickMinute();
+        time().tickMinute();
+        time().tickMinute();
+        time().tickMinute();
+        time().tickMinute();
+        final LocalTime secondTick = time().getCurrentTimeMinutes();
         assertThat(secondTick).isEqualTo(firstTick.plusMinutes(5));
 
         TestUtil.sleepShort();
@@ -97,11 +97,11 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void beginAndEndDeletedWhenChangingDayTypeToSick()
     {
-        final int currentDayRowIndex = getCurrentDayRowIndex();
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
 
-        tickMinute();
-        final LocalTime now = getCurrentTimeMinutes();
+        time().tickMinute();
+        final LocalTime now = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
@@ -116,7 +116,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     void start(Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setCurrentTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
         doStart(stage);
         setRobot(robot);
     }
