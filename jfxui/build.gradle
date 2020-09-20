@@ -62,11 +62,13 @@ task uiTest(type: Test) {
 
     useJUnitPlatform()
 
-    systemProperty 'java.awt.headless', 'true'
-    systemProperty 'testfx.headless', 'true'
-    systemProperty 'testfx.robot', 'glass'
-    systemProperty 'glass.platform', 'Monocle'
-    systemProperty 'monocle.platform', 'Headless'
+    if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
+        systemProperty 'java.awt.headless', 'true'
+        systemProperty 'testfx.headless', 'true'
+        systemProperty 'testfx.robot', 'glass'
+        systemProperty 'glass.platform', 'Monocle'
+        systemProperty 'monocle.platform', 'Headless'
+    }
 
     testClassesDirs = sourceSets.uiTest.output.classesDirs
     classpath = sourceSets.uiTest.runtimeClasspath

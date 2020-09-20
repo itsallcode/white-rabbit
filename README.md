@@ -191,3 +191,12 @@ java -jar jfxui/build/libs/jfxui.jar
 ```bash
 ./gradlew runJfxui
 ```
+
+#### Run UI-Tests
+
+```bash
+# Headless (default)
+./gradlew  check
+# Not Headless (don't move mouse while running)
+./gradlew  check -PuiTestsHeadless=false
+```
