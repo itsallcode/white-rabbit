@@ -10,6 +10,11 @@ A time recording tool
 
 ## Recent changes
 
+* [#29](https://github.com/itsallcode/white-rabbit/issues/29): Relaxed parsing of time and duration
+* [#27](https://github.com/itsallcode/white-rabbit/issues/27): Delete begin, end and interruption when changing day type to "not working"
+* [#26](https://github.com/itsallcode/white-rabbit/issues/26): Omit "activities" from json when list is empty
+* [#10](https://github.com/itsallcode/white-rabbit/issues/10): Facelift: Improved menu. Turned buttons an drop-down into toolbar. Turned OT (thanks to [redcatbear](https://github.com/redcatbear))
+* [#6](https://github.com/itsallcode/white-rabbit/issues/6): Persist cell changes on focus loss
 * Text UI is now deprecated, please use the new Java FX UI.
 * Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
 * Supports reduced working hours / short-time work, see [configuration option `current_working_time_per_day`](#optional_config)
