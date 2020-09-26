@@ -82,8 +82,7 @@ public class DayRecordTable
                         new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
                 data -> data.getValue().date);
         final DurationStringConverter durationConverter = new DurationStringConverter(formatterService);
-        final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT);
-        @SuppressWarnings("null")
+        final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT, locale);
         final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);
