@@ -70,6 +70,9 @@ task uiTest(type: Test) {
         systemProperty 'monocle.platform', 'Headless'
     }
 
+    systemProperty 'testfx.launch.timeout', '60000'
+    systemProperty 'testfx.setup.timeout', '30000'
+
     testClassesDirs = sourceSets.uiTest.output.classesDirs
     classpath = sourceSets.uiTest.runtimeClasspath
     shouldRunAfter test
