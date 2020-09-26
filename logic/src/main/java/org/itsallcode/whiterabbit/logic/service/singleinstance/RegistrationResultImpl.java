@@ -1,6 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
-public class RegistrationResultImpl implements RegistrationResult
+class RegistrationResultImpl implements RegistrationResult
 {
     private final SingleInstanceServer server;
     private final ClientConnection client;
