@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
@@ -42,7 +41,6 @@ public class ApplicationHelper
     public AutomaticInterruptionDialog assertAutomaticInterruption()
     {
         final Window dialogWindow = robot.window("Interruption detected");
-        UiDebugTool.printNode(dialogWindow.getScene().getRoot());
         Assertions.assertThat(dialogWindow).isShowing();
         return new AutomaticInterruptionDialog(robot, dialogWindow);
     }

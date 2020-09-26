@@ -157,15 +157,11 @@ class SingleInstanceServiceImplTest
 
     private void assertOtherInstanceIsRunning(RegistrationResult result)
     {
-        LOG.debug("Assert that no other instance is running: "
-                + (result.isOtherInstanceRunning() ? "success" : "failed"));
         assertThat(result.isOtherInstanceRunning()).as("other instance is running").isTrue();
     }
 
     private void assertOtherInstanceIsNotRunning(RegistrationResult result)
     {
-        LOG.debug("Assert that no other instance is running: "
-                + (result.isOtherInstanceRunning() ? "failed" : "success"));
         assertThat(result.isOtherInstanceRunning()).as("other instance is running").isFalse();
     }
 
@@ -178,7 +174,7 @@ class SingleInstanceServiceImplTest
         }
         catch (final InterruptedException e)
         {
-            // Ignore
+            Thread.currentThread().interrupt();
         }
     }
 
