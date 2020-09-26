@@ -108,6 +108,7 @@ abstract class JavaFxAppUiTestBase
         this.dataDir = this.workingDir.resolve("data");
         String configFileContent = "data = " + this.dataDir.toString().replace('\\', '/') + "\n";
         configFileContent += "locale = " + this.locale.getLanguage() + "\n";
+        configFileContent += "allow_multiple_instances = true\n";
         try
         {
             Files.createDirectories(this.dataDir);

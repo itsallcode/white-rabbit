@@ -38,6 +38,12 @@ public class TestingConfig implements Config
         return Optional.ofNullable(currentHoursPerDay);
     }
 
+    @Override
+    public boolean allowMultipleInstances()
+    {
+        return false;
+    }
+
     public static Builder builder()
     {
         return new Builder();

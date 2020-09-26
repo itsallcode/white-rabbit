@@ -1,61 +1,15 @@
 package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
-public class RegistrationResult implements OtherInstance, AutoCloseable
+public interface RegistrationResult extends OtherInstance, AutoCloseable
 {
-    private final SingleInstanceServer server;
-    private final ClientConnection client;
-
-    private RegistrationResult(SingleInstanceServer server, ClientConnection client)
-    {
-        this.server = server;
-        this.client = client;
-    }
-
-    public static RegistrationResult of(ClientConnection client)
-    {
-        return new RegistrationResult(null, client);
-    }
-
-    public static RegistrationResult of(SingleInstanceServer server)
-    {
-        return new RegistrationResult(server, null);
-    }
-
-    public boolean isOtherInstanceRunning()
-    {
-        return client != null;
-    }
+    public boolean isOtherInstanceRunning();
 
     @Override
-    public void sendMessage(String message)
-    {
-        if (client == null)
-        {
-            throw new IllegalStateException("Running as server: can't send message");
-        }
-        client.sendMessage(message);
-    }
+    public void sendMessage(String message);
 
     @Override
-    public String sendMessageWithResponse(String message)
-    {
-        if (client == null)
-        {
-            throw new IllegalStateException("Running as server: can't send message");
-        }
-        return client.sendMessageWithResponse(message);
-    }
+    public String sendMessageWithResponse(String message);
 
     @Override
-    public void close()
-    {
-        if (server != null)
-        {
-            server.close();
-        }
-        if (client != null)
-        {
-            client.close();
-        }
-    }
+    public void close();
 }

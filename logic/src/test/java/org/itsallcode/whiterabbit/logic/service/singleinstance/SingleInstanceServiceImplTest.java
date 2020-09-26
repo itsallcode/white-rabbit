@@ -18,9 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SingleInstanceServiceTest
+class SingleInstanceServiceImplTest
 {
-    private static final Logger LOG = LogManager.getLogger(SingleInstanceServiceTest.class);
+    private static final Logger LOG = LogManager.getLogger(SingleInstanceServiceImplTest.class);
 
     private static final int PORT = 34568;
 
@@ -36,7 +36,7 @@ class SingleInstanceServiceTest
     @Test
     void registerInvalidPortFails()
     {
-        final SingleInstanceService service = new SingleInstanceService(9999999);
+        final SingleInstanceService service = new SingleInstanceServiceImpl(9999999);
         assertThatThrownBy(() -> service.tryToRegisterInstance(callbackMock))
                 .isInstanceOf(IllegalArgumentException.class).hasMessage("Port value out of range: 9999999");
     }
@@ -184,6 +184,6 @@ class SingleInstanceServiceTest
 
     private SingleInstanceService create()
     {
-        return new SingleInstanceService(PORT);
+        return new SingleInstanceServiceImpl(PORT);
     }
 }
