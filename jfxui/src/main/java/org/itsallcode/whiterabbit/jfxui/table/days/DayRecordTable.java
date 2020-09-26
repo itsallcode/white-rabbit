@@ -13,9 +13,9 @@ import java.util.Locale;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
-import org.itsallcode.whiterabbit.jfxui.table.PersistOnFocusLossTextFieldTableCell;
-import org.itsallcode.whiterabbit.jfxui.table.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
+import org.itsallcode.whiterabbit.jfxui.table.PersistOnFocusLossTextFieldTableCell;
+import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
@@ -81,34 +81,38 @@ public class DayRecordTable
                 param -> new PersistOnFocusLossTextFieldTableCell<>(
                         new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
                 data -> data.getValue().date);
+        final DurationStringConverter durationConverter = new DurationStringConverter(formatterService);
+        final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT);
         @SuppressWarnings("null")
         final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);
         final TableColumn<DayRecordPropertyAdapter, LocalTime> beginCol = column("begin", "Begin",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new LocalTimeStringConverter(FormatStyle.SHORT)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(localTimeConverter),
                 data -> data.getValue().begin);
         final TableColumn<DayRecordPropertyAdapter, LocalTime> endCol = column("end", "End",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new LocalTimeStringConverter(FormatStyle.SHORT)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(localTimeConverter),
                 data -> data.getValue().end);
         final TableColumn<DayRecordPropertyAdapter, Duration> breakCol = readOnlyColumn("break", "Break",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().mandatoryBreak);
         final TableColumn<DayRecordPropertyAdapter, Duration> interruptionCol = column("interruption", "Interruption",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().interruption);
         final TableColumn<DayRecordPropertyAdapter, Duration> workingTimeCol = readOnlyColumn("working-time",
-                "Working time", param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                "Working time",
+                param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().workingTime);
         final TableColumn<DayRecordPropertyAdapter, Duration> overTimeCol = readOnlyColumn("overtime", "Overtime",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().overtime);
         final TableColumn<DayRecordPropertyAdapter, Duration> totalOvertimeCol = readOnlyColumn("total-overtime",
                 "Total Overtime",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().totalOvertime);
         final TableColumn<DayRecordPropertyAdapter, String> commentCol = column("comment", "Comment",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter()), data -> data.getValue().comment);
+                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter()),
+                data -> data.getValue().comment);
 
         return asList(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);

@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.table;
+package org.itsallcode.whiterabbit.jfxui.table.converter;
 
 import java.time.Duration;
 import java.util.Optional;

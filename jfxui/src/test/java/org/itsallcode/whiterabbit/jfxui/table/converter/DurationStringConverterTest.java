@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.table;
+package org.itsallcode.whiterabbit.jfxui.table.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
