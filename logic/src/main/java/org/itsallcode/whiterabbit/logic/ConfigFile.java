@@ -70,6 +70,12 @@ class ConfigFile implements Config
         return getOptionalValue("current_working_time_per_day").map(Duration::parse);
     }
 
+    @Override
+    public boolean allowMultipleInstances()
+    {
+        return getOptionalValue("allow_multiple_instances").map(Boolean::valueOf).orElse(false);
+    }
+
     private String getMandatoryValue(String param)
     {
         return getOptionalValue(param).orElseThrow(

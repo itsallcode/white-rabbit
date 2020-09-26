@@ -22,4 +22,6 @@ public interface Config
     Locale getLocale();
 
     Optional<Duration> getCurrentHoursPerDay();
+
+    boolean allowMultipleInstances();
 }

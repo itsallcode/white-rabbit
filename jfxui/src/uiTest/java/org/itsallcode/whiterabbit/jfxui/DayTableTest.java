@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Locale;
@@ -109,6 +110,68 @@ class DayTableTest extends JavaFxAppUiTestBase
         dayTable.selectDayType(currentDayRowIndex, DayType.SICK);
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
+    }
+
+    @Test
+    void timeWithLeadingZeroSupported()
+    {
+        assertTimeParsed("08:12", LocalTime.of(8, 12));
+    }
+
+    @Test
+    void timeAfter12Supported()
+    {
+        assertTimeParsed("13:14", LocalTime.of(13, 14));
+    }
+
+    @Test
+    void timeWithoutLeadingZeroSupported()
+    {
+        assertTimeParsed("8:14", LocalTime.of(8, 14));
+    }
+
+    @Test
+    void timeWithoutTrailingZeroSupported()
+    {
+        assertTimeParsed("8:4", LocalTime.of(8, 4));
+    }
+
+    @Test
+    void durationWithLeadingZeroSupported()
+    {
+        assertDurationParsed("01:02", Duration.ofHours(1).plusMinutes(2));
+    }
+
+    @Test
+    void durationWithoutLeadingZeroSupported()
+    {
+        assertDurationParsed("1:02", Duration.ofHours(1).plusMinutes(2));
+    }
+
+    @Test
+    void durationWithoutTrailingZeroSupported()
+    {
+        assertDurationParsed("01:2", Duration.ofHours(1).plusMinutes(2));
+    }
+
+    private void assertTimeParsed(String enteredText, LocalTime expectedTime)
+    {
+        final int row = time().getCurrentDayRowIndex() + 1;
+        final DayTable dayTable = app().dayTable();
+
+        dayTable.typeBegin(row, enteredText);
+
+        assertThat(dayTable.getBegin(row)).isEqualTo(expectedTime);
+    }
+
+    private void assertDurationParsed(String enteredText, Duration expectedDuration)
+    {
+        final int row = time().getCurrentDayRowIndex() + 1;
+        final DayTable dayTable = app().dayTable();
+
+        dayTable.typeInterruption(row, enteredText);
+
+        assertThat(dayTable.getInterruption(row)).isEqualTo(expectedDuration);
     }
 
     @Override

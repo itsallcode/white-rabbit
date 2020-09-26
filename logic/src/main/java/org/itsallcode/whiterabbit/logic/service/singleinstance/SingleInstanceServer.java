@@ -42,10 +42,10 @@ class SingleInstanceServer
 
     public void start()
     {
-        LOG.info("Executing server thread using {}", executorService);
+        LOG.trace("Executing server thread using {}", executorService);
         executorService.execute(this::run);
         waitUntilServerRunning();
-        LOG.info("Server thread is running");
+        LOG.trace("Server thread is running");
     }
 
     private void waitUntilServerRunning()
@@ -62,7 +62,7 @@ class SingleInstanceServer
 
     private void run()
     {
-        LOG.info("Starting server thread");
+        LOG.trace("Starting server thread");
         try
         {
             serverRunning.countDown();
@@ -70,7 +70,7 @@ class SingleInstanceServer
         }
         finally
         {
-            LOG.debug("Server loop finished");
+            LOG.trace("Server loop finished");
             serverStopped.countDown();
         }
     }
@@ -81,13 +81,13 @@ class SingleInstanceServer
         {
             try (final Socket socket = serverSocket.accept())
             {
-                LOG.debug("Client connected on {}: reading from socket", socket);
+                LOG.trace("Client connected on {}: reading from socket", socket);
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 String message;
                 while ((message = reader.readLine()) != null)
                 {
-                    LOG.debug("Got message '{}' from client socket {}", message, socket);
+                    LOG.trace("Got message '{}' from client socket {}", message, socket);
                     callback.messageReceived(message, new Client(socket));
                 }
             }
@@ -95,7 +95,7 @@ class SingleInstanceServer
             {
                 if (serverSocket.isClosed())
                 {
-                    LOG.debug("Accept failed during shutdown: ignore.");
+                    LOG.trace("Accept failed during shutdown: ignore.");
                 }
                 else
                 {
@@ -128,7 +128,7 @@ class SingleInstanceServer
 
             try
             {
-                LOG.debug("Sending message '{}' to client {}", message, socket);
+                LOG.trace("Sending message '{}' to client {}", message, socket);
                 final OutputStream outputStream = socket.getOutputStream();
                 outputStream.write(message.getBytes(StandardCharsets.UTF_8));
                 outputStream.write('\n');
@@ -143,7 +143,7 @@ class SingleInstanceServer
 
     public void close()
     {
-        LOG.info("Shutting down server for socket {}", serverSocket);
+        LOG.trace("Shutting down server for socket {}", serverSocket);
         executorService.shutdownNow();
         try
         {
@@ -161,6 +161,6 @@ class SingleInstanceServer
         {
             Thread.currentThread().interrupt();
         }
-        LOG.info("Shutdown complete");
+        LOG.trace("Shutdown complete");
     }
 }

@@ -323,13 +323,13 @@ public class JavaFxApp extends Application
     {
         if (!tray.isSupported())
         {
-            LOG.debug("System tray is not supported: don't allow hiding primary stage");
+            LOG.trace("System tray is not supported: don't allow hiding primary stage");
             return;
         }
         LOG.trace("System tray is supported: allow hiding primary stage");
         Platform.setImplicitExit(false);
         primaryStage.setOnCloseRequest(event -> {
-            LOG.debug("Hiding primary stage");
+            LOG.trace("Hiding primary stage");
             event.consume();
             primaryStage.hide();
         });

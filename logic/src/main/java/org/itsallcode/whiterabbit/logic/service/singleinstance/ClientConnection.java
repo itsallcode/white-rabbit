@@ -29,7 +29,7 @@ class ClientConnection implements AutoCloseable
     {
         try
         {
-            LOG.info("Creating client connection to server {}", address);
+            LOG.trace("Creating client connection to server {}", address);
             final Socket socket = new Socket(address, port);
             return new ClientConnection(socket);
         }
@@ -45,7 +45,7 @@ class ClientConnection implements AutoCloseable
         {
             throw new IllegalArgumentException("Message '" + message + "' must not contain \\n");
         }
-        LOG.debug("Sending message '{}' to {}", message, clientSocket);
+        LOG.trace("Sending message '{}' to {}", message, clientSocket);
         try
         {
             final OutputStream output = clientSocket.getOutputStream();
@@ -69,11 +69,11 @@ class ClientConnection implements AutoCloseable
     {
         try
         {
-            LOG.debug("Reading response...");
+            LOG.trace("Reading response...");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             final String response = reader.readLine();
-            LOG.debug("Read response '{}'", response);
+            LOG.trace("Read response '{}'", response);
             return response;
         }
         catch (final IOException e)
@@ -85,7 +85,7 @@ class ClientConnection implements AutoCloseable
     @Override
     public void close()
     {
-        LOG.info("Closing client socket {}", clientSocket);
+        LOG.trace("Closing client socket {}", clientSocket);
         try
         {
             clientSocket.close();

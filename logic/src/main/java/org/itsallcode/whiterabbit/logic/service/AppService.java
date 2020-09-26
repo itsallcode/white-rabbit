@@ -76,7 +76,7 @@ public class AppService implements Closeable
 
     public static AppService create(final Config config, Clock clock, ScheduledExecutorService scheduledExecutor)
     {
-        final SingleInstanceService singleInstanceService = new SingleInstanceService();
+        final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
         final ProjectService projectService = new ProjectService(config);
         final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()),
                 new ContractTermsService(config), projectService);
