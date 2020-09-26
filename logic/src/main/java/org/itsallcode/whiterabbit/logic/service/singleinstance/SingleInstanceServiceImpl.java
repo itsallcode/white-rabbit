@@ -43,7 +43,7 @@ class SingleInstanceServiceImpl implements SingleInstanceService
             final SingleInstanceServer server = new SingleInstanceServer(serverSocket.get(), callback);
             server.start();
 
-            LOG.info("Opened server socket to {}", serverSocket.get().getLocalSocketAddress());
+            LOG.trace("Opened server socket to {}", serverSocket.get().getLocalSocketAddress());
             return RegistrationResultImpl.of(server);
         }
         catch (final IOException e)
@@ -58,12 +58,12 @@ class SingleInstanceServiceImpl implements SingleInstanceService
         try
         {
             final ServerSocket serverSocket = new ServerSocket(port, 0, address);
-            LOG.info("Opened server socket {}", serverSocket);
+            LOG.trace("Opened server socket {}", serverSocket);
             return Optional.of(serverSocket);
         }
         catch (final BindException e)
         {
-            LOG.debug("Another instance is already running on address {}, port {}: '{}'", address, port,
+            LOG.trace("Another instance is already running on address {}, port {}: '{}'", address, port,
                     e.getMessage());
             LOG.trace("Root cause", e);
             return Optional.empty();
