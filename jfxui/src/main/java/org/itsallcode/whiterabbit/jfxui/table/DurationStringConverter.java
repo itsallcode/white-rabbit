@@ -1,7 +1,9 @@
 package org.itsallcode.whiterabbit.jfxui.table;
 
 import java.time.Duration;
-import java.time.LocalTime;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
@@ -9,6 +11,7 @@ import javafx.util.StringConverter;
 
 public class DurationStringConverter extends StringConverter<Duration>
 {
+    private static final Pattern DURATION_PATTERN = Pattern.compile("(?:(?<hours>\\d+):)?(?<minutes>\\d+)");
     private final FormatterService formatter;
 
     public DurationStringConverter(FormatterService formatter)
@@ -25,12 +28,18 @@ public class DurationStringConverter extends StringConverter<Duration>
     @Override
     public Duration fromString(String string)
     {
-        if (string.isBlank() || string.trim().equals("0"))
+        if (string.trim().isBlank())
         {
             return Duration.ZERO;
         }
-        final LocalTime parsed = LocalTime.parse(string);
+        final Matcher matcher = DURATION_PATTERN.matcher(string.trim());
+        if (!matcher.matches())
+        {
+            return null;
+        }
 
-        return Duration.ofHours(parsed.getHour()).plusMinutes(parsed.getMinute());
+        final int hours = Optional.ofNullable(matcher.group("hours")).map(Integer::parseInt).orElse(0);
+        final int minutes = Integer.parseInt(matcher.group("minutes"));
+        return Duration.ofHours(hours).plusMinutes(minutes);
     }
 }
