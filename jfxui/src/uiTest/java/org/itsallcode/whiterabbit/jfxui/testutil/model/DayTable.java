@@ -49,7 +49,7 @@ public class DayTable
     public void typeBegin(int row, String value)
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
-        robot.doubleClickOn(tableCell).write(value).type(KeyCode.ENTER);
+        robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
     }
 
     public LocalTime getEnd(int row)
@@ -67,7 +67,7 @@ public class DayTable
     public void typeInterruption(int row, String value)
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
-        robot.doubleClickOn(tableCell).write(value).type(KeyCode.ENTER);
+        robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
     }
 
     public void selectDayType(int row, DayType type)

@@ -48,7 +48,7 @@ public class TimeUtil
                 .thenAnswer(invocation -> {
                     final Long delayMillis = invocation.getArgument(1, Long.class);
                     final Runnable runnable = invocation.getArgument(0, Runnable.class);
-                    LOG.debug("Mock scheduler called: {} -> {}", Duration.ofMillis(delayMillis), runnable);
+                    LOG.trace("Mock scheduler called: {} -> {}", Duration.ofMillis(delayMillis), runnable);
                     return scheduledFutureMock;
                 });
 
@@ -114,8 +114,8 @@ public class TimeUtil
         verify(this.executorServiceMock, times(2)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
         this.updateEverySecondRunnable = arg.getAllValues().get(0);
         this.updateEveryMinuteRunnable = arg.getAllValues().get(1);
-        LOG.debug("Found callback for seconds: {}", updateEverySecondRunnable);
-        LOG.debug("Found callback for minutes: {}", updateEveryMinuteRunnable);
+        LOG.trace("Found callback for seconds: {}", updateEverySecondRunnable);
+        LOG.trace("Found callback for minutes: {}", updateEveryMinuteRunnable);
     }
 
     public Clock clock()

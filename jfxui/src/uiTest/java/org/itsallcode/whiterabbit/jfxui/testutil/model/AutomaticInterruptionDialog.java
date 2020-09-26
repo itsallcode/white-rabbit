@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 import java.time.Duration;
 import java.time.LocalTime;
 
-import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
@@ -25,7 +24,6 @@ public class AutomaticInterruptionDialog
     public void assertLabel(LocalTime startTime, Duration interruption)
     {
         Assertions.assertThat(window).isShowing();
-        UiDebugTool.printNode(window.getScene().getRoot());
         final Labeled label = robot.from(window.getScene().getRoot()).lookup(".label").queryLabeled();
         Assertions.assertThat(label)
                 .hasText("An interruption of " + interruption + " was detected beginning at " + startTime + ".");

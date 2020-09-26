@@ -23,15 +23,15 @@ public class SwingUtil
     {
         if (SwingUtilities.isEventDispatchThread())
         {
-            LOG.debug("Already on Fx thread: run directly");
+            LOG.trace("Already on Fx thread: run directly");
             return supplier.get();
         }
 
-        LOG.debug("Not running on Swing thread: schedule for execution...");
+        LOG.trace("Not running on Swing thread: schedule for execution...");
         final Future<T> future = scheduleOnSwingThread(supplier);
-        LOG.debug("Waiting for result from Swing thread...");
+        LOG.trace("Waiting for result from Swing thread...");
         final T result = waitForResult(future);
-        LOG.debug("Got result from Swing thread: {}", result);
+        LOG.trace("Got result from Swing thread: {}", result);
         return result;
     }
 
@@ -39,7 +39,7 @@ public class SwingUtil
     {
         final CompletableFuture<T> future = new CompletableFuture<>();
         SwingUtilities.invokeLater(() -> {
-            LOG.debug("Running on Fx thread: run now...");
+            LOG.trace("Running on Fx thread: run now...");
             future.complete(supplier.get());
         });
         return future;
