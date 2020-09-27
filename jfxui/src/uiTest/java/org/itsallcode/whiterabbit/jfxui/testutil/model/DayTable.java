@@ -46,6 +46,12 @@ public class DayTable
         return (LocalTime) tableCell.getItem();
     }
 
+    public String getBeginText(int row)
+    {
+        final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
+        return tableCell.getText();
+    }
+
     public void typeBegin(int row, String value)
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
@@ -62,6 +68,12 @@ public class DayTable
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
         return (Duration) tableCell.getItem();
+    }
+
+    public String getInterruptionText(int row)
+    {
+        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
+        return tableCell.getText();
     }
 
     public void typeInterruption(int row, String value)

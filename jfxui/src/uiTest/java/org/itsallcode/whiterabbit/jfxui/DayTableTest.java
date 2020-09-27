@@ -174,6 +174,39 @@ class DayTableTest extends JavaFxAppUiTestBase
         assertThat(dayTable.getInterruption(row)).isEqualTo(expectedDuration);
     }
 
+    @Test
+    void beginFormatted()
+    {
+        time().tickMinute();
+        TestUtil.sleepShort();
+
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
+        final DayTable dayTable = app().dayTable();
+        assertThat(dayTable.getBeginText(currentDayRowIndex)).isEqualTo("11:16");
+    }
+
+    @Test
+    void zeroInterruptionFormatted()
+    {
+        time().tickMinute();
+        TestUtil.sleepShort();
+
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
+        final DayTable dayTable = app().dayTable();
+        assertThat(dayTable.getInterruptionText(currentDayRowIndex)).isEqualTo("00:00");
+    }
+
+    @Test
+    void nonZeroInterruptionFormatted()
+    {
+        final int row = time().getCurrentDayRowIndex() + 1;
+        final DayTable dayTable = app().dayTable();
+
+        dayTable.typeInterruption(row, "1:02");
+
+        assertThat(dayTable.getInterruptionText(row)).isEqualTo("01:02");
+    }
+
     @Override
     @Start
     void start(Stage stage)
