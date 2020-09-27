@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionDetectedDecision;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class WorkingTimeService
@@ -90,17 +91,28 @@ public class WorkingTimeService
         final LocalDate today = clock.getCurrentDate();
         if (workStoppedForToday(today))
         {
-            LOG.info("Continue work for today");
+            LOG.debug("Continue work for today");
             this.workStoppedForToday.set(null);
             appServiceCallback.workStoppedForToday(false);
             updateNow();
         }
         else
         {
-            LOG.info("Stopping work for today {}", today);
-            this.workStoppedForToday.set(today);
-            appServiceCallback.workStoppedForToday(true);
+            stopWorkForToday();
         }
+    }
+
+    private void stopWorkForToday()
+    {
+        final LocalDate today = clock.getCurrentDate();
+        if (workStoppedForToday(today))
+        {
+            LOG.debug("Work already stopped for today {}: ignore", today);
+            return;
+        }
+        LOG.debug("Stopping work for today {}", today);
+        this.workStoppedForToday.set(today);
+        appServiceCallback.workStoppedForToday(true);
     }
 
     private boolean shouldUpdateBegin(final DayRecord day, final LocalTime now)
@@ -123,15 +135,33 @@ public class WorkingTimeService
         {
             return true;
         }
-        if (!isInterruptionActive())
+        if (isInterruptionActive())
         {
-            final Duration interruptionToAdd = Duration.between(day.getEnd(), now);
-            if (appServiceCallback.shouldAddAutomaticInterruption(day.getEnd(), interruptionToAdd))
-            {
-                addToInterruption(day, interruptionToAdd);
-            }
+            return true;
         }
-        return true;
+        return automaticInterruptionDetected(day, now);
+    }
+
+    private boolean automaticInterruptionDetected(final DayRecord day, final LocalTime now)
+    {
+        final Duration interruptionToAdd = Duration.between(day.getEnd(), now);
+        LOG.debug("Interruption of {} detected", interruptionToAdd);
+        final InterruptionDetectedDecision decision = appServiceCallback.automaticInterruptionDetected(day.getEnd(),
+                interruptionToAdd);
+        switch (decision)
+        {
+        case ADD_INTERRUPTION:
+            addToInterruption(day, interruptionToAdd);
+            return true;
+        case SKIP_INTERRUPTION:
+            // ignore
+            return true;
+        case STOP_WORKING_FOR_TODAY:
+            stopWorkForToday();
+            return false;
+        default:
+            throw new IllegalStateException("Unknown enum value " + decision);
+        }
     }
 
     private boolean isInterruptionActive()

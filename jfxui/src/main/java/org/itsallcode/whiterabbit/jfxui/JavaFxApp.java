@@ -506,13 +506,15 @@ public class JavaFxApp extends Application
     private final class AppServiceCallbackImplementation implements AppServiceCallback
     {
         @Override
-        public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
+        public InterruptionDetectedDecision automaticInterruptionDetected(LocalTime startOfInterruption,
+                Duration interruption)
         {
             return JavaFxUtil
                     .runOnFxApplicationThread(() -> showAutomaticInterruptionDialog(startOfInterruption, interruption));
         }
 
-        private Boolean showAutomaticInterruptionDialog(LocalTime startOfInterruption, Duration interruption)
+        private InterruptionDetectedDecision showAutomaticInterruptionDialog(LocalTime startOfInterruption,
+                Duration interruption)
         {
             LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
                     interruption);
@@ -528,20 +530,28 @@ public class JavaFxApp extends Application
             alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
 
-            LOG.info("User clicked button {}", selectedButton);
+            final InterruptionDetectedDecision decision = evaluateButton(selectedButton);
+            LOG.info("User clicked button {} -> {}", selectedButton, decision);
+            return decision;
+        }
 
+        private InterruptionDetectedDecision evaluateButton(final Optional<ButtonType> selectedButton)
+        {
             if (isButton(selectedButton, ButtonData.FINISH) && !stoppedWorkingForToday.get())
             {
-                appService.toggleStopWorkForToday();
-                return false;
+                return InterruptionDetectedDecision.STOP_WORKING_FOR_TODAY;
             }
-            return isButton(selectedButton, ButtonData.YES);
+            if (isButton(selectedButton, ButtonData.YES))
+            {
+                return InterruptionDetectedDecision.ADD_INTERRUPTION;
+            }
+            return InterruptionDetectedDecision.SKIP_INTERRUPTION;
         }
 
         private boolean isButton(Optional<ButtonType> button, ButtonData data)
         {
-            return button.map(ButtonType::getButtonData) //
-                    .filter(d -> d == data) //
+            return button.map(ButtonType::getButtonData)
+                    .filter(d -> d == data)
                     .isPresent();
         }
 

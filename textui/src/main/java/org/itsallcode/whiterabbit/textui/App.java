@@ -77,9 +77,10 @@ public class App
         return new AppServiceCallback()
         {
             @Override
-            public boolean shouldAddAutomaticInterruption(LocalTime startOfInterruption, Duration interruption)
+            public InterruptionDetectedDecision automaticInterruptionDetected(LocalTime startOfInterruption,
+                    Duration interruption)
             {
-                return true;
+                return InterruptionDetectedDecision.ADD_INTERRUPTION;
             }
 
             @Override
