@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +19,9 @@ public class Interruption
 
     private Interruption(ClockService clock, Instant start, InterruptionCallback callback)
     {
-        this.clock = clock;
-        this.start = start;
-        this.callback = callback;
+        this.clock = Objects.requireNonNull(clock, "clock");
+        this.start = Objects.requireNonNull(start, "start");
+        this.callback = Objects.requireNonNull(callback, "callback");
         this.duration = null;
     }
 

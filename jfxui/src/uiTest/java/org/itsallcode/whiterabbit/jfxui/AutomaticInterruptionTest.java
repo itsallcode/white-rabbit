@@ -13,7 +13,6 @@ import org.itsallcode.whiterabbit.jfxui.testutil.model.AutomaticInterruptionDial
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -66,7 +65,6 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
         dayTable.assertBeginAndEnd(currentDayRowIndex, interruptionStart, interruptionEnd);
     }
 
-    @Disabled("Not implemented yet, see https://github.com/itsallcode/white-rabbit/issues/15")
     @Test
     void stopWorkingForTodayButtonDoesNotAddsInterruption()
     {
@@ -76,19 +74,6 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
         final DayTable dayTable = app().dayTable();
         dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
         dayTable.assertBeginAndEnd(currentDayRowIndex, interruptionStart, interruptionStart);
-    }
-
-    // Delete this when https://github.com/itsallcode/white-rabbit/issues/15 is
-    // fixed.
-    @Test
-    void stopWorkingForTodayButtonWronglyUpdatesEnd()
-    {
-        simulateInterruption(dialog -> dialog.clickStopWorkForToday());
-
-        final int currentDayRowIndex = time().getCurrentDayRowIndex();
-        final DayTable dayTable = app().dayTable();
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
-        dayTable.assertBeginAndEnd(currentDayRowIndex, interruptionStart, interruptionEnd);
     }
 
     private void simulateInterruption(Consumer<AutomaticInterruptionDialog> closeDialogAction)

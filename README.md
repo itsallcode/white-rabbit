@@ -11,6 +11,7 @@ A time recording tool
 
 ## Recent changes
 
+* [#15](https://github.com/itsallcode/white-rabbit/issues/15): Freeze previous end time on "stop working" in pop-up
 * [#29](https://github.com/itsallcode/white-rabbit/issues/29): Relaxed parsing of time and duration
 * [#27](https://github.com/itsallcode/white-rabbit/issues/27): Delete begin, end and interruption when changing day type to "not working"
 * [#26](https://github.com/itsallcode/white-rabbit/issues/26): Omit "activities" from json when list is empty

@@ -2,7 +2,9 @@ package org.itsallcode.whiterabbit.textui;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -53,7 +55,7 @@ public class App
             otherInstance.get().sendMessage("bringToFront");
             throw new IllegalStateException("Another instance is already running");
         }
-        appService.setUpdateListener(AppServiceCallback.createOnlyUpdate(this::dayRecordUpdated));
+        appService.setUpdateListener(createOnlyUpdate());
         appService.start();
 
         while (running)
@@ -67,6 +69,38 @@ public class App
             final char commandChar = Character.toLowerCase(c);
             executeCommand(commandChar);
         }
+    }
+
+    private AppServiceCallback createOnlyUpdate()
+    {
+        final Logger log = LogManager.getLogger(AppServiceCallback.class);
+        return new AppServiceCallback()
+        {
+            @Override
+            public InterruptionDetectedDecision automaticInterruptionDetected(LocalTime startOfInterruption,
+                    Duration interruption)
+            {
+                return InterruptionDetectedDecision.ADD_INTERRUPTION;
+            }
+
+            @Override
+            public void recordUpdated(DayRecord record)
+            {
+                dayRecordUpdated(record);
+            }
+
+            @Override
+            public void exceptionOccurred(Exception e)
+            {
+                log.error("An error occurred: {}", e.getMessage(), e);
+            }
+
+            @Override
+            public void workStoppedForToday(boolean stopWorking)
+            {
+                // Ignore
+            }
+        };
     }
 
     private void messageReceived(String message, ClientConnection client)

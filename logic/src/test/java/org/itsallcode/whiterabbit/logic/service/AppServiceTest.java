@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -13,13 +15,17 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionDetectedDecision;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
@@ -70,8 +76,10 @@ class AppServiceTest
     void setUp()
     {
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
-        appService = new AppService(new WorkingTimeService(storageMock, clockMock, appServiceCallback), storageMock,
-                formatterServiceMock, clockMock, schedulingServiceMock, singleInstanceService, appServiceCallback,
+        final WorkingTimeService workingTimeService = new WorkingTimeService(storageMock, clockMock,
+                appServiceCallback);
+        appService = new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
+                schedulingServiceMock, singleInstanceService, appServiceCallback,
                 vacationServiceMock, activityService, projectServiceMock);
         appService.setUpdateListener(updateListenerMock);
     }
@@ -158,6 +166,9 @@ class AppServiceTest
         day.setBegin(begin);
         day.setEnd(begin);
 
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(2)))
+                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
+
         updateNow(now, day);
 
         assertThat(day.getBegin()).isEqualTo(begin);
@@ -193,6 +204,9 @@ class AppServiceTest
         day.setBegin(begin);
         day.setEnd(begin);
 
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(3)))
+                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
+
         updateNow(now, day);
 
         assertThat(day.getBegin()).isEqualTo(begin);
@@ -209,10 +223,12 @@ class AppServiceTest
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
 
-        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1))).thenReturn(true);
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofHours(1)))
+                .thenReturn(InterruptionDetectedDecision.ADD_INTERRUPTION);
 
         updateNow(now, day);
 
+        assertThat(day.getEnd()).isEqualTo(now);
         assertThat(day.getInterruption()).isEqualTo(Duration.ofHours(1));
     }
 
@@ -226,10 +242,32 @@ class AppServiceTest
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
 
-        when(updateListenerMock.shouldAddAutomaticInterruption(day.getEnd(), Duration.ofHours(1))).thenReturn(false);
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofHours(1)))
+                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
 
         updateNow(now, day);
 
+        assertThat(day.getEnd()).isEqualTo(now);
+        assertThat(day.getInterruption()).isNull();
+    }
+
+    @Test
+    void testUpdateNowDoesNotAddInterruptionWhenCallbackStopWorkForToday()
+    {
+        final LocalTime beforeInterruption = LocalTime.of(13, 0);
+        final LocalTime now = beforeInterruption.plusHours(1);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(beforeInterruption);
+
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofHours(1)))
+                .thenReturn(InterruptionDetectedDecision.STOP_WORKING_FOR_TODAY);
+
+        updateNow(now, day);
+
+        assertThat(day.getEnd()).isEqualTo(beforeInterruption);
         assertThat(day.getInterruption()).isNull();
     }
 
@@ -277,10 +315,61 @@ class AppServiceTest
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
 
+        final Instant instant = LocalDateTime.of(today, now).toInstant(ZoneOffset.ofHours(0));
+        when(clockMock.instant()).thenReturn(instant);
+
         appService.startInterruption();
 
         updateNow(now, day);
 
+        assertThat(day.getInterruption()).isNull();
+    }
+
+    @Test
+    void addInterruptionCallback()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(LocalTime.of(13, 0));
+
+        final Instant instant = LocalDateTime.of(today, now).toInstant(ZoneOffset.ofHours(0));
+        when(clockMock.instant()).thenReturn(instant);
+
+        final Interruption interruption = appService.startInterruption();
+
+        updateNow(now, day);
+
+        assertThat(day.getInterruption()).isNull();
+
+        when(clockMock.instant()).thenReturn(instant.plus(3, ChronoUnit.MINUTES));
+        interruption.end();
+        assertThat(day.getInterruption()).isEqualTo(Duration.ofMinutes(3));
+    }
+
+    @Test
+    void cancelInterruptionCallback()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(LocalTime.of(13, 0));
+
+        final Instant instant = LocalDateTime.of(today, now).toInstant(ZoneOffset.ofHours(0));
+        when(clockMock.instant()).thenReturn(instant);
+
+        final Interruption interruption = appService.startInterruption();
+
+        updateNow(now, day);
+
+        assertThat(day.getInterruption()).isNull();
+
+        when(clockMock.instant()).thenReturn(instant.plus(3, ChronoUnit.MINUTES));
+        interruption.cancel();
         assertThat(day.getInterruption()).isNull();
     }
 
@@ -324,6 +413,87 @@ class AppServiceTest
         appService.registerSingleInstance(callbackMock);
         appService.start();
         verify(schedulingServiceMock).schedule(any(), ArgumentMatchers.any(Runnable.class));
+    }
+
+    @Test
+    void toggleStopWorkForTodayCurrentlyNotStopped()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(now);
+        updateNow(now, day);
+
+        appService.toggleStopWorkForToday();
+
+        verify(updateListenerMock).workStoppedForToday(true);
+    }
+
+    @Test
+    void toggleStopWorkForTodayAlreadyStopped()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(now);
+        updateNow(now, day);
+
+        appService.toggleStopWorkForToday();
+        verify(updateListenerMock).workStoppedForToday(true);
+
+        appService.toggleStopWorkForToday();
+        verify(updateListenerMock).workStoppedForToday(false);
+    }
+
+    @Test
+    void endTimeNotUpdatedWhenWorkStoppedForToday()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(now);
+        updateNow(now, day);
+
+        appService.toggleStopWorkForToday();
+
+        assertThat(day.getEnd()).isEqualTo(now);
+
+        lenient().when(clockMock.getCurrentTime()).thenReturn(now.plusMinutes(1));
+
+        appService.updateNow();
+        assertThat(day.getEnd()).isEqualTo(now);
+
+        verify(clockMock, times(1)).getCurrentTime();
+    }
+
+    @Test
+    void endTimeNotUpdatedWhenWorkNotStoppedForToday()
+    {
+        final LocalTime now = LocalTime.of(14, 0);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final JsonDay day = new JsonDay();
+        day.setDate(today);
+        day.setBegin(LocalTime.of(8, 0));
+        day.setEnd(now);
+        updateNow(now, day);
+
+        appService.toggleStopWorkForToday();
+        appService.toggleStopWorkForToday();
+
+        assertThat(day.getEnd()).isEqualTo(now);
+
+        when(clockMock.getCurrentTime()).thenReturn(now.plusMinutes(1));
+
+        appService.updateNow();
+        assertThat(day.getEnd()).isEqualTo(now.plusMinutes(1));
+
+        verify(clockMock, times(3)).getCurrentTime();
     }
 
     private DayRecord updateNow(final LocalTime now, final JsonDay day)
