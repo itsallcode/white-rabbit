@@ -10,6 +10,8 @@ A time recording tool
 * [Usage](#usage)
 * [Recent changes](#changes)
 
+![Screenshot of WhiteRabbit](screenshot.png)
+
 ## <a name="features"></a>Features
 
 * Records begin, end and interruption of your working day
@@ -38,8 +40,6 @@ A time recording tool
   * Mandatory break of 45 minutes after 6 hours of working
 
 ### Java FX user interface
-
-![Screenshot of WhiteRabbit](screenshot.png)
 
 * Double click on a table cell (Type, Begin, End, Interruption and Comment) to edit it
   * Interruptions must be entered as `01:23` for 1 hour, 23 minutes
