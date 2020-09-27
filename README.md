@@ -8,18 +8,7 @@ A time recording tool
 
 * [Features](#features)
 * [Usage](#usage)
-
-## Recent changes
-
-* [#15](https://github.com/itsallcode/white-rabbit/issues/15): Freeze previous end time on "stop working" in pop-up
-* [#29](https://github.com/itsallcode/white-rabbit/issues/29): Relaxed parsing of time and duration
-* [#27](https://github.com/itsallcode/white-rabbit/issues/27): Delete begin, end and interruption when changing day type to "not working"
-* [#26](https://github.com/itsallcode/white-rabbit/issues/26): Omit "activities" from json when list is empty
-* [#10](https://github.com/itsallcode/white-rabbit/issues/10): Facelift: Improved menu. Turned buttons an drop-down into toolbar. Turned OT (thanks to [redcatbear](https://github.com/redcatbear))
-* [#6](https://github.com/itsallcode/white-rabbit/issues/6): Persist cell changes on focus loss
-* Text UI is now deprecated, please use the new Java FX UI.
-* Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
-* Supports reduced working hours / short-time work, see [configuration option `current_working_time_per_day`](#optional_config)
+* [Recent changes](#changes)
 
 ## <a name="features"></a>Features
 
@@ -49,6 +38,8 @@ A time recording tool
   * Mandatory break of 45 minutes after 6 hours of working
 
 ### Java FX user interface
+
+![Screenshot of WhiteRabbit](screenshot.png)
 
 * Double click on a table cell (Type, Begin, End, Interruption and Comment) to edit it
   * Interruptions must be entered as `01:23` for 1 hour, 23 minutes
@@ -121,6 +112,18 @@ This is generated automatically. The Java FX user interface allows you to edit i
 * Public holidays are not detected automatically. Set the day type to `HOLIDAY` manually.
 * If you change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months` in the Java FX UI.
 * When you modify config file `time.properties` you need to restart WhiteRabbit manually.
+
+## <a name="changes"></a>Recent changes
+
+* [#15](https://github.com/itsallcode/white-rabbit/issues/15): Freeze previous end time on "stop working" in pop-up
+* [#29](https://github.com/itsallcode/white-rabbit/issues/29): Relaxed parsing of time and duration
+* [#27](https://github.com/itsallcode/white-rabbit/issues/27): Delete begin, end and interruption when changing day type to "not working"
+* [#26](https://github.com/itsallcode/white-rabbit/issues/26): Omit "activities" from json when list is empty
+* [#10](https://github.com/itsallcode/white-rabbit/issues/10): Facelift: Improved menu. Turned buttons an drop-down into toolbar. Turned OT (thanks to [redcatbear](https://github.com/redcatbear))
+* [#6](https://github.com/itsallcode/white-rabbit/issues/6): Persist cell changes on focus loss
+* Text UI is now deprecated, please use the new Java FX UI.
+* Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
+* Supports reduced working hours / short-time work, see [configuration option `current_working_time_per_day`](#optional_config)
 
 ## <a name="usage"></a>Usage
 
