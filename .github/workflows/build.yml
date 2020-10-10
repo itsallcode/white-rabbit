@@ -49,4 +49,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: jfxui
-        path: jfxui/build/libs/*
+        path: jfxui/build/libs/white-rabbit-fx-*.jar
