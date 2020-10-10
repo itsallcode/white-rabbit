@@ -139,6 +139,7 @@ public class JavaFxApp extends Application
         final Config config = Config.read(workingDirProvider);
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
+        LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
         final Optional<OtherInstance> otherInstance = appService
                 .registerSingleInstance(this::messageFromOtherInstanceReceived);
         if (otherInstance.isPresent())
@@ -318,7 +319,7 @@ public class JavaFxApp extends Application
             }
         });
 
-        primaryStage.setTitle("White Rabbit Time Recording");
+        primaryStage.setTitle("White Rabbit Time Recording " + appService.getAppProperties().getVersion());
         try (InputStream resourceStream = JavaFxApp.class.getResourceAsStream("/icon.png"))
         {
             primaryStage.getIcons().add(new Image(resourceStream));
