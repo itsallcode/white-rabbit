@@ -8,12 +8,18 @@ ext {
     mockitoVersion = '3.4.6'
 }
 
-version = '0.0.1'
+def getProjectVersion() {
+    if(project.hasProperty("releaseVersion")) {
+        return project.property("releaseVersion")
+    }
+    return "dev-SNAPSHOT"
+}
 
 allprojects {
     apply plugin: "java"
     apply plugin: "jacoco"
 
+    version = getProjectVersion()
     sourceCompatibility = 11
     targetCompatibility = 11
 
