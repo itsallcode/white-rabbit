@@ -1,5 +1,7 @@
 plugins {
+    id 'eclipse'
     id "org.sonarqube" version "3.0"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "0.9"
 }
 
 ext {
@@ -15,6 +17,15 @@ def getProjectVersion() {
     return "dev-SNAPSHOT"
 }
 
+def getPlatform() {
+    if(project.hasProperty("platform")) {
+        return project.property("platform").toString()
+    }
+
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    return os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
+}
+
 allprojects {
     apply plugin: "java"
     apply plugin: "jacoco"
@@ -22,6 +33,10 @@ allprojects {
     version = getProjectVersion()
     sourceCompatibility = 11
     targetCompatibility = 11
+
+    ext {
+        platform = getPlatform()
+    }
 
     repositories {
         jcenter()

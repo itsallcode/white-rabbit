@@ -1,6 +1,35 @@
+
+
 dependencies {
     implementation "javax.json.bind:javax.json.bind-api:1.0"
     runtimeOnly "org.eclipse:yasson:1.0.8"
     
     testImplementation "nl.jqno.equalsverifier:equalsverifier:3.4.2"
+}
+
+ext.generatedResourcesFolder = file("$buildDir/generated-resources")
+
+sourceSets {
+    main {
+        resources.srcDirs generatedResourcesFolder
+    }
+}
+
+task createAppProperties(type: WriteProperties) {
+    comment = "White Rabbit app properties"
+    outputFile = "$generatedResourcesFolder/white-rabbit.properties"
+    property 'version', project.version
+    property 'platform', platform
+}
+
+tasks['processResources'].dependsOn createAppProperties
+
+eclipse {
+    synchronizationTasks createAppProperties
+}
+
+idea.project.settings {
+    taskTriggers {
+        afterSync createAppProperties
+    }
 }

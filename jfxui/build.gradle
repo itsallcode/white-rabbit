@@ -2,17 +2,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.0.0'
 }
 
-def getPlatform() {
-    if(project.hasProperty("platform")) {
-        return project.property("platform").toString()
-    }
-
-    def os = org.gradle.internal.os.OperatingSystem.current()
-    return os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
-}
-
 ext {
-    platform = getPlatform()
     javaFxVersion = '11.0.2'
 }
 
