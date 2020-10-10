@@ -46,7 +46,7 @@ jobs:
         report_paths: '**/build/test-results/*/TEST-*.xml'
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Archive jfxui binary
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: jfxui
         path: jfxui/build/libs/*
