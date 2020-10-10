@@ -30,6 +30,7 @@ import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
@@ -271,6 +272,28 @@ public class JavaFxApp extends Application
     {
         final VacationReport vacationReport = appService.getVacationReport();
         new VacationReportViewer(vacationReport).show();
+    }
+
+    public void showAboutDialog()
+    {
+        final AppProperties appProperties = appService.getAppProperties();
+        final Alert aboutDialog = new Alert(AlertType.INFORMATION);
+        aboutDialog.initModality(Modality.NONE);
+        aboutDialog.initOwner(primaryStage);
+        aboutDialog.setTitle("About White Rabbit");
+        aboutDialog.setHeaderText("About White Rabbit:");
+        aboutDialog.setContentText(
+                "Version: " + appProperties.getVersion() + "\nPlatform: " + appProperties.getPlatform());
+        final ButtonType close = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
+        final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
+        aboutDialog.getButtonTypes().setAll(close, homepage);
+        final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
+        selectedButton.filter(response -> response == homepage).ifPresent(this::openHomepage);
+    }
+
+    private void openHomepage(ButtonType ignored)
+    {
+        getHostServices().showDocument("https://github.com/itsallcode/white-rabbit/blob/develop/README.md");
     }
 
     private void createUi()

@@ -44,4 +44,12 @@ public class ApplicationHelper
         Assertions.assertThat(dialogWindow).isShowing();
         return new AutomaticInterruptionDialog(robot, dialogWindow);
     }
+
+    public AboutDialogWindow openAboutDialog()
+    {
+        robot.clickOn("#menu_help").clickOn("#menuitem_about");
+        final Window dialogWindow = robot.window("About White Rabbit");
+        Assertions.assertThat(dialogWindow).isShowing();
+        return new AboutDialogWindow(robot, dialogWindow);
+    }
 }
