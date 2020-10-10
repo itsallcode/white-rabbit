@@ -31,18 +31,29 @@ public class MenuBarBuilder
     {
         LOG.info("Creating menu bar");
         final MenuBar menuBar = new MenuBar();
-        final Menu menuFile = new Menu("_File");
-        final Menu menuCalculations = new Menu("_Working hours");
-        final Menu menuReports = new Menu("_Reports");
-        menuFile.getItems().addAll(menuItem("_Quit", app::exitApp));
+        final Menu menuFile = menu("_File", "menu_file");
+        final Menu menuCalculations = menu("_Working hours", "menu_working_hours");
+        final Menu menuReports = menu("_Reports", "menu_reports");
+        final Menu menuHelp = menu("_Help", "menu_help");
+        menuFile.getItems().addAll(menuItem("_Quit", "menuitem_quit", app::exitApp));
         menuCalculations.getItems().addAll(
-                menuItem("_Update", appService::updateNow),
-                menuItem("Update overtime for _all months", appService::updatePreviousMonthOvertimeField),
+                menuItem("_Update", "menuitem_update", appService::updateNow),
+                menuItem("Update overtime for _all months", "menuitem_overtime",
+                        appService::updatePreviousMonthOvertimeField),
                 new SeparatorMenuItem(),
                 createStopWorkingForTodayMenuItem());
-        menuReports.getItems().addAll(menuItem("_Vacation report", app::showVacationReport));
-        menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports);
+        menuReports.getItems()
+                .addAll(menuItem("_Vacation report", "menuitem_vacation_report", app::showVacationReport));
+        menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", app::showAboutDialog));
+        menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuHelp);
         return menuBar;
+    }
+
+    private Menu menu(String label, String id)
+    {
+        final Menu menu = new Menu(label);
+        menu.setId(id);
+        return menu;
     }
 
     private MenuItem createStopWorkingForTodayMenuItem()
@@ -56,14 +67,15 @@ public class MenuBarBuilder
         return menuItem;
     }
 
-    private MenuItem menuItem(String label, Runnable action)
+    private MenuItem menuItem(String label, String id, Runnable action)
     {
-        return menuItem(label, event -> action.run());
+        return menuItem(label, id, event -> action.run());
     }
 
-    private MenuItem menuItem(String label, EventHandler<ActionEvent> action)
+    private MenuItem menuItem(String label, String id, EventHandler<ActionEvent> action)
     {
         final MenuItem menuItem = new MenuItem(label);
+        menuItem.setId(id);
         menuItem.setOnAction(action);
         return menuItem;
     }

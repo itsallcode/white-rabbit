@@ -206,7 +206,15 @@ java -jar jfxui/build/libs/jfxui.jar
 
 ```bash
 # Headless (default)
-./gradlew  check
+./gradlew check
 # Not Headless (don't move mouse while running)
-./gradlew  check -PuiTestsHeadless=false
+./gradlew check -PuiTestsHeadless=false
 ```
+
+#### Building a release
+
+```bash
+./gradlew build -Pplatform=<win|mac|linux> -PreleaseVersion=<version>
+```
+
+The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>-<platform>.jar`

@@ -2,9 +2,14 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.0.0'
 }
 
+ext {
+    javaFxVersion = '11.0.2'
+}
+
 shadowJar {
-    archiveBaseName.set('jfxui')
-    archiveVersion.set(null)
+    archiveBaseName.set('white-rabbit-fx')
+    archiveClassifier.set(platform)
+    archiveVersion.set(project.version)
 }
 
 def mainClass = 'org.itsallcode.whiterabbit.jfxui.App'
@@ -21,12 +26,6 @@ task runJfxui(type: JavaExec, dependsOn: shadowJar) {
     classpath = shadowJar.outputs.files
     main = mainClass
     workingDir = rootProject.projectDir
-}
-
-ext {
-    def os = org.gradle.internal.os.OperatingSystem.current()
-    ext.platform = os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
-    ext.javaFxVersion = '11.0.2'
 }
 
 sourceSets {
