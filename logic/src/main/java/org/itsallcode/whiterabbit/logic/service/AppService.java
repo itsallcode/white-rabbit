@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
@@ -48,6 +49,7 @@ public class AppService implements Closeable
     private final VacationReportGenerator vacationService;
     private final ActivityService activityService;
     private final ProjectService projectService;
+    private final AppPropertiesService appPropertiesService;
 
     private RegistrationResult singleInstanceRegistration;
 
@@ -55,7 +57,7 @@ public class AppService implements Closeable
     AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService,
-            ActivityService activityService, ProjectService projectService)
+            ActivityService activityService, ProjectService projectService, AppPropertiesService appPropertiesService)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -67,6 +69,7 @@ public class AppService implements Closeable
         this.vacationService = vacationService;
         this.activityService = activityService;
         this.projectService = projectService;
+        this.appPropertiesService = appPropertiesService;
     }
 
     public static AppService create(final Config config)
@@ -88,7 +91,8 @@ public class AppService implements Closeable
         final ActivityService activityService = new ActivityService(storage, appServiceCallback);
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
-                singleInstanceService, appServiceCallback, vacationService, activityService, projectService);
+                singleInstanceService, appServiceCallback, vacationService, activityService, projectService,
+                new AppPropertiesService());
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -224,6 +228,11 @@ public class AppService implements Closeable
     public FormatterService formatter()
     {
         return formatterService;
+    }
+
+    public AppProperties getAppProperties()
+    {
+        return appPropertiesService.load();
     }
 
     @Override

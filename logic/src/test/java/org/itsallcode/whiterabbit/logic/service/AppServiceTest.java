@@ -25,6 +25,7 @@ import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionDetectedDecision;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
@@ -69,6 +70,8 @@ class AppServiceTest
     private ActivityService activityService;
     @Mock
     private ProjectService projectServiceMock;
+    @Mock
+    private AppPropertiesService appPropertiesServiceMock;
 
     private AppService appService;
 
@@ -80,7 +83,7 @@ class AppServiceTest
                 appServiceCallback);
         appService = new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock, singleInstanceService, appServiceCallback,
-                vacationServiceMock, activityService, projectServiceMock);
+                vacationServiceMock, activityService, projectServiceMock, appPropertiesServiceMock);
         appService.setUpdateListener(updateListenerMock);
     }
 
@@ -494,6 +497,15 @@ class AppServiceTest
         assertThat(day.getEnd()).isEqualTo(now.plusMinutes(1));
 
         verify(clockMock, times(3)).getCurrentTime();
+    }
+
+    @Test
+    void loadAppProperties()
+    {
+        final AppProperties appPropertiesMock = mock(AppProperties.class);
+        when(appPropertiesServiceMock.load()).thenReturn(appPropertiesMock);
+
+        assertThat(appService.getAppProperties()).isSameAs(appPropertiesMock);
     }
 
     private DayRecord updateNow(final LocalTime now, final JsonDay day)
