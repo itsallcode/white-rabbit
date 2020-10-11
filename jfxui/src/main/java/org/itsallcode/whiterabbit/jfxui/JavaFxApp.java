@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.ProcessHandle.Info;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -137,7 +138,7 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        final Config config = new ConfigLoader(workingDirProvider).loadConfigFromDefaultLocations();
+        final Config config = loadConfig();
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
@@ -171,6 +172,15 @@ public class JavaFxApp extends Application
                 Platform.exit();
             }
         });
+    }
+
+    private Config loadConfig()
+    {
+        final ConfigLoader configLoader = new ConfigLoader(workingDirProvider);
+        return Optional.ofNullable(getParameters().getNamed().get("config"))
+                .map(Paths::get)
+                .map(configLoader::loadConfig)
+                .orElseGet(configLoader::loadConfigFromDefaultLocations);
     }
 
     private void bringWindowToFront()

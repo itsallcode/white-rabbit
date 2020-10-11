@@ -135,8 +135,9 @@ JDK 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net/).
 
 White Rabbit will search for the configuration file in the following locations:
 
-1. `time.properties` in the current working directory
-2. `$HOME/.whiterabbit.properties`
+1. The path specified via command line parameter `--config=<path>`
+2. `time.properties` in the current working directory
+3. `$HOME/.whiterabbit.properties`
 
 If the no config file is found, White Rabbit will create a default file at `$HOME/.whiterabbit.properties`, using data directory `$HOME/whiterabbit-data`.
 

@@ -37,7 +37,12 @@ public class ConfigLoader
     public Config loadConfigFromDefaultLocations()
     {
         final Path configFile = findExistingConfigFile().orElseGet(this::createDefaultConfig);
-        return ConfigFile.read(configFile);
+        return loadConfig(configFile);
+    }
+
+    public Config loadConfig(Path location)
+    {
+        return ConfigFile.read(location);
     }
 
     private Path createDefaultConfig()
