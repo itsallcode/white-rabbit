@@ -26,6 +26,7 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.ConfigLoader;
 import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -136,7 +137,7 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        final Config config = Config.read(workingDirProvider);
+        final Config config = new ConfigLoader(workingDirProvider).loadConfigFromDefaultLocations();
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
