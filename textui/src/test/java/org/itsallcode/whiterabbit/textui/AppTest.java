@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.textui;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
@@ -60,14 +58,6 @@ class AppTest
         app = new App(appServiceMock, terminalMock);
         lenient().when(appServiceMock.getClock()).thenReturn(clockMock);
         lenient().when(appServiceMock.formatter()).thenReturn(formatterServiceMock);
-    }
-
-    @Test
-    void startupFailsWhenConfigFileIsMissing()
-    {
-        final IllegalStateException exception = assertThrows(IllegalStateException.class,
-                () -> App.main(new String[0]));
-        assertThat(exception).hasMessage("Config file not found at 'time.properties'");
     }
 
     @Test

@@ -133,13 +133,21 @@ JDK 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net/).
 
 ### <a name="configuration"></a>Configuration
 
-Create file `time.properties` in the current working directory with the following content:
+White Rabbit will search for the configuration file in the following locations:
+
+1. The path specified via command line parameter `--config=<path>`
+2. `time.properties` in the current working directory
+3. `$HOME/.whiterabbit.properties`
+
+If the no config file is found, White Rabbit will create a default file at `$HOME/.whiterabbit.properties`, using data directory `$HOME/whiterabbit-data`.
+
+The config file has the following content:
 
 ```properties
 data = <path-to-data-dir> # e.g.: ../time-recording-data/
 ```
 
-Restart WhiteRabbit after changing `time.properties`.
+Restart WhiteRabbit after changing the configuration file.
 
 #### <a name="optional_config"></a>Optional configuration settings
 

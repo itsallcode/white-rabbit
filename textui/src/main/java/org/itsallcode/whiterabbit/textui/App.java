@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.textui;
 
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -11,6 +10,8 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.ConfigLoader;
+import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
@@ -41,7 +42,7 @@ public class App
 
     public static void main(String[] args)
     {
-        final Config config = Config.read(Paths.get("time.properties"));
+        final Config config = new ConfigLoader(new DefaultWorkingDirProvider()).loadConfigFromDefaultLocations();
         final AppService appService = AppService.create(config);
         final UiTerminal terminal = UiTerminal.create();
         new App(appService, terminal).run();

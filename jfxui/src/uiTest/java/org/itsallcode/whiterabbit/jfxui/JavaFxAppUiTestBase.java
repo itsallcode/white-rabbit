@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -33,6 +35,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
+import com.sun.javafx.application.ParametersImpl;
+
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
@@ -51,6 +55,7 @@ abstract class JavaFxAppUiTestBase
     private Locale locale = Locale.GERMANY;
 
     private Instant initialTime = Instant.parse("2007-12-03T10:15:30.20Z");
+    private List<String> commandLineArgs = emptyList();
 
     private ApplicationHelper applicationHelper;
     private TimeUtil timeUtil;
@@ -80,6 +85,11 @@ abstract class JavaFxAppUiTestBase
         this.initialTime = initialTime;
     }
 
+    public void setCommandLineArgs(List<String> commandLineArgs)
+    {
+        this.commandLineArgs = commandLineArgs;
+    }
+
     protected void doStart(final Stage stage, final ProjectConfig projectConfig)
     {
         LOG.info("Starting application using stage {}", stage);
@@ -89,6 +99,9 @@ abstract class JavaFxAppUiTestBase
         prepareConfiguration(projectConfig);
 
         this.javaFxApp = new JavaFxApp(() -> this.workingDir, timeUtil.clock(), timeUtil.executorService());
+
+        ParametersImpl.registerParameters(javaFxApp, new ParametersImpl(commandLineArgs));
+
         this.javaFxApp.init();
         this.javaFxApp.start(stage);
 
