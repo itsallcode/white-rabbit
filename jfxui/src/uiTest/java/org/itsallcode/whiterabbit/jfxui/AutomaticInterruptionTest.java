@@ -48,10 +48,7 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
     {
         simulateInterruption(dialog -> dialog.clickSkipInterruption());
 
-        final int currentDayRowIndex = time().getCurrentDayRowIndex();
-        final DayTable dayTable = app().dayTable();
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
-        dayTable.assertBeginAndEnd(currentDayRowIndex, interruptionStart, interruptionEnd);
+        assertDay(Duration.ZERO, interruptionStart, interruptionEnd);
     }
 
     @Test
@@ -59,21 +56,15 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
     {
         simulateInterruption(dialog -> dialog.clickAddInterruption());
 
-        final int currentDayRowIndex = time().getCurrentDayRowIndex();
-        final DayTable dayTable = app().dayTable();
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ofMinutes(5));
-        dayTable.assertBeginAndEnd(currentDayRowIndex, interruptionStart, interruptionEnd);
+        assertDay(Duration.ofMinutes(5), interruptionStart, interruptionEnd);
     }
 
     @Test
-    void stopWorkingForTodayButtonDoesNotAddsInterruption()
+    void stopWorkingForTodayButtonDoesNotAddInterruptionDoesNotUpdateEnd()
     {
         simulateInterruption(dialog -> dialog.clickStopWorkForToday());
 
-        final int currentDayRowIndex = time().getCurrentDayRowIndex();
-        final DayTable dayTable = app().dayTable();
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
-        dayTable.assertBeginAndEnd(currentDayRowIndex, interruptionStart, interruptionStart);
+        assertDay(Duration.ZERO, interruptionStart, interruptionStart);
     }
 
     private void simulateInterruption(Consumer<AutomaticInterruptionDialog> closeDialogAction)
@@ -91,6 +82,16 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
 
         interruptionDialog.assertLabel(interruptionStart, Duration.ofMinutes(5));
         closeDialogAction.accept(interruptionDialog);
+
+        TestUtil.sleepShort();
+    }
+
+    private void assertDay(Duration expectedInterruption, LocalTime expectedBegin, LocalTime expectedEnd)
+    {
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
+        final DayTable dayTable = app().dayTable();
+        dayTable.assertInterruption(currentDayRowIndex, expectedInterruption);
+        dayTable.assertBeginAndEnd(currentDayRowIndex, expectedBegin, expectedEnd);
     }
 
     @Override
