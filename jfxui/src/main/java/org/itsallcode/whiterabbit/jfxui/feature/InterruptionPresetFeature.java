@@ -165,7 +165,7 @@ public class InterruptionPresetFeature
             grid.add(spinner, 1, 0);
             getDialogPane().setContent(grid);
 
-            Platform.runLater(() -> spinner.requestFocus());
+            Platform.runLater(spinner::requestFocus);
         }
     }
 }
