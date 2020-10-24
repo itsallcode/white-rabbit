@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.Closeable;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -129,7 +130,7 @@ public class AppService implements Closeable
     public void start()
     {
         assertSingleInstance();
-        schedule(PeriodicTrigger.everyMinute(), workingTimeService::updateNow);
+        schedule(PeriodicTrigger.everyMinute(), this::updateNow);
     }
 
     public ScheduledTaskFuture schedule(Trigger trigger, Runnable runnable)
@@ -199,6 +200,11 @@ public class AppService implements Closeable
         return workingTimeService.startInterruption();
     }
 
+    public void addInterruption(LocalDate date, Duration interruption)
+    {
+        workingTimeService.addInterruption(date, interruption);
+    }
+
     public void toggleStopWorkForToday()
     {
         workingTimeService.toggleStopWorkForToday();
@@ -206,7 +212,6 @@ public class AppService implements Closeable
 
     public void updateNow()
     {
-        LOG.debug("Update now");
         workingTimeService.updateNow();
     }
 

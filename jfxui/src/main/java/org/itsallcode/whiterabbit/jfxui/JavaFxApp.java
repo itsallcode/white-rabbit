@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.feature.InterruptionPresetFeature;
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
@@ -400,12 +401,16 @@ public class JavaFxApp extends Application
 
     private ToolBar createToolBar()
     {
+        final InterruptionPresetFeature interruptionPreset = new InterruptionPresetFeature(appService);
+
         final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
                 e -> startManualInterruption());
         startInterruptionButton.disableProperty().bind(interruption.isNotNull());
+
         return new ToolBar(monthDropDownBox(),
                 new Separator(),
                 startInterruptionButton,
+                interruptionPreset.createButton(),
                 createStopWorkForTodayButton(),
                 new Separator(),
                 button("update-button", "Update", e -> appService.updateNow()),

@@ -115,6 +115,9 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ## <a name="changes"></a>Recent changes
 
+* [#5](https://github.com/itsallcode/white-rabbit/issues/5): Add presets for adding interruptions
+* [#20](https://github.com/itsallcode/white-rabbit/issues/20): Allow configuring the location of the configuration file, see [details below](#configuration)
+* [#22](https://github.com/itsallcode/white-rabbit/issues/22), [#18](https://github.com/itsallcode/white-rabbit/issues/18): Add version number to build, show "About" dialog and build executable jars for all platforms, see [building a release](#building_release)
 * [#15](https://github.com/itsallcode/white-rabbit/issues/15): Freeze previous end time on "stop working" in pop-up
 * [#29](https://github.com/itsallcode/white-rabbit/issues/29): Relaxed parsing of time and duration
 * [#27](https://github.com/itsallcode/white-rabbit/issues/27): Delete begin, end and interruption when changing day type to "not working"
@@ -219,7 +222,7 @@ java -jar jfxui/build/libs/jfxui.jar
 ./gradlew check -PuiTestsHeadless=false
 ```
 
-#### Building a release
+#### <a name="building_release"></a>Building a release
 
 ```bash
 ./gradlew build -Pplatform=<win|mac|linux> -PreleaseVersion=<version>
