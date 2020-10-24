@@ -193,9 +193,14 @@ public class WorkingTimeService
             return;
         }
         final LocalDate today = clock.getCurrentDate();
+        addInterruption(today, additionalInterruption);
+    }
+
+    public void addInterruption(final LocalDate today, Duration interruption)
+    {
         final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
-        addToInterruption(day, additionalInterruption);
+        addToInterruption(day, interruption);
         storage.storeMonth(month);
         appServiceCallback.recordUpdated(day);
     }

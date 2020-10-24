@@ -1,9 +1,13 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
+import java.time.Duration;
+
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitMenuButton;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Window;
 
 public class ApplicationHelper
@@ -51,5 +55,22 @@ public class ApplicationHelper
         final Window dialogWindow = robot.window("About White Rabbit");
         Assertions.assertThat(dialogWindow).isShowing();
         return new AboutDialogWindow(robot, dialogWindow);
+    }
+
+    public void addPresetInterruption(Duration preset)
+    {
+        final SplitMenuButton splitMenuButton = robot.lookup("#add-interruption-button").query();
+        final StackPane arrowButton = (StackPane) robot.from(splitMenuButton).lookup(".arrow-button").query();
+        robot.clickOn(arrowButton);
+
+        robot.clickOn("#add-interruption-preset-" + preset.toString());
+    }
+
+    public AddInterruptionDialog addInterruption()
+    {
+        robot.clickOn("#add-interruption-button");
+        final Window dialogWindow = robot.window("Add interruption for today");
+        Assertions.assertThat(dialogWindow).isShowing();
+        return new AddInterruptionDialog(robot, dialogWindow);
     }
 }
