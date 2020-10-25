@@ -15,6 +15,11 @@ public class PeriodicTrigger implements Trigger
         this.roundToUnit = roundToUnit;
     }
 
+    public static Trigger everyDay()
+    {
+        return new PeriodicTrigger(ChronoUnit.DAYS);
+    }
+
     public static Trigger everyMinute()
     {
         return new PeriodicTrigger(ChronoUnit.MINUTES);

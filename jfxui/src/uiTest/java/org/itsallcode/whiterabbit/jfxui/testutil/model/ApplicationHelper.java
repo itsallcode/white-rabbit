@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import java.time.Duration;
 
+import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
@@ -27,14 +29,14 @@ public class ApplicationHelper
         return new InterruptionDialog(robot, window);
     }
 
-    public JavaFxTable activitiesTable()
+    public JavaFxTable<ActivityPropertyAdapter> activitiesTable()
     {
-        return JavaFxTable.find(robot, "#activities-table");
+        return JavaFxTable.find(robot, "#activities-table", ActivityPropertyAdapter.class);
     }
 
-    public JavaFxTable genericDayTable()
+    public JavaFxTable<DayRecordPropertyAdapter> genericDayTable()
     {
-        return JavaFxTable.find(robot, "#day-table");
+        return JavaFxTable.find(robot, "#day-table", DayRecordPropertyAdapter.class);
     }
 
     public DayTable dayTable()

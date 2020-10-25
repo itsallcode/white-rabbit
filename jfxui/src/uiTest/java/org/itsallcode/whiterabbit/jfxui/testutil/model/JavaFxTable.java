@@ -11,18 +11,18 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.skin.VirtualFlow;
 
-public class JavaFxTable
+public class JavaFxTable<T>
 {
-    private final TableView<?> table;
+    private final TableView<T> table;
 
-    private JavaFxTable(TableView<?> table)
+    private JavaFxTable(TableView<T> table)
     {
         this.table = table;
     }
 
-    static JavaFxTable find(FxRobot robot, String query)
+    static <T> JavaFxTable<T> find(FxRobot robot, String query, Class<T> rowType)
     {
-        return new JavaFxTable(robot.lookup(query).queryTableView());
+        return new JavaFxTable<>(robot.lookup(query).queryTableView());
     }
 
     public void assertRowContent(final int rowIndex, final TableRowExpectedContent expectedRowContent)
@@ -39,18 +39,33 @@ public class JavaFxTable
                 .findFirst().orElseThrow();
     }
 
-    public TableRow<?> getTableRow(final int rowIndex)
+    public TableRow<T> getTableRow(final int rowIndex)
     {
         final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
                 .filter(VirtualFlow.class::isInstance)
                 .map(VirtualFlow.class::cast)
                 .findFirst().orElseThrow();
         assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        return (TableRow<?>) virtualFlow.getCell(rowIndex);
+        return (TableRow<T>) virtualFlow.getCell(rowIndex);
     }
 
     public TableView<?> table()
     {
         return table;
+    }
+
+    public int getSelectedRowIndex()
+    {
+        return table.getSelectionModel().selectedIndexProperty().get();
+    }
+
+    public TableRow<T> getSelectedTableRow()
+    {
+        final int selectedRowIndex = getSelectedRowIndex();
+        if (selectedRowIndex < 0)
+        {
+            throw new AssertionError("No row is selected");
+        }
+        return getTableRow(selectedRowIndex);
     }
 }

@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.testutil;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -12,6 +14,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -31,6 +34,7 @@ public class TimeUtil
 
     private Runnable updateEverySecondRunnable;
     private Runnable updateEveryMinuteRunnable;
+    private Runnable updateEveryDayRunnable;
 
     private TimeUtil(Clock clockMock, ScheduledExecutorService executorServiceMock)
     {
@@ -90,6 +94,18 @@ public class TimeUtil
         tickMinute(Duration.ofMinutes(1));
     }
 
+    public void tickDay(LocalTime time)
+    {
+        final LocalDateTime now = LocalDateTime.now(clockMock);
+        final LocalDateTime tomorrow = LocalDateTime.of(now.toLocalDate().plusDays(1), time);
+        final Duration duration = Duration.between(now, tomorrow);
+        addTime(duration);
+        LOG.info("Tick day by {} to {}", duration, clockMock.instant());
+        this.updateEverySecondRunnable.run();
+        this.updateEveryMinuteRunnable.run();
+        this.updateEveryDayRunnable.run();
+    }
+
     public void tickMinute(Duration duration)
     {
         addTime(duration);
@@ -100,6 +116,7 @@ public class TimeUtil
 
     private void addTime(final Duration duration)
     {
+        assertThat(duration).isPositive();
         setCurrentTime(clockMock.instant().plus(duration));
     }
 
@@ -111,11 +128,23 @@ public class TimeUtil
     public void captureScheduledRunnables()
     {
         final ArgumentCaptor<Runnable> arg = ArgumentCaptor.forClass(Runnable.class);
-        verify(this.executorServiceMock, times(2)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
+        verify(this.executorServiceMock, times(3)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
+
         this.updateEverySecondRunnable = arg.getAllValues().get(0);
-        this.updateEveryMinuteRunnable = arg.getAllValues().get(1);
+        this.updateEveryDayRunnable = arg.getAllValues().get(1);
+        this.updateEveryMinuteRunnable = arg.getAllValues().get(2);
+
         LOG.trace("Found callback for seconds: {}", updateEverySecondRunnable);
+        LOG.trace("Found callback for days: {}", updateEveryDayRunnable);
         LOG.trace("Found callback for minutes: {}", updateEveryMinuteRunnable);
+
+        assertAll(
+                () -> assertThat(updateEverySecondRunnable.toString())
+                        .contains("trigger=PeriodicTrigger [roundToUnit=Seconds]"),
+                () -> assertThat(updateEveryDayRunnable.toString())
+                        .contains("trigger=PeriodicTrigger [roundToUnit=Days]"),
+                () -> assertThat(updateEveryMinuteRunnable.toString())
+                        .contains("trigger=PeriodicTrigger [roundToUnit=Minutes]"));
     }
 
     public Clock clock()

@@ -207,6 +207,24 @@ class DayTableTest extends JavaFxAppUiTestBase
         assertThat(dayTable.getInterruptionText(row)).isEqualTo("01:02");
     }
 
+    @Test
+    void currentDaySelectedAtStartup()
+    {
+        time().tickMinute();
+
+        assertThat(app().dayTable().getSelectedRow().getDate()).isEqualTo(time().getCurrentDate());
+    }
+
+    @Test
+    void currentDaySelectedAtDayChange()
+    {
+        time().tickMinute();
+
+        time().tickDay(LocalTime.of(8, 0));
+
+        assertThat(app().dayTable().getSelectedRow().getDate()).isEqualTo(time().getCurrentDate());
+    }
+
     @Override
     @Start
     void start(Stage stage)
