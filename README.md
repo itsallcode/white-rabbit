@@ -229,3 +229,15 @@ java -jar jfxui/build/libs/jfxui.jar
 ```
 
 The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>-<platform>.jar`
+
+## WebStart Infrastructure
+
+### Managing configuration in a private branch
+
+This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you could push to a private repository only.
+
+When switching from `private-master` to the public `develop` branch, git will delete the configuration files. To restore them you can use the following command:
+
+```bash
+git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts
+```
