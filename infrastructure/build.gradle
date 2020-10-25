@@ -1,0 +1,10 @@
+
+dependencies {
+    def cdkVersion = '1.70.0'
+    implementation "software.amazon.awscdk:core:${cdkVersion}"
+}
+
+task runCdkApp(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.itsallcode.whiterabbit.infrastructure.InfrastructureApp'
+}
