@@ -7,3 +7,5 @@
 /time.properties
 **/logs/
 /.idea
+
+/infrastructure/target/
