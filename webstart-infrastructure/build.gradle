@@ -1,1 +1,9 @@
 apply plugin: 'com.moowork.node'
+
+task cdkSynth(type: NpmTask, dependsOn: 'npmInstall') {
+    args = ['run', 'cdk', 'synth']
+}
+
+task npmTest(type: NpmTask, dependsOn: 'npmInstall') {
+    args = ['test']
+}

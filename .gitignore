@@ -9,3 +9,4 @@
 /.idea
 /webstart-infrastructure/node_modules/
 /webstart-infrastructure/cdk.out/
+/webstart-infrastructure/config.ts
