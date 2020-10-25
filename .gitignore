@@ -9,3 +9,4 @@
 /.idea
 
 /infrastructure/target/
+/infrastructure/node_modules/

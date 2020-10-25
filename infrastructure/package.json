@@ -1,0 +1,10 @@
+{
+    "name": "infrastructure",
+    "version": "0.1.0",
+    "scripts": {
+        "cdk": "cdk"
+    },
+    "devDependencies": {
+        "aws-cdk": "^1.70.0"
+    }
+}
