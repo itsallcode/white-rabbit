@@ -16,7 +16,7 @@ import org.itsallcode.whiterabbit.logic.service.project.Project;
 
 import javafx.beans.property.ObjectProperty;
 
-public class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
+public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
 {
     private static final Logger LOG = LogManager.getLogger(ActivityPropertyAdapter.class);
 

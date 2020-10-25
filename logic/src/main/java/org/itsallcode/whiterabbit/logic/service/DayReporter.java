@@ -30,8 +30,14 @@ public class DayReporter
                     "Invalid overtime: expected " + this.overtime + " but was " + day.getTotalOvertimeThisMonth());
         }
         final String line = formatterService.format(day);
-        report.append(line) //
-                .append(day.getComment() != null ? ", " + day.getComment() : "").append(NEWLINE);
+        report.append(line);
+
+        if (day.getComment() != null)
+        {
+
+            report.append(", ").append(day.getComment());
+        }
+        report.append(NEWLINE);
     }
 
     public void finish()
