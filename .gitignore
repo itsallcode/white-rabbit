@@ -8,3 +8,4 @@
 **/logs/
 /.idea
 /webstart-infrastructure/node_modules/
+/webstart-infrastructure/cdk.out/
