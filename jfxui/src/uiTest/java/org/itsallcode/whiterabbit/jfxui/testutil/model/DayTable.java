@@ -93,8 +93,6 @@ public class DayTable
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "day-type");
         int tries = 0;
-        robot.clickOn(tableCell);
-        TestUtil.sleepShort();
         while (getDayType(row) != type && tries <= DayType.values().length)
         {
             robot.clickOn(tableCell);

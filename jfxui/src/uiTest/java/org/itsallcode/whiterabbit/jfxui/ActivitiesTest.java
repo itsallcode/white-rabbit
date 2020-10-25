@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow.Builder;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
@@ -69,7 +71,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final JavaFxTable activitiesTable = lookupActivitiesTable();
+        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = lookupActivitiesTable();
         robot.clickOn(activitiesTable.getTableCell(0, "remainder"));
         activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withRemainder(true).build());
     }
@@ -79,19 +81,45 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final JavaFxTable activitiesTable = lookupActivitiesTable();
+        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = lookupActivitiesTable();
         final Node projectCell = activitiesTable.getTableCell(0, "project");
 
         robot.doubleClickOn(projectCell).clickOn(projectCell).type(KeyCode.ENTER);
         activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withProject(PROJECT1).build());
     }
 
+    @Test
+    void addActivityForOtherDay()
+    {
+        final int rowTomorrow = time().getCurrentDayRowIndex() + 1;
+        app().genericDayTable().clickRow(rowTomorrow);
+
+        app().activitiesTable().assertRowCount(0);
+
+        addActivity();
+
+        app().activitiesTable().assertRowCount(1);
+    }
+
+    @Test
+    void activitiesTableUpdatedWhenSwitchingDays()
+    {
+        final int row = time().getCurrentDayRowIndex();
+        app().genericDayTable().clickRow(row + 1);
+
+        app().activitiesTable().assertRowCount(0);
+
+        addActivity();
+        app().activitiesTable().assertRowCount(1);
+
+        app().genericDayTable().clickRow(row);
+        app().activitiesTable().assertRowCount(0);
+    }
+
     private void addActivity()
     {
         time().tickMinute();
-        final JavaFxTable activitiesTable = lookupActivitiesTable();
-
-        selectCurrentDay();
+        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = lookupActivitiesTable();
 
         clickAddActivityButton();
 
@@ -103,7 +131,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
     private void selectCurrentDay()
     {
-        final JavaFxTable dayTable = app().genericDayTable();
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
 
         final int dayRowIndex = time().getCurrentDayRowIndex();
         robot.clickOn(dayTable.getTableRow(dayRowIndex));
@@ -120,7 +148,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         return robot.lookup("#add-activity-button").queryButton();
     }
 
-    private JavaFxTable lookupActivitiesTable()
+    private JavaFxTable<ActivityPropertyAdapter> lookupActivitiesTable()
     {
         return app().activitiesTable();
     }

@@ -228,6 +228,7 @@ public class JavaFxApp extends Application
     {
         final YearMonth thisMonth = appService.getClock().getCurrentYearMonth();
         loadMonth(thisMonth);
+        dayRecordTable.selectRow(appService.getClock().getCurrentDate());
     }
 
     private void loadMonth(final YearMonth month)
@@ -384,7 +385,6 @@ public class JavaFxApp extends Application
     {
         final Insets insets = new Insets(GAP_PIXEL);
         final Node daysTable = dayRecordTable.initTable();
-        dayRecordTable.selectRow(appService.getClock().getCurrentDate());
         currentDateProperty.property()
                 .addListener((observable, oldValue, newValue) -> dayRecordTable.selectRow(newValue));
         final Node activitiesTab = activitiesTable.initTable();
@@ -435,6 +435,7 @@ public class JavaFxApp extends Application
         final DayRecord selectedDay = dayRecordTable.selectedDay().getValue();
         if (selectedDay == null)
         {
+            LOG.warn("No day selected, can't add an activity");
             return;
         }
         appService.activities().addActivity(selectedDay.getDate());

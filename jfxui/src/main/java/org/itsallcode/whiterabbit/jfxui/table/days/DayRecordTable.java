@@ -71,7 +71,10 @@ public class DayRecordTable
         table.setId("day-table");
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> selectedDay.set(newValue.getRecord()));
+                .addListener((observable, oldValue, newValue) -> {
+                    LOG.debug("Table row selected: {}", newValue.getRecord());
+                    selectedDay.set(newValue.getRecord());
+                });
         return table;
     }
 
@@ -84,9 +87,10 @@ public class DayRecordTable
     {
         Objects.requireNonNull(table, "Table not yet initialized");
         final int row = date.getDayOfMonth() - 1;
-        LOG.debug("Select table row {} for {}", row, date);
-        table.getSelectionModel().select(row);
-        table.scrollTo(row);
+        final DayRecordPropertyAdapter rowItem = table.getItems().get(row);
+        LOG.debug("Select table row {} (item {}) for {}", row, rowItem.getRecord(), date);
+        table.getSelectionModel().select(rowItem);
+        table.scrollTo(rowItem);
     }
 
     private List<TableColumn<DayRecordPropertyAdapter, ?>> createColumns()

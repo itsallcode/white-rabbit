@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
@@ -29,7 +30,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void dayTableRowCount()
     {
-        final JavaFxTable dayTable = app().genericDayTable();
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         Assertions.assertThat(dayTable.table()).hasExactlyNumRows(31);
     }
 

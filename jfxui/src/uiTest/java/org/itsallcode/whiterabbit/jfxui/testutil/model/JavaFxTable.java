@@ -6,23 +6,25 @@ import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.control.IndexedCell;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.skin.VirtualFlow;
 
 public class JavaFxTable<T>
 {
+    private final FxRobot robot;
     private final TableView<T> table;
 
-    private JavaFxTable(TableView<T> table)
+    private JavaFxTable(FxRobot robot, TableView<T> table)
     {
+        this.robot = robot;
         this.table = table;
     }
 
     static <T> JavaFxTable<T> find(FxRobot robot, String query, Class<T> rowType)
     {
-        return new JavaFxTable<>(robot.lookup(query).queryTableView());
+        return new JavaFxTable<>(robot, robot.lookup(query).queryTableView());
     }
 
     public void assertRowContent(final int rowIndex, final TableRowExpectedContent expectedRowContent)
@@ -32,21 +34,33 @@ public class JavaFxTable<T>
 
     public TableCell<?, ?> getTableCell(final int rowIndex, final String columnId)
     {
-        final TableRow<?> row = getTableRow(rowIndex);
+        final IndexedCell<T> row = getTableRow(rowIndex);
         return row.getChildrenUnmodifiable().stream()
                 .filter(cell -> cell.getId().equals(columnId))
                 .map(TableCell.class::cast)
                 .findFirst().orElseThrow();
     }
 
-    public TableRow<T> getTableRow(final int rowIndex)
+    public IndexedCell<T> getTableRow(final int rowIndex)
     {
-        final VirtualFlow<?> virtualFlow = table.getChildrenUnmodifiable().stream()
+        @SuppressWarnings("unchecked")
+        final VirtualFlow<IndexedCell<T>> virtualFlow = table.getChildrenUnmodifiable().stream()
                 .filter(VirtualFlow.class::isInstance)
                 .map(VirtualFlow.class::cast)
                 .findFirst().orElseThrow();
         assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        return (TableRow<T>) virtualFlow.getCell(rowIndex);
+        return virtualFlow.getCell(rowIndex);
+    }
+
+    public JavaFxTable<T> clickRow(int rowIndex)
+    {
+        robot.clickOn(getTableRow(rowIndex));
+        return this;
+    }
+
+    public void assertRowCount(int expectedRowCount)
+    {
+        assertThat(table.getItems()).hasSize(expectedRowCount);
     }
 
     public TableView<?> table()
@@ -59,7 +73,7 @@ public class JavaFxTable<T>
         return table.getSelectionModel().selectedIndexProperty().get();
     }
 
-    public TableRow<T> getSelectedTableRow()
+    public IndexedCell<T> getSelectedTableRow()
     {
         final int selectedRowIndex = getSelectedRowIndex();
         if (selectedRowIndex < 0)
