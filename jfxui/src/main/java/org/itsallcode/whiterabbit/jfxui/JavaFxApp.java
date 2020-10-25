@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Arrays;
@@ -97,6 +98,8 @@ public class JavaFxApp extends Application
     private final ObservableList<YearMonth> availableMonths = FXCollections.observableArrayList();
 
     private ScheduledProperty<Instant> currentTimeProperty;
+    private ScheduledProperty<LocalDate> currentDateProperty;
+
     private Stage primaryStage;
 
     private Tray tray;
@@ -153,6 +156,8 @@ public class JavaFxApp extends Application
         }
 
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
+        currentDateProperty = new ClockPropertyFactory(appService).currentDateProperty();
+
         tray = Tray.create(new TrayCallback()
         {
             @Override
@@ -223,6 +228,7 @@ public class JavaFxApp extends Application
     {
         final YearMonth thisMonth = appService.getClock().getCurrentYearMonth();
         loadMonth(thisMonth);
+        dayRecordTable.selectRow(appService.getClock().getCurrentDate());
     }
 
     private void loadMonth(final YearMonth month)
@@ -244,6 +250,10 @@ public class JavaFxApp extends Application
         if (tray != null)
         {
             tray.removeTrayIcon();
+        }
+        if (currentDateProperty != null)
+        {
+            currentDateProperty.cancel();
         }
         if (currentTimeProperty != null)
         {
@@ -375,6 +385,8 @@ public class JavaFxApp extends Application
     {
         final Insets insets = new Insets(GAP_PIXEL);
         final Node daysTable = dayRecordTable.initTable();
+        currentDateProperty.property()
+                .addListener((observable, oldValue, newValue) -> dayRecordTable.selectRow(newValue));
         final Node activitiesTab = activitiesTable.initTable();
         final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> addActivity());
         final Button removeActivityButton = button("remove-activity-button", "-", "Remove activity",
@@ -423,6 +435,7 @@ public class JavaFxApp extends Application
         final DayRecord selectedDay = dayRecordTable.selectedDay().getValue();
         if (selectedDay == null)
         {
+            LOG.warn("No day selected, can't add an activity");
             return;
         }
         appService.activities().addActivity(selectedDay.getDate());

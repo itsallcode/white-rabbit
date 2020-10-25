@@ -10,7 +10,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
@@ -40,11 +43,14 @@ import javafx.util.converter.LocalTimeStringConverter;
 
 public class DayRecordTable
 {
+    private static final Logger LOG = LogManager.getLogger(DayRecordTable.class);
+
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final Locale locale;
     private final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
+    private TableView<DayRecordPropertyAdapter> table;
 
     public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
             FormatterService formatterService)
@@ -58,7 +64,6 @@ public class DayRecordTable
 
     public TableView<DayRecordPropertyAdapter> initTable()
     {
-        TableView<DayRecordPropertyAdapter> table;
         table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);
@@ -66,13 +71,26 @@ public class DayRecordTable
         table.setId("day-table");
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> selectedDay.set(newValue.getRecord()));
+                .addListener((observable, oldValue, newValue) -> {
+                    LOG.debug("Table row selected: {}", newValue.getRecord());
+                    selectedDay.set(newValue.getRecord());
+                });
         return table;
     }
 
     public ReadOnlyProperty<DayRecord> selectedDay()
     {
         return selectedDay;
+    }
+
+    public void selectRow(LocalDate date)
+    {
+        Objects.requireNonNull(table, "Table not yet initialized");
+        final int row = date.getDayOfMonth() - 1;
+        final DayRecordPropertyAdapter rowItem = table.getItems().get(row);
+        LOG.debug("Select table row {} (item {}) for {}", row, rowItem.getRecord(), date);
+        table.getSelectionModel().select(rowItem);
+        table.scrollTo(rowItem);
     }
 
     private List<TableColumn<DayRecordPropertyAdapter, ?>> createColumns()

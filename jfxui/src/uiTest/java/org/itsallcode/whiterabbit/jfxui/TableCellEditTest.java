@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
@@ -69,8 +70,8 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     void commentNotPersistedAfterClickingAnotherRow()
     {
         assertCommentCellNotPersistedAfterFocusLostAction(() -> {
-            final JavaFxTable dayTable = app().genericDayTable();
-            final TableCell<?, ?> commentCell = dayTable.getTableCell(0, "comment");
+            final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+            final TableCell<?, ?> commentCell = dayTable.getTableCell(10, "comment");
             robot.clickOn(commentCell);
         });
     }
@@ -90,10 +91,11 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
-        final JavaFxTable dayTable = app().genericDayTable();
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
 
         dayTable.assertRowContent(rowIndex, expectedCellValues.build());
 
+        dayTable.clickRow(rowIndex + 1);
         final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
 
         robot.doubleClickOn(commentCell).write(comment);
@@ -117,21 +119,20 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
 
-        final JavaFxTable dayTable = app().genericDayTable();
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
 
         dayTable.assertRowContent(rowIndex, expectedCellValues.build());
 
+        dayTable.clickRow(rowIndex + 1);
         final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
 
         robot.doubleClickOn(commentCell).write("tst");
 
         assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
 
-        focusLossAction.run();
+        JavaFxUtil.runOnFxApplicationThread(focusLossAction::run);
 
-        assertAll(
-                () -> assertThat(commentCell.isEditing()).as("cell is editing").isFalse(),
-                () -> dayTable.assertRowContent(rowIndex, expectedCellValues.build()));
+        dayTable.assertRowContent(rowIndex, expectedCellValues.build());
     }
 
     @Override

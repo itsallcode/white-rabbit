@@ -8,7 +8,9 @@ import java.time.LocalTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.testfx.api.FxRobot;
 
@@ -19,13 +21,18 @@ public class DayTable
 {
     private static final Logger LOG = LogManager.getLogger(DayTable.class);
 
-    private final JavaFxTable table;
+    private final JavaFxTable<DayRecordPropertyAdapter> table;
     private final FxRobot robot;
 
-    DayTable(JavaFxTable table, FxRobot robot)
+    DayTable(JavaFxTable<DayRecordPropertyAdapter> table, FxRobot robot)
     {
         this.table = table;
         this.robot = robot;
+    }
+
+    public DayRecord getSelectedRow()
+    {
+        return table.getSelectedTableRow().getItem().getRecord();
     }
 
     public void assertInterruption(int row, Duration expectedInterruption)
@@ -86,8 +93,6 @@ public class DayTable
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "day-type");
         int tries = 0;
-        robot.clickOn(tableCell);
-        TestUtil.sleepShort();
         while (getDayType(row) != type && tries <= DayType.values().length)
         {
             robot.clickOn(tableCell);

@@ -16,7 +16,7 @@ import org.itsallcode.whiterabbit.logic.service.project.Project;
 
 import javafx.beans.property.ObjectProperty;
 
-class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
+public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
 {
     private static final Logger LOG = LogManager.getLogger(ActivityPropertyAdapter.class);
 
@@ -25,9 +25,7 @@ class ActivityPropertyAdapter extends RecordPropertyAdapter<Activity>
     final ObjectProperty<Boolean> remainder;
     final ObjectProperty<String> comment;
 
-    @SuppressWarnings("null")
-    private ActivityPropertyAdapter(EditListener<DayRecord> editListener,
-            Activity act)
+    private ActivityPropertyAdapter(EditListener<DayRecord> editListener, Activity act)
     {
         super(record -> editListener.recordUpdated(record.getDay()));
         setRecord(act);

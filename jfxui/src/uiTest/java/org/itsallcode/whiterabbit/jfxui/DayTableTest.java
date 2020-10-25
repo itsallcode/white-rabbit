@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
@@ -14,7 +15,6 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.assertions.api.Assertions;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
@@ -29,8 +29,8 @@ class DayTableTest extends JavaFxAppUiTestBase
     @Test
     void dayTableRowCount()
     {
-        final JavaFxTable dayTable = app().genericDayTable();
-        Assertions.assertThat(dayTable.table()).hasExactlyNumRows(31);
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+        dayTable.assertRowCount(31);
     }
 
     @Test
@@ -205,6 +205,24 @@ class DayTableTest extends JavaFxAppUiTestBase
         dayTable.typeInterruption(row, "1:02");
 
         assertThat(dayTable.getInterruptionText(row)).isEqualTo("01:02");
+    }
+
+    @Test
+    void currentDaySelectedAtStartup()
+    {
+        time().tickMinute();
+
+        assertThat(app().dayTable().getSelectedRow().getDate()).isEqualTo(time().getCurrentDate());
+    }
+
+    @Test
+    void currentDaySelectedAtDayChange()
+    {
+        time().tickMinute();
+
+        time().tickDay(LocalTime.of(8, 0));
+
+        assertThat(app().dayTable().getSelectedRow().getDate()).isEqualTo(time().getCurrentDate());
     }
 
     @Override
