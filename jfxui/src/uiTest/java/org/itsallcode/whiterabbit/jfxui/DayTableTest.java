@@ -15,7 +15,6 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.assertions.api.Assertions;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
@@ -31,7 +30,7 @@ class DayTableTest extends JavaFxAppUiTestBase
     void dayTableRowCount()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
-        Assertions.assertThat(dayTable.table()).hasExactlyNumRows(31);
+        dayTable.assertRowCount(31);
     }
 
     @Test

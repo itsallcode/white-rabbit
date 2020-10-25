@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.assertions.api.Assertions;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
@@ -53,7 +52,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         selectCurrentDay();
         time().tickMinute();
-        Assertions.assertThat(lookupActivitiesTable().table()).hasExactlyNumRows(0);
+        lookupActivitiesTable().assertRowCount(0);
     }
 
     @Test
@@ -63,7 +62,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         time().tickMinute();
         clickAddActivityButton();
 
-        Assertions.assertThat(lookupActivitiesTable().table()).hasExactlyNumRows(1);
+        lookupActivitiesTable().assertRowCount(1);
     }
 
     @Test
@@ -125,7 +124,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
         final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow();
 
-        assertAll(() -> Assertions.assertThat(activitiesTable.table()).hasExactlyNumRows(1),
+        assertAll(() -> activitiesTable.assertRowCount(1),
                 () -> activitiesTable.assertRowContent(0, expectedRowContent.build()));
     }
 

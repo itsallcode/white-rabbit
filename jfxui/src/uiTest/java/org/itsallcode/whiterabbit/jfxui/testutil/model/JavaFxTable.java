@@ -60,12 +60,7 @@ public class JavaFxTable<T>
 
     public void assertRowCount(int expectedRowCount)
     {
-        assertThat(table.getItems()).hasSize(expectedRowCount);
-    }
-
-    public TableView<?> table()
-    {
-        return table;
+        Assertions.assertThat(table).hasExactlyNumRows(expectedRowCount);
     }
 
     public int getSelectedRowIndex()
