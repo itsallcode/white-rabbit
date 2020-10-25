@@ -7,4 +7,4 @@
 /time.properties
 **/logs/
 /.idea
-/infrastructure/node_modules/
+/webstart-infrastructure/node_modules/

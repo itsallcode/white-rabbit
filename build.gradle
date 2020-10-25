@@ -27,7 +27,10 @@ def getPlatform() {
     return os.windows ? 'win' : (os.linux ? 'linux' : (os.mac ? 'mac' : 'unknown'))
 }
 
-allprojects {
+subprojects {
+    if(!['logic', 'textui', 'jfxui'].contains(project.name)) {
+        return
+    }
     apply plugin: "java"
     apply plugin: "jacoco"
 
