@@ -1,6 +1,7 @@
 apply plugin: 'base'
 
 def shadowJarTask = project(':jfxui').tasks['shadowJar']
+def props = loadProperties()
 
 task signJar(dependsOn: shadowJarTask, description: 'Sign shadowJar', group: 'Build') {
     def inputJar = shadowJarTask.outputs.files.singleFile
@@ -16,16 +17,39 @@ task signJar(dependsOn: shadowJarTask, description: 'Sign shadowJar', group: 'Bu
             storetype: "jks",
             keystore: properties.get('keystoreFile'),
             storepass: properties.get('keystorePassword'),
-            verbose: true,
+            verbose: false,
             preservelastmodified: "true"
         )
     }
 }
 
+task prepareStaticContent(dependsOn: signJar, type: Copy) {
+    from "$projectDir/content"
+    include "*"
+    from signJar.outputs.files.singleFile
+    into "$buildDir/content"
+}
+
+task invalidateCloudFrontCache(type: Exec) {
+    executable("aws")
+    args('cloudfront', 'create-invalidation', '--distribution-id', props.get('cloudfrontDistribution'), '--paths', '/*')
+}
+
+task publishToWebstart(dependsOn: prepareStaticContent, type: Exec) {
+    finalizedBy(invalidateCloudFrontCache)
+    executable("aws")
+    args("s3", "sync", "$buildDir/content", "s3://${props.get('s3Bucket')}/")
+}
+
 def Properties loadProperties() {
+    File file = new File("$projectDir/webstart.properties")
     Properties properties = new Properties()
-    new File("$projectDir/webstart.properties").withInputStream {stream ->
-        properties.load(stream)
+    if(file.exists()) {
+        file.withInputStream {stream ->
+            properties.load(stream)
+        }
+    } else {
+        logger.lifecycle("Warning: file ${file} does not exist. See webstart/README.md for details")
     }
     return properties
 }

@@ -8,7 +8,7 @@
     </information>
     <resources>
         <j2se version="11" href="http://java.sun.com/products/autodl/j2se"/>
-        <jar href="build/libs/whiterabbitfx-signed.jar" main="true" />
+        <jar href="https://whiterabbit.chp1.net/whiterabbitfx-signed.jar" main="true" />
     </resources>
     <update check="background"/>
     <application-desc name="WhiteRabbit Time Recording" main-class="org.itsallcode.whiterabbit.jfxui.App" width="300" height="300">
