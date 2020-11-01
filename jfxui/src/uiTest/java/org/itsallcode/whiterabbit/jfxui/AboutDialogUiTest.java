@@ -24,7 +24,7 @@ class AboutDialogUiTest extends JavaFxAppUiTestBase
     void openAboutDialog()
     {
         final AboutDialogWindow aboutDialog = app().openAboutDialog();
-        assertThat(aboutDialog.getText()).startsWith("Version: ").contains("Platform: ");
+        assertThat(aboutDialog.getText()).startsWith("Version: ");
         aboutDialog.close();
     }
 

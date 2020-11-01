@@ -61,11 +61,6 @@ public class AppPropertiesService
             return getRequiredProperty("version");
         }
 
-        public String getPlatform()
-        {
-            return getRequiredProperty("platform");
-        }
-
         private String getRequiredProperty(String key)
         {
             final Optional<String> value = Optional.ofNullable(properties.getProperty(key));

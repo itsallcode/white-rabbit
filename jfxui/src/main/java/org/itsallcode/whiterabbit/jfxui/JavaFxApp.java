@@ -305,8 +305,7 @@ public class JavaFxApp extends Application
         aboutDialog.initOwner(primaryStage);
         aboutDialog.setTitle("About White Rabbit");
         aboutDialog.setHeaderText("About White Rabbit:");
-        aboutDialog.setContentText(
-                "Version: " + appProperties.getVersion() + "\nPlatform: " + appProperties.getPlatform());
+        aboutDialog.setContentText("Version: " + appProperties.getVersion());
         final ButtonType close = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
         final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
         aboutDialog.getButtonTypes().setAll(close, homepage);
