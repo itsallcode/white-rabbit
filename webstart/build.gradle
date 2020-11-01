@@ -35,7 +35,7 @@ task invalidateCloudFrontCache(type: Exec) {
     args('cloudfront', 'create-invalidation', '--distribution-id', props.get('cloudfrontDistribution'), '--paths', '/*')
 }
 
-task publishToWebstart(dependsOn: prepareStaticContent, type: Exec) {
+task publishWebstart(dependsOn: prepareStaticContent, type: Exec) {
     finalizedBy(invalidateCloudFrontCache)
     executable("aws")
     args("s3", "sync", "$buildDir/content", "s3://${props.get('s3Bucket')}/")

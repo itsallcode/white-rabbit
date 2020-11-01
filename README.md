@@ -132,7 +132,8 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ### Requirements
 
-JDK 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net/).
+* Java Runtime Environment (JRE) 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
+* WebStart [OpenWebStart](https://openwebstart.com) if you want to launch WhiteRabbit from [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net). This will automatically install a new JRE.
 
 ### <a name="configuration"></a>Configuration
 
@@ -229,6 +230,8 @@ java -jar jfxui/build/libs/jfxui.jar
 ```
 
 The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar`
+
+See [how to deploy webstart](webstart/README.md).
 
 ## WebStart Infrastructure
 
