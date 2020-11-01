@@ -8,7 +8,7 @@ ext {
 
 shadowJar {
     archiveBaseName.set('white-rabbit-fx')
-    archiveClassifier.set(platform)
+    archiveClassifier.set(null)
     archiveVersion.set(project.version)
 }
 
@@ -42,9 +42,12 @@ configurations {
 
 dependencies {
     implementation project(':logic')
-    implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
-    implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
-    implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
+    ['win', 'mac', 'linux'].forEach {
+        implementation "org.openjfx:javafx-base:$javaFxVersion:$it"
+        implementation "org.openjfx:javafx-graphics:$javaFxVersion:$it"
+        implementation "org.openjfx:javafx-controls:$javaFxVersion:$it"
+    }
+
     
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
     
