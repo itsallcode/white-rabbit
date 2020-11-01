@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="" href="">
+    <information>
+        <title>WhiteRabbit Time Recording</title>
+        <vendor>chπ</vendor>
+        <icon href="icon.png"/>
+        <offline-allowed/>
+    </information>
+    <resources>
+        <j2se version="11" href="http://java.sun.com/products/autodl/j2se"/>
+        <jar href="build/libs/whiterabbitfx-signed.jar" main="true" />
+    </resources>
+    <update check="background"/>
+    <application-desc name="WhiteRabbit Time Recording" main-class="org.itsallcode.whiterabbit.jfxui.App" width="300" height="300">
+    </application-desc>
+    <security>
+        <all-permissions/>
+    </security>
+</jnlp>

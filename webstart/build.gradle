@@ -1,0 +1,31 @@
+apply plugin: 'base'
+
+def shadowJarTask = project(':jfxui').tasks['shadowJar']
+
+task signJar(dependsOn: shadowJarTask, description: 'Sign shadowJar', group: 'Build') {
+    def inputJar = shadowJarTask.outputs.files.singleFile
+    def signedJar = file("$buildDir/libs/whiterabbitfx-signed.jar")
+    inputs.file(inputJar)
+    outputs.file(signedJar)
+    doLast {
+        Properties properties = loadProperties()
+        ant.signjar (
+            jar: inputJar,
+            signedjar: signedJar,
+            alias: properties.get('keystoreAlias'),
+            storetype: "jks",
+            keystore: properties.get('keystoreFile'),
+            storepass: properties.get('keystorePassword'),
+            verbose: true,
+            preservelastmodified: "true"
+        )
+    }
+}
+
+def Properties loadProperties() {
+    Properties properties = new Properties()
+    new File("$projectDir/webstart.properties").withInputStream {stream ->
+        properties.load(stream)
+    }
+    return properties
+}
