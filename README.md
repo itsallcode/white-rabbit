@@ -239,5 +239,7 @@ This project requires some configuration files with deployment specific informat
 When switching from `private-master` to the public `develop` branch, git will delete the configuration files. To restore them you can use the following command:
 
 ```bash
-git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts
+git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts \
+        && git show private-master:webstart/webstart.properties > webstart/webstart.properties \
+        && git show private-master:webstart/keystore.jks > webstart/keystore.jks
 ```
