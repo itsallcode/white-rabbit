@@ -19,7 +19,6 @@ task createAppProperties(type: WriteProperties) {
     comment = "White Rabbit app properties"
     outputFile = "$generatedResourcesFolder/white-rabbit.properties"
     property 'version', project.version
-    property 'platform', platform
 }
 
 tasks['processResources'].dependsOn createAppProperties

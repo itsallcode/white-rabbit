@@ -13,7 +13,6 @@ class AppPropertiesServiceTest
     {
         final AppProperties properties = new AppPropertiesService().load();
         assertThat(properties.getVersion()).isNotEmpty();
-        assertThat(properties.getPlatform()).isNotEmpty();
     }
 
     @Test

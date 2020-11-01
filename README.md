@@ -225,7 +225,7 @@ java -jar jfxui/build/libs/jfxui.jar
 #### <a name="building_release"></a>Building a release
 
 ```bash
-./gradlew build -Pplatform=<win|mac|linux> -PreleaseVersion=<version>
+./gradlew build -PreleaseVersion=<version>
 ```
 
-The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>-<platform>.jar`
+The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar`
