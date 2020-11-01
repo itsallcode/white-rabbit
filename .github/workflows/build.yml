@@ -27,6 +27,30 @@ jobs:
           ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
         restore-keys: ${{ runner.os }}-gradle-
+
+    - name: Configure webstart
+      run: |
+        cat > webstart/webstart.properties << EOF
+        keystoreFile = keystore.jks
+        keystorePassword = password
+        keystoreAlias = whiterabbit-webstart
+        s3Bucket = whiterabbit-webstart-bucket
+        cloudfrontDistribution = XXXXXXXXXXXXXX
+        EOF
+
+    - name: Configure webstart-infrastructure
+      run: |
+        cat > webstart-infrastructure/config.ts << EOF
+        import { InfrastructureConfig } from "./lib/config-interface";
+        export const CONFIG: InfrastructureConfig = {
+            region: 'eu-west-1',
+            domain: "whiterabbit.example.com",
+            hostedZoneName: "example.com.",
+            sslCertificateArn: "arn:aws:acm:us-east-1:000000000000:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            stackName: "whiterabbit-webstart"
+        };
+        EOF
+
     - name: Build with Gradle
       run: |
         ./gradlew build --info --stacktrace --warning-mode=summary
