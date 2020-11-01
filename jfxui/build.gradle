@@ -17,7 +17,7 @@ def mainClass = 'org.itsallcode.whiterabbit.jfxui.App'
 
 jar {
     manifest {
-        attributes 'Main-Class': mainClass
+        attributes 'Main-Class': mainClass, 'Permissions': 'all-permissions'
     }
 }
 
