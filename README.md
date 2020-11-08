@@ -115,6 +115,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ## <a name="changes"></a>Recent changes
 
+* [#40](https://github.com/itsallcode/white-rabbit/pull/40): Bugfix: Keep edit focus when table is updated every minute
 * [#39](https://github.com/itsallcode/white-rabbit/pull/39): Publish WhiteRabbit using WebStart
 * [#5](https://github.com/itsallcode/white-rabbit/issues/5): Add presets for adding interruptions
 * [#20](https://github.com/itsallcode/white-rabbit/issues/20): Allow configuring the location of the configuration file, see [details below](#configuration)

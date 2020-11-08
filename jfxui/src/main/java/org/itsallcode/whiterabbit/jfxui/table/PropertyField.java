@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.table;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +30,10 @@ public class PropertyField<R, T>
     public void update()
     {
         final T newValue = recordProperty.get() != null ? getter.apply(recordProperty.get()) : null;
-        LOG.trace("Field {} updated, new value: {}", fieldName, newValue);
-        property.setValue(newValue);
+        if (!Objects.equals(newValue, property.getValue()))
+        {
+            LOG.debug("Field {} updated, new value: {}", fieldName, newValue);
+            property.setValue(newValue);
+        }
     }
 }
