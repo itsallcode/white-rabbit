@@ -1,8 +1,6 @@
-# Welcome to your CDK TypeScript project!
+# Deployment for WhiteRabbit infrastructure
 
-This is a blank project for TypeScript development with CDK.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+This deploys the WhiteRabbit infrastructure to AWS using CDK.
 
 ## Useful commands
 
@@ -12,3 +10,4 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `npm run cdk deploy` deploy this stack to your default AWS account/region
 * `npm run cdk diff`   compare deployed stack with current state
 * `npm run cdk synth`  emits the synthesized CloudFormation template
+* `npx npm-check-updates -u && npm install` Upgrade all dependencies
