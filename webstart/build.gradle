@@ -32,7 +32,7 @@ task prepareStaticContent(dependsOn: signJar, type: Copy) {
 
 task invalidateCloudFrontCache(type: Exec) {
     executable("aws")
-    args('cloudfront', 'create-invalidation', '--distribution-id', props.get('cloudfrontDistribution'), '--paths', '/*')
+    args('cloudfront', 'create-invalidation', '--distribution-id', props.get('cloudfrontDistribution', 'Please define "cloudfrontDistribution" in webstart.properties'), '--paths', '/*')
 }
 
 task publishWebstart(dependsOn: prepareStaticContent, type: Exec) {
