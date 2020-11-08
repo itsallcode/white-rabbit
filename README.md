@@ -132,8 +132,8 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ### Requirements
 
-* Java Runtime Environment (JRE) 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
-* WebStart [OpenWebStart](https://openwebstart.com) if you want to launch WhiteRabbit from [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net). This will automatically install a new JRE.
+* If you want to run WhiteRabbit locally, you need a Java Runtime Environment (JRE) 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
+* If you want to run WhiteRabbit using WebStart, install [OpenWebStart](https://openwebstart.com) and go to [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).
 
 ### <a name="configuration"></a>Configuration
 

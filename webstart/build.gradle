@@ -1,22 +1,42 @@
 apply plugin: 'base'
 
-def shadowJarTask = project(':jfxui').tasks['shadowJar']
+def jfxuiProject = project(':jfxui')
+def shadowJarTask = jfxuiProject.tasks['shadowJar']
 def props = loadProperties()
 
-task signJar(dependsOn: shadowJarTask, description: 'Sign shadowJar', group: 'Build') {
-    def inputJar = shadowJarTask.outputs.files.singleFile
+task updateJarManifest(type: Jar, dependsOn: shadowJarTask, description: 'Update manifest', group: 'Build') {
+    from(zipTree(shadowJarTask.outputs.files.singleFile)) {
+        exclude('META-INF/MANIFEST.MF')
+    }
+    def codeBaseUrl = "https://${props.get('domain', 'Please define "domain" in webstart.properties')}/"
+    def mainClass = jfxuiProject.mainClass
+    manifest {
+        attributes(
+            'Main-Class': mainClass,
+            'Application-Name': 'WhiteRabbit Time Recording',
+            'Permissions': 'all-permissions',
+            'Entry-Point': mainClass,
+            'Codebase': codeBaseUrl,
+            'Application-Library-Allowable-Codebase': codeBaseUrl,
+            'Trusted-Only': true,
+            'Trusted-Library': true
+        )
+    }
+}
+
+task signJar(dependsOn: updateJarManifest, description: 'Sign shadowJar', group: 'Build') {
+    def inputJar = updateJarManifest.outputs.files.singleFile
     def signedJar = file("$buildDir/libs/whiterabbitfx-signed.jar")
     inputs.file(inputJar)
     outputs.file(signedJar)
     doLast {
-        Properties properties = loadProperties()
         ant.signjar (
             jar: inputJar,
             signedjar: signedJar,
-            alias: properties.get('keystoreAlias'),
+            alias: props.get('keystoreAlias'),
             storetype: "jks",
-            keystore: properties.get('keystoreFile'),
-            storepass: properties.get('keystorePassword'),
+            keystore: props.get('keystoreFile'),
+            storepass: props.get('keystorePassword'),
             verbose: false,
             preservelastmodified: "true"
         )

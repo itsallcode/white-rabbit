@@ -34,6 +34,7 @@ jobs:
         keystoreFile = keystore.jks
         keystorePassword = password
         keystoreAlias = whiterabbit-webstart
+        domain = whiterabbit.example.com
         s3Bucket = whiterabbit-webstart-bucket
         cloudfrontDistribution = XXXXXXXXXXXXXX
         EOF
