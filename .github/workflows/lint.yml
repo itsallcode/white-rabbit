@@ -20,4 +20,5 @@ jobs:
         DEFAULT_BRANCH: develop
         # Already checked via Eclipse code formatter and Sonar
         VALIDATE_JAVA: false
+        VALIDATE_TYPESCRIPT_STANDARD: false
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
