@@ -30,6 +30,7 @@ task signJar(dependsOn: updateJarManifest, description: 'Sign shadowJar', group:
     inputs.file(inputJar)
     outputs.file(signedJar)
     doLast {
+        assert props.get('keystoreFile') != null : "Please create and fill webstart.properties. See webstart/README.md for details"
         ant.signjar (
             jar: inputJar,
             signedjar: signedJar,
@@ -69,7 +70,7 @@ def Properties loadProperties() {
             properties.load(stream)
         }
     } else {
-        logger.lifecycle("Warning: file ${file} does not exist. See webstart/README.md for details")
+        logger.lifecycle("Warning: file ${file} does not exist. See webstart/README.md for details.")
     }
     return properties
 }
