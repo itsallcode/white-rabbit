@@ -17,7 +17,6 @@ task updateJarManifest(type: Jar, dependsOn: shadowJarTask, description: 'Update
             'Permissions': 'all-permissions',
             'Entry-Point': mainClass,
             'Codebase': codeBaseUrl,
-            'Application-Library-Allowable-Codebase': codeBaseUrl,
             'Trusted-Only': true,
             'Trusted-Library': true
         )
