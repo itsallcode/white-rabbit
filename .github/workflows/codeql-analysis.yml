@@ -45,6 +45,21 @@ jobs:
       with:
         java-version: 11
 
+    - uses: gradle/wrapper-validation-action@v1
+
+    - name: Cache Gradle packages and wrapper
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: ${{ runner.os }}-gradle-
+
+    - name: Configure webstart
+      run: |
+        cp .github/workflows/webstart.properties.template webstart/webstart.properties
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1

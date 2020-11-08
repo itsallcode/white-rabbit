@@ -115,6 +115,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ## <a name="changes"></a>Recent changes
 
+* [#39](https://github.com/itsallcode/white-rabbit/pull/39): Publish WhiteRabbit using WebStart
 * [#5](https://github.com/itsallcode/white-rabbit/issues/5): Add presets for adding interruptions
 * [#20](https://github.com/itsallcode/white-rabbit/issues/20): Allow configuring the location of the configuration file, see [details below](#configuration)
 * [#22](https://github.com/itsallcode/white-rabbit/issues/22), [#18](https://github.com/itsallcode/white-rabbit/issues/18): Add version number to build, show "About" dialog and build executable jars for all platforms, see [building a release](#building_release)
@@ -132,7 +133,8 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ### Requirements
 
-JDK 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net/).
+* If you want to run WhiteRabbit locally, you need a Java Runtime Environment (JRE) 11, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
+* If you want to run WhiteRabbit using WebStart, install [OpenWebStart](https://openwebstart.com) and go to [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).
 
 ### <a name="configuration"></a>Configuration
 
@@ -229,3 +231,19 @@ java -jar jfxui/build/libs/jfxui.jar
 ```
 
 The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar`
+
+See [how to deploy webstart](webstart/README.md).
+
+## WebStart Infrastructure
+
+### Managing configuration in a private branch
+
+This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you could push to a private repository only.
+
+When switching from `private-master` to the public `develop` branch, git will delete the configuration files. To restore them you can use the following command:
+
+```bash
+git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts \
+        && git show private-master:webstart/webstart.properties > webstart/webstart.properties \
+        && git show private-master:webstart/keystore.jks > webstart/keystore.jks
+```

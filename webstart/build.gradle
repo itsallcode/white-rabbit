@@ -1,0 +1,75 @@
+apply plugin: 'base'
+
+def jfxuiProject = project(':jfxui')
+def shadowJarTask = jfxuiProject.tasks['shadowJar']
+def props = loadProperties()
+
+task updateJarManifest(type: Jar, dependsOn: shadowJarTask, description: 'Update manifest', group: 'Build') {
+    from(zipTree(shadowJarTask.outputs.files.singleFile)) {
+        exclude('META-INF/MANIFEST.MF')
+    }
+    def codeBaseUrl = "https://${props.get('domain', 'Please define "domain" in webstart.properties')}/"
+    def mainClass = jfxuiProject.mainClass
+    manifest {
+        attributes(
+            'Main-Class': mainClass,
+            'Application-Name': 'WhiteRabbit Time Recording',
+            'Permissions': 'all-permissions',
+            'Entry-Point': mainClass,
+            'Codebase': codeBaseUrl,
+            'Application-Library-Allowable-Codebase': codeBaseUrl,
+            'Trusted-Only': true,
+            'Trusted-Library': true
+        )
+    }
+}
+
+task signJar(dependsOn: updateJarManifest, description: 'Sign shadowJar', group: 'Build') {
+    def inputJar = updateJarManifest.outputs.files.singleFile
+    def signedJar = file("$buildDir/libs/whiterabbitfx-signed.jar")
+    inputs.file(inputJar)
+    outputs.file(signedJar)
+    doLast {
+        ant.signjar (
+            jar: inputJar,
+            signedjar: signedJar,
+            alias: props.get('keystoreAlias'),
+            storetype: "jks",
+            keystore: props.get('keystoreFile'),
+            storepass: props.get('keystorePassword'),
+            verbose: false,
+            preservelastmodified: "true"
+        )
+    }
+}
+
+task prepareStaticContent(dependsOn: signJar, type: Copy) {
+    from "$projectDir/content"
+    include "*"
+    from signJar.outputs.files.singleFile
+    into "$buildDir/content"
+}
+
+task invalidateCloudFrontCache(type: Exec) {
+    executable("aws")
+    args('cloudfront', 'create-invalidation', '--distribution-id', props.get('cloudfrontDistribution', 'Please define "cloudfrontDistribution" in webstart.properties'), '--paths', '/*')
+}
+
+task publishWebstart(dependsOn: prepareStaticContent, type: Exec) {
+    finalizedBy(invalidateCloudFrontCache)
+    executable("aws")
+    args("s3", "sync", "$buildDir/content", "s3://${props.get('s3Bucket')}/")
+}
+
+def Properties loadProperties() {
+    File file = new File("$projectDir/webstart.properties")
+    Properties properties = new Properties()
+    if(file.exists()) {
+        file.withInputStream {stream ->
+            properties.load(stream)
+        }
+    } else {
+        logger.lifecycle("Warning: file ${file} does not exist. See webstart/README.md for details")
+    }
+    return properties
+}

@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.OtherInstanceAlreadyRunningException;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 
 import javafx.application.Preloader;
@@ -83,11 +84,22 @@ public class SplashScreenLoader extends Preloader
     public boolean handleErrorNotification(ErrorNotification info)
     {
         splashScreen.hide();
-        final String location = info.getLocation() != null ? info.getLocation() + "\n" : "";
-        final String message = "Error during initialization: " + location + info.getDetails() + "\n" + info.getCause();
-        LOG.error(message, info.getCause());
-        final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+        final Alert alert = createAlert(info);
         alert.showAndWait();
         return false;
+    }
+
+    private Alert createAlert(ErrorNotification info)
+    {
+        final Throwable exception = info.getCause();
+        if (exception instanceof OtherInstanceAlreadyRunningException)
+        {
+            final String message = "Another instance of WhiteRabbit is already running.\n\n" + exception.getMessage();
+            return new Alert(AlertType.WARNING, message, ButtonType.OK);
+        }
+        final String location = info.getLocation() != null ? info.getLocation() + "\n" : "";
+        final String message = "Error during initialization: " + location + info.getDetails() + "\n" + exception;
+        LOG.error(message, exception);
+        return new Alert(AlertType.ERROR, message, ButtonType.OK);
     }
 }
