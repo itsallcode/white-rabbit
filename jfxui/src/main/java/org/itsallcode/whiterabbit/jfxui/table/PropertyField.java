@@ -32,7 +32,7 @@ public class PropertyField<R, T>
         final T newValue = recordProperty.get() != null ? getter.apply(recordProperty.get()) : null;
         if (!Objects.equals(newValue, property.getValue()))
         {
-            LOG.debug("Field {} updated, new value: {}", fieldName, newValue);
+            LOG.trace("Field {} updated, new value: {}", fieldName, newValue);
             property.setValue(newValue);
         }
     }
