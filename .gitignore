@@ -12,4 +12,3 @@
 /webstart-infrastructure/node_modules/
 /webstart-infrastructure/cdk.out/
 /webstart-infrastructure/config.ts
-!/webstart-infrastructure/bin
