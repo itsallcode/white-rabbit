@@ -58,13 +58,7 @@ jobs:
 
     - name: Configure webstart
       run: |
-        cat > webstart/webstart.properties << EOF
-        keystoreFile = keystore.jks
-        keystorePassword = password
-        keystoreAlias = whiterabbit-webstart
-        s3Bucket = whiterabbit-webstart-bucket
-        cloudfrontDistribution = XXXXXXXXXXXXXX
-        EOF
+        cp .github/workflows/webstart-template.properties webstart/webstart.properties
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
