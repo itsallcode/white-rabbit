@@ -152,7 +152,7 @@ public class JavaFxApp extends Application
         {
             final String response = otherInstance.get().sendMessageWithResponse(MESSAGE_GET_PROCESS_INFO);
             otherInstance.get().sendMessage(MESSAGE_BRING_TO_FRONT);
-            throw new IllegalStateException("Other instance already running: " + response);
+            throw new OtherInstanceAlreadyRunningException(response);
         }
 
         currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
