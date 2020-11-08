@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
+import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
@@ -80,6 +81,35 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     void commentNotPersistedAfterTypingEscape()
     {
         assertCommentCellNotPersistedAfterFocusLostAction(() -> robot.type(KeyCode.ESCAPE));
+    }
+
+    @Test
+    void editingNotAbortedWhenMinuteChanges()
+    {
+        time().tickMinute();
+        final int rowIndex = time().getCurrentDayRowIndex();
+
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.clickRow(rowIndex + 1);
+        final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
+
+        robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
+
+        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
+
+        robot.doubleClickOn(commentCell).write("new");
+
+        assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
+
+        time().tickMinute();
+
+        TestUtil.sleepShort();
+
+        assertThat(commentCell.isEditing()).as("cell is editing after minute tick").isTrue();
+        robot.type(KeyCode.ENTER);
+
+        assertThat(commentCell.getText()).isEqualTo("new");
     }
 
     private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)

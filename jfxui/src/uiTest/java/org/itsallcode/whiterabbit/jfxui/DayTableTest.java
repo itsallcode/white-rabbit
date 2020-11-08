@@ -212,6 +212,8 @@ class DayTableTest extends JavaFxAppUiTestBase
     {
         time().tickMinute();
 
+        TestUtil.sleepShort();
+
         assertThat(app().dayTable().getSelectedRow().getDate()).isEqualTo(time().getCurrentDate());
     }
 
