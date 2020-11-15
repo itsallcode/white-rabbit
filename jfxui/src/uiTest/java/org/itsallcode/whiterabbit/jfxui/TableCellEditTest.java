@@ -14,8 +14,10 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -112,23 +114,24 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertThat(commentCell.getText()).isEqualTo("new");
     }
 
+    @Disabled("Will be fixed with https://github.com/itsallcode/white-rabbit/issues/42")
     @Test
     void editingNotAbortedWhenMinuteChangesInActivitiesTable()
     {
         time().tickMinute();
 
-        // app().activitiesTable().a
-        final int rowIndex = time().getCurrentDayRowIndex();
+        final ActivitiesTable activities = app().activitiesTable();
+        activities.addActivity();
 
-        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+        activities.table().clickRow(0);
 
-        dayTable.clickRow(rowIndex + 1);
-        final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
+        TableCell<?, ?> commentCell = activities.getCommentCell(0);
 
         robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
 
         assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
 
+        commentCell = activities.getCommentCell(0);
         robot.doubleClickOn(commentCell).write("new");
 
         assertThat(commentCell.isEditing()).as("cell is editing").isTrue();

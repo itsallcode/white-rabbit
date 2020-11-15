@@ -4,6 +4,7 @@ import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter
 import org.testfx.api.FxRobot;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 
 public class ActivitiesTable
 {
@@ -25,6 +26,22 @@ public class ActivitiesTable
     {
         final Button addActivityButton = getAddActivityButton();
         robot.clickOn(addActivityButton);
+    }
+
+    public void removeActivity()
+    {
+        final Button removeActivityButton = getRemoveActivityButton();
+        robot.clickOn(removeActivityButton);
+    }
+
+    public Button getRemoveActivityButton()
+    {
+        return robot.lookup("#remove-activity-button").queryButton();
+    }
+
+    public TableCell<?, ?> getCommentCell(int rowIndex)
+    {
+        return table.getTableCell(rowIndex, "comment");
     }
 
     public JavaFxTable<ActivityPropertyAdapter> table()

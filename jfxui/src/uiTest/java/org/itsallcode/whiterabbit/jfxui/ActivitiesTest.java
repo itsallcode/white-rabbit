@@ -67,6 +67,55 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         activities.table().assertRowCount(1);
     }
 
+    @Disabled("Not implemented yet, see https://github.com/itsallcode/white-rabbit/issues/23")
+    @Test
+    void removeButtonDisabledWhenNoActivitySelected()
+    {
+        selectCurrentDay();
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        assertThat(activities.getRemoveActivityButton().isDisable()).isTrue();
+    }
+
+    @Test
+    void clickRemoveButtonWhenNoActivitySelectedDoesNothing()
+    {
+        selectCurrentDay();
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.removeActivity();
+
+        activities.table().assertRowCount(1);
+    }
+
+    @Test
+    void clickRemoveButtonRemovesSelectedActivity()
+    {
+        selectCurrentDay();
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.table().clickRow(0);
+
+        activities.removeActivity();
+
+        activities.table().assertRowCount(0);
+    }
+
     @Test
     void addActivitySelectRemainder()
     {
@@ -117,6 +166,22 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         table.assertRowCount(1);
 
         app().genericDayTable().clickRow(row);
+        table.assertRowCount(0);
+    }
+
+    @Test
+    void activitiesTableUpdatedWhenDayChanges()
+    {
+        time().tickMinute();
+
+        final ActivitiesTable activities = app().activitiesTable();
+        final JavaFxTable<ActivityPropertyAdapter> table = activities.table();
+        table.assertRowCount(0);
+
+        activities.addActivity();
+        table.assertRowCount(1);
+
+        time().tickDay();
         table.assertRowCount(0);
     }
 

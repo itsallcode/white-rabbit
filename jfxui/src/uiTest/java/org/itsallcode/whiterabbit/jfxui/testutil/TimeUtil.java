@@ -94,6 +94,11 @@ public class TimeUtil
         tickMinute(Duration.ofMinutes(1));
     }
 
+    public void tickDay()
+    {
+        tickDay(LocalTime.of(8, 0));
+    }
+
     public void tickDay(LocalTime time)
     {
         final LocalDateTime now = LocalDateTime.now(clockMock);
