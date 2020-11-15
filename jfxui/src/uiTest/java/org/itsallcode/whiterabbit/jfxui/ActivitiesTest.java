@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.jfxui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
@@ -114,6 +115,119 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         activities.removeActivity();
 
         activities.table().assertRowCount(0);
+    }
+
+    @Test
+    void addRemainderActivityWithValues()
+    {
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        final Project project = new Project("p1", "Project 1", null);
+        activities.addRemainderActivity(project, "tst");
+
+        activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()
+                .withProject(project)
+                .withDuration(Duration.ZERO)
+                .withRemainder(true)
+                .withComment("tst")
+                .build());
+    }
+
+    @Test
+    void addFixedDurationActivityWithValues()
+    {
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        final Project project = new Project("p1", "Project 1", null);
+        activities.addActivity(project, Duration.ofMinutes(5), "tst");
+
+        activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()
+                .withProject(project)
+                .withDuration(Duration.ofMinutes(5))
+                .withRemainder(false)
+                .withComment("tst")
+                .build());
+    }
+
+    @Test
+    void remainderDurationCalculated()
+    {
+        time().tickSeparateMinutes(11);
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("a1");
+        activities.addActivity(Duration.ofMinutes(7), "a2");
+
+        final Builder activity1 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(3))
+                .withRemainder(true)
+                .withComment("a1");
+        final Builder activity2 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(7))
+                .withRemainder(false)
+                .withComment("a2");
+
+        activities.table().assertContent(activity1.build(), activity2.build());
+    }
+
+    @Test
+    void remainderDurationUpdatedAtMinuteTick()
+    {
+        time().tickSeparateMinutes(11);
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("a1");
+        activities.addActivity(Duration.ofMinutes(7), "a2");
+
+        final Builder activity1 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(3))
+                .withRemainder(true)
+                .withComment("a1");
+        final Builder activity2 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(7))
+                .withRemainder(false)
+                .withComment("a2");
+
+        activities.table().assertContent(activity1.build(), activity2.build());
+
+        time().tickMinute();
+
+        activity1.withDuration(Duration.ofMinutes(4));
+        activities.table().assertContent(activity1.build(), activity2.build());
+    }
+
+    @Test
+    void toggleRemainderDurationUpdatedAtMinuteTick()
+    {
+        time().tickSeparateMinutes(11);
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("a1");
+        activities.addActivity(Duration.ofMinutes(7), "a2");
+
+        final Builder activity1 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(3))
+                .withRemainder(true)
+                .withComment("a1");
+        final Builder activity2 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(7))
+                .withRemainder(false)
+                .withComment("a2");
+
+        activities.table().assertContent(activity1.build(), activity2.build());
+
+        activities.toggleRemainder(1);
+
+        time().tickMinute();
+
+        activity2.withRemainder(true).withDuration(Duration.ofMinutes(8));
+        activity1.withRemainder(false);
+        activities.table().assertContent(activity1.build(), activity2.build());
     }
 
     @Test

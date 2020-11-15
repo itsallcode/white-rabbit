@@ -1,8 +1,13 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
+import org.junit.jupiter.api.function.Executable;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
@@ -25,6 +30,18 @@ public class JavaFxTable<T>
     static <T> JavaFxTable<T> find(FxRobot robot, String query, Class<T> rowType)
     {
         return new JavaFxTable<>(robot, robot.lookup(query).queryTableView());
+    }
+
+    public void assertContent(TableRowExpectedContent... expectedRows)
+    {
+        final List<Executable> expectations = new ArrayList<>();
+        expectations.add(() -> assertRowCount(expectedRows.length));
+        for (int i = 0; i < expectedRows.length; i++)
+        {
+            final int row = i;
+            expectations.add(() -> assertRowContent(row, expectedRows[row]));
+        }
+        assertAll(expectations);
     }
 
     public void assertRowContent(final int rowIndex, final TableRowExpectedContent expectedRowContent)
@@ -61,6 +78,11 @@ public class JavaFxTable<T>
     public void assertRowCount(int expectedRowCount)
     {
         Assertions.assertThat(table).hasExactlyNumRows(expectedRowCount);
+    }
+
+    public int getRowCount()
+    {
+        return table.getItems().size();
     }
 
     public int getSelectedRowIndex()

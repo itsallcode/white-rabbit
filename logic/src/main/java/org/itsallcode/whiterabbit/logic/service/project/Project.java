@@ -11,6 +11,18 @@ public class Project
     @JsonbProperty("costCarrier")
     private String costCarrier;
 
+    public Project(String projectId, String label, String costCarrier)
+    {
+        this.projectId = projectId;
+        this.label = label;
+        this.costCarrier = costCarrier;
+    }
+
+    public Project()
+    {
+        this(null, null, null);
+    }
+
     public String getProjectId()
     {
         return projectId;

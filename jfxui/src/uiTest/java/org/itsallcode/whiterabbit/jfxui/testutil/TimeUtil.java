@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,6 +88,11 @@ public class TimeUtil
         addTime(Duration.ofSeconds(1));
         LOG.info("Tick second to {}", clockMock.instant());
         this.updateEverySecondRunnable.run();
+    }
+
+    public void tickSeparateMinutes(int minuteCount)
+    {
+        IntStream.range(0, minuteCount).forEach(i -> tickMinute());
     }
 
     public void tickMinute()

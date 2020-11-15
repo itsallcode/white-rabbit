@@ -10,7 +10,7 @@
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 		</Root>
-        <Logger name="org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable" level="trace" additivity="false">
+        <Logger name="org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
 	</Loggers>

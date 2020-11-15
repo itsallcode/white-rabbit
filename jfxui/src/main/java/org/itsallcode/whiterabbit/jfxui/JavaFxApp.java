@@ -321,10 +321,9 @@ public class JavaFxApp extends Application
     private void createUi()
     {
         LOG.debug("Creating user interface");
-        dayRecordTable = new DayRecordTable(locale, currentMonth, record -> {
-            appService.store(record);
-            appService.updateNow();
-        }, appService.formatter());
+        dayRecordTable = new DayRecordTable(locale, currentMonth,
+                record -> appService.store(record),
+                appService.formatter());
 
         activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
             appService.store(record);
