@@ -112,6 +112,37 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertThat(commentCell.getText()).isEqualTo("new");
     }
 
+    @Test
+    void editingNotAbortedWhenMinuteChangesInActivitiesTable()
+    {
+        time().tickMinute();
+
+        // app().activitiesTable().a
+        final int rowIndex = time().getCurrentDayRowIndex();
+
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.clickRow(rowIndex + 1);
+        final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
+
+        robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
+
+        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
+
+        robot.doubleClickOn(commentCell).write("new");
+
+        assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
+
+        time().tickMinute();
+
+        TestUtil.sleepShort();
+
+        assertThat(commentCell.isEditing()).as("cell is editing after minute tick").isTrue();
+        robot.type(KeyCode.ENTER);
+
+        assertThat(commentCell.getText()).isEqualTo("new");
+    }
+
     private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)
     {
         final LocalDate today = time().getCurrentDate();

@@ -29,11 +29,6 @@ public class ApplicationHelper
         return new InterruptionDialog(robot, window);
     }
 
-    public JavaFxTable<ActivityPropertyAdapter> activitiesTable()
-    {
-        return JavaFxTable.find(robot, "#activities-table", ActivityPropertyAdapter.class);
-    }
-
     public JavaFxTable<DayRecordPropertyAdapter> genericDayTable()
     {
         return JavaFxTable.find(robot, "#day-table", DayRecordPropertyAdapter.class);
@@ -42,6 +37,16 @@ public class ApplicationHelper
     public DayTable dayTable()
     {
         return new DayTable(genericDayTable(), robot);
+    }
+
+    public ActivitiesTable activitiesTable()
+    {
+        return new ActivitiesTable(genericActivitiesTable(), robot);
+    }
+
+    private JavaFxTable<ActivityPropertyAdapter> genericActivitiesTable()
+    {
+        return JavaFxTable.find(robot, "#activities-table", ActivityPropertyAdapter.class);
     }
 
     public AutomaticInterruptionDialog assertAutomaticInterruption()
