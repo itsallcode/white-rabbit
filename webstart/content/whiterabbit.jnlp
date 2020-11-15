@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="" href="">
+<jnlp spec="1.0+" codebase="https://whiterabbit.chp1.net/" href="whiterabbit.jnlp">
     <information>
         <title>WhiteRabbit Time Recording</title>
-        <vendor>chπ</vendor>
+        <vendor>It's all code</vendor>
+        <homepage href="https://github.com/itsallcode/white-rabbit"/>
+        <description kind="one-line">A time recording tool</description>
         <icon href="icon.png"/>
         <offline-allowed/>
     </information>
     <resources>
-        <j2se version="11" href="http://java.sun.com/products/autodl/j2se"/>
-        <jar href="https://whiterabbit.chp1.net/whiterabbitfx-signed.jar" main="true" />
+        <j2se version="11" max-heap-size="512M" java-vm-args="-XX:+HeapDumpOnOutOfMemoryError" href="https://adoptopenjdk.net/"/>
+        <jar href="whiterabbitfx-signed.jar" main="true" />
     </resources>
     <update check="background"/>
     <application-desc name="WhiteRabbit Time Recording" main-class="org.itsallcode.whiterabbit.jfxui.App" width="300" height="300">
