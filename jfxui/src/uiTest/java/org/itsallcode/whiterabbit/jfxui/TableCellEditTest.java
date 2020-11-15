@@ -17,7 +17,6 @@ import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -114,9 +113,8 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertThat(commentCell.getText()).isEqualTo("new");
     }
 
-    @Disabled("Will be fixed with https://github.com/itsallcode/white-rabbit/issues/42")
     @Test
-    void editingNotAbortedWhenMinuteChangesInActivitiesTable()
+    void editingActivitiesTableNotAbortedWhenMinuteChanges()
     {
         time().tickMinute();
 

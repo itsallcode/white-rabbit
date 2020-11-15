@@ -55,6 +55,12 @@ public class DayActivities
                 .collect(toList());
     }
 
+    public boolean isEmpty()
+    {
+        return getActivities().map(a -> false)
+                .findFirst().orElse(true);
+    }
+
     private Stream<JsonActivity> getActivities()
     {
         return Optional.ofNullable(day.getActivities())

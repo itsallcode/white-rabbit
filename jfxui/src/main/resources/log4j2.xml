@@ -19,8 +19,8 @@
                     size="10 MB" />
             </Policies>
         </RollingFile>
-
     </Appenders>
+    
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="Console" />
