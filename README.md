@@ -115,6 +115,16 @@ This is generated automatically. The Java FX user interface allows you to edit i
 
 ## <a name="changes"></a>Recent changes
 
+### Version 1.0.1 (unreleased)
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.0.1) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/3?closed=1)
+
+* [#42](https://github.com/itsallcode/white-rabbit/pull/42): Bugfix: Keep edit focus for activities when table is updated every minute
+
+### Version 1.0.0
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.0.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/1?closed=1)
+
 * [#40](https://github.com/itsallcode/white-rabbit/pull/40): Bugfix: Keep edit focus when table is updated every minute
 * [#39](https://github.com/itsallcode/white-rabbit/pull/39): Publish WhiteRabbit using WebStart
 * [#5](https://github.com/itsallcode/white-rabbit/issues/5): Add presets for adding interruptions
@@ -124,7 +134,7 @@ This is generated automatically. The Java FX user interface allows you to edit i
 * [#29](https://github.com/itsallcode/white-rabbit/issues/29): Relaxed parsing of time and duration
 * [#27](https://github.com/itsallcode/white-rabbit/issues/27): Delete begin, end and interruption when changing day type to "not working"
 * [#26](https://github.com/itsallcode/white-rabbit/issues/26): Omit "activities" from json when list is empty
-* [#10](https://github.com/itsallcode/white-rabbit/issues/10): Facelift: Improved menu. Turned buttons an drop-down into toolbar. Turned OT (thanks to [redcatbear](https://github.com/redcatbear))
+* [#10](https://github.com/itsallcode/white-rabbit/issues/10): Facelift: Improved menu. Turned buttons and drop-down into toolbar. Turned OT (thanks to [redcatbear](https://github.com/redcatbear))
 * [#6](https://github.com/itsallcode/white-rabbit/issues/6): Persist cell changes on focus loss
 * Text UI is now deprecated, please use the new Java FX UI.
 * Keep track of activities for time booking on multiple projects, See [project configuration](#project_config)
