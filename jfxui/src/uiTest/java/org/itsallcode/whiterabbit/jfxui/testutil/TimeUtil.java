@@ -141,8 +141,8 @@ public class TimeUtil
         final ArgumentCaptor<Runnable> arg = ArgumentCaptor.forClass(Runnable.class);
         verify(this.executorServiceMock, times(3)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
 
-        this.updateEverySecondRunnable = arg.getAllValues().get(0);
-        this.updateEveryDayRunnable = arg.getAllValues().get(1);
+        this.updateEveryDayRunnable = arg.getAllValues().get(0);
+        this.updateEverySecondRunnable = arg.getAllValues().get(1);
         this.updateEveryMinuteRunnable = arg.getAllValues().get(2);
 
         LOG.trace("Found callback for seconds: {}", updateEverySecondRunnable);

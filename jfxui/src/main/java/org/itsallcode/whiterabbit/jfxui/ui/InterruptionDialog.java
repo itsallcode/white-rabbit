@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui;
+package org.itsallcode.whiterabbit.jfxui.ui;
 
 import java.time.Clock;
 import java.time.Duration;
