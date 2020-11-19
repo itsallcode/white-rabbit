@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Arrays;
@@ -16,8 +15,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
-import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -29,19 +26,12 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
-import org.itsallcode.whiterabbit.logic.service.Interruption;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -57,14 +47,6 @@ public class JavaFxApp extends Application
 
     private AppService appService;
 
-    private final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
-    private final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
-    private final BooleanProperty stoppedWorkingForToday = new SimpleBooleanProperty(false);
-    private final ObservableList<YearMonth> availableMonths = FXCollections.observableArrayList();
-
-    private ScheduledProperty<Instant> currentTimeProperty;
-    private ScheduledProperty<LocalDate> currentDateProperty;
-
     private Stage primaryStage;
 
     private Locale locale;
@@ -73,6 +55,8 @@ public class JavaFxApp extends Application
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
     private AppUi ui;
+
+    private AppState state;
 
     public JavaFxApp()
     {
@@ -120,8 +104,7 @@ public class JavaFxApp extends Application
             throw new OtherInstanceAlreadyRunningException(response);
         }
 
-        currentTimeProperty = new ClockPropertyFactory(appService).currentTimeProperty();
-        currentDateProperty = new ClockPropertyFactory(appService).currentDateProperty();
+        state = AppState.create(appService);
 
     }
 
@@ -145,8 +128,7 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi(this, locale, interruption, availableMonths, currentMonth, currentDateProperty,
-                currentTimeProperty, stoppedWorkingForToday, appService, primaryStage);
+        this.ui = new AppUi(this, locale, state, appService, primaryStage);
         ui.createUi();
 
         primaryStage.show();
@@ -166,7 +148,7 @@ public class JavaFxApp extends Application
     void loadMonth(final YearMonth month)
     {
         final MonthIndex record = appService.getOrCreateMonth(month);
-        currentMonth.setValue(record);
+        state.currentMonth.setValue(record);
     }
 
     @Override
@@ -181,14 +163,12 @@ public class JavaFxApp extends Application
         LOG.info("Stopping application");
         ui.shutdown();
 
-        if (currentDateProperty != null)
+        if (state != null)
         {
-            currentDateProperty.cancel();
+            state.shutdown();
+            state = null;
         }
-        if (currentTimeProperty != null)
-        {
-            currentTimeProperty.cancel();
-        }
+
         if (appService != null)
         {
             appService.close();
@@ -261,14 +241,15 @@ public class JavaFxApp extends Application
 
     void startManualInterruption()
     {
-        if (interruption.isNotNull().get())
+        if (state.interruption.isNotNull().get())
         {
-            LOG.warn("Interruption {} already active", interruption.get());
+            LOG.warn("Interruption {} already active", state.interruption.get());
             return;
         }
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            interruption.set(appService.startInterruption());
-            new InterruptionDialog(primaryStage, currentTimeProperty.property(), interruption, clock).show();
+            state.interruption.set(appService.startInterruption());
+            new InterruptionDialog(primaryStage, state.currentTimeProperty.property(), state.interruption, clock)
+                    .show();
         });
     }
 
@@ -306,7 +287,7 @@ public class JavaFxApp extends Application
 
         private InterruptionDetectedDecision evaluateButton(final Optional<ButtonType> selectedButton)
         {
-            if (isButton(selectedButton, ButtonData.FINISH) && !stoppedWorkingForToday.get())
+            if (isButton(selectedButton, ButtonData.FINISH) && !state.stoppedWorkingForToday.get())
             {
                 return InterruptionDetectedDecision.STOP_WORKING_FOR_TODAY;
             }
@@ -329,13 +310,13 @@ public class JavaFxApp extends Application
         {
             JavaFxUtil.runOnFxApplicationThread(() -> {
                 final YearMonth recordMonth = YearMonth.from(record.getDate());
-                if (!availableMonths.isEmpty() && !availableMonths.contains(recordMonth))
+                if (!state.availableMonths.isEmpty() && !state.availableMonths.contains(recordMonth))
                 {
-                    availableMonths.add(recordMonth);
+                    state.availableMonths.add(recordMonth);
                 }
-                if (currentMonth.get().getYearMonth().equals(recordMonth))
+                if (state.currentMonth.get().getYearMonth().equals(recordMonth))
                 {
-                    currentMonth.setValue(record.getMonth());
+                    state.currentMonth.setValue(record.getMonth());
                     if (daySelected(record))
                     {
                         ui.updateActivities(record);
@@ -370,7 +351,7 @@ public class JavaFxApp extends Application
         @Override
         public void workStoppedForToday(boolean stopWorking)
         {
-            JavaFxUtil.runOnFxApplicationThread(() -> stoppedWorkingForToday.setValue(stopWorking));
+            JavaFxUtil.runOnFxApplicationThread(() -> state.stoppedWorkingForToday.setValue(stopWorking));
         }
     }
 }

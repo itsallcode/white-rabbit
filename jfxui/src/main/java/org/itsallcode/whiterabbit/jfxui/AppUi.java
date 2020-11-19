@@ -13,7 +13,6 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.feature.InterruptionPresetFeature;
-import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
@@ -23,13 +22,9 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
-import org.itsallcode.whiterabbit.logic.service.Interruption;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -59,39 +54,22 @@ class AppUi
     private static final int GAP_PIXEL = 10;
 
     private static final Logger LOG = LogManager.getLogger(AppUi.class);
-    private final Locale locale;
-    private final ObjectProperty<MonthIndex> currentMonth;
-    private final ScheduledProperty<LocalDate> currentDateProperty;
-    private final AppService appService;
     private final Stage primaryStage;
+    private final AppService appService;
+    private final Locale locale;
 
     private DayRecordTable dayRecordTable;
     private ActivitiesTable activitiesTable;
-    private final BooleanProperty stoppedWorkingForToday;
     private final JavaFxApp app;
     private Tray tray;
 
-    private final ObjectProperty<Interruption> interruption;
+    private final AppState state;
 
-    private final ScheduledProperty<Instant> currentTimeProperty;
-
-    private final ObservableList<YearMonth> availableMonths;
-
-    AppUi(JavaFxApp app, Locale locale, ObjectProperty<Interruption> interruption,
-            ObservableList<YearMonth> availableMonths, ObjectProperty<MonthIndex> currentMonth,
-            ScheduledProperty<LocalDate> currentDateProperty, ScheduledProperty<Instant> currentTimeProperty,
-            BooleanProperty stoppedWorkingForToday,
-            AppService appService,
-            Stage primaryStage)
+    public AppUi(JavaFxApp javaFxApp, Locale locale, AppState appState, AppService appService, Stage primaryStage)
     {
-        this.app = app;
+        app = javaFxApp;
         this.locale = locale;
-        this.interruption = interruption;
-        this.availableMonths = availableMonths;
-        this.currentMonth = currentMonth;
-        this.currentDateProperty = currentDateProperty;
-        this.currentTimeProperty = currentTimeProperty;
-        this.stoppedWorkingForToday = stoppedWorkingForToday;
+        this.state = appState;
         this.appService = appService;
         this.primaryStage = primaryStage;
     }
@@ -99,7 +77,7 @@ class AppUi
     void createUi()
     {
         LOG.debug("Creating user interface");
-        dayRecordTable = new DayRecordTable(locale, currentMonth,
+        dayRecordTable = new DayRecordTable(locale, state.currentMonth,
                 record -> appService.store(record),
                 appService.formatter());
 
@@ -135,7 +113,8 @@ class AppUi
 
     private VBox createTopContainer()
     {
-        final MenuBar menuBar = new MenuBarBuilder(app, primaryStage, appService, this.stoppedWorkingForToday).build();
+        final MenuBar menuBar = new MenuBarBuilder(app, primaryStage, appService, state.stoppedWorkingForToday)
+                .build();
         final VBox topContainer = new VBox();
         topContainer.getChildren().addAll(menuBar, createToolBar());
         return topContainer;
@@ -182,7 +161,7 @@ class AppUi
     {
         final Insets insets = new Insets(GAP_PIXEL);
         final Node daysTable = dayRecordTable.initTable();
-        currentDateProperty.property()
+        state.currentDateProperty.property()
                 .addListener((observable, oldValue, newValue) -> dayRecordTable.selectRow(newValue));
         final Node activitiesTab = activitiesTable.initTable();
         final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> app.addActivity());
@@ -214,7 +193,7 @@ class AppUi
 
         final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
                 e -> app.startManualInterruption());
-        startInterruptionButton.disableProperty().bind(interruption.isNotNull());
+        startInterruptionButton.disableProperty().bind(state.interruption.isNotNull());
 
         return new ToolBar(monthDropDownBox(),
                 new Separator(),
@@ -232,8 +211,8 @@ class AppUi
         final Button button = new Button();
         button.textProperty()
                 .bind(Bindings.createStringBinding(
-                        () -> stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",
-                        stoppedWorkingForToday));
+                        () -> state.stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",
+                        state.stoppedWorkingForToday));
         button.setOnAction(e -> appService.toggleStopWorkForToday());
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         return button;
@@ -258,9 +237,9 @@ class AppUi
         final Label label = new Label();
         label.setId("current-time-label");
         label.textProperty().bind(Bindings.createStringBinding(() -> {
-            final Instant now = currentTimeProperty.property().getValue();
+            final Instant now = state.currentTimeProperty.property().getValue();
             return formatter.formatDateAndTime(now);
-        }, currentTimeProperty.property()));
+        }, state.currentTimeProperty.property()));
         return label;
     }
 
@@ -270,7 +249,7 @@ class AppUi
         final Label label = new Label();
         label.setId("overtime-label");
         label.textProperty().bind(Bindings.createStringBinding(() -> {
-            final MonthIndex month = currentMonth.get();
+            final MonthIndex month = state.currentMonth.get();
             if (month != null && month.getOvertimePreviousMonth() != null)
             {
                 final Duration totalOvertime = month.getTotalOvertime();
@@ -280,16 +259,16 @@ class AppUi
                         + formatter.format(totalOvertime);
             }
             return "Overtime: (no month selected)";
-        }, currentTimeProperty.property(), currentMonth));
+        }, state.currentTimeProperty.property(), state.currentMonth));
         return label;
     }
 
     private Node monthDropDownBox()
     {
-        availableMonths.addAll(appService.getAvailableDataYearMonth());
-        final ComboBox<YearMonth> comboBox = new ComboBox<>(availableMonths);
+        state.availableMonths.addAll(appService.getAvailableDataYearMonth());
+        final ComboBox<YearMonth> comboBox = new ComboBox<>(state.availableMonths);
 
-        currentMonth.addListener(
+        state.currentMonth.addListener(
                 (observable, oldValue, newValue) -> comboBox.getSelectionModel().select(newValue.getYearMonth()));
         comboBox.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> app.loadMonth(newValue));
