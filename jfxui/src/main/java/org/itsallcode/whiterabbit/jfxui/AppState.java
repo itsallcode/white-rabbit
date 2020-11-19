@@ -17,7 +17,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-class AppState
+final class AppState
 {
     final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
     final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();

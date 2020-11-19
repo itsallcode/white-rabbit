@@ -54,267 +54,21 @@ class AppUi
     private static final int GAP_PIXEL = 10;
 
     private static final Logger LOG = LogManager.getLogger(AppUi.class);
-    private final Stage primaryStage;
-    private final AppService appService;
-    private final Locale locale;
 
-    private DayRecordTable dayRecordTable;
-    private ActivitiesTable activitiesTable;
-    private final JavaFxApp app;
-    private Tray tray;
+    private final DayRecordTable dayRecordTable;
+    private final ActivitiesTable activitiesTable;
+    private final Tray tray;
 
-    private final AppState state;
-
-    public AppUi(JavaFxApp javaFxApp, Locale locale, AppState appState, AppService appService, Stage primaryStage)
+    private AppUi(Builder builder)
     {
-        app = javaFxApp;
-        this.locale = locale;
-        this.state = appState;
-        this.appService = appService;
-        this.primaryStage = primaryStage;
-    }
-
-    void createUi()
-    {
-        LOG.debug("Creating user interface");
-        dayRecordTable = new DayRecordTable(locale, state.currentMonth,
-                record -> appService.store(record),
-                appService.formatter());
-
-        activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
-            appService.store(record);
-            activitiesTable.refresh();
-        }, appService.formatter(), appService.projects());
-        final BorderPane rootPane = new BorderPane(createMainPane());
-        rootPane.setTop(createTopContainer());
-        final Scene scene = new Scene(rootPane, 780, 800);
-        scene.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.F5)
-            {
-                appService.updateNow();
-            }
-        });
-
-        primaryStage.setTitle("White Rabbit Time Recording " + appService.getAppProperties().getVersion());
-        try (InputStream resourceStream = JavaFxApp.class.getResourceAsStream("/icon.png"))
-        {
-            primaryStage.getIcons().add(new Image(resourceStream));
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error loading image from resource", e);
-        }
-
-        createTrayIcon();
-
-        primaryStage.setScene(scene);
-        LOG.debug("User interface finished");
-    }
-
-    private VBox createTopContainer()
-    {
-        final MenuBar menuBar = new MenuBarBuilder(app, primaryStage, appService, state.stoppedWorkingForToday)
-                .build();
-        final VBox topContainer = new VBox();
-        topContainer.getChildren().addAll(menuBar, createToolBar());
-        return topContainer;
-    }
-
-    private void createTrayIcon()
-    {
-        tray = Tray.create(new TrayCallback()
-        {
-            @Override
-            public void showMainWindow()
-            {
-                bringWindowToFront();
-            }
-
-            @Override
-            public void startInterruption()
-            {
-                app.startManualInterruption();
-            }
-
-            @Override
-            public void exit()
-            {
-                Platform.exit();
-            }
-        });
-
-        if (!tray.isSupported())
-        {
-            LOG.trace("System tray is not supported: don't allow hiding primary stage");
-            return;
-        }
-        LOG.trace("System tray is supported: allow hiding primary stage");
-        Platform.setImplicitExit(false);
-        primaryStage.setOnCloseRequest(event -> {
-            LOG.trace("Hiding primary stage");
-            event.consume();
-            primaryStage.hide();
-        });
-    }
-
-    private BorderPane createMainPane()
-    {
-        final Insets insets = new Insets(GAP_PIXEL);
-        final Node daysTable = dayRecordTable.initTable();
-        state.currentDateProperty.property()
-                .addListener((observable, oldValue, newValue) -> dayRecordTable.selectRow(newValue));
-        final Node activitiesTab = activitiesTable.initTable();
-        final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> app.addActivity());
-        final Button removeActivityButton = button("remove-activity-button", "-", "Remove activity",
-                e -> app.removeActivity());
-        final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
-                addActivityButton,
-                removeActivityButton);
-        final SplitPane mainPane = new SplitPane(daysTable,
-                new TitledPane("Activities", new HBox(GAP_PIXEL, activitiesButtonPane, activitiesTab)));
-        HBox.setHgrow(activitiesTab, Priority.ALWAYS);
-        mainPane.setOrientation(Orientation.VERTICAL);
-        mainPane.setDividerPositions(0.8);
-
-        final BorderPane pane = new BorderPane();
-        pane.setCenter(mainPane);
-
-        BorderPane.setMargin(mainPane, insets);
-
-        BorderPane.setMargin(createStatusBar(), new Insets(0, GAP_PIXEL, 0, GAP_PIXEL));
-        pane.setBottom(createStatusBar());
-
-        return pane;
-    }
-
-    private ToolBar createToolBar()
-    {
-        final InterruptionPresetFeature interruptionPreset = new InterruptionPresetFeature(appService);
-
-        final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
-                e -> app.startManualInterruption());
-        startInterruptionButton.disableProperty().bind(state.interruption.isNotNull());
-
-        return new ToolBar(monthDropDownBox(),
-                new Separator(),
-                startInterruptionButton,
-                interruptionPreset.createButton(),
-                createStopWorkForTodayButton(),
-                new Separator(),
-                button("update-button", "Update", e -> appService.updateNow()),
-                new Separator(),
-                button("vacation-report-button", "Vacation report", e -> app.showVacationReport()));
-    }
-
-    private Button createStopWorkForTodayButton()
-    {
-        final Button button = new Button();
-        button.textProperty()
-                .bind(Bindings.createStringBinding(
-                        () -> state.stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",
-                        state.stoppedWorkingForToday));
-        button.setOnAction(e -> appService.toggleStopWorkForToday());
-        button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        return button;
-    }
-
-    private HBox createStatusBar()
-    {
-        final HBox status = new HBox();
-        status.setPadding(new Insets(GAP_PIXEL));
-        final Node left = overtimeLabel();
-        final Pane spacer = new Pane();
-        spacer.setMinSize(GAP_PIXEL, 1);
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        final Node right = currentTimeLabel();
-        status.getChildren().addAll(left, spacer, right);
-        return status;
-    }
-
-    private Node currentTimeLabel()
-    {
-        final FormatterService formatter = appService.formatter();
-        final Label label = new Label();
-        label.setId("current-time-label");
-        label.textProperty().bind(Bindings.createStringBinding(() -> {
-            final Instant now = state.currentTimeProperty.property().getValue();
-            return formatter.formatDateAndTime(now);
-        }, state.currentTimeProperty.property()));
-        return label;
-    }
-
-    private Node overtimeLabel()
-    {
-        final FormatterService formatter = appService.formatter();
-        final Label label = new Label();
-        label.setId("overtime-label");
-        label.textProperty().bind(Bindings.createStringBinding(() -> {
-            final MonthIndex month = state.currentMonth.get();
-            if (month != null && month.getOvertimePreviousMonth() != null)
-            {
-                final Duration totalOvertime = month.getTotalOvertime();
-                return "Overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
-                        + ", this month: "
-                        + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total: "
-                        + formatter.format(totalOvertime);
-            }
-            return "Overtime: (no month selected)";
-        }, state.currentTimeProperty.property(), state.currentMonth));
-        return label;
-    }
-
-    private Node monthDropDownBox()
-    {
-        state.availableMonths.addAll(appService.getAvailableDataYearMonth());
-        final ComboBox<YearMonth> comboBox = new ComboBox<>(state.availableMonths);
-
-        state.currentMonth.addListener(
-                (observable, oldValue, newValue) -> comboBox.getSelectionModel().select(newValue.getYearMonth()));
-        comboBox.getSelectionModel().selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> app.loadMonth(newValue));
-        return comboBox;
-    }
-
-    private Button button(String id, String label, EventHandler<ActionEvent> action)
-    {
-        return button(id, label, null, action);
-    }
-
-    private Button button(String id, String label, String tooltip, EventHandler<ActionEvent> action)
-    {
-        final Button button = new Button(label);
-        button.setId(id);
-        button.setOnAction(action);
-        button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        if (tooltip != null)
-        {
-            button.setTooltip(new Tooltip(tooltip));
-        }
-        return button;
-    }
-
-    void bringWindowToFront()
-    {
-        Platform.runLater(() -> {
-            if (primaryStage.isShowing())
-            {
-                LOG.debug("Request focus");
-                primaryStage.requestFocus();
-            }
-            else
-            {
-                LOG.debug("Show primary stage");
-                primaryStage.show();
-            }
-        });
+        dayRecordTable = builder.dayRecordTable;
+        activitiesTable = builder.activitiesTable;
+        tray = builder.tray;
     }
 
     void shutdown()
     {
-        if (tray != null)
-        {
-            tray.removeTrayIcon();
-        }
+        tray.removeTrayIcon();
     }
 
     public void selectDay(LocalDate date)
@@ -335,5 +89,247 @@ class AppUi
     public void updateActivities(DayRecord record)
     {
         activitiesTable.updateTableValues(record);
+    }
+
+    static class Builder
+    {
+        private final Stage primaryStage;
+        private final AppService appService;
+        private final Locale locale;
+        private final JavaFxApp app;
+        private final AppState state;
+
+        private DayRecordTable dayRecordTable;
+        private ActivitiesTable activitiesTable;
+        private Tray tray;
+
+        Builder(JavaFxApp app, AppService appService, Stage primaryStage, AppState appState, Locale locale)
+        {
+            this.app = app;
+            this.locale = locale;
+            this.state = appState;
+            this.appService = appService;
+            this.primaryStage = primaryStage;
+        }
+
+        AppUi build()
+        {
+            LOG.debug("Creating user interface");
+            dayRecordTable = new DayRecordTable(locale, state.currentMonth,
+                    record -> appService.store(record),
+                    appService.formatter());
+
+            activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
+                appService.store(record);
+                activitiesTable.refresh();
+            }, appService.formatter(), appService.projects());
+            final BorderPane rootPane = new BorderPane(createMainPane());
+            rootPane.setTop(createTopContainer());
+            final Scene scene = new Scene(rootPane, 780, 800);
+            scene.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.F5)
+                {
+                    appService.updateNow();
+                }
+            });
+
+            primaryStage.setTitle("White Rabbit Time Recording " + appService.getAppProperties().getVersion());
+            try (InputStream resourceStream = JavaFxApp.class.getResourceAsStream("/icon.png"))
+            {
+                primaryStage.getIcons().add(new Image(resourceStream));
+            }
+            catch (final IOException e)
+            {
+                throw new UncheckedIOException("Error loading image from resource", e);
+            }
+
+            createTrayIcon();
+
+            primaryStage.setScene(scene);
+            LOG.debug("User interface finished");
+            return new AppUi(this);
+        }
+
+        private VBox createTopContainer()
+        {
+            final MenuBar menuBar = new MenuBarBuilder(app, primaryStage, appService, state.stoppedWorkingForToday)
+                    .build();
+            final VBox topContainer = new VBox();
+            topContainer.getChildren().addAll(menuBar, createToolBar());
+            return topContainer;
+        }
+
+        private void createTrayIcon()
+        {
+            tray = Tray.create(new TrayCallback()
+            {
+                @Override
+                public void showMainWindow()
+                {
+                    app.bringWindowToFront();
+                }
+
+                @Override
+                public void startInterruption()
+                {
+                    app.startManualInterruption();
+                }
+
+                @Override
+                public void exit()
+                {
+                    Platform.exit();
+                }
+            });
+
+            if (!tray.isSupported())
+            {
+                LOG.trace("System tray is not supported: don't allow hiding primary stage");
+                return;
+            }
+            LOG.trace("System tray is supported: allow hiding primary stage");
+            Platform.setImplicitExit(false);
+            primaryStage.setOnCloseRequest(event -> {
+                LOG.trace("Hiding primary stage");
+                event.consume();
+                primaryStage.hide();
+            });
+        }
+
+        private BorderPane createMainPane()
+        {
+            final Insets insets = new Insets(GAP_PIXEL);
+            final Node daysTable = dayRecordTable.initTable();
+            state.currentDateProperty.property()
+                    .addListener((observable, oldValue, newValue) -> dayRecordTable.selectRow(newValue));
+            final Node activitiesTab = activitiesTable.initTable();
+            final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> app.addActivity());
+            final Button removeActivityButton = button("remove-activity-button", "-", "Remove activity",
+                    e -> app.removeActivity());
+            final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
+                    addActivityButton,
+                    removeActivityButton);
+            final SplitPane mainPane = new SplitPane(daysTable,
+                    new TitledPane("Activities", new HBox(GAP_PIXEL, activitiesButtonPane, activitiesTab)));
+            HBox.setHgrow(activitiesTab, Priority.ALWAYS);
+            mainPane.setOrientation(Orientation.VERTICAL);
+            mainPane.setDividerPositions(0.8);
+
+            final BorderPane pane = new BorderPane();
+            pane.setCenter(mainPane);
+
+            BorderPane.setMargin(mainPane, insets);
+
+            BorderPane.setMargin(createStatusBar(), new Insets(0, GAP_PIXEL, 0, GAP_PIXEL));
+            pane.setBottom(createStatusBar());
+
+            return pane;
+        }
+
+        private ToolBar createToolBar()
+        {
+            final InterruptionPresetFeature interruptionPreset = new InterruptionPresetFeature(appService);
+
+            final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
+                    e -> app.startManualInterruption());
+            startInterruptionButton.disableProperty().bind(state.interruption.isNotNull());
+
+            return new ToolBar(monthDropDownBox(),
+                    new Separator(),
+                    startInterruptionButton,
+                    interruptionPreset.createButton(),
+                    createStopWorkForTodayButton(),
+                    new Separator(),
+                    button("update-button", "Update", e -> appService.updateNow()),
+                    new Separator(),
+                    button("vacation-report-button", "Vacation report", e -> app.showVacationReport()));
+        }
+
+        private Button createStopWorkForTodayButton()
+        {
+            final Button button = new Button();
+            button.textProperty()
+                    .bind(Bindings.createStringBinding(
+                            () -> state.stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",
+                            state.stoppedWorkingForToday));
+            button.setOnAction(e -> appService.toggleStopWorkForToday());
+            button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            return button;
+        }
+
+        private HBox createStatusBar()
+        {
+            final HBox status = new HBox();
+            status.setPadding(new Insets(GAP_PIXEL));
+            final Node left = overtimeLabel();
+            final Pane spacer = new Pane();
+            spacer.setMinSize(GAP_PIXEL, 1);
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            final Node right = currentTimeLabel();
+            status.getChildren().addAll(left, spacer, right);
+            return status;
+        }
+
+        private Node currentTimeLabel()
+        {
+            final FormatterService formatter = appService.formatter();
+            final Label label = new Label();
+            label.setId("current-time-label");
+            label.textProperty().bind(Bindings.createStringBinding(() -> {
+                final Instant now = state.currentTimeProperty.property().getValue();
+                return formatter.formatDateAndTime(now);
+            }, state.currentTimeProperty.property()));
+            return label;
+        }
+
+        private Node overtimeLabel()
+        {
+            final FormatterService formatter = appService.formatter();
+            final Label label = new Label();
+            label.setId("overtime-label");
+            label.textProperty().bind(Bindings.createStringBinding(() -> {
+                final MonthIndex month = state.currentMonth.get();
+                if (month != null && month.getOvertimePreviousMonth() != null)
+                {
+                    final Duration totalOvertime = month.getTotalOvertime();
+                    return "Overtime previous month: " + formatter.format(month.getOvertimePreviousMonth())
+                            + ", this month: "
+                            + formatter.format(totalOvertime.minus(month.getOvertimePreviousMonth())) + ", total: "
+                            + formatter.format(totalOvertime);
+                }
+                return "Overtime: (no month selected)";
+            }, state.currentTimeProperty.property(), state.currentMonth));
+            return label;
+        }
+
+        private Node monthDropDownBox()
+        {
+            state.availableMonths.addAll(appService.getAvailableDataYearMonth());
+            final ComboBox<YearMonth> comboBox = new ComboBox<>(state.availableMonths);
+
+            state.currentMonth.addListener(
+                    (observable, oldValue, newValue) -> comboBox.getSelectionModel().select(newValue.getYearMonth()));
+            comboBox.getSelectionModel().selectedItemProperty()
+                    .addListener((observable, oldValue, newValue) -> app.loadMonth(newValue));
+            return comboBox;
+        }
+
+        private Button button(String id, String label, EventHandler<ActionEvent> action)
+        {
+            return button(id, label, null, action);
+        }
+
+        private Button button(String id, String label, String tooltip, EventHandler<ActionEvent> action)
+        {
+            final Button button = new Button(label);
+            button.setId(id);
+            button.setOnAction(action);
+            button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            if (tooltip != null)
+            {
+                button.setTooltip(new Tooltip(tooltip));
+            }
+            return button;
+        }
     }
 }

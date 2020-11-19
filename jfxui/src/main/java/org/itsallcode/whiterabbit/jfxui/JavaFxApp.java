@@ -128,8 +128,7 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi(this, locale, state, appService, primaryStage);
-        ui.createUi();
+        this.ui = new AppUi.Builder(this, appService, primaryStage, state, locale).build();
 
         primaryStage.show();
 
@@ -185,7 +184,7 @@ public class JavaFxApp extends Application
     {
         if (MESSAGE_BRING_TO_FRONT.equals(message))
         {
-            ui.bringWindowToFront();
+            bringWindowToFront();
         }
         if (MESSAGE_GET_PROCESS_INFO.equals(message))
         {
@@ -201,7 +200,23 @@ public class JavaFxApp extends Application
         }
     }
 
-    public void showVacationReport()
+    void bringWindowToFront()
+    {
+        Platform.runLater(() -> {
+            if (primaryStage.isShowing())
+            {
+                LOG.debug("Request focus");
+                primaryStage.requestFocus();
+            }
+            else
+            {
+                LOG.debug("Show primary stage");
+                primaryStage.show();
+            }
+        });
+    }
+
+    void showVacationReport()
     {
         final VacationReport vacationReport = appService.getVacationReport();
         new VacationReportViewer(vacationReport).show();
@@ -234,7 +249,7 @@ public class JavaFxApp extends Application
         appService.activities().removeActivity(selectedActivity.get());
     }
 
-    public void exitApp()
+    void exitApp()
     {
         Platform.exit();
     }
