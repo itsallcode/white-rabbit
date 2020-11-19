@@ -117,9 +117,7 @@ public class AppUi
         public AppUi build()
         {
             LOG.debug("Creating user interface");
-            dayRecordTable = new DayRecordTable(locale, state.currentMonth,
-                    record -> appService.store(record),
-                    appService.formatter());
+            dayRecordTable = new DayRecordTable(locale, state.currentMonth, appService::store, appService.formatter());
 
             activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
                 appService.store(record);

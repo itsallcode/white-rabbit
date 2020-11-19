@@ -106,6 +106,6 @@ class MenuBarBuilder
         final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
         aboutDialog.getButtonTypes().setAll(close, homepage);
         final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
-        selectedButton.filter(response -> response == homepage).ifPresent((buttonType) -> app.openHomepage());
+        selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> app.openHomepage());
     }
 }
