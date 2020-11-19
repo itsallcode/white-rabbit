@@ -6,7 +6,7 @@ import { CfnRecordSetGroup } from "@aws-cdk/aws-route53";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import {
   CloudFrontWebDistribution, ViewerCertificate, PriceClass,
-  SecurityPolicyProtocol, SSLMethod, ViewerProtocolPolicy, OriginAccessIdentity
+  SecurityPolicyProtocol, SSLMethod, ViewerProtocolPolicy, OriginAccessIdentity, HttpVersion
 } from "@aws-cdk/aws-cloudfront";
 
 interface StaticContentProps {
@@ -33,7 +33,7 @@ export class StaticContentConstruct extends Construct {
     });
 
     const cloudfrontDistribution = new CloudFrontWebDistribution(this, "CloudFrontDistribution", {
-      comment: `${props.domain}`,
+      comment: props.domain,
       originConfigs: [{
         behaviors: [{ isDefaultBehavior: true }],
         s3OriginSource: {
@@ -49,7 +49,8 @@ export class StaticContentConstruct extends Construct {
         aliases: [props.domain]
       }),
       priceClass: PriceClass.PRICE_CLASS_100,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS
+      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      httpVersion: HttpVersion.HTTP2
     });
 
     const bucketPolicy = new BucketPolicy(this, "AllowReadAccessToCloudFront", { bucket: staticContentBucket });
