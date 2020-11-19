@@ -17,15 +17,15 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-final class AppState
+public final class AppState
 {
-    final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
-    final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
-    final BooleanProperty stoppedWorkingForToday = new SimpleBooleanProperty(false);
-    final ObservableList<YearMonth> availableMonths = FXCollections.observableArrayList();
+    public final ObjectProperty<Interruption> interruption = new SimpleObjectProperty<>();
+    public final ObjectProperty<MonthIndex> currentMonth = new SimpleObjectProperty<>();
+    public final BooleanProperty stoppedWorkingForToday = new SimpleBooleanProperty(false);
+    public final ObservableList<YearMonth> availableMonths = FXCollections.observableArrayList();
 
-    final ScheduledProperty<LocalDate> currentDateProperty;
-    final ScheduledProperty<Instant> currentTimeProperty;
+    public final ScheduledProperty<LocalDate> currentDateProperty;
+    public final ScheduledProperty<Instant> currentTimeProperty;
 
     private AppState(ScheduledProperty<LocalDate> currentDateProperty, ScheduledProperty<Instant> currentTimeProperty)
     {
@@ -39,7 +39,7 @@ final class AppState
         return new AppState(clockPropertyFactory.currentDateProperty(), clockPropertyFactory.currentTimeProperty());
     }
 
-    public void shutdown()
+    void shutdown()
     {
         currentDateProperty.cancel();
         currentTimeProperty.cancel();

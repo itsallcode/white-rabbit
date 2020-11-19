@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui;
+package org.itsallcode.whiterabbit.jfxui.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

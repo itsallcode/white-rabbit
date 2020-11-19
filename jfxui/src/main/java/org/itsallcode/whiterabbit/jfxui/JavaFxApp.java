@@ -17,6 +17,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
+import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
+import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
+import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.ConfigLoader;
 import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
@@ -144,7 +147,7 @@ public class JavaFxApp extends Application
         ui.selectDay(appService.getClock().getCurrentDate());
     }
 
-    void loadMonth(final YearMonth month)
+    public void loadMonth(final YearMonth month)
     {
         final MonthIndex record = appService.getOrCreateMonth(month);
         state.currentMonth.setValue(record);
@@ -200,7 +203,7 @@ public class JavaFxApp extends Application
         }
     }
 
-    void bringWindowToFront()
+    public void bringWindowToFront()
     {
         Platform.runLater(() -> {
             if (primaryStage.isShowing())
@@ -216,18 +219,18 @@ public class JavaFxApp extends Application
         });
     }
 
-    void showVacationReport()
+    public void showVacationReport()
     {
         final VacationReport vacationReport = appService.getVacationReport();
         new VacationReportViewer(vacationReport).show();
     }
 
-    void openHomepage()
+    public void openHomepage()
     {
         getHostServices().showDocument("https://github.com/itsallcode/white-rabbit/blob/develop/README.md");
     }
 
-    void addActivity()
+    public void addActivity()
     {
         final Optional<DayRecord> selectedDay = ui.getSelectedDay();
         if (selectedDay.isEmpty())
@@ -238,7 +241,7 @@ public class JavaFxApp extends Application
         appService.activities().addActivity(selectedDay.get().getDate());
     }
 
-    void removeActivity()
+    public void removeActivity()
     {
         final Optional<Activity> selectedActivity = ui.getSelectedActivity();
         if (selectedActivity.isEmpty())
@@ -249,12 +252,12 @@ public class JavaFxApp extends Application
         appService.activities().removeActivity(selectedActivity.get());
     }
 
-    void exitApp()
+    public void exitApp()
     {
         Platform.exit();
     }
 
-    void startManualInterruption()
+    public void startManualInterruption()
     {
         if (state.interruption.isNotNull().get())
         {

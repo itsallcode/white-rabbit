@@ -1,10 +1,11 @@
-package org.itsallcode.whiterabbit.jfxui;
+package org.itsallcode.whiterabbit.jfxui.ui;
 
 import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.JavaFxApp;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
@@ -23,7 +24,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 
-public class MenuBarBuilder
+class MenuBarBuilder
 {
     private static final Logger LOG = LogManager.getLogger(MenuBarBuilder.class);
     private final JavaFxApp app;

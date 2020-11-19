@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui;
+package org.itsallcode.whiterabbit.jfxui.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,8 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.AppState;
+import org.itsallcode.whiterabbit.jfxui.JavaFxApp;
 import org.itsallcode.whiterabbit.jfxui.feature.InterruptionPresetFeature;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
@@ -49,7 +51,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-class AppUi
+public class AppUi
 {
     private static final int GAP_PIXEL = 10;
 
@@ -66,7 +68,7 @@ class AppUi
         tray = builder.tray;
     }
 
-    void shutdown()
+    public void shutdown()
     {
         tray.removeTrayIcon();
     }
@@ -91,7 +93,7 @@ class AppUi
         activitiesTable.updateTableValues(record);
     }
 
-    static class Builder
+    public static class Builder
     {
         private final Stage primaryStage;
         private final AppService appService;
@@ -103,7 +105,7 @@ class AppUi
         private ActivitiesTable activitiesTable;
         private Tray tray;
 
-        Builder(JavaFxApp app, AppService appService, Stage primaryStage, AppState appState, Locale locale)
+        public Builder(JavaFxApp app, AppService appService, Stage primaryStage, AppState appState, Locale locale)
         {
             this.app = app;
             this.locale = locale;
@@ -112,7 +114,7 @@ class AppUi
             this.primaryStage = primaryStage;
         }
 
-        AppUi build()
+        public AppUi build()
         {
             LOG.debug("Creating user interface");
             dayRecordTable = new DayRecordTable(locale, state.currentMonth,
