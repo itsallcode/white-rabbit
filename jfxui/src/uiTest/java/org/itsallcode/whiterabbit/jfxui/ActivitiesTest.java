@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.jfxui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
@@ -10,6 +11,7 @@ import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow.Builder;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.junit.jupiter.api.Disabled;
@@ -21,7 +23,6 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
@@ -37,14 +38,14 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void addActivityButtonDisabledWhenNoDaySelected()
     {
-        assertThat(getAddActivityButton().isDisabled()).isTrue();
+        assertThat(app().activitiesTable().getAddActivityButton().isDisabled()).isTrue();
     }
 
     @Test
     void addActivityButtonEnabledWhenDaySelected()
     {
         selectCurrentDay();
-        assertThat(getAddActivityButton().isDisabled()).isFalse();
+        assertThat(app().activitiesTable().getAddActivityButton().isDisabled()).isFalse();
     }
 
     @Test
@@ -52,7 +53,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         selectCurrentDay();
         time().tickMinute();
-        lookupActivitiesTable().assertRowCount(0);
+        app().activitiesTable().table().assertRowCount(0);
     }
 
     @Test
@@ -60,9 +61,173 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         selectCurrentDay();
         time().tickMinute();
-        clickAddActivityButton();
+        final ActivitiesTable activities = app().activitiesTable();
 
-        lookupActivitiesTable().assertRowCount(1);
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+    }
+
+    @Disabled("Not implemented yet, see https://github.com/itsallcode/white-rabbit/issues/23")
+    @Test
+    void removeButtonDisabledWhenNoActivitySelected()
+    {
+        selectCurrentDay();
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        assertThat(activities.getRemoveActivityButton().isDisable()).isTrue();
+    }
+
+    @Test
+    void clickRemoveButtonWhenNoActivitySelectedDoesNothing()
+    {
+        selectCurrentDay();
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.removeActivity();
+
+        activities.table().assertRowCount(1);
+    }
+
+    @Test
+    void clickRemoveButtonRemovesSelectedActivity()
+    {
+        selectCurrentDay();
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.table().clickRow(0);
+
+        activities.removeActivity();
+
+        activities.table().assertRowCount(0);
+    }
+
+    @Test
+    void addRemainderActivityWithValues()
+    {
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        final Project project = new Project("p1", "Project 1", null);
+        activities.addRemainderActivity(project, "tst");
+
+        activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()
+                .withProject(project)
+                .withDuration(Duration.ZERO)
+                .withRemainder(true)
+                .withComment("tst")
+                .build());
+    }
+
+    @Test
+    void addFixedDurationActivityWithValues()
+    {
+        time().tickMinute();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        final Project project = new Project("p1", "Project 1", null);
+        activities.addActivity(project, Duration.ofMinutes(5), "tst");
+
+        activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()
+                .withProject(project)
+                .withDuration(Duration.ofMinutes(5))
+                .withRemainder(false)
+                .withComment("tst")
+                .build());
+    }
+
+    @Test
+    void remainderDurationCalculated()
+    {
+        time().tickSeparateMinutes(11);
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("a1");
+        activities.addActivity(Duration.ofMinutes(7), "a2");
+
+        final Builder activity1 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(3))
+                .withRemainder(true)
+                .withComment("a1");
+        final Builder activity2 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(7))
+                .withRemainder(false)
+                .withComment("a2");
+
+        activities.table().assertContent(activity1.build(), activity2.build());
+    }
+
+    @Test
+    void remainderDurationUpdatedAtMinuteTick()
+    {
+        time().tickSeparateMinutes(11);
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("a1");
+        activities.addActivity(Duration.ofMinutes(7), "a2");
+
+        final Builder activity1 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(3))
+                .withRemainder(true)
+                .withComment("a1");
+        final Builder activity2 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(7))
+                .withRemainder(false)
+                .withComment("a2");
+
+        activities.table().assertContent(activity1.build(), activity2.build());
+
+        time().tickMinute();
+
+        activity1.withDuration(Duration.ofMinutes(4));
+        activities.table().assertContent(activity1.build(), activity2.build());
+    }
+
+    @Test
+    void toggleRemainderDurationUpdatedAtMinuteTick()
+    {
+        time().tickSeparateMinutes(11);
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("a1");
+        activities.addActivity(Duration.ofMinutes(7), "a2");
+
+        final Builder activity1 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(3))
+                .withRemainder(true)
+                .withComment("a1");
+        final Builder activity2 = ActivitiesTableExpectedRow.defaultRow()
+                .withDuration(Duration.ofMinutes(7))
+                .withRemainder(false)
+                .withComment("a2");
+
+        activities.table().assertContent(activity1.build(), activity2.build());
+
+        activities.toggleRemainder(1);
+
+        time().tickMinute();
+
+        activity2.withRemainder(true).withDuration(Duration.ofMinutes(8));
+        activity1.withRemainder(false);
+        activities.table().assertContent(activity1.build(), activity2.build());
     }
 
     @Test
@@ -70,7 +235,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = lookupActivitiesTable();
+        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
         robot.clickOn(activitiesTable.getTableCell(0, "remainder"));
         activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withRemainder(true).build());
     }
@@ -80,7 +245,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         addActivity();
 
-        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = lookupActivitiesTable();
+        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
         final Node projectCell = activitiesTable.getTableCell(0, "project");
 
         robot.doubleClickOn(projectCell).clickOn(projectCell).type(KeyCode.ENTER);
@@ -91,13 +256,15 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     void addActivityForOtherDay()
     {
         final int rowTomorrow = time().getCurrentDayRowIndex() + 1;
+        final JavaFxTable<ActivityPropertyAdapter> table = app().activitiesTable().table();
+
         app().genericDayTable().clickRow(rowTomorrow);
 
-        app().activitiesTable().assertRowCount(0);
+        table.assertRowCount(0);
 
         addActivity();
 
-        app().activitiesTable().assertRowCount(1);
+        table.assertRowCount(1);
     }
 
     @Test
@@ -106,26 +273,43 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         final int row = time().getCurrentDayRowIndex();
         app().genericDayTable().clickRow(row + 1);
 
-        app().activitiesTable().assertRowCount(0);
+        final JavaFxTable<ActivityPropertyAdapter> table = app().activitiesTable().table();
+        table.assertRowCount(0);
 
         addActivity();
-        app().activitiesTable().assertRowCount(1);
+        table.assertRowCount(1);
 
         app().genericDayTable().clickRow(row);
-        app().activitiesTable().assertRowCount(0);
+        table.assertRowCount(0);
+    }
+
+    @Test
+    void activitiesTableUpdatedWhenDayChanges()
+    {
+        time().tickMinute();
+
+        final ActivitiesTable activities = app().activitiesTable();
+        final JavaFxTable<ActivityPropertyAdapter> table = activities.table();
+        table.assertRowCount(0);
+
+        activities.addActivity();
+        table.assertRowCount(1);
+
+        time().tickDay();
+        table.assertRowCount(0);
     }
 
     private void addActivity()
     {
         time().tickMinute();
-        final JavaFxTable<ActivityPropertyAdapter> activitiesTable = lookupActivitiesTable();
+        final ActivitiesTable activities = app().activitiesTable();
 
-        clickAddActivityButton();
+        activities.addActivity();
 
         final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow();
 
-        assertAll(() -> activitiesTable.assertRowCount(1),
-                () -> activitiesTable.assertRowContent(0, expectedRowContent.build()));
+        assertAll(() -> activities.table().assertRowCount(1),
+                () -> activities.table().assertRowContent(0, expectedRowContent.build()));
     }
 
     private void selectCurrentDay()
@@ -134,22 +318,6 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
         final int dayRowIndex = time().getCurrentDayRowIndex();
         robot.clickOn(dayTable.getTableRow(dayRowIndex));
-    }
-
-    private void clickAddActivityButton()
-    {
-        final Button addActivityButton = getAddActivityButton();
-        robot.clickOn(addActivityButton);
-    }
-
-    private Button getAddActivityButton()
-    {
-        return robot.lookup("#add-activity-button").queryButton();
-    }
-
-    private JavaFxTable<ActivityPropertyAdapter> lookupActivitiesTable()
-    {
-        return app().activitiesTable();
     }
 
     @Override

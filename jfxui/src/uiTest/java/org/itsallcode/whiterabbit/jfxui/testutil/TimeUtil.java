@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,9 +90,19 @@ public class TimeUtil
         this.updateEverySecondRunnable.run();
     }
 
+    public void tickSeparateMinutes(int minuteCount)
+    {
+        IntStream.range(0, minuteCount).forEach(i -> tickMinute());
+    }
+
     public void tickMinute()
     {
         tickMinute(Duration.ofMinutes(1));
+    }
+
+    public void tickDay()
+    {
+        tickDay(LocalTime.of(8, 0));
     }
 
     public void tickDay(LocalTime time)

@@ -56,14 +56,41 @@ public class ActivitiesTable
     public void updateTableValues(DayRecord day)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            activities.clear();
-            if (day != null)
+            if (day == null || day.activities().isEmpty())
             {
-                final List<Activity> selectedDayActivities = day.activities().getAll();
-                LOG.trace("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
-                activities.addAll(ActivityPropertyAdapter.wrap(editListener, selectedDayActivities));
+                LOG.trace("No day selected or no activities: clear list of activities");
+                activities.clear();
+                return;
+            }
+            final List<Activity> selectedDayActivities = day.activities().getAll();
+            LOG.trace("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
+
+            removeSurplusRows(selectedDayActivities);
+            for (int i = 0; i < selectedDayActivities.size(); i++)
+            {
+                final Activity activity = selectedDayActivities.get(i);
+                if (activities.size() <= i)
+                {
+                    LOG.trace("Add activity #{}: {}", i, activity);
+                    activities.add(ActivityPropertyAdapter.wrap(editListener, activity));
+                }
+                else
+                {
+                    LOG.trace("Update activity #{}: {}", i, activity);
+                    activities.get(i).setActivity(activity);
+                }
             }
         });
+    }
+
+    private void removeSurplusRows(final List<Activity> selectedDayActivities)
+    {
+        final int activitiesToRemove = Math.max(0, activities.size() - selectedDayActivities.size());
+        LOG.trace("Removing {} surplus rows of {}", activitiesToRemove, activities.size());
+        for (int i = 0; i < activitiesToRemove; i++)
+        {
+            activities.remove(activities.size() - 1);
+        }
     }
 
     public TableView<ActivityPropertyAdapter> initTable()

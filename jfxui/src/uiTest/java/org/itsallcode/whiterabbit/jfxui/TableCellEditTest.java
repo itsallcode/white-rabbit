@@ -14,6 +14,7 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
@@ -112,14 +113,50 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertThat(commentCell.getText()).isEqualTo("new");
     }
 
+    @Test
+    void editingActivitiesTableNotAbortedWhenMinuteChanges()
+    {
+        time().tickMinute();
+
+        final ActivitiesTable activities = app().activitiesTable();
+        activities.addActivity();
+
+        activities.table().clickRow(0);
+
+        TableCell<?, ?> commentCell = activities.getCommentCell(0);
+
+        robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
+
+        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
+
+        commentCell = activities.getCommentCell(0);
+        robot.doubleClickOn(commentCell).write("new");
+
+        assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
+
+        time().tickMinute();
+
+        TestUtil.sleepShort();
+
+        assertThat(commentCell.isEditing()).as("cell is editing after minute tick").isTrue();
+        robot.type(KeyCode.ENTER);
+
+        assertThat(commentCell.getText()).isEqualTo("new");
+    }
+
     private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)
     {
+        time().tickMinute();
         final LocalDate today = time().getCurrentDate();
         final LocalTime now = time().getCurrentTimeMinutes();
         final int rowIndex = time().getCurrentDayRowIndex();
         final String comment = "tst";
 
-        final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK);
+        final Builder expectedCellValues = DayTableExpectedRow.defaultValues(today, DayType.WORK)
+                .withBegin(now)
+                .withEnd(now)
+                .withOvertimeToday(Duration.ofHours(-8))
+                .withTotalOvertime(Duration.ofHours(-8));
 
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
 
@@ -136,10 +173,7 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         assertAll(
                 () -> assertThat(commentCell.isEditing()).as("cell is editing").isFalse(),
-                () -> dayTable.assertRowContent(rowIndex, expectedCellValues.withBegin(now).withEnd(now)
-                        .withOvertimeToday(Duration.ofHours(-8))
-                        .withTotalOvertime(Duration.ofHours(-8))
-                        .withComment(comment).build()));
+                () -> dayTable.assertRowContent(rowIndex, expectedCellValues.withComment(comment).build()));
     }
 
     private void assertCommentCellNotPersistedAfterFocusLostAction(Runnable focusLossAction)

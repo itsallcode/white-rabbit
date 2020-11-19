@@ -36,6 +36,12 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
         update();
     }
 
+    public void setActivity(Activity activity)
+    {
+        super.setRecord(activity);
+        update();
+    }
+
     public void update()
     {
         runUpdate(() -> {
@@ -44,10 +50,15 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
         });
     }
 
+    public static ActivityPropertyAdapter wrap(EditListener<DayRecord> editListener, Activity activity)
+    {
+        return new ActivityPropertyAdapter(editListener, activity);
+    }
+
     static List<@NonNull ActivityPropertyAdapter> wrap(EditListener<DayRecord> editListener, List<Activity> activities)
     {
         return activities.stream()
-                .map(a -> new ActivityPropertyAdapter(editListener, a))
+                .map(a -> wrap(editListener, a))
                 .collect(toList());
     }
 }
