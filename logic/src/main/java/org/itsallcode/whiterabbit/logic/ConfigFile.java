@@ -21,7 +21,7 @@ class ConfigFile implements Config
     private final Properties properties;
     private final Path file;
 
-    private ConfigFile(Properties properties, Path configFile)
+    ConfigFile(Properties properties, Path configFile)
     {
         this.properties = properties;
         this.file = configFile;
