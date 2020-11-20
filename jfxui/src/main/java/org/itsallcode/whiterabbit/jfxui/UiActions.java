@@ -11,7 +11,7 @@ import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 
-public class UiActions
+public final class UiActions
 {
     private final Config config;
     private final DesktopService desktopService;

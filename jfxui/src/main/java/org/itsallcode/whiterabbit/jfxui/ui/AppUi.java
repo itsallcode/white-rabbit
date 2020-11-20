@@ -182,7 +182,7 @@ public class AppUi
                 @Override
                 public void exit()
                 {
-                    Platform.exit();
+                    actions.exitApp();
                 }
             });
 
