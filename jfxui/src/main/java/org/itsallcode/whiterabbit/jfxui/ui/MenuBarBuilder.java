@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.jfxui.JavaFxApp;
+import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
@@ -27,14 +27,14 @@ import javafx.stage.Window;
 class MenuBarBuilder
 {
     private static final Logger LOG = LogManager.getLogger(MenuBarBuilder.class);
-    private final JavaFxApp app;
+    private final UiActions actions;
     private final AppService appService;
     private final BooleanProperty stoppedWorkingForToday;
     private final Window primaryStage;
 
-    MenuBarBuilder(JavaFxApp app, Window primaryStage, AppService appService, BooleanProperty stoppedWorkingForToday)
+    MenuBarBuilder(UiActions actions, Window primaryStage, AppService appService, BooleanProperty stoppedWorkingForToday)
     {
-        this.app = app;
+        this.actions = actions;
         this.primaryStage = primaryStage;
         this.appService = appService;
         this.stoppedWorkingForToday = Objects.requireNonNull(stoppedWorkingForToday);
@@ -48,18 +48,28 @@ class MenuBarBuilder
         final Menu menuCalculations = menu("_Working hours", "menu_working_hours");
         final Menu menuReports = menu("_Reports", "menu_reports");
         final Menu menuHelp = menu("_Help", "menu_help");
-        menuFile.getItems().addAll(menuItem("_Quit", "menuitem_quit", app::exitApp));
+        menuFile.getItems().addAll(
+                menuItem("Edit config file", "menuitem_edit_config", actions::editConfigFile),
+                menuItem("Edit project file", "menuitem_edit_project", actions::editProjectFile),
+                menuItem("Open data directory", "menuitem_open_datadir", actions::openDataDir),
+                separatorItem(),
+                menuItem("_Quit", "menuitem_quit", actions::exitApp));
         menuCalculations.getItems().addAll(
                 menuItem("_Update", "menuitem_update", appService::updateNow),
                 menuItem("Update overtime for _all months", "menuitem_overtime",
                         appService::updatePreviousMonthOvertimeField),
-                new SeparatorMenuItem(),
+                separatorItem(),
                 createStopWorkingForTodayMenuItem());
         menuReports.getItems()
-                .addAll(menuItem("_Vacation report", "menuitem_vacation_report", app::showVacationReport));
+                .addAll(menuItem("_Vacation report", "menuitem_vacation_report", actions::showVacationReport));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", this::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuHelp);
         return menuBar;
+    }
+
+    private SeparatorMenuItem separatorItem()
+    {
+        return new SeparatorMenuItem();
     }
 
     private Menu menu(String label, String id)
@@ -106,6 +116,6 @@ class MenuBarBuilder
         final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
         aboutDialog.getButtonTypes().setAll(close, homepage);
         final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
-        selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> app.openHomepage());
+        selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> actions.openHomepage());
     }
 }

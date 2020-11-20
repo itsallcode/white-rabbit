@@ -19,7 +19,6 @@ import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotificati
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
-import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.ConfigLoader;
 import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
@@ -31,7 +30,6 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -57,9 +55,10 @@ public class JavaFxApp extends Application
     private final WorkingDirProvider workingDirProvider;
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
-    private AppUi ui;
 
     private AppState state;
+    private UiActions actions;
+    private AppUi ui;
 
     public JavaFxApp()
     {
@@ -108,7 +107,7 @@ public class JavaFxApp extends Application
         }
 
         state = AppState.create(appService);
-
+        actions = UiActions.create(config, appService, getHostServices());
     }
 
     private Config loadConfig()
@@ -131,7 +130,8 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi.Builder(this, appService, primaryStage, state, locale).build();
+
+        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, locale).build();
 
         primaryStage.show();
 
@@ -163,7 +163,11 @@ public class JavaFxApp extends Application
     void prepareShutdown()
     {
         LOG.info("Stopping application");
-        ui.shutdown();
+        if (ui != null)
+        {
+            ui.shutdown();
+            ui = null;
+        }
 
         if (state != null)
         {
@@ -174,6 +178,7 @@ public class JavaFxApp extends Application
         if (appService != null)
         {
             appService.close();
+            appService = null;
         }
     }
 
@@ -219,17 +224,6 @@ public class JavaFxApp extends Application
         });
     }
 
-    public void showVacationReport()
-    {
-        final VacationReport vacationReport = appService.getVacationReport();
-        new VacationReportViewer(vacationReport).show();
-    }
-
-    public void openHomepage()
-    {
-        getHostServices().showDocument("https://github.com/itsallcode/white-rabbit/blob/develop/README.md");
-    }
-
     public void addActivity()
     {
         final Optional<DayRecord> selectedDay = ui.getSelectedDay();
@@ -250,11 +244,6 @@ public class JavaFxApp extends Application
             return;
         }
         appService.activities().removeActivity(selectedActivity.get());
-    }
-
-    public void exitApp()
-    {
-        Platform.exit();
     }
 
     public void startManualInterruption()
@@ -294,7 +283,7 @@ public class JavaFxApp extends Application
                     "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
             final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
             final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
-            final ButtonType stopWorkForToday = new ButtonType("Stop work for today", ButtonData.FINISH);
+            final ButtonType stopWorkForToday = new ButtonType("Stop working for today", ButtonData.FINISH);
             alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
 

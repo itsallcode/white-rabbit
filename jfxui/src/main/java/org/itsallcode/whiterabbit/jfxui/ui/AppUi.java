@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.AppState;
 import org.itsallcode.whiterabbit.jfxui.JavaFxApp;
+import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.feature.InterruptionPresetFeature;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
@@ -100,14 +101,17 @@ public class AppUi
         private final Locale locale;
         private final JavaFxApp app;
         private final AppState state;
+        private final UiActions actions;
 
         private DayRecordTable dayRecordTable;
         private ActivitiesTable activitiesTable;
         private Tray tray;
 
-        public Builder(JavaFxApp app, AppService appService, Stage primaryStage, AppState appState, Locale locale)
+        public Builder(JavaFxApp app, UiActions actions, AppService appService, Stage primaryStage, AppState appState,
+                Locale locale)
         {
             this.app = app;
+            this.actions = actions;
             this.locale = locale;
             this.state = appState;
             this.appService = appService;
@@ -152,7 +156,7 @@ public class AppUi
 
         private VBox createTopContainer()
         {
-            final MenuBar menuBar = new MenuBarBuilder(app, primaryStage, appService, state.stoppedWorkingForToday)
+            final MenuBar menuBar = new MenuBarBuilder(actions, primaryStage, appService, state.stoppedWorkingForToday)
                     .build();
             final VBox topContainer = new VBox();
             topContainer.getChildren().addAll(menuBar, createToolBar());
@@ -178,7 +182,7 @@ public class AppUi
                 @Override
                 public void exit()
                 {
-                    Platform.exit();
+                    actions.exitApp();
                 }
             });
 
@@ -240,14 +244,13 @@ public class AppUi
                     interruptionPreset.createButton(),
                     createStopWorkForTodayButton(),
                     new Separator(),
-                    button("update-button", "Update", e -> appService.updateNow()),
-                    new Separator(),
-                    button("vacation-report-button", "Vacation report", e -> app.showVacationReport()));
+                    button("update-button", "Update", e -> appService.updateNow()));
         }
 
         private Button createStopWorkForTodayButton()
         {
             final Button button = new Button();
+            button.setId("start-stop-working-button");
             button.textProperty()
                     .bind(Bindings.createStringBinding(
                             () -> state.stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",

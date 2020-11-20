@@ -21,7 +21,7 @@ class ConfigFile implements Config
     private final Properties properties;
     private final Path file;
 
-    private ConfigFile(Properties properties, Path configFile)
+    ConfigFile(Properties properties, Path configFile)
     {
         this.properties = properties;
         this.file = configFile;
@@ -74,6 +74,12 @@ class ConfigFile implements Config
     public boolean allowMultipleInstances()
     {
         return getOptionalValue("allow_multiple_instances").map(Boolean::valueOf).orElse(false);
+    }
+
+    @Override
+    public Path getConfigFile()
+    {
+        return file;
     }
 
     private String getMandatoryValue(String param)

@@ -40,7 +40,7 @@ public class ProjectService
     {
         this.jsonb = jsonb;
 
-        final Path projectConfigFile = config.getDataDir().resolve("projects.json");
+        final Path projectConfigFile = config.getProjectFile();
         if (Files.exists(projectConfigFile))
         {
             final List<Project> allProjects = loadAvailableProjects(projectConfigFile);

@@ -44,6 +44,12 @@ public class TestingConfig implements Config
         return false;
     }
 
+    @Override
+    public Path getConfigFile()
+    {
+        return null;
+    }
+
     public static Builder builder()
     {
         return new Builder();

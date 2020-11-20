@@ -14,4 +14,11 @@ public interface Config
     Optional<Duration> getCurrentHoursPerDay();
 
     boolean allowMultipleInstances();
+
+    default Path getProjectFile()
+    {
+        return getDataDir().resolve("projects.json");
+    }
+
+    Path getConfigFile();
 }
