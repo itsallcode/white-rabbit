@@ -252,6 +252,7 @@ public class AppUi
         private Button createStopWorkForTodayButton()
         {
             final Button button = new Button();
+            button.setId("start-stop-working-button");
             button.textProperty()
                     .bind(Bindings.createStringBinding(
                             () -> state.stoppedWorkingForToday.get() ? "Continue working" : "Stop working for today",

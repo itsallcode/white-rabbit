@@ -283,7 +283,7 @@ public class JavaFxApp extends Application
                     "An interruption of " + interruption + " was detected beginning at " + startOfInterruption + ".");
             final ButtonType addInterruption = new ButtonType("Add interruption", ButtonData.YES);
             final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
-            final ButtonType stopWorkForToday = new ButtonType("Stop work for today", ButtonData.FINISH);
+            final ButtonType stopWorkForToday = new ButtonType("Stop working for today", ButtonData.FINISH);
             alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
 

@@ -43,7 +43,7 @@ public class AutomaticInterruptionDialog
 
     public void clickStopWorkForToday()
     {
-        clickButton("Stop work for today");
+        clickButton("Stop working for today");
 
         Assertions.assertThat(window).isNotShowing();
     }
