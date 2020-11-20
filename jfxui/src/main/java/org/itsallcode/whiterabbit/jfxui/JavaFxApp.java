@@ -1,10 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.ProcessHandle.Info;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
@@ -23,7 +19,6 @@ import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotificati
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
-import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.ConfigLoader;
 import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
@@ -35,7 +30,6 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -62,8 +56,8 @@ public class JavaFxApp extends Application
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
 
-    private Config config;
     private AppState state;
+    private UiActions actions;
     private AppUi ui;
 
     public JavaFxApp()
@@ -99,7 +93,7 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        config = loadConfig();
+        final Config config = loadConfig();
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
@@ -113,7 +107,7 @@ public class JavaFxApp extends Application
         }
 
         state = AppState.create(appService);
-
+        actions = UiActions.create(config, appService, getHostServices());
     }
 
     private Config loadConfig()
@@ -136,7 +130,8 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi.Builder(this, appService, primaryStage, state, locale).build();
+
+        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, locale).build();
 
         primaryStage.show();
 
@@ -168,7 +163,11 @@ public class JavaFxApp extends Application
     void prepareShutdown()
     {
         LOG.info("Stopping application");
-        ui.shutdown();
+        if (ui != null)
+        {
+            ui.shutdown();
+            ui = null;
+        }
 
         if (state != null)
         {
@@ -179,6 +178,7 @@ public class JavaFxApp extends Application
         if (appService != null)
         {
             appService.close();
+            appService = null;
         }
     }
 
@@ -224,17 +224,6 @@ public class JavaFxApp extends Application
         });
     }
 
-    public void showVacationReport()
-    {
-        final VacationReport vacationReport = appService.getVacationReport();
-        new VacationReportViewer(vacationReport).show();
-    }
-
-    public void openHomepage()
-    {
-        getHostServices().showDocument("https://github.com/itsallcode/white-rabbit/blob/develop/README.md");
-    }
-
     public void addActivity()
     {
         final Optional<DayRecord> selectedDay = ui.getSelectedDay();
@@ -255,38 +244,6 @@ public class JavaFxApp extends Application
             return;
         }
         appService.activities().removeActivity(selectedActivity.get());
-    }
-
-    public void editConfigFile()
-    {
-        openFileWithDefaultProgram(config.getConfigFile());
-    }
-
-    public void editProjectFile()
-    {
-        openFileWithDefaultProgram(config.getProjectFile());
-    }
-
-    public void openDataDir()
-    {
-        openFileWithDefaultProgram(config.getDataDir());
-    }
-
-    private void openFileWithDefaultProgram(Path file)
-    {
-        try
-        {
-            Desktop.getDesktop().open(file.toFile());
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error opening file " + file, e);
-        }
-    }
-
-    public void exitApp()
-    {
-        Platform.exit();
     }
 
     public void startManualInterruption()
