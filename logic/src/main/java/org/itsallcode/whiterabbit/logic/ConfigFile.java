@@ -76,6 +76,12 @@ class ConfigFile implements Config
         return getOptionalValue("allow_multiple_instances").map(Boolean::valueOf).orElse(false);
     }
 
+    @Override
+    public Path getConfigFile()
+    {
+        return file;
+    }
+
     private String getMandatoryValue(String param)
     {
         return getOptionalValue(param).orElseThrow(

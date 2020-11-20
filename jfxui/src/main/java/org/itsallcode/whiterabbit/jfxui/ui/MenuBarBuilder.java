@@ -48,18 +48,28 @@ class MenuBarBuilder
         final Menu menuCalculations = menu("_Working hours", "menu_working_hours");
         final Menu menuReports = menu("_Reports", "menu_reports");
         final Menu menuHelp = menu("_Help", "menu_help");
-        menuFile.getItems().addAll(menuItem("_Quit", "menuitem_quit", app::exitApp));
+        menuFile.getItems().addAll(
+                menuItem("Edit config file", "menuitem_edit_config", app::editConfigFile),
+                menuItem("Edit project file", "menuitem_edit_project", app::editProjectFile),
+                menuItem("Open data directory", "menuitem_open_datadir", app::openDataDir),
+                separatorItem(),
+                menuItem("_Quit", "menuitem_quit", app::exitApp));
         menuCalculations.getItems().addAll(
                 menuItem("_Update", "menuitem_update", appService::updateNow),
                 menuItem("Update overtime for _all months", "menuitem_overtime",
                         appService::updatePreviousMonthOvertimeField),
-                new SeparatorMenuItem(),
+                separatorItem(),
                 createStopWorkingForTodayMenuItem());
         menuReports.getItems()
                 .addAll(menuItem("_Vacation report", "menuitem_vacation_report", app::showVacationReport));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", this::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuHelp);
         return menuBar;
+    }
+
+    private SeparatorMenuItem separatorItem()
+    {
+        return new SeparatorMenuItem();
     }
 
     private Menu menu(String label, String id)

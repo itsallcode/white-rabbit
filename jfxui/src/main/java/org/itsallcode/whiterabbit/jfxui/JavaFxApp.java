@@ -1,6 +1,10 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.ProcessHandle.Info;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
@@ -57,9 +61,10 @@ public class JavaFxApp extends Application
     private final WorkingDirProvider workingDirProvider;
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
-    private AppUi ui;
 
+    private Config config;
     private AppState state;
+    private AppUi ui;
 
     public JavaFxApp()
     {
@@ -94,7 +99,7 @@ public class JavaFxApp extends Application
 
     private void doInitialize()
     {
-        final Config config = loadConfig();
+        config = loadConfig();
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
@@ -250,6 +255,33 @@ public class JavaFxApp extends Application
             return;
         }
         appService.activities().removeActivity(selectedActivity.get());
+    }
+
+    public void editConfigFile()
+    {
+        openFileWithDefaultProgram(config.getConfigFile());
+    }
+
+    public void editProjectFile()
+    {
+        openFileWithDefaultProgram(config.getProjectFile());
+    }
+
+    public void openDataDir()
+    {
+        openFileWithDefaultProgram(config.getDataDir());
+    }
+
+    private void openFileWithDefaultProgram(Path file)
+    {
+        try
+        {
+            Desktop.getDesktop().open(file.toFile());
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error opening file " + file, e);
+        }
     }
 
     public void exitApp()
