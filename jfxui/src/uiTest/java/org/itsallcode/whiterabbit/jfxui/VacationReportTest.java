@@ -20,13 +20,13 @@ class VacationReportTest extends JavaFxAppUiTestBase
     @Test
     void generateReportViaButton()
     {
-        robot.clickOn(robot.lookup("Vacation report").queryButton());
+        robot.clickOn(robot.lookup("#vacation-report-button").queryButton());
     }
 
     @Test
     void generateReportViaMenu()
     {
-        robot.clickOn("Reports").clickOn("Vacation report");
+        robot.clickOn("#menu_reports").clickOn("#menuitem_vacation_report");
     }
 
     @Override
