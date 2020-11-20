@@ -244,9 +244,7 @@ public class AppUi
                     interruptionPreset.createButton(),
                     createStopWorkForTodayButton(),
                     new Separator(),
-                    button("update-button", "Update", e -> appService.updateNow()),
-                    new Separator(),
-                    button("vacation-report-button", "Vacation report", e -> actions.showVacationReport()));
+                    button("update-button", "Update", e -> appService.updateNow()));
         }
 
         private Button createStopWorkForTodayButton()

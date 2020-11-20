@@ -18,13 +18,7 @@ class VacationReportTest extends JavaFxAppUiTestBase
     FxRobot robot;
 
     @Test
-    void generateReportViaButton()
-    {
-        robot.clickOn(robot.lookup("#vacation-report-button").queryButton());
-    }
-
-    @Test
-    void generateReportViaMenu()
+    void generateReport()
     {
         robot.clickOn("#menu_reports").clickOn("#menuitem_vacation_report");
     }
