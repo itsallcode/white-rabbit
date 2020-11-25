@@ -1,8 +1,9 @@
 package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
-import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteEntrySupplier;
 
 import javafx.geometry.Side;
@@ -17,66 +18,71 @@ import javafx.scene.control.TextField;
 @SuppressWarnings("java:S110") // Deep inheritance tree required by API
 public class AutoCompleteTextField extends TextField
 {
+    private static final Logger LOG = LogManager.getLogger(AutoCompleteTextField.class);
+
     private static final int MAX_ENTRY_COUNT = 10;
 
-    /** The popup used to select an entry. */
+    private final AutocompleteEntrySupplier autocompleteEntriesSupplier;
     private final ContextMenu entriesPopup;
 
-    /** Construct a new AutoCompleteTextField. */
     public AutoCompleteTextField(AutocompleteEntrySupplier autocompleteEntriesSupplier)
     {
+        this.autocompleteEntriesSupplier = autocompleteEntriesSupplier;
         entriesPopup = new ContextMenu();
-        textProperty().addListener((observableValue, oldValue, newValue) -> {
-            final String currentText = getText();
-            if (currentText.length() == 0)
-            {
-                entriesPopup.hide();
-            }
-            else
-            {
-                final List<String> searchResult = autocompleteEntriesSupplier.getEntries(currentText);
-                if (!searchResult.isEmpty())
-                {
-                    populatePopup(searchResult);
-                    if (!entriesPopup.isShowing())
-                    {
-                        entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
-                    }
-                }
-                else
-                {
-                    entriesPopup.hide();
-                }
-            }
-        });
+        textProperty().addListener((observableValue, oldValue, newValue) -> textUpdated(getText()));
 
         focusedProperty().addListener((observableValue, oldValue, newValue) -> entriesPopup.hide());
     }
 
-    /**
-     * Populate the entry set with the given search results. Display is limited
-     * to 10 entries, for performance.
-     * 
-     * @param searchResult
-     *            The set of matching strings.
-     */
+    private void textUpdated(final String currentText)
+    {
+        if (currentText.isBlank())
+        {
+            entriesPopup.hide();
+            return;
+        }
+        final List<String> searchResult = autocompleteEntriesSupplier.getEntries(currentText);
+        if (searchResult.isEmpty())
+        {
+            entriesPopup.hide();
+            return;
+        }
+        populatePopup(searchResult);
+        if (!entriesPopup.isShowing())
+        {
+            showPopup();
+        }
+    }
+
+    private void showPopup()
+    {
+        if (getScene() == null)
+        {
+            LOG.warn("Scene not available for {}", this);
+            return;
+        }
+        entriesPopup.show(this, Side.BOTTOM, 0, 0);
+    }
+
     private void populatePopup(List<String> searchResult)
     {
-        final List<CustomMenuItem> menuItems = new LinkedList<>();
-
         final int count = Math.min(searchResult.size(), MAX_ENTRY_COUNT);
+        entriesPopup.getItems().clear();
         for (int i = 0; i < count; i++)
         {
             final String result = searchResult.get(i);
-            final Label entryLabel = new Label(result);
-            final CustomMenuItem item = new CustomMenuItem(entryLabel, true);
-            item.setOnAction(actionEvent -> {
-                setText(result);
-                entriesPopup.hide();
-            });
-            menuItems.add(item);
+            entriesPopup.getItems().add(createMenuItem(result));
         }
-        entriesPopup.getItems().clear();
-        entriesPopup.getItems().addAll(menuItems);
+    }
+
+    private CustomMenuItem createMenuItem(final String result)
+    {
+        final Label entryLabel = new Label(result);
+        final CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+        item.setOnAction(actionEvent -> {
+            setText(result);
+            entriesPopup.hide();
+        });
+        return item;
     }
 }
