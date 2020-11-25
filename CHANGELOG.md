@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.0.1) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/3?closed=1)
 
+### Added
+
+* [#21](https://github.com/itsallcode/white-rabbit/issues/21): Add menu items for editing configuration files
+
 ### Fixed
 
 * [#44](https://github.com/itsallcode/white-rabbit/pull/44): Bugfix: Update activity duration when modifying day entry
