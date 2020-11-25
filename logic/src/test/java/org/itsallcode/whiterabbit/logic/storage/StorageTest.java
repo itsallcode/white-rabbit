@@ -1,15 +1,21 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
@@ -30,6 +36,8 @@ class StorageTest
     ProjectService projectServiceMock;
     @Mock
     JsonFileStorage fileStorageMock;
+    @Mock
+    MonthIndex monthIndexMock;
 
     Storage storage;
 
@@ -91,6 +99,49 @@ class StorageTest
         assertThat(newMonth.getTotalOvertime()).hasMinutes(4);
         assertThat(newMonth.getVacationDayCount()).isZero();
         assertThat(newMonth.getOvertimePreviousMonth()).hasMinutes(4);
+    }
+
+    @Test
+    void storeMonth()
+    {
+        final JsonMonth month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
+        when(monthIndexMock.getMonthRecord()).thenReturn(month);
+        when(monthIndexMock.getYearMonth()).thenReturn(YEAR_MONTH);
+
+        storage.storeMonth(monthIndexMock);
+
+        verify(fileStorageMock).writeToFile(eq(YEAR_MONTH), same(month));
+    }
+
+    @Test
+    void loadAll_empty()
+    {
+        when(fileStorageMock.loadAll()).thenReturn(emptyList());
+
+        final MultiMonthIndex index = storage.loadAll();
+
+        assertThat(index.getDays()).isEmpty();
+        assertThat(index.getMonths()).isEmpty();
+    }
+
+    @Test
+    void loadAll_nonEmpty()
+    {
+        when(fileStorageMock.loadAll()).thenReturn(List.of(jsonMonth(YEAR_MONTH, Duration.ZERO)));
+
+        final MultiMonthIndex index = storage.loadAll();
+
+        assertThat(index.getDays()).hasSize(30);
+        assertThat(index.getMonths()).hasSize(1);
+    }
+
+    @Test
+    void getAvailableDataYearMonth()
+    {
+        final List<YearMonth> availableYearMonths = List.of(YEAR_MONTH);
+        when(fileStorageMock.getAvailableDataYearMonth()).thenReturn(availableYearMonths);
+
+        assertThat(storage.getAvailableDataYearMonth()).isSameAs(availableYearMonths);
     }
 
     private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth)

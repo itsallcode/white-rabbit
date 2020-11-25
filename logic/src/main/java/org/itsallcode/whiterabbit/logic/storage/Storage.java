@@ -56,21 +56,6 @@ public class Storage
         return month.orElseGet(() -> createNewMonth(yearMonth));
     }
 
-    private MonthIndex createNewMonth(YearMonth date)
-    {
-        final JsonMonth month = new JsonMonth();
-        month.setYear(date.getYear());
-        month.setMonth(date.getMonth());
-        month.setDays(new ArrayList<>());
-        month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
-        return createMonthIndex(month);
-    }
-
-    private MonthIndex createMonthIndex(final JsonMonth month)
-    {
-        return MonthIndex.create(contractTerms, month, projectService);
-    }
-
     public void storeMonth(MonthIndex month)
     {
         fileStorage.writeToFile(month.getYearMonth(), month.getMonthRecord());
@@ -83,7 +68,22 @@ public class Storage
                 .collect(toList()));
     }
 
-    public Duration loadPreviousMonthOvertime(YearMonth date)
+    public List<YearMonth> getAvailableDataYearMonth()
+    {
+        return fileStorage.getAvailableDataYearMonth();
+    }
+
+    private MonthIndex createNewMonth(YearMonth date)
+    {
+        final JsonMonth month = new JsonMonth();
+        month.setYear(date.getYear());
+        month.setMonth(date.getMonth());
+        month.setDays(new ArrayList<>());
+        month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
+        return createMonthIndex(month);
+    }
+
+    Duration loadPreviousMonthOvertime(YearMonth date)
     {
         final YearMonth previousYearMonth = date.minus(1, ChronoUnit.MONTHS);
         final Duration overtime = loadMonth(previousYearMonth)
@@ -93,8 +93,8 @@ public class Storage
         return overtime;
     }
 
-    public List<YearMonth> getAvailableDataYearMonth()
+    private MonthIndex createMonthIndex(final JsonMonth month)
     {
-        return fileStorage.getAvailableDataYearMonth();
+        return MonthIndex.create(contractTerms, month, projectService);
     }
 }
