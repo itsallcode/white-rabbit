@@ -226,7 +226,7 @@ public class JavaFxApp extends Application
 
     public void addActivity()
     {
-        final Optional<DayRecord> selectedDay = ui.getSelectedDay();
+        final Optional<DayRecord> selectedDay = state.getSelectedDay();
         if (selectedDay.isEmpty())
         {
             LOG.warn("No day selected, can't add an activity");
@@ -237,7 +237,7 @@ public class JavaFxApp extends Application
 
     public void removeActivity()
     {
-        final Optional<Activity> selectedActivity = ui.getSelectedActivity();
+        final Optional<Activity> selectedActivity = state.getSelectedActivity();
         if (selectedActivity.isEmpty())
         {
             LOG.info("No activity selected to be removed");
@@ -334,8 +334,7 @@ public class JavaFxApp extends Application
 
         private boolean daySelected(DayRecord record)
         {
-
-            final Optional<DayRecord> selectedDay = ui.getSelectedDay();
+            final Optional<DayRecord> selectedDay = state.getSelectedDay();
             return selectedDay.isPresent() && selectedDay.get().getDate().equals(record.getDate());
         }
 

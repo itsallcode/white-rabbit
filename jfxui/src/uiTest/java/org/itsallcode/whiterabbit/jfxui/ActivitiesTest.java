@@ -299,6 +299,23 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         table.assertRowCount(0);
     }
 
+    @Test
+    void activitiesDurationUpdatedWhenChangingBegin()
+    {
+        final int row = time().getCurrentDayRowIndex();
+        time().tickMinute();
+
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addRemainderActivity("act");
+
+        final Builder expectedRow = ActivitiesTableExpectedRow.defaultRow().withRemainder(true).withComment("act");
+        activities.table().assertContent(expectedRow.withDuration(Duration.ZERO).build());
+
+        app().dayTable().typeBegin(row, "11:00");
+        activities.table().assertContent(expectedRow.withDuration(Duration.ofMinutes(16)).build());
+    }
+
     private void addActivity()
     {
         time().tickMinute();

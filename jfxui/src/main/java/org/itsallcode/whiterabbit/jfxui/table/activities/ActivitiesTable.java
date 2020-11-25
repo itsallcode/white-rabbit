@@ -38,15 +38,17 @@ public class ActivitiesTable
     private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
 
     private final ObservableList<ActivityPropertyAdapter> activities = FXCollections.observableArrayList();
-    private final SimpleObjectProperty<Activity> selectedActivity = new SimpleObjectProperty<>(null);
+    private final SimpleObjectProperty<Activity> selectedActivity;
 
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final ProjectService projectService;
 
-    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, EditListener<DayRecord> editListener,
+    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, SimpleObjectProperty<Activity> selectedActivity,
+            EditListener<DayRecord> editListener,
             FormatterService formatterService, ProjectService projectService)
     {
+        this.selectedActivity = selectedActivity;
         this.editListener = editListener;
         this.formatterService = formatterService;
         this.projectService = projectService;
@@ -161,10 +163,5 @@ public class ActivitiesTable
     public void refresh()
     {
         activities.forEach(ActivityPropertyAdapter::update);
-    }
-
-    public SimpleObjectProperty<Activity> selectedActivity()
-    {
-        return selectedActivity;
     }
 }

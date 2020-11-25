@@ -62,7 +62,8 @@ public class DayTable
     public void typeBegin(int row, String value)
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
-        robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
+        robot.clickOn(tableCell).clickOn(tableCell).clickOn(tableCell).type(KeyCode.BACK_SPACE).write(value)
+                .type(KeyCode.TAB);
     }
 
     public LocalTime getEnd(int row)
