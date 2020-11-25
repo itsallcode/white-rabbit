@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -110,7 +109,14 @@ public class AppUi
         public AppUi build()
         {
             LOG.debug("Creating user interface");
-            dayRecordTable = new DayRecordTable(locale, state.currentMonth, appService::store, appService.formatter());
+            dayRecordTable = new DayRecordTable(locale, state.selectedDay, state.currentMonth, record -> {
+                appService.store(record);
+                if (record.getDate().equals(state.getSelectedDay().map(DayRecord::getDate).orElse(null)))
+                {
+                    LOG.debug("Current day {} updated: refresh activieties", record.getDate());
+                    activitiesTable.refresh();
+                }
+            }, appService.formatter());
 
             activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
                 appService.store(record);
