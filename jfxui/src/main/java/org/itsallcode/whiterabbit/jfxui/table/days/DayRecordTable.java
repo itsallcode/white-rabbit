@@ -25,7 +25,6 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -49,15 +48,17 @@ public class DayRecordTable
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final Locale locale;
-    private final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
+    private final SimpleObjectProperty<DayRecord> selectedDay;
     private TableView<DayRecordPropertyAdapter> table;
 
-    public DayRecordTable(Locale locale, ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
+    public DayRecordTable(Locale locale, SimpleObjectProperty<DayRecord> selectedDay,
+            ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
             FormatterService formatterService)
     {
         this.editListener = editListener;
         this.formatterService = formatterService;
         this.locale = locale;
+        this.selectedDay = selectedDay;
         fillTableWith31EmptyRows();
         currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
@@ -76,11 +77,6 @@ public class DayRecordTable
                     selectedDay.set(newValue.getRecord());
                 });
         return table;
-    }
-
-    public ReadOnlyProperty<DayRecord> selectedDay()
-    {
-        return selectedDay;
     }
 
     public void selectRow(LocalDate date)

@@ -20,7 +20,6 @@ import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
-import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
@@ -79,16 +78,6 @@ public class AppUi
         dayRecordTable.selectRow(date);
     }
 
-    public Optional<DayRecord> getSelectedDay()
-    {
-        return Optional.ofNullable(dayRecordTable.selectedDay().getValue());
-    }
-
-    public Optional<Activity> getSelectedActivity()
-    {
-        return Optional.ofNullable(activitiesTable.selectedActivity().get());
-    }
-
     public void updateActivities(DayRecord record)
     {
         activitiesTable.updateTableValues(record);
@@ -123,7 +112,7 @@ public class AppUi
             LOG.debug("Creating user interface");
             dayRecordTable = new DayRecordTable(locale, state.currentMonth, appService::store, appService.formatter());
 
-            activitiesTable = new ActivitiesTable(dayRecordTable.selectedDay(), record -> {
+            activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
                 appService.store(record);
                 activitiesTable.refresh();
             }, appService.formatter(), appService.projects());
