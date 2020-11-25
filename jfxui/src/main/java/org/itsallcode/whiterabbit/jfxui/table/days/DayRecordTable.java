@@ -18,7 +18,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.AutoCompleteTextField;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTableCell;
+import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
@@ -51,14 +53,17 @@ public class DayRecordTable
     private final SimpleObjectProperty<DayRecord> selectedDay;
     private TableView<DayRecordPropertyAdapter> table;
 
+    private final AutocompleteService autocompleteService;
+
     public DayRecordTable(Locale locale, SimpleObjectProperty<DayRecord> selectedDay,
             ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
-            FormatterService formatterService)
+            FormatterService formatterService, AutocompleteService autocompleteService)
     {
         this.editListener = editListener;
         this.formatterService = formatterService;
         this.locale = locale;
         this.selectedDay = selectedDay;
+        this.autocompleteService = autocompleteService;
         fillTableWith31EmptyRows();
         currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
@@ -124,7 +129,8 @@ public class DayRecordTable
                 param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().totalOvertime);
         final TableColumn<DayRecordPropertyAdapter, String> commentCol = column("comment", "Comment",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter()),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter(),
+                        () -> new AutoCompleteTextField(autocompleteService.dayCommentAutocompleter())),
                 data -> data.getValue().comment);
 
         return asList(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,

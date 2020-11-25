@@ -97,7 +97,7 @@ public class AppService implements Closeable
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
         final VacationReportGenerator vacationService = new VacationReportGenerator(storage);
-        final ActivityService activityService = new ActivityService(storage, appServiceCallback);
+        final ActivityService activityService = new ActivityService(storage, autocompleteService, appServiceCallback);
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, vacationService, activityService, projectService,

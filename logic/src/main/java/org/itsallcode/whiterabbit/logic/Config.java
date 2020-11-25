@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface Config
 {
+    static final String PROJECTS_JSON = "projects.json";
+
     Path getDataDir();
 
     Locale getLocale();
@@ -17,7 +19,7 @@ public interface Config
 
     default Path getProjectFile()
     {
-        return getDataDir().resolve("projects.json");
+        return getDataDir().resolve(PROJECTS_JSON);
     }
 
     Path getConfigFile();

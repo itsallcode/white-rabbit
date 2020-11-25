@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.AutoCompleteTextField;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTableCell;
+import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
@@ -43,15 +45,17 @@ public class ActivitiesTable
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final ProjectService projectService;
+    private final AutocompleteService autocompleteService;
 
     public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, SimpleObjectProperty<Activity> selectedActivity,
-            EditListener<DayRecord> editListener,
-            FormatterService formatterService, ProjectService projectService)
+            EditListener<DayRecord> editListener, FormatterService formatterService, ProjectService projectService,
+            AutocompleteService autocompleteService)
     {
         this.selectedActivity = selectedActivity;
         this.editListener = editListener;
         this.formatterService = formatterService;
         this.projectService = projectService;
+        this.autocompleteService = autocompleteService;
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
@@ -132,7 +136,8 @@ public class ActivitiesTable
         final TableColumn<ActivityPropertyAdapter, Boolean> remainderCol = column("remainder", "Remainder",
                 cellFactory, data -> data.getValue().remainder);
         final TableColumn<ActivityPropertyAdapter, String> commentCol = column("comment", "Comment",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter()),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter(),
+                        () -> new AutoCompleteTextField(autocompleteService.activityCommentAutocompleter())),
                 data -> data.getValue().comment);
 
         return asList(projectCol, durationCol, remainderCol, commentCol);

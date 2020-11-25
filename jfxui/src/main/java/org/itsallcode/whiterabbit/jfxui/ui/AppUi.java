@@ -116,12 +116,12 @@ public class AppUi
                     LOG.debug("Current day {} updated: refresh activieties", record.getDate());
                     activitiesTable.refresh();
                 }
-            }, appService.formatter());
+            }, appService.formatter(), appService.autocomplete());
 
             activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
                 appService.store(record);
                 activitiesTable.refresh();
-            }, appService.formatter(), appService.projects());
+            }, appService.formatter(), appService.projects(), appService.autocomplete());
             final BorderPane rootPane = new BorderPane(createMainPane());
             rootPane.setTop(createTopContainer());
             final Scene scene = new Scene(rootPane, 780, 800);

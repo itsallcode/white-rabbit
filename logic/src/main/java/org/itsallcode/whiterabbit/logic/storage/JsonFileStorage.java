@@ -18,6 +18,7 @@ import javax.json.bind.Jsonb;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 
 public class JsonFileStorage
@@ -104,6 +105,7 @@ public class JsonFileStorage
     List<JsonMonth> loadAll()
     {
         return dateToFileMapper.getAllFiles()
+                .filter(file -> !file.getFileName().toString().equals(Config.PROJECTS_JSON))
                 .map(this::loadFromFile)
                 .sorted(comparing(JsonMonth::getYear).thenComparing(JsonMonth::getMonth))
                 .collect(toList());
