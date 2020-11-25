@@ -23,18 +23,18 @@ public class DateToFileMapper
     private final DateTimeFormatter formatter;
     private final Pattern fileNamePattern = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)\\.json$");
 
-    public DateToFileMapper(Path dataDir)
+    DateToFileMapper(Path dataDir)
     {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM", Locale.ENGLISH);
         this.dataDir = dataDir;
     }
 
-    public Path getPathForDate(YearMonth date)
+    Path getPathForDate(YearMonth date)
     {
         return dataDir.resolve(String.valueOf(date.getYear())).resolve(getFileName(date));
     }
 
-    public Path getLegacyPathForDate(YearMonth date)
+    Path getLegacyPathForDate(YearMonth date)
     {
         return dataDir.resolve(getFileName(date));
     }
@@ -44,7 +44,7 @@ public class DateToFileMapper
         return date.format(formatter) + ".json";
     }
 
-    public Stream<Path> getAllFiles()
+    Stream<Path> getAllFiles()
     {
         LOG.debug("Reading all files in {}", dataDir);
         try
@@ -59,7 +59,7 @@ public class DateToFileMapper
         }
     }
 
-    public Stream<YearMonth> getAllYearMonths()
+    Stream<YearMonth> getAllYearMonths()
     {
         return getAllFiles() //
                 .map(Path::getFileName) //

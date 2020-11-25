@@ -2,18 +2,11 @@ package org.itsallcode.whiterabbit.logic.storage;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,30 +26,28 @@ public class Storage
 {
     private static final Logger LOG = LogManager.getLogger(Storage.class);
 
-    private final Jsonb jsonb;
-    private final DateToFileMapper dateToFileMapper;
-
     private final ContractTermsService contractTerms;
     private final ProjectService projectService;
+    private final JsonFileStorage fileStorage;
 
-    private Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms,
-            ProjectService projectService, Jsonb jsonb)
+    Storage(ContractTermsService contractTerms, ProjectService projectService, JsonFileStorage fileStorage)
     {
-        this.dateToFileMapper = dateToFileMapper;
         this.contractTerms = contractTerms;
         this.projectService = projectService;
-        this.jsonb = jsonb;
+        this.fileStorage = fileStorage;
     }
 
-    public Storage(DateToFileMapper dateToFileMapper, ContractTermsService contractTerms, ProjectService projectService)
+    public static Storage create(Path dataDir, ContractTermsService contractTerms,
+            ProjectService projectService)
     {
-        this(dateToFileMapper, contractTerms, projectService,
-                JsonbBuilder.create(new JsonbConfig().withFormatting(true)));
+        final DateToFileMapper dateToFileMapper = new DateToFileMapper(dataDir);
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        return new Storage(contractTerms, projectService, new JsonFileStorage(jsonb, dateToFileMapper));
     }
 
     public Optional<MonthIndex> loadMonth(YearMonth date)
     {
-        return loadMonthRecord(date).map(this::createMonthIndex);
+        return fileStorage.loadMonthRecord(date).map(this::createMonthIndex);
     }
 
     public MonthIndex loadOrCreate(final YearMonth yearMonth)
@@ -82,98 +73,28 @@ public class Storage
 
     public void storeMonth(MonthIndex month)
     {
-        writeToFile(month);
+        fileStorage.writeToFile(month.getYearMonth(), month.getMonthRecord());
     }
 
     public MultiMonthIndex loadAll()
     {
-        final List<MonthIndex> months = new ArrayList<>();
-        for (final Path file : dateToFileMapper.getAllFiles().collect(toList()))
-        {
-            final JsonMonth jsonMonth = loadFromFile(file);
-            months.add(createMonthIndex(jsonMonth));
-        }
-
-        months.sort(Comparator.comparing(MonthIndex::getYearMonth));
-
-        return new MultiMonthIndex(months);
-    }
-
-    private void writeToFile(MonthIndex month)
-    {
-        final Path file = dateToFileMapper.getPathForDate(month.getYearMonth());
-        LOG.info("Write month {} to file {}", month.getYearMonth(), file);
-        createDirectory(file.getParent());
-        try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING))
-        {
-            jsonb.toJson(month.getMonthRecord(), stream);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error writing file " + file, e);
-        }
-    }
-
-    private void createDirectory(Path dir)
-    {
-        if (dir.toFile().isDirectory())
-        {
-            return;
-        }
-        try
-        {
-            Files.createDirectories(dir);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error creating dir " + dir, e);
-        }
-    }
-
-    private Optional<JsonMonth> loadMonthRecord(YearMonth date)
-    {
-        final Path file = dateToFileMapper.getPathForDate(date);
-        if (file.toFile().exists())
-        {
-            LOG.trace("Found file {} for month {}", file, date);
-            return Optional.of(loadFromFile(file));
-        }
-        final Path legacyFile = dateToFileMapper.getLegacyPathForDate(date);
-        if (legacyFile.toFile().exists())
-        {
-            LOG.trace("Found legacy file {} for month {}", file, date);
-            return Optional.of(loadFromFile(legacyFile));
-        }
-        LOG.debug("File {} not found for month {}", file, date);
-        return Optional.empty();
+        return new MultiMonthIndex(fileStorage.loadAll().stream()
+                .map(this::createMonthIndex)
+                .collect(toList()));
     }
 
     public Duration loadPreviousMonthOvertime(YearMonth date)
     {
         final YearMonth previousYearMonth = date.minus(1, ChronoUnit.MONTHS);
-        final Duration overtime = loadMonth(previousYearMonth) //
-                .map(m -> m.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES)) //
+        final Duration overtime = loadMonth(previousYearMonth)
+                .map(m -> m.getTotalOvertime().truncatedTo(ChronoUnit.MINUTES))
                 .orElse(Duration.ZERO);
         LOG.info("Found overtime {} for previous month {}", overtime, previousYearMonth);
         return overtime;
     }
 
-    private JsonMonth loadFromFile(Path file)
-    {
-        LOG.trace("Reading file {}", file);
-        try (InputStream stream = Files.newInputStream(file))
-        {
-            return jsonb.fromJson(stream, JsonMonth.class);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error reading file " + file, e);
-        }
-    }
-
     public List<YearMonth> getAvailableDataYearMonth()
     {
-        return dateToFileMapper.getAllYearMonths().sorted().collect(toList());
+        return fileStorage.getAvailableDataYearMonth();
     }
 }

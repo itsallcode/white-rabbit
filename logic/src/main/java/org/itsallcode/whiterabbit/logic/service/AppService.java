@@ -33,7 +33,6 @@ import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCa
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
-import org.itsallcode.whiterabbit.logic.storage.DateToFileMapper;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class AppService implements Closeable
@@ -82,8 +81,7 @@ public class AppService implements Closeable
     {
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
         final ProjectService projectService = new ProjectService(config);
-        final Storage storage = new Storage(new DateToFileMapper(config.getDataDir()),
-                new ContractTermsService(config), projectService);
+        final Storage storage = Storage.create(config.getDataDir(), new ContractTermsService(config), projectService);
         final ClockService clockService = new ClockService(clock);
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
