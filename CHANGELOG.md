@@ -10,6 +10,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.0.1) / 
 
 ### Fixed
 
+* [#44](https://github.com/itsallcode/white-rabbit/pull/44): Bugfix: Update activity duration when modifying day entry
 * [#42](https://github.com/itsallcode/white-rabbit/pull/42): Bugfix: Keep edit focus for activities when table is updated every minute
 
 ## [1.0.0]
