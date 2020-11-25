@@ -103,7 +103,8 @@ public class JsonFileStorage
 
     List<JsonMonth> loadAll()
     {
-        return dateToFileMapper.getAllFiles().map(this::loadFromFile)
+        return dateToFileMapper.getAllFiles()
+                .map(this::loadFromFile)
                 .sorted(comparing(JsonMonth::getYear).thenComparing(JsonMonth::getMonth))
                 .collect(toList());
     }

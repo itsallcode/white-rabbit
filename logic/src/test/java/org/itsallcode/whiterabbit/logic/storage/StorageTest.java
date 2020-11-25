@@ -2,12 +2,11 @@ package org.itsallcode.whiterabbit.logic.storage;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.time.Duration;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -16,9 +15,6 @@ import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
-import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,13 +25,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class StorageTest
 {
     private static final YearMonth YEAR_MONTH = YearMonth.of(2020, Month.NOVEMBER);
-    private static final YearMonth PREVIOUS_MONTH = YearMonth.of(2020, Month.OCTOBER);
+
     @Mock
-    ContractTermsService contractTermsMock;
+    StorageLoadingListener loadingListenerMock;
     @Mock
-    ProjectService projectServiceMock;
-    @Mock
-    JsonFileStorage fileStorageMock;
+    MonthIndexStorage monthIndexStorageMock;
     @Mock
     MonthIndex monthIndexMock;
 
@@ -44,113 +38,70 @@ class StorageTest
     @BeforeEach
     void setUp()
     {
-        storage = new Storage(contractTermsMock, projectServiceMock, fileStorageMock);
+        storage = new Storage(monthIndexStorageMock, loadingListenerMock);
     }
 
     @Test
-    void loadPreviousMonthOvertime_returnsZero_whenNoPreviousMonth()
+    void loadMonth_updatesCache_whenMonthFound()
     {
-        when(fileStorageMock.loadMonthRecord(YearMonth.of(2020, Month.OCTOBER))).thenReturn(Optional.empty());
+        when(monthIndexStorageMock.loadMonth(YEAR_MONTH)).thenReturn(Optional.of(monthIndexMock));
+        storage.loadMonth(YEAR_MONTH);
 
-        assertThat(storage.loadPreviousMonthOvertime(YEAR_MONTH)).isZero();
+        verifyListenerUpdated();
     }
 
     @Test
-    void loadPreviousMonthOvertime_returnsPreviousMonthOvertime()
+    void loadMonth_doesNotUpdateCache_whenMonthNotFound()
     {
-        when(fileStorageMock.loadMonthRecord(PREVIOUS_MONTH))
-                .thenReturn(Optional.of(jsonMonth(PREVIOUS_MONTH, Duration.ofMinutes(5))));
+        when(monthIndexStorageMock.loadMonth(YEAR_MONTH)).thenReturn(Optional.empty());
+        storage.loadMonth(YEAR_MONTH);
 
-        assertThat(storage.loadPreviousMonthOvertime(YEAR_MONTH)).hasMinutes(5);
+        verifyNoInteractions(loadingListenerMock);
     }
 
     @Test
-    void loadPreviousMonthOvertime_truncatesToMinute()
+    void loadOrCreate_updatesCache()
     {
-        when(fileStorageMock.loadMonthRecord(PREVIOUS_MONTH))
-                .thenReturn(Optional.of(jsonMonth(PREVIOUS_MONTH, Duration.ofMinutes(5).plusSeconds(50))));
-
-        assertThat(storage.loadPreviousMonthOvertime(YEAR_MONTH)).hasMinutes(5);
+        when(monthIndexStorageMock.loadOrCreate(YEAR_MONTH)).thenReturn(monthIndexMock);
+        storage.loadOrCreate(YEAR_MONTH);
+        verifyListenerUpdated();
     }
 
     @Test
-    void loadOrCreate_createsNewMonthIfNotExists()
+    void storeMonth_updatesCache()
     {
-        when(fileStorageMock.loadMonthRecord(YEAR_MONTH)).thenReturn(Optional.empty());
-
-        final MonthIndex newMonth = storage.loadOrCreate(YEAR_MONTH);
-
-        assertThat(newMonth.getYearMonth()).isEqualTo(YEAR_MONTH);
-        assertThat(newMonth.getSortedDays()).hasSize(30);
-        assertThat(newMonth.getTotalOvertime()).isZero();
-        assertThat(newMonth.getVacationDayCount()).isZero();
-    }
-
-    @Test
-    void loadOrCreate_loadsExistingMonth()
-    {
-        final JsonMonth month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
-        when(fileStorageMock.loadMonthRecord(YEAR_MONTH)).thenReturn(Optional.of(month));
-
-        final MonthIndex newMonth = storage.loadOrCreate(YEAR_MONTH);
-
-        assertThat(newMonth.getYearMonth()).isEqualTo(YEAR_MONTH);
-        assertThat(newMonth.getSortedDays()).hasSize(30);
-        assertThat(newMonth.getTotalOvertime()).hasMinutes(4);
-        assertThat(newMonth.getVacationDayCount()).isZero();
-        assertThat(newMonth.getOvertimePreviousMonth()).hasMinutes(4);
-    }
-
-    @Test
-    void storeMonth()
-    {
-        final JsonMonth month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
-        when(monthIndexMock.getMonthRecord()).thenReturn(month);
-        when(monthIndexMock.getYearMonth()).thenReturn(YEAR_MONTH);
-
         storage.storeMonth(monthIndexMock);
-
-        verify(fileStorageMock).writeToFile(eq(YEAR_MONTH), same(month));
+        verifyListenerUpdated();
     }
 
     @Test
-    void loadAll_empty()
+    void loadAll_updatesCache_whenEntriesFound()
     {
-        when(fileStorageMock.loadAll()).thenReturn(emptyList());
+        when(monthIndexStorageMock.loadAll()).thenReturn(new MultiMonthIndex(List.of(monthIndexMock)));
 
-        final MultiMonthIndex index = storage.loadAll();
-
-        assertThat(index.getDays()).isEmpty();
-        assertThat(index.getMonths()).isEmpty();
+        storage.loadAll();
+        verifyListenerUpdated();
     }
 
     @Test
-    void loadAll_nonEmpty()
+    void loadAll_doesNotUpdateCache_whenNoEntriesFound()
     {
-        when(fileStorageMock.loadAll()).thenReturn(List.of(jsonMonth(YEAR_MONTH, Duration.ZERO)));
+        when(monthIndexStorageMock.loadAll()).thenReturn(new MultiMonthIndex(emptyList()));
 
-        final MultiMonthIndex index = storage.loadAll();
+        storage.loadAll();
+        verifyNoInteractions(loadingListenerMock);
+    }
 
-        assertThat(index.getDays()).hasSize(30);
-        assertThat(index.getMonths()).hasSize(1);
+    private void verifyListenerUpdated()
+    {
+        verify(loadingListenerMock).monthLoaded(same(monthIndexMock));
     }
 
     @Test
-    void getAvailableDataYearMonth()
+    void getAvailableDataYearMonth_delegates()
     {
-        final List<YearMonth> availableYearMonths = List.of(YEAR_MONTH);
-        when(fileStorageMock.getAvailableDataYearMonth()).thenReturn(availableYearMonths);
-
-        assertThat(storage.getAvailableDataYearMonth()).isSameAs(availableYearMonths);
-    }
-
-    private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth)
-    {
-        final JsonMonth month = new JsonMonth();
-        month.setYear(yearMonth.getYear());
-        month.setMonth(yearMonth.getMonth());
-        month.setOvertimePreviousMonth(overtimePreviousMonth);
-        month.setDays(new ArrayList<>());
-        return month;
+        final List<YearMonth> list = new ArrayList<>();
+        when(monthIndexStorageMock.getAvailableDataYearMonth()).thenReturn(list);
+        assertThat(storage.getAvailableDataYearMonth()).isSameAs(list);
     }
 }

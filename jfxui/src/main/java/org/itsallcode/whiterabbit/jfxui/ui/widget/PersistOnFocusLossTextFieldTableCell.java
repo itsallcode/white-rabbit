@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.table;
+package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
 import java.util.Objects;
 

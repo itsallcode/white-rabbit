@@ -18,6 +18,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
+import org.itsallcode.whiterabbit.logic.autocomplete.MonthCache;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
@@ -53,11 +55,14 @@ public class AppService implements Closeable
 
     private RegistrationResult singleInstanceRegistration;
 
+    private final AutocompleteService autocompleteService;
+
     @SuppressWarnings("java:S107") // Large number of parameters is ok here.
     AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, VacationReportGenerator vacationService,
-            ActivityService activityService, ProjectService projectService, AppPropertiesService appPropertiesService)
+            ActivityService activityService, ProjectService projectService, AutocompleteService autocompleteService,
+            AppPropertiesService appPropertiesService)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -69,6 +74,7 @@ public class AppService implements Closeable
         this.vacationService = vacationService;
         this.activityService = activityService;
         this.projectService = projectService;
+        this.autocompleteService = autocompleteService;
         this.appPropertiesService = appPropertiesService;
     }
 
@@ -81,7 +87,11 @@ public class AppService implements Closeable
     {
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
         final ProjectService projectService = new ProjectService(config);
-        final Storage storage = Storage.create(config.getDataDir(), new ContractTermsService(config), projectService);
+
+        final MonthCache monthCache = new MonthCache();
+        final Storage storage = Storage.create(config.getDataDir(), new ContractTermsService(config), projectService,
+                monthCache::update);
+        final AutocompleteService autocompleteService = new AutocompleteService(storage, monthCache);
         final ClockService clockService = new ClockService(clock);
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
@@ -91,6 +101,7 @@ public class AppService implements Closeable
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, vacationService, activityService, projectService,
+                autocompleteService,
                 new AppPropertiesService());
     }
 
@@ -236,6 +247,11 @@ public class AppService implements Closeable
     public AppProperties getAppProperties()
     {
         return appPropertiesService.load();
+    }
+
+    public AutocompleteService autocomplete()
+    {
+        return autocompleteService;
     }
 
     @Override

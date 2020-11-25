@@ -33,6 +33,13 @@ class DateToFileMapperTest
     }
 
     @Test
+    void testGetLegacyPathForDate(@TempDir Path tempDir)
+    {
+        final Path path = mapper.getLegacyPathForDate(YearMonth.of(2019, Month.MAY));
+        assertThat(path).isEqualTo(tempDir.resolve("2019-05.json"));
+    }
+
+    @Test
     void testGetAllFilesDirDoesNotExist()
     {
         assertThrows(UncheckedIOException.class, new DateToFileMapper(Paths.get("notExistingDir"))::getAllFiles);
