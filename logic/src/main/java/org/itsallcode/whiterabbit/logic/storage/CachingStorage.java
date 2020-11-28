@@ -1,67 +1,26 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
-import java.time.YearMonth;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
-
-class CachingStorage implements Storage
+public interface CachingStorage extends Storage
 {
-    private final Storage delegateStorage;
-    private final MonthCache cache;
-
-    CachingStorage(Storage delegateStorage)
+    static CachingStorage create(Path dataDir, ContractTermsService contractTerms, ProjectService projectService)
     {
-        this(delegateStorage, new MonthCache());
+        final DateToFileMapper dateToFileMapper = new DateToFileMapper(dataDir);
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        final JsonFileStorage fileStorage = new JsonFileStorage(jsonb, dateToFileMapper);
+        final MonthIndexStorage monthIndexStorage = new MonthIndexStorage(contractTerms, projectService, fileStorage);
+        return new CachingStorageImpl(monthIndexStorage);
     }
 
-    CachingStorage(Storage delegateStorage, MonthCache cache)
-    {
-        this.delegateStorage = delegateStorage;
-        this.cache = cache;
-    }
-
-    @Override
-    public Optional<MonthIndex> loadMonth(YearMonth date)
-    {
-        return delegateStorage.loadMonth(date).map(this::updateCache);
-    }
-
-    @Override
-    public MonthIndex loadOrCreate(final YearMonth yearMonth)
-    {
-        return updateCache(delegateStorage.loadOrCreate(yearMonth));
-    }
-
-    @Override
-    public void storeMonth(MonthIndex month)
-    {
-        delegateStorage.storeMonth(updateCache(month));
-    }
-
-    @Override
-    public MultiMonthIndex loadAll()
-    {
-        return updateCache(delegateStorage.loadAll());
-    }
-
-    private MultiMonthIndex updateCache(MultiMonthIndex index)
-    {
-        index.getMonths().forEach(this::updateCache);
-        return index;
-    }
-
-    private MonthIndex updateCache(MonthIndex month)
-    {
-        cache.update(month);
-        return month;
-    }
-
-    @Override
-    public List<YearMonth> getAvailableDataYearMonth()
-    {
-        return delegateStorage.getAvailableDataYearMonth();
-    }
+    List<DayRecord> getLatestDays(LocalDate maxAge);
 }

@@ -1,11 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.time.Duration;
-import java.time.LocalTime;
-
+import javafx.scene.control.TableCell;
+import javafx.scene.input.KeyCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
@@ -14,8 +10,11 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.testfx.api.FxRobot;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.input.KeyCode;
+import java.time.Duration;
+import java.time.LocalTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class DayTable
 {
@@ -88,6 +87,15 @@ public class DayTable
     {
         final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
         robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
+    }
+
+    public void typeComment(int row, String value)
+    {
+        robot.doubleClickOn(getCommentCell(row)).write(value).type(KeyCode.TAB);
+    }
+
+    public TableCell<?, ?> getCommentCell(int row) {
+        return table.getTableCell(row, "comment");
     }
 
     public void selectDayType(int row, DayType type)

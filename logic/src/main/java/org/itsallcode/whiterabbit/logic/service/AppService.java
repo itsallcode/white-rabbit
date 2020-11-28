@@ -1,20 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-
-import java.io.Closeable;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -34,7 +19,23 @@ import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCa
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.vacation.VacationReportGenerator;
+import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
+
+import java.io.Closeable;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public class AppService implements Closeable
 {
@@ -87,9 +88,10 @@ public class AppService implements Closeable
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
         final ProjectService projectService = new ProjectService(config);
 
-        final Storage storage = Storage.create(config.getDataDir(), new ContractTermsService(config), projectService);
-        final AutocompleteService autocompleteService = new AutocompleteService(storage);
+        final CachingStorage storage = CachingStorage.create(config.getDataDir(), new ContractTermsService(config),
+                projectService);
         final ClockService clockService = new ClockService(clock);
+        final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService);
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
