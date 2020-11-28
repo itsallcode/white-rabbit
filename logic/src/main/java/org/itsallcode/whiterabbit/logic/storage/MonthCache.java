@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.autocomplete;
+package org.itsallcode.whiterabbit.logic.storage;
 
 import static java.util.stream.Collectors.toList;
 

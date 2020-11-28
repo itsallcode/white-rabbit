@@ -19,7 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
-import org.itsallcode.whiterabbit.logic.autocomplete.MonthCache;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
@@ -88,10 +87,8 @@ public class AppService implements Closeable
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
         final ProjectService projectService = new ProjectService(config);
 
-        final MonthCache monthCache = new MonthCache();
-        final Storage storage = Storage.create(config.getDataDir(), new ContractTermsService(config), projectService,
-                monthCache::update);
-        final AutocompleteService autocompleteService = new AutocompleteService(storage, monthCache);
+        final Storage storage = Storage.create(config.getDataDir(), new ContractTermsService(config), projectService);
+        final AutocompleteService autocompleteService = new AutocompleteService(storage);
         final ClockService clockService = new ClockService(clock);
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();

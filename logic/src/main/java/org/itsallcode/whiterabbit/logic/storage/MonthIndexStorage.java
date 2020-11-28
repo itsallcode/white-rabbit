@@ -17,7 +17,7 @@ import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
-class MonthIndexStorage
+class MonthIndexStorage implements Storage
 {
     private static final Logger LOG = LogManager.getLogger(MonthIndexStorage.class);
 
@@ -33,30 +33,35 @@ class MonthIndexStorage
         this.fileStorage = fileStorage;
     }
 
-    Optional<MonthIndex> loadMonth(YearMonth date)
+    @Override
+    public Optional<MonthIndex> loadMonth(YearMonth date)
     {
         return fileStorage.loadMonthRecord(date).map(this::createMonthIndex);
     }
 
-    MonthIndex loadOrCreate(final YearMonth yearMonth)
+    @Override
+    public MonthIndex loadOrCreate(final YearMonth yearMonth)
     {
         final Optional<MonthIndex> month = loadMonth(yearMonth);
         return month.orElseGet(() -> createNewMonth(yearMonth));
     }
 
-    void storeMonth(MonthIndex month)
+    @Override
+    public void storeMonth(MonthIndex month)
     {
         fileStorage.writeToFile(month.getYearMonth(), month.getMonthRecord());
     }
 
-    MultiMonthIndex loadAll()
+    @Override
+    public MultiMonthIndex loadAll()
     {
         return new MultiMonthIndex(fileStorage.loadAll().stream()
                 .map(this::createMonthIndex)
                 .collect(toList()));
     }
 
-    List<YearMonth> getAvailableDataYearMonth()
+    @Override
+    public List<YearMonth> getAvailableDataYearMonth()
     {
         return fileStorage.getAvailableDataYearMonth();
     }

@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.autocomplete;
+package org.itsallcode.whiterabbit.logic.storage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.storage.MonthCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

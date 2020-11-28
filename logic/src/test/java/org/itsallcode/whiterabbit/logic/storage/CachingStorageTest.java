@@ -22,12 +22,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class StorageTest
+class CachingStorageTest
 {
     private static final YearMonth YEAR_MONTH = YearMonth.of(2020, Month.NOVEMBER);
 
     @Mock
-    StorageLoadingListener loadingListenerMock;
+    MonthCache cacheMock;
     @Mock
     MonthIndexStorage monthIndexStorageMock;
     @Mock
@@ -38,7 +38,7 @@ class StorageTest
     @BeforeEach
     void setUp()
     {
-        storage = new Storage(monthIndexStorageMock, loadingListenerMock);
+        storage = new CachingStorage(monthIndexStorageMock, cacheMock);
     }
 
     @Test
@@ -56,7 +56,7 @@ class StorageTest
         when(monthIndexStorageMock.loadMonth(YEAR_MONTH)).thenReturn(Optional.empty());
         storage.loadMonth(YEAR_MONTH);
 
-        verifyNoInteractions(loadingListenerMock);
+        verifyNoInteractions(cacheMock);
     }
 
     @Test
@@ -89,12 +89,12 @@ class StorageTest
         when(monthIndexStorageMock.loadAll()).thenReturn(new MultiMonthIndex(emptyList()));
 
         storage.loadAll();
-        verifyNoInteractions(loadingListenerMock);
+        verifyNoInteractions(cacheMock);
     }
 
     private void verifyListenerUpdated()
     {
-        verify(loadingListenerMock).monthLoaded(same(monthIndexMock));
+        verify(cacheMock).update(same(monthIndexMock));
     }
 
     @Test
