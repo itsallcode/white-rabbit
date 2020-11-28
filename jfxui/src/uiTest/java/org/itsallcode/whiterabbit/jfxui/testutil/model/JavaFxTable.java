@@ -1,11 +1,9 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import javafx.scene.control.IndexedCell;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableView;
+import javafx.scene.control.skin.VirtualFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
@@ -14,10 +12,11 @@ import org.junit.jupiter.api.function.Executable;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
-import javafx.scene.control.IndexedCell;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableView;
-import javafx.scene.control.skin.VirtualFlow;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class JavaFxTable<T>
 {
@@ -72,7 +71,6 @@ public class JavaFxTable<T>
                 .map(VirtualFlow.class::cast)
                 .findFirst().orElseThrow();
         assertThat(virtualFlow.getCellCount()).as("row count of " + virtualFlow).isGreaterThan(rowIndex);
-        System.out.println("Found flow " + virtualFlow + " with cells# " + virtualFlow.getCellCount());
         final IndexedCell<T> row = JavaFxUtil.runOnFxApplicationThread(() -> virtualFlow.getCell(rowIndex));
         LOG.debug("Got row #{} of {}: {}", rowIndex, virtualFlow, row);
         return row;
