@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.1.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/2?closed=1)
 
+### Added
+
+* [#16](https://github.com/itsallcode/white-rabbit/issues/16): Search-as-you-type for comments, select most common project for new activities.
+
 ## [1.0.1] 2020-11-25
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.0.1) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/3?closed=1)

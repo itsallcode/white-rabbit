@@ -1,23 +1,27 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import javafx.scene.control.IndexedCell;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableView;
+import javafx.scene.control.skin.VirtualFlow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.junit.jupiter.api.function.Executable;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
-import javafx.scene.control.IndexedCell;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableView;
-import javafx.scene.control.skin.VirtualFlow;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class JavaFxTable<T>
 {
+    private static final Logger LOG = LogManager.getLogger(JavaFxTable.class);
+
     private final FxRobot robot;
     private final TableView<T> table;
 
@@ -51,6 +55,7 @@ public class JavaFxTable<T>
 
     public TableCell<?, ?> getTableCell(final int rowIndex, final String columnId)
     {
+        LOG.debug("Getting row {} / column {}", rowIndex, columnId);
         final IndexedCell<T> row = getTableRow(rowIndex);
         return row.getChildrenUnmodifiable().stream()
                 .filter(cell -> cell.getId().equals(columnId))
@@ -65,8 +70,10 @@ public class JavaFxTable<T>
                 .filter(VirtualFlow.class::isInstance)
                 .map(VirtualFlow.class::cast)
                 .findFirst().orElseThrow();
-        assertThat(virtualFlow.getCellCount()).isGreaterThan(rowIndex);
-        return virtualFlow.getCell(rowIndex);
+        assertThat(virtualFlow.getCellCount()).as("row count of " + virtualFlow).isGreaterThan(rowIndex);
+        final IndexedCell<T> row = JavaFxUtil.runOnFxApplicationThread(() -> virtualFlow.getCell(rowIndex));
+        LOG.debug("Got row #{} of {}: {}", rowIndex, virtualFlow, row);
+        return row;
     }
 
     public JavaFxTable<T> clickRow(int rowIndex)

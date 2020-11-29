@@ -22,6 +22,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
@@ -72,6 +73,8 @@ class AppServiceTest
     private ProjectService projectServiceMock;
     @Mock
     private AppPropertiesService appPropertiesServiceMock;
+    @Mock
+    private AutocompleteService autocompleteServiceMock;
 
     private AppService appService;
 
@@ -83,7 +86,8 @@ class AppServiceTest
                 appServiceCallback);
         appService = new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock, singleInstanceService, appServiceCallback,
-                vacationServiceMock, activityService, projectServiceMock, appPropertiesServiceMock);
+                vacationServiceMock, activityService, projectServiceMock, autocompleteServiceMock,
+                appPropertiesServiceMock);
         appService.setUpdateListener(updateListenerMock);
     }
 

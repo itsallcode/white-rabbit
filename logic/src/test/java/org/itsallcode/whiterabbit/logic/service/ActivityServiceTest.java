@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,9 +14,11 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,13 +39,15 @@ class ActivityServiceTest
     private AppServiceCallback appServiceCallbackMock;
     @Mock
     private ProjectService projectService;
+    @Mock
+    private AutocompleteService autocompleteServiceMock;
 
     private ActivityService service;
 
     @BeforeEach
     void setUp()
     {
-        service = new ActivityService(storageMock, appServiceCallbackMock);
+        service = new ActivityService(storageMock, autocompleteServiceMock, appServiceCallbackMock);
     }
 
     @Test
@@ -66,6 +71,38 @@ class ActivityServiceTest
         verify(appServiceCallbackMock).recordUpdated(same(month.getDay(DATE)));
 
         assertThat(month.getDay(DATE).activities().getAll()).hasSize(1);
+    }
+
+    @Test
+    void addActivityWithProposedProject()
+    {
+        final MonthIndex month = createMonth();
+        when(storageMock.loadMonth(YearMonth.from(DATE)))
+                .thenReturn(Optional.of(month));
+
+        final Project project = mock(Project.class);
+        when(project.getProjectId()).thenReturn("projectId");
+        when(projectService.getProjectById(project.getProjectId())).thenReturn(Optional.of(project));
+
+        when(autocompleteServiceMock.getSuggestedProject()).thenReturn(Optional.of(project));
+
+        service.addActivity(DATE);
+
+        assertThat(month.getDay(DATE).activities().getAll().get(0).getProject()).isSameAs(project);
+    }
+
+    @Test
+    void addActivityWithoutProposedProject()
+    {
+        final MonthIndex month = createMonth();
+        when(storageMock.loadMonth(YearMonth.from(DATE)))
+                .thenReturn(Optional.of(month));
+
+        when(autocompleteServiceMock.getSuggestedProject()).thenReturn(Optional.empty());
+
+        service.addActivity(DATE);
+
+        assertThat(month.getDay(DATE).activities().getAll().get(0).getProject()).isNull();
     }
 
     @Test

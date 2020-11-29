@@ -1,6 +1,7 @@
-package org.itsallcode.whiterabbit.jfxui.table;
+package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
@@ -25,10 +26,18 @@ import javafx.util.StringConverter;
 public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
 {
     private final StringConverter<T> converter;
+    public final Supplier<TextField> textFieldSupplier;
     private TextField textField;
 
     public PersistOnFocusLossTextFieldTableCell(final StringConverter<T> converter)
     {
+        this(converter, TextField::new);
+    }
+
+    public PersistOnFocusLossTextFieldTableCell(final StringConverter<T> converter,
+            Supplier<TextField> testFieldSupplier)
+    {
+        this.textFieldSupplier = testFieldSupplier;
         this.converter = Objects.requireNonNull(converter);
     }
 
@@ -47,7 +56,7 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
         {
             if (this.textField == null)
             {
-                this.textField = createTextField(this, this.converter);
+                this.textField = createTextField(this, this.converter, this.textFieldSupplier);
             }
 
             startEdit(this, this.converter, this.textField);
@@ -55,9 +64,10 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
     }
 
     private static <T> TextField createTextField(final PersistOnFocusLossTextFieldTableCell<?, T> cell,
-            final StringConverter<T> converter)
+            final StringConverter<T> converter, Supplier<TextField> textFieldSupplier)
     {
-        final TextField textField = new TextField(getItemText(cell, converter));
+        final TextField textField = textFieldSupplier.get();
+        textField.setText(getItemText(cell, converter));
 
         textField.setOnAction(event -> {
             cell.commitEdit(converter.fromString(textField.getText()));
@@ -128,7 +138,8 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
         cell.setGraphic(graphic);
     }
 
-    private static <T> void updateItem(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
+    private static <T> void updateItem(final Cell<T> cell, final StringConverter<T> converter,
+            final TextField textField)
     {
         if (cell.isEmpty())
         {

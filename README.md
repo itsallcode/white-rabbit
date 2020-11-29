@@ -4,7 +4,6 @@ A time recording tool
 [![Build](https://github.com/itsallcode/white-rabbit/workflows/Build/badge.svg)](https://github.com/itsallcode/white-rabbit/actions?query=workflow%3ABuild)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=white-rabbit)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=white-rabbit)
-[![deepcode](https://www.deepcode.ai/api/gh/badge?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbGF0Zm9ybTEiOiJnaCIsIm93bmVyMSI6Iml0c2FsbGNvZGUiLCJyZXBvMSI6IndoaXRlLXJhYmJpdCIsImluY2x1ZGVMaW50IjpmYWxzZSwiYXV0aG9ySWQiOjE1ODQ3LCJpYXQiOjE2MDExMjk1NTB9.J8l6aFttX7uETXvT1KzG2ai2kER_GJF94SZBOX9FTP0)](https://www.deepcode.ai/app/gh/itsallcode/white-rabbit/_/dashboard?utm_content=gh%2Fitsallcode%2Fwhite-rabbit)
 
 * [Features](#features)
 * [Usage](#usage)
