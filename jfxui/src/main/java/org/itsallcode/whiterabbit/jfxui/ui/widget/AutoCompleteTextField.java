@@ -62,6 +62,7 @@ public class AutoCompleteTextField extends TextField
             return;
         }
         entriesPopup.show(this, Side.BOTTOM, 0, 0);
+        entriesPopup.getSkin().getNode().requestFocus();
     }
 
     private void populatePopup(List<String> searchResult)
