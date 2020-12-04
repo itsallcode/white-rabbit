@@ -5,5 +5,5 @@ import java.util.List;
 @FunctionalInterface
 public interface AutocompleteEntrySupplier
 {
-    List<String> getEntries(String currentText);
+    List<AutocompleteProposal> getEntries(String currentText);
 }

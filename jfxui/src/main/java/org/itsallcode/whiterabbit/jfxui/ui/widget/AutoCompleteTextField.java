@@ -1,16 +1,23 @@
 package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteEntrySupplier;
+import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteProposal;
 
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 /**
  * Based on https://gist.github.com/floralvikings/10290131
@@ -19,8 +26,6 @@ import javafx.scene.control.TextField;
 public class AutoCompleteTextField extends TextField
 {
     private static final Logger LOG = LogManager.getLogger(AutoCompleteTextField.class);
-
-    private static final int MAX_ENTRY_COUNT = 10;
 
     private final AutocompleteEntrySupplier autocompleteEntriesSupplier;
     private final ContextMenu entriesPopup;
@@ -36,12 +41,7 @@ public class AutoCompleteTextField extends TextField
 
     private void textUpdated(final String currentText)
     {
-        if (currentText.isBlank())
-        {
-            entriesPopup.hide();
-            return;
-        }
-        final List<String> searchResult = autocompleteEntriesSupplier.getEntries(currentText);
+        final List<AutocompleteProposal> searchResult = autocompleteEntriesSupplier.getEntries(currentText);
         if (searchResult.isEmpty())
         {
             entriesPopup.hide();
@@ -65,25 +65,45 @@ public class AutoCompleteTextField extends TextField
         entriesPopup.getSkin().getNode().requestFocus();
     }
 
-    private void populatePopup(List<String> searchResult)
+    private void populatePopup(List<AutocompleteProposal> searchResult)
     {
-        final int count = Math.min(searchResult.size(), MAX_ENTRY_COUNT);
-        entriesPopup.getItems().clear();
-        for (int i = 0; i < count; i++)
-        {
-            final String result = searchResult.get(i);
-            entriesPopup.getItems().add(createMenuItem(result));
-        }
+        final List<MenuItem> menuItems = searchResult.stream()
+                .map(this::createMenuItem)
+                .collect(toList());
+        entriesPopup.getItems().setAll(menuItems);
     }
 
-    private CustomMenuItem createMenuItem(final String result)
+    private MenuItem createMenuItem(final AutocompleteProposal result)
     {
-        final Label entryLabel = new Label(result);
-        final CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+        final List<Text> textParts = highlightMatch(result);
+        final TextFlow textFlow = new TextFlow(textParts.toArray(new Node[0]));
+
+        final MenuItem item = new CustomMenuItem(textFlow);
         item.setOnAction(actionEvent -> {
-            setText(result);
+            setText(result.getText());
             entriesPopup.hide();
         });
         return item;
+    }
+
+    private List<Text> highlightMatch(final AutocompleteProposal result)
+    {
+        final int matchPositionStart = result.getMatchPositionStart();
+        final List<Text> textParts = new ArrayList<>();
+        String text = result.getText();
+        if (matchPositionStart > 0)
+        {
+            textParts.add(new Text(text.substring(0, matchPositionStart)));
+        }
+        final int matchLength = result.getMatchLength();
+        final Text matchingText = new Text(text.substring(matchPositionStart, matchPositionStart + matchLength));
+        matchingText.setStyle("-fx-font-weight: bold");
+        textParts.add(matchingText);
+
+        if (matchPositionStart + matchLength < text.length())
+        {
+            textParts.add(new Text(text.substring(matchPositionStart + matchLength)));
+        }
+        return textParts;
     }
 }
