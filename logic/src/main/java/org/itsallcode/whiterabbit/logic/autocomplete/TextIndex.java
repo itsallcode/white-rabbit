@@ -49,7 +49,11 @@ class TextIndex implements AutocompleteEntrySupplier
     @Override
     public List<AutocompleteProposal> getEntries(String searchText)
     {
-        if (searchText == null || searchText.isBlank())
+        if (searchText == null)
+        {
+            return createProposals(lowerCaseValues, "");
+        }
+        if (searchText.isBlank())
         {
             return createProposals(lowerCaseValues, searchText);
         }
