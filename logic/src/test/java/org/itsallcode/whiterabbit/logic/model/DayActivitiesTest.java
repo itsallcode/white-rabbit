@@ -69,6 +69,29 @@ class DayActivitiesTest
     }
 
     @Test
+    void firstAddedActivityHasRemainderFlag()
+    {
+        final DayActivities activities = create();
+        jsonDay.setActivities(new ArrayList<>());
+
+        final Activity newActivity = activities.add();
+
+        assertThat(newActivity.isRemainderActivity()).as("remainder").isTrue();
+    }
+
+    @Test
+    void secondAddedActivityDoesNotHaveRemainderFlag()
+    {
+        final DayActivities activities = create();
+        jsonDay.setActivities(new ArrayList<>());
+
+        activities.add();
+        final Activity newActivity = activities.add();
+
+        assertThat(newActivity.isRemainderActivity()).as("remainder").isFalse();
+    }
+
+    @Test
     void addIncrementsRowIndex()
     {
         final DayActivities activities = create();
