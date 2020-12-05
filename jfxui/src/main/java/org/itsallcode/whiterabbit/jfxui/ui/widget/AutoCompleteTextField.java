@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteEntrySupplier;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteProposal;
 
+import javafx.application.Platform;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -36,7 +37,7 @@ public class AutoCompleteTextField extends TextField
         entriesPopup = new ContextMenu();
         textProperty().addListener((observableValue, oldValue, newValue) -> textUpdated(getText()));
         focusedProperty().addListener((observableValue, oldValue, newValue) -> entriesPopup.hide());
-        textUpdated("");
+        Platform.runLater(() -> textUpdated(""));
     }
 
     private void textUpdated(final String currentText)
@@ -59,7 +60,7 @@ public class AutoCompleteTextField extends TextField
     {
         if (getScene() == null)
         {
-            LOG.warn("Scene not available for {}", this);
+            LOG.warn("Scene not available for {}, can't show popup", this);
             return;
         }
         LOG.debug("Showing popup with {} entries", entriesPopup.getItems().size());
