@@ -11,6 +11,7 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.testfx.api.FxRobot;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +45,17 @@ public class DayTable
         assertAll(
                 () -> assertThat(getBegin(row)).as("begin").isEqualTo(begin),
                 () -> assertThat(getEnd(row)).as("end").isEqualTo(end));
+    }
+
+    public void assertDate(int row, LocalDate expectedDate)
+    {
+        assertThat(getDate(row)).isEqualTo(expectedDate);
+    }
+
+    public LocalDate getDate(int row)
+    {
+        final TableCell<?, ?> tableCell = table.getTableCell(row, "date");
+        return (LocalDate) tableCell.getItem();
     }
 
     public LocalTime getBegin(int row)
@@ -94,7 +106,8 @@ public class DayTable
         robot.doubleClickOn(getCommentCell(row)).write(value).type(KeyCode.TAB);
     }
 
-    public TableCell<?, ?> getCommentCell(int row) {
+    public TableCell<?, ?> getCommentCell(int row)
+    {
         return table.getTableCell(row, "comment");
     }
 

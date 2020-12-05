@@ -1,13 +1,8 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Locale;
-
+import javafx.scene.control.Labeled;
+import javafx.stage.Stage;
+import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.junit.jupiter.api.Test;
@@ -18,8 +13,11 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
-import javafx.scene.control.Labeled;
-import javafx.stage.Stage;
+import java.time.*;
+import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(ApplicationExtension.class)
 class JavaFxAppUiTest extends JavaFxAppUiTestBase
@@ -99,6 +97,37 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> assertThat(month.getDays()).hasSize(1),
                 () -> assertThat(month.getDays()).extracting(JsonDay::getBegin).containsExactly(begin),
                 () -> assertThat(month.getDays()).extracting(JsonDay::getEnd).containsExactly(end));
+    }
+
+    @Test
+    void newMonthSelectedWhenMonthChanges()
+    {
+        assertAll(
+                () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
+                () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+
+        assertAll(
+                () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
+                () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
+    }
+
+    @Test
+    void newMonthSelectedUserChangesMonth()
+    {
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+
+        assertAll(
+                () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
+                () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
+
+        app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+        TestUtil.sleepShort();
+        
+        assertAll(
+                () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
+                () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
     }
 
     @Override

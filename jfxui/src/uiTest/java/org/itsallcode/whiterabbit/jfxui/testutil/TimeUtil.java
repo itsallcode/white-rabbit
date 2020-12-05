@@ -1,31 +1,20 @@
 package org.itsallcode.whiterabbit.jfxui.testutil;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mockito.ArgumentCaptor;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mockito.ArgumentCaptor;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class TimeUtil
 {
@@ -109,7 +98,13 @@ public class TimeUtil
     {
         final LocalDateTime now = LocalDateTime.now(clockMock);
         final LocalDateTime tomorrow = LocalDateTime.of(now.toLocalDate().plusDays(1), time);
-        final Duration duration = Duration.between(now, tomorrow);
+        tickDay(tomorrow);
+    }
+
+    public void tickDay(LocalDateTime nextDay)
+    {
+        final LocalDateTime now = LocalDateTime.now(clockMock);
+        final Duration duration = Duration.between(now, nextDay);
         addTime(duration);
         LOG.info("Tick day by {} to {}", duration, clockMock.instant());
         this.updateEverySecondRunnable.run();
@@ -144,10 +139,6 @@ public class TimeUtil
         this.updateEveryDayRunnable = arg.getAllValues().get(0);
         this.updateEverySecondRunnable = arg.getAllValues().get(1);
         this.updateEveryMinuteRunnable = arg.getAllValues().get(2);
-
-        LOG.trace("Found callback for seconds: {}", updateEverySecondRunnable);
-        LOG.trace("Found callback for days: {}", updateEveryDayRunnable);
-        LOG.trace("Found callback for minutes: {}", updateEveryMinuteRunnable);
 
         assertAll(
                 () -> assertThat(updateEverySecondRunnable.toString())
