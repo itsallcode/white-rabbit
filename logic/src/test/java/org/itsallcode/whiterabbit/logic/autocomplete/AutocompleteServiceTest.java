@@ -12,7 +12,6 @@ import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayActivities;
@@ -23,11 +22,6 @@ import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -66,36 +60,6 @@ class AutocompleteServiceTest
         assertThat(autocompleteService.activityCommentAutocompleter().getEntries("comm"))
                 .extracting(AutocompleteProposal::getText)
                 .containsExactly("Comment A", "Comment B");
-    }
-
-    @ParameterizedTest(name = "[{index}] available values {0}, search text ''{1}''")
-    @ArgumentsSource(AutocompleterArgumentsProvider.class)
-    void autocompleter(List<String> availableEntries, String searchText, List<String> expectedResult)
-    {
-        final List<AutocompleteProposal> entries = autocompleteService.autocompleter(availableEntries)
-                .getEntries(searchText);
-        assertThat(entries)
-                .as("autocomplete for available values " + availableEntries + " and search text '" + searchText + "'")
-                .extracting(AutocompleteProposal::getText)
-                .containsExactly(expectedResult.toArray(new String[0]));
-    }
-
-    private static class AutocompleterArgumentsProvider implements ArgumentsProvider
-    {
-        @Override
-        public Stream<Arguments> provideArguments(ExtensionContext context) throws Exception
-        {
-            return Stream.of(
-                    Arguments.of(List.of(), "text", List.of()),
-                    Arguments.of(List.of("text"), null, List.of()),
-                    Arguments.of(List.of("text"), "", List.of()),
-                    Arguments.of(List.of("text"), " ", List.of()),
-                    Arguments.of(List.of("TEXT"), "text", List.of("TEXT")),
-                    Arguments.of(List.of("match", "nomatch"), "ma", List.of("match")),
-                    Arguments.of(List.of("match1", "match2"), "ma", List.of("match1", "match2")),
-                    Arguments.of(List.of("first second"), "fi", List.of("first second")),
-                    Arguments.of(List.of("first second"), "sec", List.of()));
-        }
     }
 
     @Test
