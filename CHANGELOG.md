@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] - unreleased
 
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.2.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/4?closed=1)
+
+### Added
+
+* [#52](https://github.com/itsallcode/white-rabbit/issues/52): Improve keyboard usage for autocomplete text fields, immediately show proposals.
+
 ## [1.1.0] 2020-11-29
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.1.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/2?closed=1)
