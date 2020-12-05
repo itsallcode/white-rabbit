@@ -36,6 +36,7 @@ public class TimeUtil
     private Runnable updateEverySecondRunnable;
     private Runnable updateEveryMinuteRunnable;
     private Runnable updateEveryDayRunnable;
+    private Runnable updateEveryMonthRunnable;
 
     private TimeUtil(Clock clockMock, ScheduledExecutorService executorServiceMock)
     {
@@ -139,23 +140,22 @@ public class TimeUtil
     public void captureScheduledRunnables()
     {
         final ArgumentCaptor<Runnable> arg = ArgumentCaptor.forClass(Runnable.class);
-        verify(this.executorServiceMock, times(3)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
+        verify(this.executorServiceMock, times(4)).schedule(arg.capture(), eq(0L), eq(TimeUnit.MILLISECONDS));
 
-        this.updateEveryDayRunnable = arg.getAllValues().get(0);
-        this.updateEverySecondRunnable = arg.getAllValues().get(1);
-        this.updateEveryMinuteRunnable = arg.getAllValues().get(2);
-
-        LOG.trace("Found callback for seconds: {}", updateEverySecondRunnable);
-        LOG.trace("Found callback for days: {}", updateEveryDayRunnable);
-        LOG.trace("Found callback for minutes: {}", updateEveryMinuteRunnable);
+        this.updateEveryMonthRunnable = arg.getAllValues().get(0);
+        this.updateEveryDayRunnable = arg.getAllValues().get(1);
+        this.updateEverySecondRunnable = arg.getAllValues().get(2);
+        this.updateEveryMinuteRunnable = arg.getAllValues().get(3);
 
         assertAll(
-                () -> assertThat(updateEverySecondRunnable.toString())
-                        .contains("trigger=PeriodicTrigger [roundToUnit=Seconds]"),
+                () -> assertThat(updateEveryMonthRunnable.toString())
+                        .contains("trigger=PeriodicTrigger [roundToUnit=Months]"),
                 () -> assertThat(updateEveryDayRunnable.toString())
                         .contains("trigger=PeriodicTrigger [roundToUnit=Days]"),
                 () -> assertThat(updateEveryMinuteRunnable.toString())
-                        .contains("trigger=PeriodicTrigger [roundToUnit=Minutes]"));
+                        .contains("trigger=PeriodicTrigger [roundToUnit=Minutes]"),
+                () -> assertThat(updateEverySecondRunnable.toString())
+                        .contains("trigger=PeriodicTrigger [roundToUnit=Seconds]"));
     }
 
     public Clock clock()

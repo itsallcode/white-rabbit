@@ -30,19 +30,26 @@ public final class AppState
     public final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
     public final SimpleObjectProperty<Activity> selectedActivity = new SimpleObjectProperty<>(null);
 
+    public final ScheduledProperty<YearMonth> currentMonthProperty;
     public final ScheduledProperty<LocalDate> currentDateProperty;
-    public final ScheduledProperty<Instant> currentTimeProperty;
+    public final ScheduledProperty<Instant> currentSecondProperty;
 
-    private AppState(ScheduledProperty<LocalDate> currentDateProperty, ScheduledProperty<Instant> currentTimeProperty)
+    private AppState(ScheduledProperty<YearMonth> currentMonthProperty,
+            ScheduledProperty<LocalDate> currentDateProperty,
+            ScheduledProperty<Instant> currentTimeProperty)
     {
+        this.currentMonthProperty = currentMonthProperty;
         this.currentDateProperty = currentDateProperty;
-        this.currentTimeProperty = currentTimeProperty;
+        this.currentSecondProperty = currentTimeProperty;
     }
 
     static AppState create(AppService appService)
     {
         final ClockPropertyFactory clockPropertyFactory = new ClockPropertyFactory(appService);
-        return new AppState(clockPropertyFactory.currentDateProperty(), clockPropertyFactory.currentTimeProperty());
+        final ScheduledProperty<YearMonth> currentMonthProperty = clockPropertyFactory.currentMonthProperty();
+        final ScheduledProperty<LocalDate> currentDateProperty = clockPropertyFactory.currentDateProperty();
+        final ScheduledProperty<Instant> currentTimeProperty = clockPropertyFactory.currentInstantProperty();
+        return new AppState(currentMonthProperty, currentDateProperty, currentTimeProperty);
     }
 
     public Optional<DayRecord> getSelectedDay()
@@ -58,6 +65,6 @@ public final class AppState
     void shutdown()
     {
         currentDateProperty.cancel();
-        currentTimeProperty.cancel();
+        currentSecondProperty.cancel();
     }
 }

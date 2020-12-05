@@ -261,9 +261,9 @@ public class AppUi
             final Label label = new Label();
             label.setId("current-time-label");
             label.textProperty().bind(Bindings.createStringBinding(() -> {
-                final Instant now = state.currentTimeProperty.property().getValue();
+                final Instant now = state.currentSecondProperty.property().getValue();
                 return formatter.formatDateAndTime(now);
-            }, state.currentTimeProperty.property()));
+            }, state.currentSecondProperty.property()));
             return label;
         }
 
@@ -283,7 +283,7 @@ public class AppUi
                             + formatter.format(totalOvertime);
                 }
                 return "Overtime: (no month selected)";
-            }, state.currentTimeProperty.property(), state.currentMonth));
+            }, state.currentSecondProperty.property(), state.currentMonth));
             return label;
         }
 
