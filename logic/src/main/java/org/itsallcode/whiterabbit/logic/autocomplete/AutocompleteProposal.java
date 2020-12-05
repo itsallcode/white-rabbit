@@ -5,13 +5,13 @@ import java.util.Comparator;
 public class AutocompleteProposal implements Comparable<AutocompleteProposal>
 {
     private static final Comparator<AutocompleteProposal> COMPARATOR = Comparator
-            .comparing(AutocompleteProposal::getPriority).thenComparing(AutocompleteProposal::getText);
+            .comparing(AutocompleteProposal::getPriority).reversed().thenComparing(AutocompleteProposal::getText);
     private final String text;
-    private int priority;
+    private long priority;
     private final int matchPositionStart;
     private final int matchLength;
 
-    AutocompleteProposal(String text, int priority, int matchPositionStart, int matchLength)
+    AutocompleteProposal(String text, long priority, int matchPositionStart, int matchLength)
     {
         this.text = text;
         this.priority = priority;
@@ -34,7 +34,7 @@ public class AutocompleteProposal implements Comparable<AutocompleteProposal>
         return matchLength;
     }
 
-    public int getPriority()
+    public long getPriority()
     {
         return priority;
     }

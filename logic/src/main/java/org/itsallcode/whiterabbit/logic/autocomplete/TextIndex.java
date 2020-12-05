@@ -1,12 +1,18 @@
 package org.itsallcode.whiterabbit.logic.autocomplete;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.*;
-
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class TextIndex implements AutocompleteEntrySupplier
 {
@@ -15,22 +21,29 @@ class TextIndex implements AutocompleteEntrySupplier
 
     private final Map<String, List<String>> lowerCaseIndex;
     private final SortedSet<String> lowerCaseValues;
+    private final Map<String, Long> lowerCaseFrequency;
 
-    private TextIndex(Map<String, List<String>> lowerCaseIndex, SortedSet<String> lowerCaseValues)
+    private TextIndex(Map<String, List<String>> lowerCaseIndex, SortedSet<String> lowerCaseValues,
+            Map<String, Long> lowerCaseFrequency)
     {
         this.lowerCaseIndex = lowerCaseIndex;
         this.lowerCaseValues = lowerCaseValues;
+        this.lowerCaseFrequency = lowerCaseFrequency;
     }
 
     static TextIndex build(Collection<String> entries)
     {
-        List<String> uniqueEntries = entries.stream().distinct().collect(toList());
-        LOG.debug("Creating autocompleter for {} entries ({} unique): {}", entries.size(), uniqueEntries.size(),
-                uniqueEntries);
+        final List<String> uniqueEntries = entries.stream().distinct().collect(toList());
+
         final Map<String, List<String>> lowerCaseIndex = uniqueEntries.stream()
                 .collect(groupingBy(String::toLowerCase));
         final SortedSet<String> lowerCaseValues = new TreeSet<>(lowerCaseIndex.keySet());
-        return new TextIndex(lowerCaseIndex, lowerCaseValues);
+        final Map<String, Long> lowerCaseFrequency = entries.stream().map(String::toLowerCase)
+                .collect(groupingBy(identity(), counting()));
+        LOG.debug("Creating autocompleter for {} entries ({} unique): {}, frequencies: {}", entries.size(),
+                uniqueEntries.size(),
+                uniqueEntries, lowerCaseFrequency);
+        return new TextIndex(lowerCaseIndex, lowerCaseValues, lowerCaseFrequency);
     }
 
     @Override
@@ -38,7 +51,7 @@ class TextIndex implements AutocompleteEntrySupplier
     {
         if (searchText == null || searchText.isBlank())
         {
-            return createProposals(lowerCaseValues, "");
+            return createProposals(lowerCaseValues, searchText);
         }
         final SortedSet<String> lowerCaseMatches = lowerCaseValues.subSet(searchText.toLowerCase(),
                 searchText.toLowerCase() + Character.MAX_VALUE);
@@ -50,16 +63,17 @@ class TextIndex implements AutocompleteEntrySupplier
         return lowerCaseMatches.stream()
                 .map(lowerCaseIndex::get)
                 .flatMap(List::stream)
-                .map(proposedText -> createProposal(searchText, proposedText, 0))
+                .map(proposedText -> createProposal(searchText, proposedText))
                 .sorted()
                 .limit(MAX_RESULTS)
                 .collect(toList());
     }
 
-    private AutocompleteProposal createProposal(String searchText, String proposedText, int priority)
+    private AutocompleteProposal createProposal(String searchText, String proposedText)
     {
         final int matchPositionStart = proposedText.toLowerCase().indexOf(searchText.toLowerCase());
+        final long priority = lowerCaseFrequency.getOrDefault(proposedText.toLowerCase(), 0L);
+        LOG.trace("Create proposal for '{}'. Proposal: {}, priority: {}", searchText, proposedText, priority);
         return new AutocompleteProposal(proposedText, priority, matchPositionStart, searchText.length());
     }
-
 }

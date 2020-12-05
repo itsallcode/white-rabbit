@@ -35,13 +35,14 @@ public class AutoCompleteTextField extends TextField
         this.autocompleteEntriesSupplier = autocompleteEntriesSupplier;
         entriesPopup = new ContextMenu();
         textProperty().addListener((observableValue, oldValue, newValue) -> textUpdated(getText()));
-
         focusedProperty().addListener((observableValue, oldValue, newValue) -> entriesPopup.hide());
+        textUpdated("");
     }
 
     private void textUpdated(final String currentText)
     {
         final List<AutocompleteProposal> searchResult = autocompleteEntriesSupplier.getEntries(currentText);
+        LOG.debug("Text updated: '{}', got {} results", currentText, searchResult.size());
         if (searchResult.isEmpty())
         {
             entriesPopup.hide();
@@ -61,6 +62,7 @@ public class AutoCompleteTextField extends TextField
             LOG.warn("Scene not available for {}", this);
             return;
         }
+        LOG.debug("Showing popup with {} entries", entriesPopup.getItems().size());
         entriesPopup.show(this, Side.BOTTOM, 0, 0);
         entriesPopup.getSkin().getNode().requestFocus();
     }
@@ -90,16 +92,18 @@ public class AutoCompleteTextField extends TextField
     {
         final int matchPositionStart = result.getMatchPositionStart();
         final List<Text> textParts = new ArrayList<>();
-        String text = result.getText();
+        final String text = result.getText();
         if (matchPositionStart > 0)
         {
             textParts.add(new Text(text.substring(0, matchPositionStart)));
         }
         final int matchLength = result.getMatchLength();
-        final Text matchingText = new Text(text.substring(matchPositionStart, matchPositionStart + matchLength));
-        matchingText.setStyle("-fx-font-weight: bold");
-        textParts.add(matchingText);
-
+        if (matchPositionStart >= 0)
+        {
+            final Text matchingText = new Text(text.substring(matchPositionStart, matchPositionStart + matchLength));
+            matchingText.setStyle("-fx-font-weight: bold");
+            textParts.add(matchingText);
+        }
         if (matchPositionStart + matchLength < text.length())
         {
             textParts.add(new Text(text.substring(matchPositionStart + matchLength)));
