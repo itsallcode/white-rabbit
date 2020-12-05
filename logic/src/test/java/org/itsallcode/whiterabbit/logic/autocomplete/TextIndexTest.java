@@ -1,15 +1,15 @@
 package org.itsallcode.whiterabbit.logic.autocomplete;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TextIndexTest
 {
@@ -28,13 +28,16 @@ class TextIndexTest
     private static class AutocompleterArgumentsProvider implements ArgumentsProvider
     {
         @Override
-        public Stream<Arguments> provideArguments(ExtensionContext context) throws Exception
+        public Stream<Arguments> provideArguments(ExtensionContext context)
         {
             return Stream.of(
                     Arguments.of(List.of(), "text", List.of()),
-                    Arguments.of(List.of("text"), null, List.of()),
-                    Arguments.of(List.of("text"), "", List.of()),
-                    Arguments.of(List.of("text"), " ", List.of()),
+                    Arguments.of(List.of("text"), null, List.of("text")),
+                    Arguments.of(List.of("text"), "", List.of("text")),
+                    Arguments.of(List.of("text"), " ", List.of("text")),
+                    Arguments.of(List.of("text", "text", "text"), " ", List.of("text")),
+                    Arguments.of(List.of("t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "ta", "tb"), "",
+                            List.of("t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9")),
                     Arguments.of(List.of("TEXT"), "text", List.of("TEXT")),
                     Arguments.of(List.of("match", "nomatch"), "ma", List.of("match")),
                     Arguments.of(List.of("match1", "match2"), "ma", List.of("match1", "match2")),
