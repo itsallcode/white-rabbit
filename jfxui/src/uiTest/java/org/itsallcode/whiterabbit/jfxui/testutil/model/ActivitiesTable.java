@@ -41,7 +41,11 @@ public class ActivitiesTable
             final Node projectCell = table.getTableCell(rowIndex, "project");
             robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
         }
-        robot.clickOn(table.getTableCell(rowIndex, "remainder"));
+        final TableCell<?, ?> remainderCell = table.getTableCell(rowIndex, "remainder");
+        if (!(Boolean) remainderCell.getItem())
+        {
+            robot.clickOn(remainderCell);
+        }
         robot.doubleClickOn(table.getTableCell(rowIndex, "comment")).write(comment).type(KeyCode.ENTER);
     }
 
@@ -53,6 +57,12 @@ public class ActivitiesTable
     public void addActivity(Project project, Duration duration, String comment)
     {
         final int rowIndex = addActivity();
+
+        final TableCell<?, ?> remainderCell = table.getTableCell(rowIndex, "remainder");
+        if ((Boolean) remainderCell.getItem())
+        {
+            robot.clickOn(remainderCell);
+        }
 
         if (project != null)
         {

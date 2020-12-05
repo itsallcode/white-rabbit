@@ -231,13 +231,13 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     }
 
     @Test
-    void addActivitySelectRemainder()
+    void addActivityDeselectRemainder()
     {
         addActivity();
 
         final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
         robot.clickOn(activitiesTable.getTableCell(0, "remainder"));
-        activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withRemainder(true).build());
+        activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withRemainder(false).build());
     }
 
     @Test
@@ -249,7 +249,8 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         final Node projectCell = activitiesTable.getTableCell(0, "project");
 
         robot.doubleClickOn(projectCell).clickOn(projectCell).type(KeyCode.ENTER);
-        activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withProject(PROJECT1).build());
+        activitiesTable.assertRowContent(0,
+                ActivitiesTableExpectedRow.defaultRow().withRemainder(true).withProject(PROJECT1).build());
     }
 
     @Test
@@ -321,12 +322,14 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         time().tickMinute();
         final ActivitiesTable activities = app().activitiesTable();
 
+        final JavaFxTable<ActivityPropertyAdapter> table = activities.table();
+        final boolean isFirstActivity = table.getRowCount() == 0;
         activities.addActivity();
 
-        final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow();
+        final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow().withRemainder(isFirstActivity);
 
-        assertAll(() -> activities.table().assertRowCount(1),
-                () -> activities.table().assertRowContent(0, expectedRowContent.build()));
+        assertAll(() -> table.assertRowCount(1),
+                () -> table.assertRowContent(0, expectedRowContent.build()));
     }
 
     private void selectCurrentDay()
