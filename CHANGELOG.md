@@ -11,6 +11,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.2.0) / 
 ### Added
 
 * [#52](https://github.com/itsallcode/white-rabbit/issues/52): Improve keyboard usage for autocomplete text fields, immediately show proposals.
+* [#54](https://github.com/itsallcode/white-rabbit/issues/54): First added activity has the remainder flag set.
 
 ## [1.1.0] 2020-11-29
 

@@ -38,13 +38,17 @@ public class DayActivities
         {
             day.setActivities(new ArrayList<>());
         }
+        final boolean isFirstActivity = getActivities().findAny().isEmpty();
+
         final JsonActivity jsonActivity = new JsonActivity();
         jsonActivity.setProjectId("");
         jsonActivity.setDuration(Duration.ZERO);
         final int newRowIndex = day.getActivities().size();
         day.getActivities().add(jsonActivity);
 
-        return wrapActivity(jsonActivity, newRowIndex);
+        final Activity wrappedActivity = wrapActivity(jsonActivity, newRowIndex);
+        wrappedActivity.setRemainderActivity(isFirstActivity);
+        return wrappedActivity;
     }
 
     public List<Activity> getAll()
