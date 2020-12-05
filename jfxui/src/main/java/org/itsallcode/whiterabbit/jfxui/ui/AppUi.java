@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.ui;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -186,8 +187,7 @@ public class AppUi
         {
             final Insets insets = new Insets(GAP_PIXEL);
             final Node daysTable = dayRecordTable.initTable();
-            state.currentDateProperty.property()
-                    .addListener((observable, oldValue, newValue) -> dayRecordTable.selectRow(newValue));
+            state.currentDateProperty.property().addListener(this::dateChanged);
             final Node activitiesTab = activitiesTable.initTable();
             final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> app.addActivity());
             final Button removeActivityButton = button("remove-activity-button", "-", "Remove activity",
@@ -291,6 +291,7 @@ public class AppUi
         {
             state.availableMonths.addAll(appService.getAvailableDataYearMonth());
             final ComboBox<YearMonth> comboBox = new ComboBox<>(state.availableMonths);
+            comboBox.setId("selected-month-combobox");
 
             state.currentMonth.addListener(
                     (observable, oldValue, newValue) -> comboBox.getSelectionModel().select(newValue.getYearMonth()));
@@ -315,6 +316,13 @@ public class AppUi
                 button.setTooltip(new Tooltip(tooltip));
             }
             return button;
+        }
+
+        private void dateChanged(ObservableValue<? extends LocalDate> observable, LocalDate oldDate, LocalDate newDate) {
+            dayRecordTable.selectRow(newDate);
+            if(oldDate.getMonth()!=newDate.getMonth()) {
+                app.loadMonth(YearMonth.from(newDate));
+            }
         }
     }
 }

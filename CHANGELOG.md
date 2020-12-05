@@ -13,6 +13,10 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.2.0) / 
 * [#52](https://github.com/itsallcode/white-rabbit/issues/52): Improve keyboard usage for autocomplete text fields, immediately show proposals.
 * [#54](https://github.com/itsallcode/white-rabbit/issues/54): First added activity has the remainder flag set.
 
+### Fixed
+
+* [#50](https://github.com/itsallcode/white-rabbit/issues/50), [#51](https://github.com/itsallcode/white-rabbit/issues/51): Switch view when month changes.
+
 ## [1.1.0] 2020-11-29
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.1.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/2?closed=1)

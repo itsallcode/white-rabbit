@@ -1,16 +1,18 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import java.time.Duration;
-
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.SplitMenuButton;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Window;
+import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Window;
+import java.time.Duration;
+import java.time.YearMonth;
 
 public class ApplicationHelper
 {
@@ -79,5 +81,20 @@ public class ApplicationHelper
         final Window dialogWindow = robot.window("Add interruption for today");
         Assertions.assertThat(dialogWindow).isShowing();
         return new AddInterruptionDialog(robot, dialogWindow);
+    }
+
+    public YearMonth getSelectedMonth()
+    {
+        return getSelectedMonthComboBox().getValue();
+    }
+
+    public void setSelectedMonth(YearMonth month)
+    {
+        JavaFxUtil.runOnFxApplicationThread(() -> getSelectedMonthComboBox().setValue(month));
+    }
+
+    private ComboBox<YearMonth> getSelectedMonthComboBox()
+    {
+        return robot.lookup("#selected-month-combobox").queryComboBox();
     }
 }
