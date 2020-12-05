@@ -94,14 +94,9 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         dayTable.clickRow(rowIndex + 1);
         final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
 
-        robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
-
-        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
-
-        robot.doubleClickOn(commentCell).write("new");
+        robot.doubleClickOn(commentCell).write("tst");
 
         assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
-
         time().tickMinute();
 
         TestUtil.sleepShort();
@@ -109,7 +104,8 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertThat(commentCell.isEditing()).as("cell is editing after minute tick").isTrue();
         robot.type(KeyCode.ENTER);
 
-        assertThat(commentCell.getText()).isEqualTo("new");
+        assertThat(commentCell.isEditing()).as("cell is editing after typing enter").isFalse();
+        assertThat(commentCell.getText()).isEqualTo("tst");
     }
 
     @Test
@@ -122,14 +118,9 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         activities.table().clickRow(0);
 
-        TableCell<?, ?> commentCell = activities.getCommentCell(0);
+        final TableCell<?, ?> commentCell = activities.getCommentCell(0);
 
-        robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
-
-        assertThat(commentCell.isEditing()).as("cell is editing").isFalse();
-
-        commentCell = activities.getCommentCell(0);
-        robot.doubleClickOn(commentCell).write("new");
+        robot.doubleClickOn(commentCell).write("tst");
 
         assertThat(commentCell.isEditing()).as("cell is editing").isTrue();
 
@@ -140,7 +131,8 @@ class TableCellEditTest extends JavaFxAppUiTestBase
         assertThat(commentCell.isEditing()).as("cell is editing after minute tick").isTrue();
         robot.type(KeyCode.ENTER);
 
-        assertThat(commentCell.getText()).isEqualTo("new");
+        assertThat(commentCell.isEditing()).as("cell is editing after typing enter").isFalse();
+        assertThat(commentCell.getText()).isEqualTo("tst");
     }
 
     private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)

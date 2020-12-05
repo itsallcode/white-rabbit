@@ -1,5 +1,18 @@
 package org.itsallcode.whiterabbit.logic.autocomplete;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -8,15 +21,6 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.*;
 
 public class AutocompleteService
 {
@@ -34,12 +38,12 @@ public class AutocompleteService
 
     public AutocompleteEntrySupplier dayCommentAutocompleter()
     {
-        return autocompleter(getDayComments());
+        return TextIndex.build(getDayComments());
     }
 
     public AutocompleteEntrySupplier activityCommentAutocompleter()
     {
-        return autocompleter(getActivityComments());
+        return TextIndex.build(getActivityComments());
     }
 
     private List<String> getDayComments()
@@ -74,22 +78,6 @@ public class AutocompleteService
     {
         final LocalDate maxAge = clockService.getCurrentDate().minus(MAX_AGE);
         return storage.getLatestDays(maxAge);
-    }
-
-    AutocompleteEntrySupplier autocompleter(Collection<String> allEntries)
-    {
-        LOG.debug("Creating autocompleter for {} entries: {}", allEntries.size(), allEntries);
-        final Map<String, List<String>> lowerCaseIndex = allEntries.stream().collect(groupingBy(String::toLowerCase));
-        final SortedSet<String> lowerCaseValues = new TreeSet<>(lowerCaseIndex.keySet());
-        return currentText -> {
-            if (currentText == null || currentText.isBlank())
-            {
-                return emptyList();
-            }
-            final SortedSet<String> lowerCaseMatches = lowerCaseValues.subSet(currentText.toLowerCase(),
-                    currentText.toLowerCase() + Character.MAX_VALUE);
-            return lowerCaseMatches.stream().map(lowerCaseIndex::get).flatMap(List::stream).collect(toList());
-        };
     }
 
     public Optional<Project> getSuggestedProject()
