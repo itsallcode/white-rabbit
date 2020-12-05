@@ -2,8 +2,6 @@ package org.itsallcode.whiterabbit.jfxui.property;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.YearMonth;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,24 +25,14 @@ public class ClockPropertyFactory
         this.appService = appService;
     }
 
-    public ScheduledProperty<Instant> currentInstantProperty()
+    public ScheduledProperty<Instant> currentTimeProperty()
     {
         return updatingProperty(PeriodicTrigger.everySecond(), () -> appService.getClock().instant());
-    }
-
-    public ScheduledProperty<LocalTime> currentMinuteProperty()
-    {
-        return updatingProperty(PeriodicTrigger.everyMinute(), () -> appService.getClock().getCurrentTime());
     }
 
     public ScheduledProperty<LocalDate> currentDateProperty()
     {
         return updatingProperty(PeriodicTrigger.everyDay(), () -> appService.getClock().getCurrentDate());
-    }
-
-    public ScheduledProperty<YearMonth> currentMonthProperty()
-    {
-        return updatingProperty(PeriodicTrigger.everyMonth(), () -> appService.getClock().getCurrentYearMonth());
     }
 
     public <T> ScheduledProperty<T> updatingProperty(Trigger trigger, Supplier<T> supplier)
