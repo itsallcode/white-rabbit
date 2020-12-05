@@ -43,7 +43,7 @@ public class AutoCompleteTextField extends TextField
     private void textUpdated(final String currentText)
     {
         final List<AutocompleteProposal> searchResult = autocompleteEntriesSupplier.getEntries(currentText);
-        LOG.debug("Text updated: '{}', got {} results", currentText, searchResult.size());
+        LOG.trace("Text updated: '{}', got {} results", currentText, searchResult.size());
         if (searchResult.isEmpty())
         {
             entriesPopup.hide();
@@ -63,7 +63,7 @@ public class AutoCompleteTextField extends TextField
             LOG.warn("Scene not available for {}, can't show popup", this);
             return;
         }
-        LOG.debug("Showing popup with {} entries", entriesPopup.getItems().size());
+        LOG.trace("Showing popup with {} entries", entriesPopup.getItems().size());
         entriesPopup.show(this, Side.BOTTOM, 0, 0);
         entriesPopup.getSkin().getNode().requestFocus();
     }
