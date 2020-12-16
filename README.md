@@ -173,6 +173,10 @@ To use activity tracking, create file `projects.json` in your data directory wit
 }
 ```
 
+#### Logging
+
+WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).
+
 ### <a name="running"></a>Running WhiteRabbit
 
 #### Clone and configure
