@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.jfxui.log;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
@@ -29,11 +28,11 @@ public class LoggingConfigurator
         LOG.info("Configuring log4j2 with log directory {}", logPath);
         final Appender appender = createAppender(logPath);
         appender.start();
-        configureAppender(appender, Level.DEBUG);
+        configureAppender(appender);
         LOG.info("Log4j2 configured with log directory {}", logPath);
     }
 
-    private static void configureAppender(Appender appender, Level logLevel)
+    private static void configureAppender(Appender appender)
     {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         ctx.getConfiguration().addAppender(appender);
