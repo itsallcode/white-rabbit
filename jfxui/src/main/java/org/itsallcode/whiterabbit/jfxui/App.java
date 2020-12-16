@@ -16,6 +16,7 @@ public class App
         final ConfigLoader configLoader = new ConfigLoader(new DefaultWorkingDirProvider());
         final Config config = configLoader.loadConfigFromDefaultLocations();
         new LoggingConfigurator(config).configure();
+        System.setProperty("log4j.skipJansi", "false");
         Application.launch(JavaFxApp.class, args);
     }
 }

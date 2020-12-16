@@ -2,11 +2,9 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="DEBUG"
-                onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}" />
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout charset="UTF-8" noConsoleNoAnsi="false" pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
         </Console>
-
     </Appenders>
     
     <Loggers>
