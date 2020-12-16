@@ -22,13 +22,3 @@
     s3Bucket = <bucket name>
     cloudfrontDistribution = <cloudfront distribution id>
     ```
-
-## Deployment
-
-Run
-
-```shell script
-./gradlew build webstart:publishWebstart --info -PreleaseVersion=<version>
-```
-
-The uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).

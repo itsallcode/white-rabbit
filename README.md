@@ -211,23 +211,28 @@ java -jar jfxui/build/libs/jfxui.jar
 ./gradlew check -PuiTestsHeadless=false
 ```
 
-#### <a name="building_release"></a>Building a release
+#### <a name="building_release"></a>Building a release and deploy WebStart
 
-```bash
-./gradlew build -PreleaseVersion=<version>
-```
+This will build a signed JAR and upload it to the AWS S3 bucket.
 
-The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar`
+Precondition: initial setup of [keystore and AWS configuration](webstart/README.md).
 
-See [how to deploy webstart](webstart/README.md).
+1. Make sure the [Changelog](CHANGELOG.md) is updated
+2. Run the following command:
 
-## WebStart Infrastructure
+    ```bash
+    ./gradlew clean build webstart:publishWebstart --info -PreleaseVersion=<version>
+    ```
 
-### Managing configuration in a private branch
+    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).
 
-This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you could push to a private repository only.
+3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
 
-When switching from `private-master` to the public `develop` branch, git will delete the configuration files. To restore them you can use the following command:
+#### Managing WebStart configuration in a private branch
+
+This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you push to a private repository only.
+
+When switching from `private-master` to the public `develop` branch, git will delete the configuration files. To restore them you can run the following command in the project root:
 
 ```bash
 git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts \
