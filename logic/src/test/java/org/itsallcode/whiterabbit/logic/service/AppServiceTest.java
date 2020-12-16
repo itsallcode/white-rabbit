@@ -26,6 +26,7 @@ import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.logic.report.project.ProjectReportGenerator;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionDetectedDecision;
@@ -66,7 +67,9 @@ class AppServiceTest
     @Mock
     private SingleInstanceService singleInstanceService;
     @Mock
-    private VacationReportGenerator vacationServiceMock;
+    private VacationReportGenerator vacationReportGeneratorMock;
+    @Mock
+    private ProjectReportGenerator projectReportGeneratorMock;
     @Mock
     private ActivityService activityService;
     @Mock
@@ -85,9 +88,9 @@ class AppServiceTest
         final WorkingTimeService workingTimeService = new WorkingTimeService(storageMock, clockMock,
                 appServiceCallback);
         appService = new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
-                schedulingServiceMock, singleInstanceService, appServiceCallback,
-                vacationServiceMock, activityService, projectServiceMock, autocompleteServiceMock,
-                appPropertiesServiceMock);
+                schedulingServiceMock, singleInstanceService, appServiceCallback, activityService, projectServiceMock,
+                autocompleteServiceMock, appPropertiesServiceMock, vacationReportGeneratorMock,
+                projectReportGeneratorMock);
         appService.setUpdateListener(updateListenerMock);
     }
 
