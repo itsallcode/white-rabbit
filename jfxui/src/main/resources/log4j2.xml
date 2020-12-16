@@ -2,29 +2,14 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="DEBUG"
-                onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout
-                pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout charset="UTF-8" noConsoleNoAnsi="false" pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
         </Console>
-
-        <RollingFile name="File" fileName="logs/white-rabbit.log"
-            filePattern="logs/white-rabbit-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %-5level %logger{36} - %msg%n
-                </Pattern>
-            </PatternLayout>
-            <Policies>
-                <SizeBasedTriggeringPolicy
-                    size="10 MB" />
-            </Policies>
-        </RollingFile>
     </Appenders>
     
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="File" />
         </Root>
     </Loggers>
 </Configuration>

@@ -17,10 +17,15 @@ public interface Config
 
     boolean allowMultipleInstances();
 
+    Path getConfigFile();
+
     default Path getProjectFile()
     {
         return getDataDir().resolve(PROJECTS_JSON);
     }
 
-    Path getConfigFile();
+    default Path getLogPath()
+    {
+        return getDataDir().resolve("logs");
+    }
 }

@@ -5,7 +5,6 @@
 **/bin/
 **/build/
 /time.properties
-**/logs/
 /.idea
 /webstart/keystore.jks
 /webstart/webstart.properties

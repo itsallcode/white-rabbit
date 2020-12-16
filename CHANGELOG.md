@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - unreleased
+## [1.3.0] - unreleased
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.3.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/5?closed=1)
+
+### Added
+
+* [#59](https://github.com/itsallcode/white-rabbit/issues/59): Log to data directory.
+
+## [1.2.0] 2020-12-05
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.2.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/4?closed=1)
 
