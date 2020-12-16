@@ -19,6 +19,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.stage.Stage;
 
 public final class AppState
 {
@@ -32,6 +33,7 @@ public final class AppState
 
     public final ScheduledProperty<LocalDate> currentDateProperty;
     public final ScheduledProperty<Instant> currentTimeProperty;
+    private Stage primaryStage;
 
     private AppState(ScheduledProperty<LocalDate> currentDateProperty, ScheduledProperty<Instant> currentTimeProperty)
     {
@@ -53,6 +55,16 @@ public final class AppState
     public Optional<Activity> getSelectedActivity()
     {
         return Optional.ofNullable(selectedActivity.get());
+    }
+
+    public void setPrimaryStage(Stage primaryStage)
+    {
+        this.primaryStage = primaryStage;
+    }
+
+    public Optional<Stage> getPrimaryStage()
+    {
+        return Optional.ofNullable(primaryStage);
     }
 
     void shutdown()

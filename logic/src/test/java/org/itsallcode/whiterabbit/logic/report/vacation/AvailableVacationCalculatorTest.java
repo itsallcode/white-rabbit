@@ -1,7 +1,8 @@
-package org.itsallcode.whiterabbit.logic.service.vacation;
+package org.itsallcode.whiterabbit.logic.report.vacation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.itsallcode.whiterabbit.logic.report.vacation.AvailableVacationCalculator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

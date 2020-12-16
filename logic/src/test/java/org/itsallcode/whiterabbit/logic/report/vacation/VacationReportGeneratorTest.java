@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.service.vacation;
+package org.itsallcode.whiterabbit.logic.report.vacation;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport.VacationMonth;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport.VacationYear;
+import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
+import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
+import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationMonth;
+import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationYear;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -109,7 +109,7 @@ public class JavaFxApp extends Application
         }
 
         state = AppState.create(appService);
-        actions = UiActions.create(config, appService, getHostServices());
+        actions = UiActions.create(config, state, appService, getHostServices());
     }
 
     private Config loadConfig()
@@ -125,6 +125,7 @@ public class JavaFxApp extends Application
     public void start(Stage primaryStage)
     {
         this.primaryStage = primaryStage;
+        state.setPrimaryStage(primaryStage);
         LOG.info("Starting UI");
         doStart(primaryStage);
         notifyPreloaderProgress(Type.STARTUP_FINISHED);
@@ -132,7 +133,6 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-
         this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, locale).build();
 
         primaryStage.show();

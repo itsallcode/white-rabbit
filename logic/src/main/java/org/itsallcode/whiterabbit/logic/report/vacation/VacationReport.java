@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.service.vacation;
+package org.itsallcode.whiterabbit.logic.report.vacation;
 
 import java.time.Year;
 import java.time.YearMonth;
