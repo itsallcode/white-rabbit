@@ -1,12 +1,14 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import java.nio.file.Path;
-import java.time.YearMonth;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.AppService;
@@ -16,6 +18,8 @@ import javafx.application.Platform;
 
 public final class UiActions
 {
+    private static final Logger LOG = LogManager.getLogger(UiActions.class);
+
     private final Config config;
     private final AppState state;
     private final DesktopService desktopService;
@@ -63,10 +67,15 @@ public final class UiActions
         new VacationReportViewer(vacationReport).show();
     }
 
-    public void showProjectReport(YearMonth month)
+    public void showProjectReport()
     {
-        final ProjectReport report = appService.generateProjectReport(month);
-        new ProjectReportViewer(state.getPrimaryStage().orElseThrow(), report).show();
+        final MonthIndex monthIndex = state.currentMonth.get();
+        if (monthIndex == null)
+        {
+            LOG.warn("No month selected, can't generate project report");
+        }
+        final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
+        new ProjectReportViewer(state.getPrimaryStage().orElseThrow(), appService.formatter(), report).show();
     }
 
     public void openHomepage()

@@ -1,11 +1,13 @@
 package org.itsallcode.whiterabbit.logic.report.project;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -26,7 +28,7 @@ public class ProjectReportGenerator
 
     public ProjectReport generateReport(YearMonth month)
     {
-        return new ProjectReport(storage.loadMonth(month)
+        return new ProjectReport(month, storage.loadMonth(month)
                 .map(MonthIndex::getSortedDays).orElse(Stream.empty())
                 .map(this::generateDayReport)
                 .collect(toList()));
@@ -42,7 +44,7 @@ public class ProjectReportGenerator
                 .map(this::aggregateProject)
                 .collect(toList());
 
-        return new Day(record.getDate(), record.getType(), projects);
+        return new Day(record.getDate(), record.getType(), record.getComment(), projects);
     }
 
     private String activityProject(Activity activity)
@@ -56,6 +58,11 @@ public class ProjectReportGenerator
                 .filter(activity -> activity.getDuration() != null)
                 .map(Activity::getDuration).reduce((a, b) -> a.plus(b))
                 .orElse(Duration.ZERO);
-        return new ProjectReport.ProjectActivity(projectActivites.get(0).getProject(), totalWorkingTime);
+        final String comments = projectActivites.stream()
+                .map(Activity::getComment)
+                .filter(Objects::nonNull)
+                .filter(comment -> !comment.isBlank())
+                .collect(joining(", "));
+        return new ProjectReport.ProjectActivity(projectActivites.get(0).getProject(), totalWorkingTime, comments);
     }
 }

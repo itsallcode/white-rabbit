@@ -64,6 +64,14 @@ class ProjectReportGeneratorTest
     }
 
     @Test
+    void reportMonth()
+    {
+        simulateDays(day(DATE1, DayType.WORK));
+
+        assertThat(reportGenerator.generateReport(MONTH).month).isEqualTo(MONTH);
+    }
+
+    @Test
     void dayWithoutActivity()
     {
         simulateDays(day(DATE1, DayType.WORK));
@@ -83,8 +91,8 @@ class ProjectReportGeneratorTest
         final List<Day> days = reportGenerator.generateReport(MONTH).days;
         final List<ProjectActivity> projects = days.get(0).projects;
         assertThat(projects).hasSize(1);
-        assertThat(projects.get(0).project).isSameAs(PROJECT1);
-        assertThat(projects.get(0).workingTime).hasHours(2);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(2);
     }
 
     @Test
@@ -103,8 +111,8 @@ class ProjectReportGeneratorTest
         final List<Day> days = reportGenerator.generateReport(MONTH).days;
         final List<ProjectActivity> projects = days.get(0).projects;
         assertThat(projects).hasSize(1);
-        assertThat(projects.get(0).project).isSameAs(PROJECT1);
-        assertThat(projects.get(0).workingTime).isZero();
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).isZero();
     }
 
     @Test
@@ -117,10 +125,10 @@ class ProjectReportGeneratorTest
         final List<Day> days = reportGenerator.generateReport(MONTH).days;
         final List<ProjectActivity> projects = days.get(0).projects;
         assertThat(projects).hasSize(2);
-        assertThat(projects.get(0).project).isSameAs(PROJECT1);
-        assertThat(projects.get(0).workingTime).hasHours(2);
-        assertThat(projects.get(1).project).isSameAs(PROJECT2);
-        assertThat(projects.get(1).workingTime).hasHours(3);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(1).getProject()).isSameAs(PROJECT2);
+        assertThat(projects.get(1).getWorkingTime()).hasHours(3);
     }
 
     @Test
@@ -133,8 +141,8 @@ class ProjectReportGeneratorTest
         final List<Day> days = reportGenerator.generateReport(MONTH).days;
         final List<ProjectActivity> projects = days.get(0).projects;
         assertThat(projects).hasSize(1);
-        assertThat(projects.get(0).project).isSameAs(PROJECT1);
-        assertThat(projects.get(0).workingTime).hasHours(5);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(5);
     }
 
     @Test
@@ -152,13 +160,13 @@ class ProjectReportGeneratorTest
 
         List<ProjectActivity> projects = days.get(0).projects;
         assertThat(projects).hasSize(1);
-        assertThat(projects.get(0).project).isSameAs(PROJECT1);
-        assertThat(projects.get(0).workingTime).hasHours(2);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(2);
 
         projects = days.get(1).projects;
         assertThat(projects).hasSize(1);
-        assertThat(projects.get(0).project).isSameAs(PROJECT1);
-        assertThat(projects.get(0).workingTime).hasHours(3);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(3);
     }
 
     private Activity activity(Project project, Duration duration)

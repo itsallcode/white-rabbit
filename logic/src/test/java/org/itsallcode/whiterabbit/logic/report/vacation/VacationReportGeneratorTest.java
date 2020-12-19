@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
-import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationMonth;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationYear;
 import org.itsallcode.whiterabbit.logic.storage.Storage;

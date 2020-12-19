@@ -26,7 +26,7 @@ public class FormatterService
     {
         this.locale = locale;
         this.timeZoneId = timeZoneId;
-        dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
+        this.dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
                 .withLocale(locale).withZone(timeZoneId);
     }
 

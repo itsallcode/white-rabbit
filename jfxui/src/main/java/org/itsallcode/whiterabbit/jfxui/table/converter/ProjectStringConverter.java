@@ -1,15 +1,15 @@
-package org.itsallcode.whiterabbit.jfxui.table.activities;
+package org.itsallcode.whiterabbit.jfxui.table.converter;
 
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 import javafx.util.StringConverter;
 
-class ProjectStringConverter extends StringConverter<Project>
+public class ProjectStringConverter extends StringConverter<Project>
 {
     private final ProjectService projectService;
 
-    ProjectStringConverter(ProjectService projectService)
+    public ProjectStringConverter(ProjectService projectService)
     {
         this.projectService = projectService;
     }

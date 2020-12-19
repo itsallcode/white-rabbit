@@ -1,10 +1,11 @@
-package org.itsallcode.whiterabbit.jfxui.table.activities;
+package org.itsallcode.whiterabbit.jfxui.table.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.junit.jupiter.api.BeforeEach;
