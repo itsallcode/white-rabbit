@@ -3,7 +3,7 @@
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout charset="UTF-8" noConsoleNoAnsi="false" pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
+            <PatternLayout charset="UTF-8" noConsoleNoAnsi="true" pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
         </Console>
     </Appenders>
     
