@@ -68,7 +68,7 @@ public class JsonFileStorage
     void writeToFile(YearMonth yearMonth, JsonMonth record)
     {
         final Path file = dateToFileMapper.getPathForDate(yearMonth);
-        LOG.info("Write month {} to file {}", yearMonth, file);
+        LOG.trace("Write month {} to file {}", yearMonth, file);
         createDirectory(file.getParent());
         try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING))
