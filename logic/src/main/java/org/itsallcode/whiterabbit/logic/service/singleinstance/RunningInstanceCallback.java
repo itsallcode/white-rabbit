@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service.singleinstance;
 
-@FunctionalInterface
 public interface RunningInstanceCallback
 {
     interface ClientConnection
