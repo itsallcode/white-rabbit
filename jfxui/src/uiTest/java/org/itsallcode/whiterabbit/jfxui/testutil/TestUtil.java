@@ -14,6 +14,11 @@ public class TestUtil
         sleep(Duration.ofSeconds(1));
     }
 
+    public static void sleepMedium()
+    {
+        sleep(Duration.ofMillis(250));
+    }
+
     public static void sleepShort()
     {
         sleep(Duration.ofMillis(100));
