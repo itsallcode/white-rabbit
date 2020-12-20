@@ -48,6 +48,10 @@ subprojects {
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
     test {
         useJUnitPlatform()
     }

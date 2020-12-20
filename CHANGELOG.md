@@ -13,6 +13,9 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.3.0) / 
 * [#49](https://github.com/itsallcode/white-rabbit/issues/49): Added monthly project report.
 * [#59](https://github.com/itsallcode/white-rabbit/issues/59): Log to data directory.
 
+### Fixed
+* [#62](https://github.com/itsallcode/white-rabbit/issues/62): Fix editing table cells.
+
 ## [1.2.0] 2020-12-05
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.2.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/4?closed=1)

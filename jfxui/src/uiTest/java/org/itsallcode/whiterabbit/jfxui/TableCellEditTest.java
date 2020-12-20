@@ -1,10 +1,15 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import javafx.scene.Scene;
-import javafx.scene.control.TableCell;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.DayTableExpectedRow.Builder;
@@ -20,15 +25,11 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import javafx.scene.Scene;
+import javafx.scene.control.TableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
 class TableCellEditTest extends JavaFxAppUiTestBase
@@ -133,6 +134,26 @@ class TableCellEditTest extends JavaFxAppUiTestBase
 
         assertThat(commentCell.isEditing()).as("cell is editing after typing enter").isFalse();
         assertThat(commentCell.getText()).isEqualTo("tst");
+    }
+
+    // https://github.com/itsallcode/white-rabbit/issues/62
+    @Test
+    void editingCellASecondTimeWorks()
+    {
+        time().tickMinute();
+        final int rowIndex = time().getCurrentDayRowIndex();
+
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        final TableCell<?, ?> commentCell = dayTable.getTableCell(rowIndex, "comment");
+
+        robot.doubleClickOn(commentCell).write("tst").type(KeyCode.ENTER);
+        assertThat(commentCell.isEditing()).isFalse();
+        assertThat(commentCell.getText()).isEqualTo("tst");
+
+        robot.doubleClickOn(commentCell).write("abc").type(KeyCode.ENTER);
+        assertThat(commentCell.isEditing()).isFalse();
+        assertThat(commentCell.getText()).isEqualTo("abc");
     }
 
     private void assertCommentCellPersistedAfterCommitAction(Runnable commitAction)
