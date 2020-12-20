@@ -53,9 +53,11 @@ class ConfigCommandLineArgUiTest extends JavaFxAppUiTestBase
     private void prepareConfigFile(Path configPath)
     {
         final Path dataDir = getDataDir();
+        String config = "data = " + dataDir.toString().replace('\\', '/') + "\n";
+        config += "write_log_file = false\n";
         try
         {
-            Files.writeString(configPath, "data = " + dataDir.toString().replace('\\', '/'));
+            Files.writeString(configPath, config);
             Files.createDirectory(dataDir);
         }
         catch (final IOException e)
