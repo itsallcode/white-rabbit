@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'com.github.johnrengelman.shadow'
 }
 
 ext {
@@ -56,7 +56,7 @@ dependencies {
     runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
     
     testImplementation "javax.json.bind:javax.json.bind-api:1.0"
-    testRuntimeOnly "org.eclipse:yasson:1.0.8"
+    testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
     
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
     testRuntimeOnly "org.testfx:openjfx-monocle:jdk-$monocleVersion"

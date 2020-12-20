@@ -1,10 +1,9 @@
 
-
 dependencies {
     implementation "javax.json.bind:javax.json.bind-api:1.0"
-    runtimeOnly "org.eclipse:yasson:1.0.8"
+    runtimeOnly "org.eclipse:yasson:${yassonVersion}"
     
-    testImplementation "nl.jqno.equalsverifier:equalsverifier:3.4.2"
+    testImplementation "nl.jqno.equalsverifier:equalsverifier:3.5"
 }
 
 ext.generatedResourcesFolder = file("$buildDir/generated-resources")
