@@ -80,17 +80,9 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
                 t.consume();
             }
         });
-        cell.setText(null);
-        cell.setGraphic(textField);
+
         configureFocusLossBehavior(cell, converter, textField);
         return textField;
-    }
-
-    private static <T> void startEdit(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
-    {
-        textField.setText(getItemText(cell, converter));
-        textField.selectAll();
-        textField.requestFocus();
     }
 
     private static <T> void configureFocusLossBehavior(final PersistOnFocusLossTextFieldTableCell<?, T> cell,
@@ -129,6 +121,15 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
     private static <T> String getItemText(final Cell<T> cell, final StringConverter<T> converter)
     {
         return converter.toString(cell.getItem());
+    }
+
+    private static <T> void startEdit(final Cell<T> cell, final StringConverter<T> converter, final TextField textField)
+    {
+        textField.setText(getItemText(cell, converter));
+        cell.setText(null);
+        cell.setGraphic(textField);
+        textField.selectAll();
+        textField.requestFocus();
     }
 
     private static <T> void cancelEdit(final Cell<T> cell, final StringConverter<T> converter, final Node graphic)
