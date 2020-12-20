@@ -17,6 +17,8 @@ public interface Config
 
     boolean allowMultipleInstances();
 
+    boolean writeLogFile();
+
     Path getConfigFile();
 
     default Path getProjectFile()

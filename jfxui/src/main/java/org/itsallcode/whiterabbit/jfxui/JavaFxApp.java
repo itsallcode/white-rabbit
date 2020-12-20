@@ -95,7 +95,10 @@ public class JavaFxApp extends Application
     private void doInitialize()
     {
         final Config config = loadConfig();
-        LoggingConfigurator.configure(config);
+        if (config.writeLogFile())
+        {
+            LoggingConfigurator.configure(config);
+        }
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
