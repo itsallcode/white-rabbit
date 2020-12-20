@@ -1,10 +1,10 @@
-package org.itsallcode.whiterabbit.jfxui.table.days;
+package org.itsallcode.whiterabbit.jfxui.table.converter;
 
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 import javafx.util.StringConverter;
 
-class DayTypeStringConverter extends StringConverter<DayType>
+public class DayTypeStringConverter extends StringConverter<DayType>
 {
     @Override
     public String toString(DayType object)

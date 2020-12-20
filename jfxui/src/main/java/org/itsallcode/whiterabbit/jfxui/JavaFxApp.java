@@ -95,7 +95,10 @@ public class JavaFxApp extends Application
     private void doInitialize()
     {
         final Config config = loadConfig();
-        LoggingConfigurator.configure(config);
+        if (config.writeLogFile())
+        {
+            LoggingConfigurator.configure(config);
+        }
         this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
@@ -109,7 +112,7 @@ public class JavaFxApp extends Application
         }
 
         state = AppState.create(appService);
-        actions = UiActions.create(config, appService, getHostServices());
+        actions = UiActions.create(config, state, appService, getHostServices());
     }
 
     private Config loadConfig()
@@ -125,6 +128,7 @@ public class JavaFxApp extends Application
     public void start(Stage primaryStage)
     {
         this.primaryStage = primaryStage;
+        state.setPrimaryStage(primaryStage);
         LOG.info("Starting UI");
         doStart(primaryStage);
         notifyPreloaderProgress(Type.STARTUP_FINISHED);
@@ -132,7 +136,6 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-
         this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, locale).build();
 
         primaryStage.show();

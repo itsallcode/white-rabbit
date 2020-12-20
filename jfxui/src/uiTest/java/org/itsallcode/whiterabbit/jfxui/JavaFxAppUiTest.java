@@ -1,7 +1,16 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import javafx.scene.control.Labeled;
-import javafx.stage.Stage;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.YearMonth;
+import java.util.Locale;
+
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
@@ -13,11 +22,8 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
-import java.time.*;
-import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import javafx.scene.control.Labeled;
+import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
 class JavaFxAppUiTest extends JavaFxAppUiTestBase
@@ -107,6 +113,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
 
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+        TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
@@ -124,7 +131,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
         TestUtil.sleepShort();
-        
+
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
                 () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));

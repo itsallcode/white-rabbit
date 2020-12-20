@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.table.activities;
+package org.itsallcode.whiterabbit.jfxui.table.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

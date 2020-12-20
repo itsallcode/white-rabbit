@@ -17,7 +17,9 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
+import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.AutoCompleteTextField;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTableCell;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
@@ -28,16 +30,12 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
-import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.LocalDateStringConverter;
 import javafx.util.converter.LocalTimeStringConverter;
@@ -96,74 +94,48 @@ public class DayRecordTable
 
     private List<TableColumn<DayRecordPropertyAdapter, ?>> createColumns()
     {
-        final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = readOnlyColumn("date", "Date",
+        final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = UiWidget.readOnlyColumn("date", "Date",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(
                         new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
                 data -> data.getValue().date);
         final DurationStringConverter durationConverter = new DurationStringConverter(formatterService);
         final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT, locale);
-        final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = column("day-type", "Type",
+        final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = UiWidget.column("day-type", "Type",
                 param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                 data -> data.getValue().dayType);
-        final TableColumn<DayRecordPropertyAdapter, LocalTime> beginCol = column("begin", "Begin",
+        final TableColumn<DayRecordPropertyAdapter, LocalTime> beginCol = UiWidget.column("begin", "Begin",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(localTimeConverter),
                 data -> data.getValue().begin);
-        final TableColumn<DayRecordPropertyAdapter, LocalTime> endCol = column("end", "End",
+        final TableColumn<DayRecordPropertyAdapter, LocalTime> endCol = UiWidget.column("end", "End",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(localTimeConverter),
                 data -> data.getValue().end);
-        final TableColumn<DayRecordPropertyAdapter, Duration> breakCol = readOnlyColumn("break", "Break",
+        final TableColumn<DayRecordPropertyAdapter, Duration> breakCol = UiWidget.readOnlyColumn("break", "Break",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().mandatoryBreak);
-        final TableColumn<DayRecordPropertyAdapter, Duration> interruptionCol = column("interruption", "Interruption",
+        final TableColumn<DayRecordPropertyAdapter, Duration> interruptionCol = UiWidget.column("interruption",
+                "Interruption",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().interruption);
-        final TableColumn<DayRecordPropertyAdapter, Duration> workingTimeCol = readOnlyColumn("working-time",
+        final TableColumn<DayRecordPropertyAdapter, Duration> workingTimeCol = UiWidget.readOnlyColumn("working-time",
                 "Working time",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().workingTime);
-        final TableColumn<DayRecordPropertyAdapter, Duration> overTimeCol = readOnlyColumn("overtime", "Overtime",
+        final TableColumn<DayRecordPropertyAdapter, Duration> overTimeCol = UiWidget.readOnlyColumn("overtime",
+                "Overtime",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().overtime);
-        final TableColumn<DayRecordPropertyAdapter, Duration> totalOvertimeCol = readOnlyColumn("total-overtime",
+        final TableColumn<DayRecordPropertyAdapter, Duration> totalOvertimeCol = UiWidget.readOnlyColumn(
+                "total-overtime",
                 "Total Overtime",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(durationConverter),
                 data -> data.getValue().totalOvertime);
-        final TableColumn<DayRecordPropertyAdapter, String> commentCol = column("comment", "Comment",
+        final TableColumn<DayRecordPropertyAdapter, String> commentCol = UiWidget.column("comment", "Comment",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter(),
                         () -> new AutoCompleteTextField(autocompleteService.dayCommentAutocompleter())),
                 data -> data.getValue().comment);
 
         return asList(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
-    }
-
-    private <T> TableColumn<DayRecordPropertyAdapter, T> readOnlyColumn(String id, String label,
-            Callback<TableColumn<DayRecordPropertyAdapter, T>, TableCell<DayRecordPropertyAdapter, T>> cellFactory,
-            Callback<CellDataFeatures<DayRecordPropertyAdapter, T>, ObservableValue<T>> cellValueFactory)
-    {
-        return column(id, label, cellFactory, cellValueFactory, false);
-    }
-
-    private <T> TableColumn<DayRecordPropertyAdapter, T> column(String id, String label,
-            Callback<TableColumn<DayRecordPropertyAdapter, T>, TableCell<DayRecordPropertyAdapter, T>> cellFactory,
-            Callback<CellDataFeatures<DayRecordPropertyAdapter, T>, ObservableValue<T>> cellValueFactory)
-    {
-        return column(id, label, cellFactory, cellValueFactory, true);
-    }
-
-    private <T> TableColumn<DayRecordPropertyAdapter, T> column(String id, String label,
-            Callback<TableColumn<DayRecordPropertyAdapter, T>, TableCell<DayRecordPropertyAdapter, T>> cellFactory,
-            Callback<CellDataFeatures<DayRecordPropertyAdapter, T>, ObservableValue<T>> cellValueFactory,
-            boolean editable)
-    {
-        final TableColumn<DayRecordPropertyAdapter, T> column = new TableColumn<>(label);
-        column.setSortable(false);
-        column.setId(id);
-        column.setCellFactory(cellFactory);
-        column.setCellValueFactory(cellValueFactory);
-        column.setEditable(editable);
-        column.setResizable(true);
-        return column;
     }
 
     private void updateTableValues(MonthIndex newValue)

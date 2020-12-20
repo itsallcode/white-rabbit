@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
+import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.AutoCompleteTextField;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTableCell;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
@@ -23,12 +25,10 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
@@ -126,43 +126,21 @@ public class ActivitiesTable
                     return prop;
                 });
 
-        final TableColumn<ActivityPropertyAdapter, Project> projectCol = column("project", "Project",
+        final TableColumn<ActivityPropertyAdapter, Project> projectCol = UiWidget.column("project", "Project",
                 param -> new ChoiceBoxTableCell<>(new ProjectStringConverter(projectService),
                         projectService.getAvailableProjects().toArray(new Project[0])),
                 data -> data.getValue().projectId);
-        final TableColumn<ActivityPropertyAdapter, Duration> durationCol = column("duration", "Duration",
+        final TableColumn<ActivityPropertyAdapter, Duration> durationCol = UiWidget.column("duration", "Duration",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
                 data -> data.getValue().duration);
-        final TableColumn<ActivityPropertyAdapter, Boolean> remainderCol = column("remainder", "Remainder",
+        final TableColumn<ActivityPropertyAdapter, Boolean> remainderCol = UiWidget.column("remainder", "Remainder",
                 cellFactory, data -> data.getValue().remainder);
-        final TableColumn<ActivityPropertyAdapter, String> commentCol = column("comment", "Comment",
+        final TableColumn<ActivityPropertyAdapter, String> commentCol = UiWidget.column("comment", "Comment",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter(),
                         () -> new AutoCompleteTextField(autocompleteService.activityCommentAutocompleter())),
                 data -> data.getValue().comment);
 
         return asList(projectCol, durationCol, remainderCol, commentCol);
-    }
-
-    private <T> TableColumn<ActivityPropertyAdapter, T> column(String id, String label,
-            Callback<TableColumn<ActivityPropertyAdapter, T>, TableCell<ActivityPropertyAdapter, T>> cellFactory,
-            Callback<CellDataFeatures<ActivityPropertyAdapter, T>, ObservableValue<T>> cellValueFactory)
-    {
-        return column(id, label, cellFactory, cellValueFactory, true);
-    }
-
-    private <T> TableColumn<ActivityPropertyAdapter, T> column(String id, String label,
-            Callback<TableColumn<ActivityPropertyAdapter, T>, TableCell<ActivityPropertyAdapter, T>> cellFactory,
-            Callback<CellDataFeatures<ActivityPropertyAdapter, T>, ObservableValue<T>> cellValueFactory,
-            boolean editable)
-    {
-        final TableColumn<ActivityPropertyAdapter, T> column = new TableColumn<>(label);
-        column.setSortable(false);
-        column.setId(id);
-        column.setCellFactory(cellFactory);
-        column.setCellValueFactory(cellValueFactory);
-        column.setEditable(editable);
-        column.setResizable(true);
-        return column;
     }
 
     public void refresh()

@@ -77,6 +77,12 @@ class ConfigFile implements Config
     }
 
     @Override
+    public boolean writeLogFile()
+    {
+        return getOptionalValue("write_log_file").map(Boolean::valueOf).orElse(true);
+    }
+
+    @Override
     public Path getConfigFile()
     {
         return file;

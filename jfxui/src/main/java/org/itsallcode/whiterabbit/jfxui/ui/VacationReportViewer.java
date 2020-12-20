@@ -2,7 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.service.vacation.VacationReport;
+import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 
 public class VacationReportViewer
 {

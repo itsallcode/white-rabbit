@@ -32,7 +32,8 @@ class MenuBarBuilder
     private final BooleanProperty stoppedWorkingForToday;
     private final Window primaryStage;
 
-    MenuBarBuilder(UiActions actions, Window primaryStage, AppService appService, BooleanProperty stoppedWorkingForToday)
+    MenuBarBuilder(UiActions actions, Window primaryStage, AppService appService,
+            BooleanProperty stoppedWorkingForToday)
     {
         this.actions = actions;
         this.primaryStage = primaryStage;
@@ -61,7 +62,8 @@ class MenuBarBuilder
                 separatorItem(),
                 createStopWorkingForTodayMenuItem());
         menuReports.getItems()
-                .addAll(menuItem("_Vacation report", "menuitem_vacation_report", actions::showVacationReport));
+                .addAll(menuItem("_Project report", "menuitem_project_report", actions::showProjectReport),
+                        menuItem("_Vacation report", "menuitem_vacation_report", actions::showVacationReport));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", this::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuHelp);
         return menuBar;

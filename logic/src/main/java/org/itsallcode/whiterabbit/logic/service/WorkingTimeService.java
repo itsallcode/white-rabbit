@@ -58,6 +58,7 @@ public class WorkingTimeService
             }
             if (updated)
             {
+                LOG.debug("Day {} updated at {}", day.getDate(), now);
                 storage.storeMonth(month);
                 appServiceCallback.recordUpdated(day);
             }
