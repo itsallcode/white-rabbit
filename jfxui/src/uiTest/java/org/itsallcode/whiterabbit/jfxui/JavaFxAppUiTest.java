@@ -113,6 +113,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
 
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+        TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
@@ -129,7 +130,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
-        TestUtil.sleepMedium();
+        TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
