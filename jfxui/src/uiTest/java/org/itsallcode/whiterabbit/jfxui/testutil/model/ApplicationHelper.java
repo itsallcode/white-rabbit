@@ -1,18 +1,19 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Window;
+import java.time.Duration;
+import java.time.YearMonth;
+
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
-import java.time.Duration;
-import java.time.YearMonth;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.SplitMenuButton;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Window;
 
 public class ApplicationHelper
 {
@@ -96,5 +97,15 @@ public class ApplicationHelper
     private ComboBox<YearMonth> getSelectedMonthComboBox()
     {
         return robot.lookup("#selected-month-combobox").queryComboBox();
+    }
+
+    public ProjectReportWindow openProjectReport()
+    {
+        robot.clickOn("#menu_reports");
+        robot.clickOn("#menuitem_project_report");
+
+        final Window window = robot.window("Project report");
+        Assertions.assertThat(window).isShowing();
+        return new ProjectReportWindow(robot, window);
     }
 }

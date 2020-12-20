@@ -81,7 +81,7 @@ public class ProjectReportViewer
                 UiWidget.treeTableColumn("comment", "Comment",
                         ReportRow::getComment, new DefaultStringConverter())));
 
-        treeTable.setShowRoot(true);
+        treeTable.setShowRoot(false);
         treeTable.setEditable(false);
         treeTable.setId("project-table-tree");
         return treeTable;
@@ -95,7 +95,7 @@ public class ProjectReportViewer
     private Stage createStage(final Parent root)
     {
         final Stage newStage = new Stage();
-        newStage.setTitle("Project report for " + report.month);
+        newStage.setTitle("Project report");
         newStage.setScene(new Scene(root, 500, 800));
         newStage.initModality(Modality.NONE);
         newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
