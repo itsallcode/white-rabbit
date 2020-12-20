@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.function.Function;
 
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
@@ -17,25 +16,17 @@ import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActi
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.LocalDateStringConverter;
 
@@ -78,18 +69,19 @@ public class ProjectReportViewer
                 .collect(toList()));
 
         final TreeTableView<ReportRow> treeTable = new TreeTableView<>(root);
-        treeTable.getColumns().addAll(List.of(column("date", "Date",
-                ReportRow::getDate, new LocalDateStringConverter()),
-                column("daytype", "Day Type", ReportRow::getDayType,
+        treeTable.getColumns().addAll(List.of(
+                UiWidget.treeTableColumn("date", "Date",
+                        ReportRow::getDate, new LocalDateStringConverter()),
+                UiWidget.treeTableColumn("daytype", "Day Type", ReportRow::getDayType,
                         new DayTypeStringConverter()),
-                column("project", "Project", ReportRow::getProject,
+                UiWidget.treeTableColumn("project", "Project", ReportRow::getProject,
                         new ProjectStringConverter(null)),
-                column("workingtime", "Working time",
+                UiWidget.treeTableColumn("workingtime", "Working time",
                         ReportRow::getWorkingTime, new DurationStringConverter(formatterService)),
-                column("comment", "Comment",
+                UiWidget.treeTableColumn("comment", "Comment",
                         ReportRow::getComment, new DefaultStringConverter())));
 
-        treeTable.setShowRoot(false);
+        treeTable.setShowRoot(true);
         treeTable.setEditable(false);
         treeTable.setId("project-table-tree");
         return treeTable;
@@ -120,45 +112,6 @@ public class ProjectReportViewer
     private void closeReportWindow()
     {
         this.stage.close();
-    }
-
-    private <T> TreeTableColumn<ReportRow, T> column(String id, String label,
-            Function<ReportRow, T> valueExtractor,
-            StringConverter<T> stringConverter)
-    {
-        return column(id, label, cellValueFactory(valueExtractor), cellFactory(stringConverter));
-    }
-
-    private <T> TreeTableColumn<ReportRow, T> column(String id, String label,
-            Callback<CellDataFeatures<ReportRow, T>, ObservableValue<T>> cellValueFactory,
-            Callback<TreeTableColumn<ReportRow, T>, TreeTableCell<ReportRow, T>> cellFactory)
-    {
-        final TreeTableColumn<ReportRow, T> column = new TreeTableColumn<>(label);
-        column.setId(id);
-        column.setCellValueFactory(cellValueFactory);
-        column.setCellFactory(cellFactory);
-        column.setEditable(false);
-        column.setResizable(true);
-        column.setSortable(false);
-        return column;
-    }
-
-    private <T> Callback<TreeTableColumn<ReportRow, T>, TreeTableCell<ReportRow, T>> cellFactory(
-            StringConverter<T> stringConverter)
-    {
-        return param -> new TextFieldTreeTableCell<>(stringConverter);
-    }
-
-    private <T> Callback<CellDataFeatures<ReportRow, T>, ObservableValue<T>> cellValueFactory(
-            Function<ReportRow, T> valueExtractor)
-    {
-        return param -> {
-            if (param.getValue() == null || param.getValue().getValue() == null)
-            {
-                return new ReadOnlyObjectWrapper<>(null);
-            }
-            return new ReadOnlyObjectWrapper<>(valueExtractor.apply(param.getValue().getValue()));
-        };
     }
 
     private TreeItem<ReportRow> createDayTreeItem(Day day)
