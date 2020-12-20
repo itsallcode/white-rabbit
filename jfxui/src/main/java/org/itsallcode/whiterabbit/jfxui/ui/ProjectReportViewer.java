@@ -17,12 +17,12 @@ import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActi
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
-import com.sun.javafx.binding.ObjectConstant;
-
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -63,6 +63,7 @@ public class ProjectReportViewer
     {
         final TreeTableView<ReportRow> treeTable = createTreeTable();
         final BorderPane pane = new BorderPane();
+        pane.setTop(createToolBar());
         pane.setCenter(treeTable);
         BorderPane.setMargin(treeTable, new Insets(UiResources.GAP_PIXEL));
         return createStage(pane);
@@ -92,6 +93,11 @@ public class ProjectReportViewer
         treeTable.setEditable(false);
         treeTable.setId("project-table-tree");
         return treeTable;
+    }
+
+    private ToolBar createToolBar()
+    {
+        return new ToolBar(UiWidget.button("close-button", "Close Report", e -> closeReportWindow()));
     }
 
     private Stage createStage(final Parent root)
@@ -149,9 +155,9 @@ public class ProjectReportViewer
         return param -> {
             if (param.getValue() == null || param.getValue().getValue() == null)
             {
-                return ObjectConstant.valueOf(null);
+                return new ReadOnlyObjectWrapper<>(null);
             }
-            return ObjectConstant.valueOf(valueExtractor.apply(param.getValue().getValue()));
+            return new ReadOnlyObjectWrapper<>(valueExtractor.apply(param.getValue().getValue()));
         };
     }
 

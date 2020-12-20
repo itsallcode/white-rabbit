@@ -24,8 +24,6 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -38,7 +36,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -198,8 +195,9 @@ public class AppUi
             final Node daysTable = dayRecordTable.initTable();
             state.currentDateProperty.property().addListener(this::dateChanged);
             final Node activitiesTab = activitiesTable.initTable();
-            final Button addActivityButton = button("add-activity-button", "+", "Add activity", e -> app.addActivity());
-            final Button removeActivityButton = button("remove-activity-button", "-", "Remove activity",
+            final Button addActivityButton = UiWidget.button("add-activity-button", "+", "Add activity",
+                    e -> app.addActivity());
+            final Button removeActivityButton = UiWidget.button("remove-activity-button", "-", "Remove activity",
                     e -> app.removeActivity());
             final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
                     addActivityButton,
@@ -225,7 +223,7 @@ public class AppUi
         {
             final InterruptionPresetFeature interruptionPreset = new InterruptionPresetFeature(appService);
 
-            final Button startInterruptionButton = button("start-interruption-button", "Start interruption",
+            final Button startInterruptionButton = UiWidget.button("start-interruption-button", "Start interruption",
                     e -> app.startManualInterruption());
             startInterruptionButton.disableProperty().bind(state.interruption.isNotNull());
 
@@ -235,7 +233,7 @@ public class AppUi
                     interruptionPreset.createButton(),
                     createStopWorkForTodayButton(),
                     new Separator(),
-                    button("update-button", "Update", e -> appService.updateNow()));
+                    UiWidget.button("update-button", "Update", e -> appService.updateNow()));
         }
 
         private Button createStopWorkForTodayButton()
@@ -307,24 +305,6 @@ public class AppUi
             comboBox.getSelectionModel().selectedItemProperty()
                     .addListener((observable, oldValue, newValue) -> app.loadMonth(newValue));
             return comboBox;
-        }
-
-        private Button button(String id, String label, EventHandler<ActionEvent> action)
-        {
-            return button(id, label, null, action);
-        }
-
-        private Button button(String id, String label, String tooltip, EventHandler<ActionEvent> action)
-        {
-            final Button button = new Button(label);
-            button.setId(id);
-            button.setOnAction(action);
-            button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-            if (tooltip != null)
-            {
-                button.setTooltip(new Tooltip(tooltip));
-            }
-            return button;
         }
 
         private void dateChanged(ObservableValue<? extends LocalDate> observable, LocalDate oldDate, LocalDate newDate)

@@ -73,6 +73,7 @@ public final class UiActions
         if (monthIndex == null)
         {
             LOG.warn("No month selected, can't generate project report");
+            return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
         new ProjectReportViewer(state.getPrimaryStage().orElseThrow(), appService.formatter(), report).show();
