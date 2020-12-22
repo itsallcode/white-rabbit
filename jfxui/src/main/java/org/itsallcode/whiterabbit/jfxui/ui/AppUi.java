@@ -77,8 +77,6 @@ public class AppUi
 
     public static class Builder
     {
-        private static final double GAP_PIXEL = UiResources.GAP_PIXEL;
-
         private final Stage primaryStage;
         private final AppService appService;
         private final Locale locale;
@@ -191,7 +189,6 @@ public class AppUi
 
         private BorderPane createMainPane()
         {
-            final Insets insets = new Insets(GAP_PIXEL);
             final Node daysTable = dayRecordTable.initTable();
             state.currentDateProperty.property().addListener(this::dateChanged);
             final Node activitiesTab = activitiesTable.initTable();
@@ -199,11 +196,11 @@ public class AppUi
                     e -> app.addActivity());
             final Button removeActivityButton = UiWidget.button("remove-activity-button", "-", "Remove activity",
                     e -> app.removeActivity());
-            final VBox activitiesButtonPane = new VBox(GAP_PIXEL,
+            final VBox activitiesButtonPane = new VBox(UiResources.GAP_PIXEL,
                     addActivityButton,
                     removeActivityButton);
             final SplitPane mainPane = new SplitPane(daysTable,
-                    new TitledPane("Activities", new HBox(GAP_PIXEL, activitiesButtonPane, activitiesTab)));
+                    new TitledPane("Activities", new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab)));
             HBox.setHgrow(activitiesTab, Priority.ALWAYS);
             mainPane.setOrientation(Orientation.VERTICAL);
             mainPane.setDividerPositions(0.8);
@@ -211,9 +208,9 @@ public class AppUi
             final BorderPane pane = new BorderPane();
             pane.setCenter(mainPane);
 
-            BorderPane.setMargin(mainPane, insets);
+            BorderPane.setMargin(mainPane, UiResources.DEFAULT_MARGIN);
 
-            BorderPane.setMargin(createStatusBar(), new Insets(0, GAP_PIXEL, 0, GAP_PIXEL));
+            BorderPane.setMargin(createStatusBar(), new Insets(0, UiResources.GAP_PIXEL, 0, UiResources.GAP_PIXEL));
             pane.setBottom(createStatusBar());
 
             return pane;
@@ -252,10 +249,10 @@ public class AppUi
         private HBox createStatusBar()
         {
             final HBox status = new HBox();
-            status.setPadding(new Insets(GAP_PIXEL));
+            status.setPadding(UiResources.DEFAULT_MARGIN);
             final Node left = overtimeLabel();
             final Pane spacer = new Pane();
-            spacer.setMinSize(GAP_PIXEL, 1);
+            spacer.setMinSize(UiResources.GAP_PIXEL, 1);
             HBox.setHgrow(spacer, Priority.ALWAYS);
             final Node right = currentTimeLabel();
             status.getChildren().addAll(left, spacer, right);

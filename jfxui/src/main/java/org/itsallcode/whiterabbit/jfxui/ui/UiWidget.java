@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -42,26 +43,32 @@ public class UiWidget
         return button;
     }
 
-    public static <T, A> TableColumn<A, T> readOnlyColumn(String id, String label,
-            Callback<TableColumn<A, T>, TableCell<A, T>> cellFactory,
-            Callback<CellDataFeatures<A, T>, ObservableValue<T>> cellValueFactory)
+    public static <S, T> TableColumn<T, S> readOnlyColumn(String id, String label, StringConverter<S> stringConverter,
+            Function<T, S> valueExtractor)
+    {
+        return readOnlyColumn(id, label, tableCellFactory(stringConverter), tableCellValueFactory(valueExtractor));
+    }
+
+    public static <S, T> TableColumn<T, S> readOnlyColumn(String id, String label,
+            Callback<TableColumn<T, S>, TableCell<T, S>> cellFactory,
+            Callback<CellDataFeatures<T, S>, ObservableValue<S>> cellValueFactory)
     {
         return column(id, label, cellFactory, cellValueFactory, false);
     }
 
-    public static <T, A> TableColumn<A, T> column(String id, String label,
-            Callback<TableColumn<A, T>, TableCell<A, T>> cellFactory,
-            Callback<CellDataFeatures<A, T>, ObservableValue<T>> cellValueFactory)
+    public static <S, T> TableColumn<T, S> column(String id, String label,
+            Callback<TableColumn<T, S>, TableCell<T, S>> cellFactory,
+            Callback<CellDataFeatures<T, S>, ObservableValue<S>> cellValueFactory)
     {
         return column(id, label, cellFactory, cellValueFactory, true);
     }
 
-    private static <T, A> TableColumn<A, T> column(String id, String label,
-            Callback<TableColumn<A, T>, TableCell<A, T>> cellFactory,
-            Callback<CellDataFeatures<A, T>, ObservableValue<T>> cellValueFactory,
+    private static <S, T> TableColumn<T, S> column(String id, String label,
+            Callback<TableColumn<T, S>, TableCell<T, S>> cellFactory,
+            Callback<CellDataFeatures<T, S>, ObservableValue<S>> cellValueFactory,
             boolean editable)
     {
-        final TableColumn<A, T> column = new TableColumn<>(label);
+        final TableColumn<T, S> column = new TableColumn<>(label);
         column.setSortable(false);
         column.setId(id);
         column.setCellFactory(cellFactory);
@@ -71,18 +78,18 @@ public class UiWidget
         return column;
     }
 
-    public static <R, T> TreeTableColumn<R, T> treeTableColumn(String id, String label,
-            Function<R, T> valueExtractor,
+    public static <S, T> TreeTableColumn<S, T> treeTableColumn(String id, String label,
+            Function<S, T> valueExtractor,
             StringConverter<T> stringConverter)
     {
         return treeTableColumn(id, label, cellValueFactory(valueExtractor), cellFactory(stringConverter));
     }
 
-    private static <R, T> TreeTableColumn<R, T> treeTableColumn(String id, String label,
-            Callback<TreeTableColumn.CellDataFeatures<R, T>, ObservableValue<T>> cellValueFactory,
-            Callback<TreeTableColumn<R, T>, TreeTableCell<R, T>> cellFactory)
+    private static <S, T> TreeTableColumn<S, T> treeTableColumn(String id, String label,
+            Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellValueFactory,
+            Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> cellFactory)
     {
-        final TreeTableColumn<R, T> column = new TreeTableColumn<>(label);
+        final TreeTableColumn<S, T> column = new TreeTableColumn<>(label);
         column.setId(id);
         column.setCellValueFactory(cellValueFactory);
         column.setCellFactory(cellFactory);
@@ -92,14 +99,20 @@ public class UiWidget
         return column;
     }
 
-    private static <R, T> Callback<TreeTableColumn<R, T>, TreeTableCell<R, T>> cellFactory(
+    private static <S, T> Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> cellFactory(
             StringConverter<T> stringConverter)
     {
         return param -> new TextFieldTreeTableCell<>(stringConverter);
     }
 
-    private static <R, T> Callback<TreeTableColumn.CellDataFeatures<R, T>, ObservableValue<T>> cellValueFactory(
-            Function<R, T> valueExtractor)
+    private static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> tableCellFactory(
+            StringConverter<T> stringConverter)
+    {
+        return param -> new TextFieldTableCell<>(stringConverter);
+    }
+
+    private static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellValueFactory(
+            Function<S, T> valueExtractor)
     {
         return param -> {
             if (param.getValue() == null || param.getValue().getValue() == null)
@@ -107,6 +120,18 @@ public class UiWidget
                 return new ReadOnlyObjectWrapper<>(null);
             }
             return new ReadOnlyObjectWrapper<>(valueExtractor.apply(param.getValue().getValue()));
+        };
+    }
+
+    private static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> tableCellValueFactory(
+            Function<S, T> valueExtractor)
+    {
+        return param -> {
+            if (param.getValue() == null)
+            {
+                return new ReadOnlyObjectWrapper<>(null);
+            }
+            return new ReadOnlyObjectWrapper<>(valueExtractor.apply(param.getValue()));
         };
     }
 }

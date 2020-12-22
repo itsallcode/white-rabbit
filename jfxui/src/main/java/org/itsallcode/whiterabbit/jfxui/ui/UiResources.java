@@ -6,11 +6,13 @@ import java.io.UncheckedIOException;
 
 import org.itsallcode.whiterabbit.jfxui.JavaFxApp;
 
+import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 
 public class UiResources
 {
     public static final int GAP_PIXEL = 10;
+    public static final Insets DEFAULT_MARGIN = new Insets(GAP_PIXEL);
     public static final Image APP_ICON = loadImage("/icon.png");
 
     private UiResources()
