@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.report.vacation;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
@@ -18,9 +19,9 @@ public class VacationReport
     public static class VacationMonth
     {
         private final YearMonth yearMonth;
-        private final int vacationDaysUsed;
+        private final List<LocalDate> vacationDaysUsed;
 
-        VacationMonth(YearMonth yearMonth, int vacationDaysUsed)
+        VacationMonth(YearMonth yearMonth, List<LocalDate> vacationDaysUsed)
         {
             this.yearMonth = yearMonth;
             this.vacationDaysUsed = vacationDaysUsed;
@@ -31,9 +32,14 @@ public class VacationReport
             return yearMonth;
         }
 
-        public int getVacationDaysUsed()
+        public List<LocalDate> getVacationDaysUsed()
         {
             return vacationDaysUsed;
+        }
+
+        public int getUsedVacationDayCount()
+        {
+            return vacationDaysUsed.size();
         }
 
         @Override

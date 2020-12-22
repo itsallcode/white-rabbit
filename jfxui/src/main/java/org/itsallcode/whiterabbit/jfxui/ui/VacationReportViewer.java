@@ -107,7 +107,7 @@ public class VacationReportViewer
         return List.of(
                 UiWidget.readOnlyColumn("month", "Month", new YearMonthStringConverter(), VacationMonth::getYearMonth),
                 UiWidget.readOnlyColumn("days-used", "Days used", new IntegerStringConverter(),
-                        VacationMonth::getVacationDaysUsed));
+                        VacationMonth::getUsedVacationDayCount));
     }
 
     private TableView<VacationYear> createYearsTable()

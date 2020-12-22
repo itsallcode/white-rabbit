@@ -82,7 +82,8 @@ public class UiWidget
             Function<S, T> valueExtractor,
             StringConverter<T> stringConverter)
     {
-        return treeTableColumn(id, label, cellValueFactory(valueExtractor), cellFactory(stringConverter));
+        return treeTableColumn(id, label, treeTableCellValueFactory(valueExtractor),
+                treeTableCellFactory(stringConverter));
     }
 
     private static <S, T> TreeTableColumn<S, T> treeTableColumn(String id, String label,
@@ -99,7 +100,7 @@ public class UiWidget
         return column;
     }
 
-    private static <S, T> Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> cellFactory(
+    private static <S, T> Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> treeTableCellFactory(
             StringConverter<T> stringConverter)
     {
         return param -> new TextFieldTreeTableCell<>(stringConverter);
@@ -111,7 +112,7 @@ public class UiWidget
         return param -> new TextFieldTableCell<>(stringConverter);
     }
 
-    private static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellValueFactory(
+    private static <S, T> Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> treeTableCellValueFactory(
             Function<S, T> valueExtractor)
     {
         return param -> {

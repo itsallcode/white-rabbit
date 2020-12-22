@@ -173,7 +173,8 @@ class VacationReportGeneratorTest
         assertThat(report.months).hasSize(1);
         final VacationMonth firstMonth = report.months.get(0);
         assertThat(firstMonth.getYearMonth()).isEqualTo(YearMonth.of(2020, Month.JANUARY));
-        assertThat(firstMonth.getVacationDaysUsed()).isZero();
+        assertThat(firstMonth.getUsedVacationDayCount()).isZero();
+        assertThat(firstMonth.getVacationDaysUsed()).isEmpty();
     }
 
     @Test
@@ -186,7 +187,8 @@ class VacationReportGeneratorTest
         assertThat(report.months).hasSize(1);
         final VacationMonth firstMonth = report.months.get(0);
         assertThat(firstMonth.getYearMonth()).isEqualTo(YearMonth.of(2020, Month.JANUARY));
-        assertThat(firstMonth.getVacationDaysUsed()).isEqualTo(4);
+        assertThat(firstMonth.getUsedVacationDayCount()).isEqualTo(4);
+        assertThat(firstMonth.getVacationDaysUsed()).containsExactly();
     }
 
     @Test
@@ -199,11 +201,11 @@ class VacationReportGeneratorTest
         assertThat(report.months).hasSize(2);
         final VacationMonth firstMonth = report.months.get(0);
         assertThat(firstMonth.getYearMonth()).isEqualTo(YearMonth.of(2020, Month.JANUARY));
-        assertThat(firstMonth.getVacationDaysUsed()).isEqualTo(4);
+        assertThat(firstMonth.getUsedVacationDayCount()).isEqualTo(4);
 
         final VacationMonth secondMonth = report.months.get(1);
         assertThat(secondMonth.getYearMonth()).isEqualTo(YearMonth.of(2020, Month.FEBRUARY));
-        assertThat(secondMonth.getVacationDaysUsed()).isEqualTo(1);
+        assertThat(secondMonth.getUsedVacationDayCount()).isEqualTo(1);
     }
 
     @Test
@@ -216,11 +218,11 @@ class VacationReportGeneratorTest
         assertThat(report.months).hasSize(2);
         final VacationMonth firstMonth = report.months.get(0);
         assertThat(firstMonth.getYearMonth()).isEqualTo(YearMonth.of(2019, Month.DECEMBER));
-        assertThat(firstMonth.getVacationDaysUsed()).isEqualTo(4);
+        assertThat(firstMonth.getUsedVacationDayCount()).isEqualTo(4);
 
         final VacationMonth secondMonth = report.months.get(1);
         assertThat(secondMonth.getYearMonth()).isEqualTo(YearMonth.of(2020, Month.JANUARY));
-        assertThat(secondMonth.getVacationDaysUsed()).isEqualTo(1);
+        assertThat(secondMonth.getUsedVacationDayCount()).isEqualTo(1);
     }
 
     private MonthIndex month(int year, Month month, int vacation)

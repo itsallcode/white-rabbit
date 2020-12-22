@@ -101,7 +101,7 @@ public class VacationReportGenerator
 
         private VacationMonth calculateMonthVacation(MonthIndex month)
         {
-            return new VacationMonth(month.getYearMonth(), month.getVacationDayCount());
+            return new VacationMonth(month.getYearMonth(), month.getVacationDays());
         }
     }
 }
