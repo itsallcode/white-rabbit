@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
+import static java.util.stream.Collectors.joining;
+
 import java.time.Year;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 public class VacationReportViewer
@@ -106,8 +109,13 @@ public class VacationReportViewer
     {
         return List.of(
                 UiWidget.readOnlyColumn("month", "Month", new YearMonthStringConverter(), VacationMonth::getYearMonth),
-                UiWidget.readOnlyColumn("days-used", "Days used", new IntegerStringConverter(),
-                        VacationMonth::getUsedVacationDayCount));
+                UiWidget.readOnlyColumn("day-count-used", "Day count used", new IntegerStringConverter(),
+                        VacationMonth::getUsedVacationDayCount),
+                UiWidget.readOnlyColumn("days-used", "Days used", new DefaultStringConverter(),
+                        month -> month.getVacationDaysUsed().stream()
+                                .map(date -> date.getDayOfMonth())
+                                .map(String::valueOf)
+                                .collect(joining(", "))));
     }
 
     private TableView<VacationYear> createYearsTable()
