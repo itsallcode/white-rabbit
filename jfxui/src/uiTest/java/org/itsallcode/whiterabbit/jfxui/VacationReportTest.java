@@ -32,7 +32,14 @@ class VacationReportTest extends JavaFxAppUiTestBase
         report.getYearsTable().assertRowCount(0);
         report.getMonthTable().assertRowCount(0);
 
-        report.close();
+        report.closeViaButton();
+    }
+
+    @Test
+    void closeReportByTypingEscKey()
+    {
+        final VacationReportWindow report = app().openVacationReport();
+        report.closeViaEscKey();
     }
 
     @Test
@@ -51,7 +58,7 @@ class VacationReportTest extends JavaFxAppUiTestBase
         report.getMonthTable().assertRowCount(1)
                 .assertContent(TableRowExpectedContent.forValues(YearMonth.of(2007, Month.DECEMBER), 1, "3"));
 
-        report.close();
+        report.closeViaButton();
     }
 
     @Override

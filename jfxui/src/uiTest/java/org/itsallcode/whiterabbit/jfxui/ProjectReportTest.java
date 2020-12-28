@@ -30,7 +30,15 @@ class ProjectReportTest extends JavaFxAppUiTestBase
         final ProjectReportWindow report = app().openProjectReport();
         report.assertDayCount(31).assertProjectCount(0, 0);
 
-        report.close();
+        report.closeViaCloseButton();
+    }
+
+    @Test
+    void closeReportByTypingEscKey()
+    {
+        time().tickSeparateMinutes(2);
+        final ProjectReportWindow report = app().openProjectReport();
+        report.closeViaEscKey();
     }
 
     @Test
@@ -46,7 +54,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
         report.assertDayCount(31)
                 .assertProjectCount(dayIndex, 1)
                 .assertProject(dayIndex, 0, PROJECT1, Duration.ofMinutes(2), "a1");
-        report.close();
+        report.closeViaCloseButton();
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationY
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.input.KeyCode;
 import javafx.stage.Window;
 
 public class VacationReportWindow
@@ -33,9 +34,15 @@ public class VacationReportWindow
         return monthTable;
     }
 
-    public void close()
+    public void closeViaButton()
     {
         robot.clickOn("#close-button");
+        Assertions.assertThat(window).isNotShowing();
+    }
+
+    public void closeViaEscKey()
+    {
+        robot.type(KeyCode.ESCAPE);
         Assertions.assertThat(window).isNotShowing();
     }
 }

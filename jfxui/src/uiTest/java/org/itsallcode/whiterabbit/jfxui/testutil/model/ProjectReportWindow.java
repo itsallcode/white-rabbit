@@ -9,6 +9,7 @@ import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.input.KeyCode;
 import javafx.stage.Window;
 
 public class ProjectReportWindow
@@ -25,9 +26,15 @@ public class ProjectReportWindow
         table = JavaFxTreeTable.find(robot, "#project-table-tree", ReportRow.class);
     }
 
-    public void close()
+    public void closeViaCloseButton()
     {
         robot.clickOn("#close-button");
+        Assertions.assertThat(window).isNotShowing();
+    }
+
+    public void closeViaEscKey()
+    {
+        robot.type(KeyCode.ESCAPE);
         Assertions.assertThat(window).isNotShowing();
     }
 
