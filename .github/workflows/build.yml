@@ -43,7 +43,7 @@ jobs:
 
     - name: Build with Gradle
       run: |
-        ./gradlew build --warning-mode=summary
+        ./gradlew build --info --warning-mode=summary
     - name: Sonar analysis
       run: |
         ./gradlew sonarqube -Dsonar.host.url=https://sonarcloud.io \
