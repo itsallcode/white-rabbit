@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.table.converter.YearMonthStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.YearStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationMonth;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationYear;
@@ -16,17 +17,11 @@ import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationY
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.ToolBar;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -37,23 +32,21 @@ public class VacationReportViewer
 
     private final SimpleObjectProperty<Year> selectedYear = new SimpleObjectProperty<>(null);
     private final VacationReport report;
-    private final Stage primaryStage;
 
-    private Stage stage;
+    private final ReportWindow reportWindow;
 
     public VacationReportViewer(Stage primaryStage, VacationReport report)
     {
-        this.primaryStage = primaryStage;
+        this.reportWindow = new ReportWindow(primaryStage);
         this.report = report;
     }
 
     public void show()
     {
-        stage = createStage();
-        stage.show();
+        reportWindow.show(createReportView());
     }
 
-    private Stage createStage()
+    private Node createReportView()
     {
         final TableView<VacationYear> yearsTable = createYearsTable();
         final TableView<VacationMonth> monthsTable = createMonthsTable();
@@ -61,39 +54,7 @@ public class VacationReportViewer
         final SplitPane mainPane = new SplitPane(yearsTable, monthsTable);
         mainPane.setOrientation(Orientation.VERTICAL);
         mainPane.setDividerPositions(0.2);
-
-        final BorderPane pane = new BorderPane();
-        pane.setTop(createToolBar());
-        pane.setCenter(mainPane);
-        BorderPane.setMargin(mainPane, UiResources.DEFAULT_MARGIN);
-        return createStage(pane);
-    }
-
-    private Stage createStage(final Parent root)
-    {
-        final Stage newStage = new Stage();
-        newStage.setTitle("Vacation report");
-        newStage.setScene(new Scene(root, 500, 800));
-        newStage.initModality(Modality.NONE);
-        newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == KeyCode.ESCAPE)
-            {
-                closeReportWindow();
-            }
-        });
-        newStage.initOwner(primaryStage);
-        newStage.getIcons().add(UiResources.APP_ICON);
-        return newStage;
-    }
-
-    private void closeReportWindow()
-    {
-        stage.close();
-    }
-
-    private ToolBar createToolBar()
-    {
-        return new ToolBar(UiWidget.button("close-button", "Close Report", e -> closeReportWindow()));
+        return mainPane;
     }
 
     private TableView<VacationMonth> createMonthsTable()

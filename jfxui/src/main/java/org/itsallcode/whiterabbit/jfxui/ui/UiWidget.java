@@ -25,7 +25,7 @@ public class UiWidget
         // Not innstantiable
     }
 
-    static Button button(String id, String label, EventHandler<ActionEvent> action)
+    public static Button button(String id, String label, EventHandler<ActionEvent> action)
     {
         return button(id, label, null, action);
     }
