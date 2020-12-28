@@ -1,9 +1,11 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import javafx.scene.control.IndexedCell;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableView;
-import javafx.scene.control.skin.VirtualFlow;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
@@ -12,11 +14,10 @@ import org.junit.jupiter.api.function.Executable;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import javafx.scene.control.IndexedCell;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableView;
+import javafx.scene.control.skin.VirtualFlow;
 
 public class JavaFxTable<T>
 {
@@ -82,9 +83,10 @@ public class JavaFxTable<T>
         return this;
     }
 
-    public void assertRowCount(int expectedRowCount)
+    public JavaFxTable<T> assertRowCount(int expectedRowCount)
     {
         Assertions.assertThat(table).hasExactlyNumRows(expectedRowCount);
+        return this;
     }
 
     public int getRowCount()

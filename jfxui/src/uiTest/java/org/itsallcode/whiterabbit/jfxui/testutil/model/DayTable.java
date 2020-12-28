@@ -1,21 +1,23 @@
 package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
-import javafx.scene.control.TableCell;
-import javafx.scene.input.KeyCode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
-import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
-import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.testfx.api.FxRobot;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
+import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.testfx.api.FxRobot;
+
+import javafx.scene.control.TableCell;
+import javafx.scene.input.KeyCode;
 
 public class DayTable
 {
@@ -85,20 +87,26 @@ public class DayTable
 
     public Duration getInterruption(int row)
     {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
+        final TableCell<?, ?> tableCell = getInterruptionCell(row);
         return (Duration) tableCell.getItem();
     }
 
     public String getInterruptionText(int row)
     {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
+        final TableCell<?, ?> tableCell = getInterruptionCell(row);
         return tableCell.getText();
     }
 
     public void typeInterruption(int row, String value)
     {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
+        final TableCell<?, ?> tableCell = getInterruptionCell(row);
         robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
+    }
+
+    private TableCell<?, ?> getInterruptionCell(int row)
+    {
+        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
+        return tableCell;
     }
 
     public void typeComment(int row, String value)
@@ -111,18 +119,25 @@ public class DayTable
         return table.getTableCell(row, "comment");
     }
 
+    public void selectDayTypeDirect(int row, DayType type)
+    {
+        robot.doubleClickOn(getDayTypeCell(row));
+        robot.clickOn(type.toString());
+    }
+
     public void selectDayType(int row, DayType type)
     {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "day-type");
         int tries = 0;
         while (getDayType(row) != type && tries <= DayType.values().length)
         {
+            final TableCell<?, ?> tableCell = getDayTypeCell(row);
             robot.clickOn(tableCell);
             TestUtil.sleepShort();
             robot.clickOn(tableCell);
             TestUtil.sleepShort();
             robot.type(KeyCode.DOWN);
             TestUtil.sleepShort();
+            UiDebugTool.printNode(tableCell);
             robot.type(KeyCode.ENTER);
 
             tries++;
@@ -133,8 +148,19 @@ public class DayTable
 
     public DayType getDayType(int row)
     {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "day-type");
+        final TableCell<?, DayType> tableCell = getDayTypeCell(row);
         LOG.debug("Got day type {} for row {}", tableCell.getItem(), row);
-        return (DayType) tableCell.getItem();
+        return tableCell.getItem();
+    }
+
+    @SuppressWarnings("unchecked")
+    public TableCell<DayRecordPropertyAdapter, DayType> getDayTypeCell(int row)
+    {
+        return (TableCell<DayRecordPropertyAdapter, DayType>) table.getTableCell(row, "day-type");
+    }
+
+    public JavaFxTable<DayRecordPropertyAdapter> table()
+    {
+        return table;
     }
 }

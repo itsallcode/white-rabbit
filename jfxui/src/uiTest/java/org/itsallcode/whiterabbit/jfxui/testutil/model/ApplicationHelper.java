@@ -108,4 +108,14 @@ public class ApplicationHelper
         Assertions.assertThat(window).isShowing();
         return new ProjectReportWindow(robot, window);
     }
+
+    public VacationReportWindow openVacationReport()
+    {
+        robot.clickOn("#menu_reports");
+        robot.clickOn("#menuitem_vacation_report");
+
+        final Window window = robot.window("Vacation report");
+        Assertions.assertThat(window).isShowing();
+        return new VacationReportWindow(robot, window);
+    }
 }

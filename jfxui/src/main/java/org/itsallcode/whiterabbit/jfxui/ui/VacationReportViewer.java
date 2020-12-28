@@ -72,7 +72,7 @@ public class VacationReportViewer
     private Stage createStage(final Parent root)
     {
         final Stage newStage = new Stage();
-        newStage.setTitle("Project report");
+        newStage.setTitle("Vacation report");
         newStage.setScene(new Scene(root, 500, 800));
         newStage.initModality(Modality.NONE);
         newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
