@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.report.vacation;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
@@ -17,14 +18,29 @@ public class VacationReport
 
     public static class VacationMonth
     {
-        VacationMonth(YearMonth yearMonth, int vacationDaysUsed)
+        private final YearMonth yearMonth;
+        private final List<LocalDate> vacationDaysUsed;
+
+        VacationMonth(YearMonth yearMonth, List<LocalDate> vacationDaysUsed)
         {
             this.yearMonth = yearMonth;
             this.vacationDaysUsed = vacationDaysUsed;
         }
 
-        public final YearMonth yearMonth;
-        public final int vacationDaysUsed;
+        public YearMonth getYearMonth()
+        {
+            return yearMonth;
+        }
+
+        public List<LocalDate> getVacationDaysUsed()
+        {
+            return vacationDaysUsed;
+        }
+
+        public int getUsedVacationDayCount()
+        {
+            return vacationDaysUsed.size();
+        }
 
         @Override
         public String toString()
@@ -35,10 +51,10 @@ public class VacationReport
 
     public static class VacationYear
     {
-        public final Year year;
-        public final int daysUsed;
-        public final int daysAvailable;
-        public final int daysRemaingFromPreviousYear;
+        private final Year year;
+        private final int daysUsed;
+        private final int daysAvailable;
+        private final int daysRemaingFromPreviousYear;
 
         VacationYear(Year year, int daysUsed, int daysAvailable, int daysRemaingFromPreviousYear)
         {
@@ -48,6 +64,31 @@ public class VacationReport
             this.daysRemaingFromPreviousYear = daysRemaingFromPreviousYear;
         }
 
+        public Year getYear()
+        {
+            return year;
+        }
+
+        public int getDaysUsed()
+        {
+            return daysUsed;
+        }
+
+        public int getDaysAvailable()
+        {
+            return daysAvailable;
+        }
+
+        public int getDaysRemaingFromPreviousYear()
+        {
+            return daysRemaingFromPreviousYear;
+        }
+
+        public int getDaysRemaining()
+        {
+            return daysRemaingFromPreviousYear + daysAvailable - daysUsed;
+        }
+
         @Override
         public String toString()
         {
@@ -55,9 +96,5 @@ public class VacationReport
                     + ", daysRemaingFromPreviousYear=" + daysRemaingFromPreviousYear + "]";
         }
 
-        public int getDaysRemaining()
-        {
-            return daysRemaingFromPreviousYear + daysAvailable - daysUsed;
-        }
     }
 }

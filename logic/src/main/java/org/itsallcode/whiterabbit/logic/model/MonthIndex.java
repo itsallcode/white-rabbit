@@ -119,8 +119,14 @@ public class MonthIndex
 
     public int getVacationDayCount()
     {
-        return (int) record.getDays().stream() //
-                .filter(day -> day.getType() == DayType.VACATION) //
-                .count();
+        return getVacationDays().size();
+    }
+
+    public List<LocalDate> getVacationDays()
+    {
+        return record.getDays().stream()
+                .filter(day -> day.getType() == DayType.VACATION)
+                .map(JsonDay::getDate)
+                .collect(toList());
     }
 }

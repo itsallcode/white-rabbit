@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.table.days;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
@@ -134,7 +133,7 @@ public class DayRecordTable
                         () -> new AutoCompleteTextField(autocompleteService.dayCommentAutocompleter())),
                 data -> data.getValue().comment);
 
-        return asList(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
+        return List.of(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
     }
 

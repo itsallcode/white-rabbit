@@ -15,6 +15,7 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.stage.Stage;
 
 public final class UiActions
 {
@@ -64,7 +65,7 @@ public final class UiActions
     public void showVacationReport()
     {
         final VacationReport vacationReport = appService.getVacationReport();
-        new VacationReportViewer(vacationReport).show();
+        new VacationReportViewer(getPrimaryStage(), vacationReport).show();
     }
 
     public void showProjectReport()
@@ -76,7 +77,12 @@ public final class UiActions
             return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new ProjectReportViewer(state.getPrimaryStage().orElseThrow(), appService.formatter(), report).show();
+        new ProjectReportViewer(getPrimaryStage(), appService.formatter(), report).show();
+    }
+
+    private Stage getPrimaryStage()
+    {
+        return state.getPrimaryStage().orElseThrow();
     }
 
     public void openHomepage()
