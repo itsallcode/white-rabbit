@@ -62,7 +62,7 @@ abstract class JavaFxAppUiTestBase
 
     protected void setRobot(FxRobot robot)
     {
-        applicationHelper = new ApplicationHelper(Objects.requireNonNull(robot, "robot"));
+        applicationHelper = ApplicationHelper.create(robot);
     }
 
     protected ApplicationHelper app()

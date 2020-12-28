@@ -2,12 +2,15 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import java.time.Duration;
 import java.time.YearMonth;
+import java.util.Objects;
 
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
+import org.testfx.service.query.NodeQuery;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -18,10 +21,18 @@ import javafx.stage.Window;
 public class ApplicationHelper
 {
     private final FxRobot robot;
+    private final Window window;
 
-    public ApplicationHelper(FxRobot robot)
+    private ApplicationHelper(FxRobot robot, Window window)
     {
         this.robot = robot;
+        this.window = window;
+    }
+
+    public static ApplicationHelper create(FxRobot robot)
+    {
+        Objects.requireNonNull(robot, "robot");
+        return new ApplicationHelper(robot, robot.window(0));
     }
 
     public InterruptionDialog startInterruption()
@@ -104,9 +115,15 @@ public class ApplicationHelper
         robot.clickOn("#menu_reports");
         robot.clickOn("#menuitem_project_report");
 
+        Window.getWindows().forEach(w -> UiDebugTool.printNode(w.getScene().getRoot()));
         final Window window = robot.window("Project report");
         Assertions.assertThat(window).isShowing();
         return new ProjectReportWindow(robot, window);
+    }
+
+    private NodeQuery lookup(String query)
+    {
+        return robot.from(window.getScene().getRoot()).lookup(query);
     }
 
     public VacationReportWindow openVacationReport()

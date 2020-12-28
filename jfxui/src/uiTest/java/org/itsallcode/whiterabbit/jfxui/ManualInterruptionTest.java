@@ -8,7 +8,6 @@ import java.time.LocalTime;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
-import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.InterruptionDialog;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
 
         time().tickMinute();
         TestUtil.sleepShort();
-        final InterruptionDialog interruptionDialog = new ApplicationHelper(robot).startInterruption();
+        final InterruptionDialog interruptionDialog = app().startInterruption();
 
         final LocalTime interruptionStartTime = time().getCurrentTimeSeconds();
 
@@ -70,7 +69,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
 
         time().tickMinute();
         TestUtil.sleepShort();
-        final InterruptionDialog interruptionDialog = new ApplicationHelper(robot).startInterruption();
+        final InterruptionDialog interruptionDialog = app().startInterruption();
 
         final LocalTime interruptionStartTime = time().getCurrentTimeSeconds();
 
@@ -97,7 +96,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
 
         time().tickMinute();
         TestUtil.sleepShort();
-        final InterruptionDialog interruptionDialog = new ApplicationHelper(robot).startInterruption();
+        final InterruptionDialog interruptionDialog = app().startInterruption();
 
         final LocalTime interruptionStartTime = time().getCurrentTimeSeconds();
 
