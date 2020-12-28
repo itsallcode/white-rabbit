@@ -38,12 +38,14 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void addActivityButtonDisabledWhenNoDaySelected()
     {
+        time().tickMinute();
         assertThat(app().activitiesTable().getAddActivityButton().isDisabled()).isTrue();
     }
 
     @Test
     void addActivityButtonEnabledWhenDaySelected()
     {
+        time().tickMinute();
         selectCurrentDay();
         assertThat(app().activitiesTable().getAddActivityButton().isDisabled()).isFalse();
     }
@@ -51,16 +53,16 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void activityTableEmptyByDefault()
     {
-        selectCurrentDay();
         time().tickMinute();
+        selectCurrentDay();
         app().activitiesTable().table().assertRowCount(0);
     }
 
     @Test
     void clickingAddButtonAddsActivity()
     {
-        selectCurrentDay();
         time().tickMinute();
+        selectCurrentDay();
         final ActivitiesTable activities = app().activitiesTable();
 
         activities.addActivity();
@@ -72,8 +74,8 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void removeButtonDisabledWhenNoActivitySelected()
     {
-        selectCurrentDay();
         time().tickMinute();
+        selectCurrentDay();
         final ActivitiesTable activities = app().activitiesTable();
 
         activities.addActivity();
@@ -86,8 +88,8 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void clickRemoveButtonWhenNoActivitySelectedDoesNothing()
     {
-        selectCurrentDay();
         time().tickMinute();
+        selectCurrentDay();
         final ActivitiesTable activities = app().activitiesTable();
 
         activities.addActivity();
@@ -102,8 +104,8 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void clickRemoveButtonRemovesSelectedActivity()
     {
-        selectCurrentDay();
         time().tickMinute();
+        selectCurrentDay();
         final ActivitiesTable activities = app().activitiesTable();
 
         activities.addActivity();
@@ -233,6 +235,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void addActivityDeselectRemainder()
     {
+        time().tickMinute();
         addActivity();
 
         final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
@@ -243,6 +246,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void addActivitySelectProject()
     {
+        time().tickMinute();
         addActivity();
 
         final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
@@ -256,6 +260,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void addActivityForOtherDay()
     {
+        time().tickMinute();
         final int rowTomorrow = time().getCurrentDayRowIndex() + 1;
         final JavaFxTable<ActivityPropertyAdapter> table = app().activitiesTable().table();
 
@@ -271,6 +276,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void activitiesTableUpdatedWhenSwitchingDays()
     {
+        time().tickMinute();
         final int row = time().getCurrentDayRowIndex();
         app().genericDayTable().clickRow(row + 1);
 
@@ -303,8 +309,8 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void activitiesDurationUpdatedWhenChangingBegin()
     {
-        final int row = time().getCurrentDayRowIndex();
         time().tickMinute();
+        final int row = time().getCurrentDayRowIndex();
 
         final ActivitiesTable activities = app().activitiesTable();
 
@@ -319,7 +325,6 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
     private void addActivity()
     {
-        time().tickMinute();
         final ActivitiesTable activities = app().activitiesTable();
 
         final JavaFxTable<ActivityPropertyAdapter> table = activities.table();

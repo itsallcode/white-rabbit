@@ -7,7 +7,6 @@ import java.time.YearMonth;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
-import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.VacationReportWindow;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
@@ -49,10 +48,8 @@ class VacationReportTest extends JavaFxAppUiTestBase
         final int row = time().getCurrentDayRowIndex();
         app().dayTable().selectDayTypeDirect(row, DayType.VACATION);
 
-        TestUtil.sleepLong();
         final VacationReportWindow report = app().openVacationReport();
 
-        TestUtil.sleepLong();
         report.getYearsTable().assertRowCount(1)
                 .assertContent(TableRowExpectedContent.forValues(Year.of(2007), 0, 3, 1, 2));
         report.getMonthTable().assertRowCount(1)
