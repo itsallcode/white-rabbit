@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.ui;
 
 import static java.util.stream.Collectors.joining;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class VacationReportViewer
                         VacationMonth::getUsedVacationDayCount),
                 UiWidget.readOnlyColumn("days-used", "Days used", new DefaultStringConverter(),
                         month -> month.getVacationDaysUsed().stream()
-                                .map(date -> date.getDayOfMonth())
+                                .map(LocalDate::getDayOfMonth)
                                 .map(String::valueOf)
                                 .collect(joining(", "))));
     }

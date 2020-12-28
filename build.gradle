@@ -45,6 +45,7 @@ subprojects {
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
         testImplementation "org.junit-pioneer:junit-pioneer:1.1.0"
+        testImplementation "nl.jqno.equalsverifier:equalsverifier:3.5"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
 
