@@ -15,7 +15,7 @@ public class VacationReportWindow
     private final JavaFxTable<VacationYear> yearsTable;
     private final JavaFxTable<VacationMonth> monthTable;
 
-    public VacationReportWindow(FxRobot robot, Window window)
+    VacationReportWindow(FxRobot robot, Window window)
     {
         this.robot = robot;
         this.window = window;

@@ -16,11 +16,13 @@ import javafx.stage.Stage;
 public class ReportWindow
 {
     private final Stage primaryStage;
+    private final String windowTitle;
     private Stage stage;
 
-    public ReportWindow(Stage primaryStage)
+    public ReportWindow(Stage primaryStage, String windowTitle)
     {
         this.primaryStage = primaryStage;
+        this.windowTitle = windowTitle;
     }
 
     public void show(Node reportView)
@@ -46,7 +48,7 @@ public class ReportWindow
     private Stage createStage(final Parent root)
     {
         final Stage newStage = new Stage();
-        newStage.setTitle("Project report");
+        newStage.setTitle(windowTitle);
         newStage.setScene(new Scene(root, 500, 800));
         newStage.initModality(Modality.NONE);
         newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {

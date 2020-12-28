@@ -31,7 +31,7 @@ public class ProjectReportViewer
 
     public ProjectReportViewer(Stage primaryStage, FormatterService formatterService, ProjectReport report)
     {
-        this.reportWindow = new ReportWindow(primaryStage);
+        this.reportWindow = new ReportWindow(primaryStage, "Project Report");
         this.formatterService = formatterService;
         this.report = report;
     }

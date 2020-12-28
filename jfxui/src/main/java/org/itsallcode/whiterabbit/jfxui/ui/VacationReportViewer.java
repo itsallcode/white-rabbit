@@ -37,7 +37,7 @@ public class VacationReportViewer
 
     public VacationReportViewer(Stage primaryStage, VacationReport report)
     {
-        this.reportWindow = new ReportWindow(primaryStage);
+        this.reportWindow = new ReportWindow(primaryStage, "Vacation Report");
         this.report = report;
     }
 

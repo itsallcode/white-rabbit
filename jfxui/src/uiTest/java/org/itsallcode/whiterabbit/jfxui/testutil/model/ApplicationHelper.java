@@ -7,7 +7,6 @@ import java.util.Objects;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
-import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 import org.testfx.service.query.NodeQuery;
@@ -115,8 +114,7 @@ public class ApplicationHelper
         robot.clickOn("#menu_reports");
         robot.clickOn("#menuitem_project_report");
 
-        Window.getWindows().forEach(w -> UiDebugTool.printNode(w.getScene().getRoot()));
-        final Window window = robot.window("Project report");
+        final Window window = robot.window("Project Report");
         Assertions.assertThat(window).isShowing();
         return new ProjectReportWindow(robot, window);
     }
@@ -131,7 +129,7 @@ public class ApplicationHelper
         robot.clickOn("#menu_reports");
         robot.clickOn("#menuitem_vacation_report");
 
-        final Window window = robot.window("Vacation report");
+        final Window window = robot.window("Vacation Report");
         Assertions.assertThat(window).isShowing();
         return new VacationReportWindow(robot, window);
     }

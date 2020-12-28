@@ -18,7 +18,7 @@ public class ProjectReportWindow
     private final Window window;
     private final JavaFxTreeTable<ReportRow> table;
 
-    public ProjectReportWindow(FxRobot robot, Window window)
+    ProjectReportWindow(FxRobot robot, Window window)
     {
         this.robot = robot;
         this.window = window;
