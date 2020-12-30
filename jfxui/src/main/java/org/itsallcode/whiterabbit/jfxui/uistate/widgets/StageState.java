@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.uistate;
+package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 
 import javafx.stage.Stage;
 

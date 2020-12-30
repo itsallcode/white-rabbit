@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.jfxui.uistate;
+package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
 
-public class UiState
+public class WidgetRegistry
 {
     private final Map<String, WidgetState<Stage>> stages = new HashMap<>();
     private final Map<String, WidgetState<TableView<?>>> tables = new HashMap<>();

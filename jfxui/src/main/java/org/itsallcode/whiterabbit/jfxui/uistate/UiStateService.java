@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.uistate;
 
+import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetRegistry;
+import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetState;
 import org.itsallcode.whiterabbit.logic.Config;
 
 import javafx.scene.control.TableView;
@@ -9,16 +11,16 @@ import javafx.stage.WindowEvent;
 
 public class UiStateService
 {
-    private final UiState state;
+    private final WidgetRegistry state;
 
-    private UiStateService(UiState state)
+    private UiStateService(WidgetRegistry state)
     {
         this.state = state;
     }
 
     public static UiStateService loadState(Config config)
     {
-        return new UiStateService(new UiState());
+        return new UiStateService(new WidgetRegistry());
     }
 
     public void persistState()
