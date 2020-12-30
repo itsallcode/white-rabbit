@@ -1,7 +1,12 @@
 package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 
+import javax.json.bind.annotation.JsonbVisibility;
+
+import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
+
 import javafx.scene.control.TreeTableView;
 
+@JsonbVisibility(FieldAccessStrategy.class)
 class TreeTableState implements WidgetState<TreeTableView<?>>
 {
     @Override

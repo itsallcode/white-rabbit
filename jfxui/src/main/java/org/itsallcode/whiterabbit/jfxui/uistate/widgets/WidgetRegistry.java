@@ -3,10 +3,15 @@ package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.json.bind.annotation.JsonbVisibility;
+
+import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
+
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
 
+@JsonbVisibility(FieldAccessStrategy.class)
 public class WidgetRegistry
 {
     private final Map<String, WidgetState<Stage>> stages = new HashMap<>();
