@@ -65,7 +65,7 @@ public final class UiActions
     public void showVacationReport()
     {
         final VacationReport vacationReport = appService.getVacationReport();
-        new VacationReportViewer(getPrimaryStage(), vacationReport).show();
+        new VacationReportViewer(getPrimaryStage(), state.uiState, vacationReport).show();
     }
 
     public void showProjectReport()
@@ -77,7 +77,7 @@ public final class UiActions
             return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new ProjectReportViewer(getPrimaryStage(), appService.formatter(), report).show();
+        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService.formatter(), report).show();
     }
 
     private Stage getPrimaryStage()

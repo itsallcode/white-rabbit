@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.itsallcode.whiterabbit.jfxui.property.ClockPropertyFactory;
 import org.itsallcode.whiterabbit.jfxui.property.ScheduledProperty;
+import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -31,20 +32,25 @@ public final class AppState
     public final SimpleObjectProperty<DayRecord> selectedDay = new SimpleObjectProperty<>(null);
     public final SimpleObjectProperty<Activity> selectedActivity = new SimpleObjectProperty<>(null);
 
+    public final UiStateService uiState;
+
     public final ScheduledProperty<LocalDate> currentDateProperty;
     public final ScheduledProperty<Instant> currentTimeProperty;
     private Stage primaryStage;
 
-    private AppState(ScheduledProperty<LocalDate> currentDateProperty, ScheduledProperty<Instant> currentTimeProperty)
+    private AppState(ScheduledProperty<LocalDate> currentDateProperty, ScheduledProperty<Instant> currentTimeProperty,
+            UiStateService uiState)
     {
         this.currentDateProperty = currentDateProperty;
         this.currentTimeProperty = currentTimeProperty;
+        this.uiState = uiState;
     }
 
-    static AppState create(AppService appService)
+    static AppState create(AppService appService, UiStateService uiState)
     {
         final ClockPropertyFactory clockPropertyFactory = new ClockPropertyFactory(appService);
-        return new AppState(clockPropertyFactory.currentDateProperty(), clockPropertyFactory.currentTimeProperty());
+        return new AppState(clockPropertyFactory.currentDateProperty(), clockPropertyFactory.currentTimeProperty(),
+                uiState);
     }
 
     public Optional<DayRecord> getSelectedDay()
@@ -71,5 +77,6 @@ public final class AppState
     {
         currentDateProperty.cancel();
         currentTimeProperty.cancel();
+        uiState.persistState();
     }
 }

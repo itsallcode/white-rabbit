@@ -10,6 +10,7 @@ import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
+import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
@@ -28,17 +29,22 @@ public class ProjectReportViewer
     private final ProjectReport report;
     private final FormatterService formatterService;
     private final ReportWindow reportWindow;
+    private final UiStateService uiState;
 
-    public ProjectReportViewer(Stage primaryStage, FormatterService formatterService, ProjectReport report)
+    public ProjectReportViewer(Stage primaryStage, UiStateService uiState, FormatterService formatterService,
+            ProjectReport report)
     {
-        this.reportWindow = new ReportWindow(primaryStage, "Project Report");
+        this.uiState = uiState;
+        this.reportWindow = new ReportWindow(primaryStage, uiState, "project-report", "Project Report");
         this.formatterService = formatterService;
         this.report = report;
     }
 
     public void show()
     {
-        reportWindow.show(createTreeTable());
+        final TreeTableView<ReportRow> treeTable = createTreeTable();
+        reportWindow.show(treeTable);
+        uiState.register(reportWindow.getStage(), treeTable);
     }
 
     private TreeTableView<ReportRow> createTreeTable()

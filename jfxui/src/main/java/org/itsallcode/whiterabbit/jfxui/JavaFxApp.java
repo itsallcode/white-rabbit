@@ -20,6 +20,7 @@ import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotificati
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
+import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.ConfigLoader;
 import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
@@ -111,7 +112,7 @@ public class JavaFxApp extends Application
             throw new OtherInstanceAlreadyRunningException(response);
         }
 
-        state = AppState.create(appService);
+        state = AppState.create(appService, UiStateService.loadState(config));
         actions = UiActions.create(config, state, appService, getHostServices());
     }
 
