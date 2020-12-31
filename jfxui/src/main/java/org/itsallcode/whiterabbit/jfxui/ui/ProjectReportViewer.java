@@ -44,7 +44,7 @@ public class ProjectReportViewer
     {
         final TreeTableView<ReportRow> treeTable = createTreeTable();
         reportWindow.show(treeTable);
-        uiState.register(reportWindow.getStage(), treeTable);
+        uiState.register(treeTable);
     }
 
     private TreeTableView<ReportRow> createTreeTable()

@@ -1,57 +1,91 @@
 package org.itsallcode.whiterabbit.jfxui.uistate;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetRegistry;
-import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetState;
 import org.itsallcode.whiterabbit.logic.Config;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class UiStateService
 {
-    private final WidgetRegistry state;
+    private static final Logger LOG = LogManager.getLogger(UiStateService.class);
 
-    private UiStateService(WidgetRegistry state)
+    private final Jsonb jsonb;
+    private final WidgetRegistry state;
+    private final Config config;
+
+    private UiStateService(WidgetRegistry state, Config config, Jsonb jsonb)
     {
+        this.jsonb = jsonb;
+        this.config = config;
         this.state = state;
     }
 
     public static UiStateService loadState(Config config)
     {
-        return new UiStateService(new WidgetRegistry());
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        return new UiStateService(loadState(jsonb, config.getUiStatePath()), config, jsonb);
+    }
+
+    private static WidgetRegistry loadState(Jsonb jsonb, Path path)
+    {
+        if (Files.exists(path))
+        {
+            try (InputStream inputStream = Files.newInputStream(path))
+            {
+                final WidgetRegistry state = jsonb.fromJson(inputStream, WidgetRegistry.class);
+                LOG.info("Loaded ui-state from {}", path);
+                LOG.info("State: {}", state);
+                return state;
+            }
+            catch (final IOException e)
+            {
+                LOG.warn("Error loading ui-state from " + path + ": use default values", e);
+            }
+        }
+        LOG.info("Using fresh ui-state");
+        return new WidgetRegistry();
     }
 
     public void persistState()
     {
-        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-        final String json = jsonb.toJson(state);
-        System.out.println(json);
+        LOG.info("Writing ui-state {}", state);
+        try (OutputStream outputStream = Files.newOutputStream(config.getUiStatePath());)
+        {
+            jsonb.toJson(state, outputStream);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error writing ui state to " + config.getUiStatePath(), e);
+        }
     }
 
     public void register(String id, Stage stage)
     {
-        final WidgetState<Stage> stageState = state.getStage(id);
-        stage.addEventHandler(WindowEvent.WINDOW_HIDING, event -> stageState.store(stage));
-        stageState.restore(stage);
+        state.registerStage(id, stage);
     }
 
-    public void register(Stage stage, TableView<?> node)
+    public void register(TableView<?> node)
     {
-        final WidgetState<TableView<?>> widgetState = state.getTableView(node.getId());
-        stage.addEventHandler(WindowEvent.WINDOW_HIDING, event -> widgetState.store(node));
-        widgetState.restore(node);
+        state.registerTableView(node);
     }
 
-    public void register(Stage stage, TreeTableView<?> node)
+    public void register(TreeTableView<?> node)
     {
-        final WidgetState<TreeTableView<?>> widgetState = state.getTreeTableView(node.getId());
-        stage.addEventHandler(WindowEvent.WINDOW_HIDING, event -> widgetState.store(node));
-        widgetState.restore(node);
+        state.registerTreeTableView(node);
     }
 }

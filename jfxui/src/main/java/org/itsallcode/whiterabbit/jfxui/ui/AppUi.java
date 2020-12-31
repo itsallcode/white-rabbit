@@ -195,10 +195,10 @@ public class AppUi
         private BorderPane createMainPane()
         {
             final TableView<DayRecordPropertyAdapter> daysTable = dayRecordTable.initTable();
-            state.uiState.register(primaryStage, daysTable);
+            state.uiState.register(daysTable);
             state.currentDateProperty.property().addListener(this::dateChanged);
             final TableView<ActivityPropertyAdapter> activitiesTab = activitiesTable.initTable();
-            state.uiState.register(primaryStage, activitiesTab);
+            state.uiState.register(activitiesTab);
             final Button addActivityButton = UiWidget.button("add-activity-button", "+", "Add activity",
                     e -> app.addActivity());
             final Button removeActivityButton = UiWidget.button("remove-activity-button", "-", "Remove activity",

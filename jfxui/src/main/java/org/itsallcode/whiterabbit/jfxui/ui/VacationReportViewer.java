@@ -57,8 +57,8 @@ public class VacationReportViewer
 
         reportWindow.show(reportView);
 
-        uiState.register(reportWindow.getStage(), yearsTable);
-        uiState.register(reportWindow.getStage(), monthsTable);
+        uiState.register(yearsTable);
+        uiState.register(monthsTable);
     }
 
     private TableView<VacationMonth> createMonthsTable()

@@ -30,4 +30,9 @@ public interface Config
     {
         return getDataDir().resolve("logs");
     }
+
+    default Path getUiStatePath()
+    {
+        return getDataDir().resolve("ui-state.json");
+    }
 }

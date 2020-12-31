@@ -36,11 +36,6 @@ public class ReportWindow
         stage.show();
     }
 
-    public Stage getStage()
-    {
-        return stage;
-    }
-
     private Stage createStage(Node reportView)
     {
         final BorderPane pane = new BorderPane();

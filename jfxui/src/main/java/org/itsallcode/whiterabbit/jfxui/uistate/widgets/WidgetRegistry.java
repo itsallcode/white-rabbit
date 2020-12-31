@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.json.bind.annotation.JsonbVisibility;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
 
 import javafx.scene.control.TableView;
@@ -14,22 +16,39 @@ import javafx.stage.Stage;
 @JsonbVisibility(FieldAccessStrategy.class)
 public class WidgetRegistry
 {
-    private final Map<String, WidgetState<Stage>> stages = new HashMap<>();
-    private final Map<String, WidgetState<TableView<?>>> tables = new HashMap<>();
-    private final Map<String, WidgetState<TreeTableView<?>>> treeTables = new HashMap<>();
+    private static final Logger LOG = LogManager.getLogger(WidgetRegistry.class);
 
-    public WidgetState<Stage> getStage(String id)
+    private final Map<String, StageState> stages = new HashMap<>();
+    private final Map<String, TableState> tables = new HashMap<>();
+    private final Map<String, TreeTableState> treeTables = new HashMap<>();
+
+    public void registerStage(String id, Stage stage)
     {
-        return stages.computeIfAbsent(id, i -> new StageState());
+        final WidgetState<Stage> state = stages.computeIfAbsent(id, StageState::new);
+
+        state.restore(stage);
+        state.watch(stage);
     }
 
-    public WidgetState<TableView<?>> getTableView(String id)
+    public void registerTableView(TableView<?> widget)
     {
-        return tables.computeIfAbsent(id, i -> new TableState());
+        final WidgetState<TableView<?>> state = tables.computeIfAbsent(widget.getId(), TableState::new);
+
+        state.restore(widget);
+        state.watch(widget);
     }
 
-    public WidgetState<TreeTableView<?>> getTreeTableView(String id)
+    public void registerTreeTableView(TreeTableView<?> widget)
     {
-        return treeTables.computeIfAbsent(id, i -> new TreeTableState());
+        final WidgetState<TreeTableView<?>> state = treeTables.computeIfAbsent(widget.getId(), TreeTableState::new);
+
+        state.restore(widget);
+        state.watch(widget);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "WidgetRegistry [stages=" + stages + ", tables=" + tables + ", treeTables=" + treeTables + "]";
     }
 }
