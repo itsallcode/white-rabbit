@@ -30,6 +30,7 @@ class SchedulingServiceTest
     private Runnable runnableMock;
     @Mock
     private Trigger triggerMock;
+
     private SchedulingService service;
 
     @BeforeEach
