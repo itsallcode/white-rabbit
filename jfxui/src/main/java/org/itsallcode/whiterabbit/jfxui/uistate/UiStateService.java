@@ -16,6 +16,7 @@ import javax.json.bind.JsonbException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.UiStateModel;
 import org.itsallcode.whiterabbit.jfxui.uistate.widgets.StateManagerRegistry;
 import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetStateManager;
@@ -44,10 +45,11 @@ public class UiStateService
         this.state = state;
     }
 
-    public static UiStateService loadState(Config config)
+    public static UiStateService loadState(Config config, DelayedPropertyListener propertyListener)
     {
         final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-        return new UiStateService(loadState(jsonb, config.getUiStatePath()), config, StateManagerRegistry.create(), jsonb);
+        return new UiStateService(loadState(jsonb, config.getUiStatePath()), config,
+                StateManagerRegistry.create(propertyListener), jsonb);
     }
 
     private static UiStateModel loadState(Jsonb jsonb, Path path)
@@ -106,7 +108,8 @@ public class UiStateService
     private <T, M> void register(Map<String, M> models, String id, T widget)
     {
         @SuppressWarnings("unchecked")
-        final WidgetStateManager<T, M> manager = (WidgetStateManager<T, M>) widgetRegistry.getManager(widget.getClass());
+        final WidgetStateManager<T, M> manager = (WidgetStateManager<T, M>) widgetRegistry
+                .getManager(widget.getClass());
         final M model = models.computeIfAbsent(Objects.requireNonNull(id), manager::createEmptyModel);
         manager.restore(widget, model);
         manager.watch(widget, model);

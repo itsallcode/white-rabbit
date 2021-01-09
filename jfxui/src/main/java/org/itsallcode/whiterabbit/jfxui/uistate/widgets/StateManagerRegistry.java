@@ -3,6 +3,8 @@ package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
+
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
@@ -17,13 +19,13 @@ public class StateManagerRegistry
         this.stateManagers = stateManagers;
     }
 
-    public static StateManagerRegistry create()
+    public static StateManagerRegistry create(DelayedPropertyListener propertyListener)
     {
         final Map<Class<?>, WidgetStateManager<?, ?>> stateManagers = new HashMap<>();
-        stateManagers.put(Stage.class, new StageStateManager());
-        stateManagers.put(TableView.class, new TableStateManager());
-        stateManagers.put(TreeTableView.class, new TreeTableStateManager());
-        stateManagers.put(SplitPane.class, new SplitPaneStateManager());
+        stateManagers.put(Stage.class, new StageStateManager(propertyListener));
+        stateManagers.put(TableView.class, new TableStateManager(propertyListener));
+        stateManagers.put(TreeTableView.class, new TreeTableStateManager(propertyListener));
+        stateManagers.put(SplitPane.class, new SplitPaneStateManager(propertyListener));
         return new StateManagerRegistry(stateManagers);
     }
 

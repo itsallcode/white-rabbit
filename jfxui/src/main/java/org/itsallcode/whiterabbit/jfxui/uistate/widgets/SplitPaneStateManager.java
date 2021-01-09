@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.SplitPaneStateModel;
 
 import javafx.collections.ObservableList;
@@ -11,6 +12,13 @@ import javafx.scene.control.SplitPane.Divider;
 
 class SplitPaneStateManager implements WidgetStateManager<SplitPane, SplitPaneStateModel>
 {
+    private final DelayedPropertyListener propertyListener;
+
+    SplitPaneStateManager(DelayedPropertyListener propertyListener)
+    {
+        this.propertyListener = propertyListener;
+    }
+
     @Override
     public void restore(SplitPane widget, SplitPaneStateModel model)
     {
@@ -33,7 +41,7 @@ class SplitPaneStateManager implements WidgetStateManager<SplitPane, SplitPaneSt
         {
             model.dividerPositions.add(0.0);
             final int index = i;
-            PropertyListener.register(
+            propertyListener.register(
                     dividers.get(index).positionProperty(),
                     pos -> model.dividerPositions.set(index, pos.doubleValue()));
         }

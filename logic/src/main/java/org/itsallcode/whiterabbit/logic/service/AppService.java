@@ -29,9 +29,7 @@ import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperti
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
-import org.itsallcode.whiterabbit.logic.service.scheduling.ScheduledTaskFuture;
 import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
-import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
@@ -144,12 +142,12 @@ public class AppService implements Closeable
     public void start()
     {
         assertSingleInstance();
-        schedule(PeriodicTrigger.everyMinute(), this::updateNow);
+        scheduler().schedule(PeriodicTrigger.everyMinute(), this::updateNow);
     }
 
-    public ScheduledTaskFuture schedule(Trigger trigger, Runnable runnable)
+    public SchedulingService scheduler()
     {
-        return this.schedulingService.schedule(trigger, runnable);
+        return this.schedulingService;
     }
 
     public void report()

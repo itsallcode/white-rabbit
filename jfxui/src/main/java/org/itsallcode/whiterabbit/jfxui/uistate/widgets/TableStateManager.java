@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 
 import java.util.ArrayList;
 
+import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.ColumnStateModel;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.TableStateModel;
 
@@ -10,6 +11,13 @@ import javafx.scene.control.TableView;
 
 class TableStateManager implements WidgetStateManager<TableView<?>, TableStateModel>
 {
+    private final DelayedPropertyListener propertyListener;
+
+    TableStateManager(DelayedPropertyListener propertyListener)
+    {
+        this.propertyListener = propertyListener;
+    }
+
     @Override
     public void restore(TableView<?> widget, TableStateModel model)
     {
@@ -40,7 +48,7 @@ class TableStateManager implements WidgetStateManager<TableView<?>, TableStateMo
             columnState.id = column.getId();
             model.columns.add(columnState);
 
-            PropertyListener.register(column.widthProperty(), columnState::setWidth);
+            propertyListener.register(column.widthProperty(), columnState::setWidth);
         }
     }
 

@@ -33,6 +33,7 @@ import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionD
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
+import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResult;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
@@ -422,7 +423,7 @@ class AppServiceTest
 
         appService.registerSingleInstance(callbackMock);
         appService.start();
-        verify(schedulingServiceMock).schedule(any(), ArgumentMatchers.any(Runnable.class));
+        verify(schedulingServiceMock).schedule(any(Trigger.class), ArgumentMatchers.any(Runnable.class));
     }
 
     @Test
