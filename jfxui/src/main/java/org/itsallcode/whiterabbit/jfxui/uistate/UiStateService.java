@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -14,7 +16,9 @@ import javax.json.bind.JsonbException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetRegistry;
+import org.itsallcode.whiterabbit.jfxui.uistate.model.UiStateModel;
+import org.itsallcode.whiterabbit.jfxui.uistate.widgets.StateManagerRegistry;
+import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetStateManager;
 import org.itsallcode.whiterabbit.logic.Config;
 
 import javafx.scene.control.SplitPane;
@@ -27,11 +31,14 @@ public class UiStateService
     private static final Logger LOG = LogManager.getLogger(UiStateService.class);
 
     private final Jsonb jsonb;
-    private final WidgetRegistry state;
+    private final UiStateModel state;
     private final Config config;
 
-    private UiStateService(WidgetRegistry state, Config config, Jsonb jsonb)
+    private final StateManagerRegistry widgetRegistry;
+
+    private UiStateService(UiStateModel state, Config config, StateManagerRegistry widgetRegistry, Jsonb jsonb)
     {
+        this.widgetRegistry = widgetRegistry;
         this.jsonb = jsonb;
         this.config = config;
         this.state = state;
@@ -40,16 +47,16 @@ public class UiStateService
     public static UiStateService loadState(Config config)
     {
         final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-        return new UiStateService(loadState(jsonb, config.getUiStatePath()), config, jsonb);
+        return new UiStateService(loadState(jsonb, config.getUiStatePath()), config, StateManagerRegistry.create(), jsonb);
     }
 
-    private static WidgetRegistry loadState(Jsonb jsonb, Path path)
+    private static UiStateModel loadState(Jsonb jsonb, Path path)
     {
         if (Files.exists(path))
         {
             try (InputStream inputStream = Files.newInputStream(path))
             {
-                final WidgetRegistry state = jsonb.fromJson(inputStream, WidgetRegistry.class);
+                final UiStateModel state = jsonb.fromJson(inputStream, UiStateModel.class);
                 LOG.info("Loaded ui-state from {}", path);
                 LOG.info("State: {}", state);
                 return state;
@@ -60,7 +67,7 @@ public class UiStateService
             }
         }
         LOG.info("Using fresh ui-state");
-        return new WidgetRegistry();
+        return new UiStateModel();
     }
 
     public void persistState()
@@ -76,23 +83,32 @@ public class UiStateService
         }
     }
 
-    public void register(String id, Stage stage)
+    public void register(String id, Stage node)
     {
-        state.registerStage(id, stage);
+        register(state.stages, id, node);
     }
 
     public void register(TableView<?> node)
     {
-        state.registerTableView(node);
+        register(state.tables, node.getId(), node);
     }
 
     public void register(TreeTableView<?> node)
     {
-        state.registerTreeTableView(node);
+        register(state.tables, node.getId(), node);
     }
 
-    public void register(SplitPane pane)
+    public void register(SplitPane node)
     {
-        state.registerSplitPane(pane);
+        register(state.splitPanes, node.getId(), node);
+    }
+
+    private <T, M> void register(Map<String, M> models, String id, T widget)
+    {
+        @SuppressWarnings("unchecked")
+        final WidgetStateManager<T, M> manager = (WidgetStateManager<T, M>) widgetRegistry.getManager(widget.getClass());
+        final M model = models.computeIfAbsent(Objects.requireNonNull(id), manager::createEmptyModel);
+        manager.restore(widget, model);
+        manager.watch(widget, model);
     }
 }
