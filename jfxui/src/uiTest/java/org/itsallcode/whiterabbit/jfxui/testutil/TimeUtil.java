@@ -76,7 +76,6 @@ public class TimeUtil
 
     private static boolean shouldRunExecutor(long delayMillis, Runnable runnable)
     {
-        System.out.println(runnable.toString());
         return delayMillis == DelayedPropertyListener.DELAY.toMillis()
                 && runnable.toString()
                         .startsWith("DelegatingErrorHandlingRunnable for " + DelayedPropertyListener.class.getName());
