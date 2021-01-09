@@ -32,7 +32,7 @@ public class UiStateService
     private static final Logger LOG = LogManager.getLogger(UiStateService.class);
 
     private final Jsonb jsonb;
-    private final UiStateModel state;
+    final UiStateModel state;
     private final Config config;
 
     private final StateManagerRegistry widgetRegistry;
@@ -48,6 +48,11 @@ public class UiStateService
     public static UiStateService loadState(Config config, DelayedPropertyListener propertyListener)
     {
         final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        return loadState(config, propertyListener, jsonb);
+    }
+
+    static UiStateService loadState(Config config, DelayedPropertyListener propertyListener, Jsonb jsonb)
+    {
         return new UiStateService(loadState(jsonb, config.getUiStatePath()), config,
                 StateManagerRegistry.create(propertyListener), jsonb);
     }
