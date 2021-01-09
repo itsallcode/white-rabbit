@@ -9,7 +9,6 @@ import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.service.query.NodeQuery;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -117,11 +116,6 @@ public class ApplicationHelper
         final Window window = robot.window("Project Report");
         Assertions.assertThat(window).isShowing();
         return new ProjectReportWindow(robot, window);
-    }
-
-    private NodeQuery lookup(String query)
-    {
-        return robot.from(window.getScene().getRoot()).lookup(query);
     }
 
     public VacationReportWindow openVacationReport()

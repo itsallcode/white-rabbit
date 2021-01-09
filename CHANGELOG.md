@@ -10,6 +10,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.3.0) / 
 
 ### Added
 
+* [#13](https://github.com/itsallcode/white-rabbit/issues/13): Persist window position and column width.
 * [#49](https://github.com/itsallcode/white-rabbit/issues/49): Added monthly project report.
 * [#59](https://github.com/itsallcode/white-rabbit/issues/59): Log to data directory.
 * [#9](https://github.com/itsallcode/white-rabbit/issues/9): Add vacation and project report.
