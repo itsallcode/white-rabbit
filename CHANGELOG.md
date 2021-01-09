@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.0] - unreleased
 
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.4.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/6?closed=1)
+
 ## [1.3.0] 2021-01-09
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.3.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/5?closed=1)
