@@ -16,10 +16,12 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.log.LoggingConfigurator;
+import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
+import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.ConfigLoader;
 import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
@@ -111,7 +113,8 @@ public class JavaFxApp extends Application
             throw new OtherInstanceAlreadyRunningException(response);
         }
 
-        state = AppState.create(appService);
+        state = AppState.create(appService,
+                UiStateService.loadState(config, new DelayedPropertyListener(appService.scheduler())));
         actions = UiActions.create(config, state, appService, getHostServices());
     }
 

@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
 import org.itsallcode.whiterabbit.jfxui.ui.UiResources;
 import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
+import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -17,11 +18,15 @@ public class ReportWindow
 {
     private final Stage primaryStage;
     private final String windowTitle;
+    private final UiStateService uiState;
+    private final String id;
     private Stage stage;
 
-    public ReportWindow(Stage primaryStage, String windowTitle)
+    public ReportWindow(Stage primaryStage, UiStateService uiState, String id, String windowTitle)
     {
         this.primaryStage = primaryStage;
+        this.uiState = uiState;
+        this.id = id;
         this.windowTitle = windowTitle;
     }
 
@@ -59,6 +64,7 @@ public class ReportWindow
         });
         newStage.initOwner(primaryStage);
         newStage.getIcons().add(UiResources.APP_ICON);
+        uiState.register(id, newStage);
         return newStage;
     }
 

@@ -42,7 +42,7 @@ public class ClockPropertyFactory
         LOG.debug("Setting initial property value {} from supplier", initialValue);
         property.set(initialValue);
         final Runnable runnable = new ClockPropertyFactoryRunnable<T>(supplier, trigger, property);
-        final ScheduledTaskFuture scheduledTaskFuture = appService.schedule(trigger, runnable);
+        final ScheduledTaskFuture scheduledTaskFuture = appService.scheduler().schedule(trigger, runnable);
         return new ScheduledProperty<>(property, scheduledTaskFuture);
     }
 

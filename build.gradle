@@ -11,6 +11,7 @@ ext {
     log4jVersion = '2.14.0'
     mockitoVersion = '3.6.28'
     yassonVersion = '1.0.8'
+    jsonBindApiVersion = '1.0'
 }
 
 def getProjectVersion() {

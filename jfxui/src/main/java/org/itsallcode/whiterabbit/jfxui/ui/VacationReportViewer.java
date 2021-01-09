@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.table.converter.YearMonthStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.YearStringConverter;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
+import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationMonth;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport.VacationYear;
@@ -35,27 +36,31 @@ public class VacationReportViewer
     private final VacationReport report;
 
     private final ReportWindow reportWindow;
+    private final UiStateService uiState;
 
-    public VacationReportViewer(Stage primaryStage, VacationReport report)
+    public VacationReportViewer(Stage primaryStage, UiStateService uiState, VacationReport report)
     {
-        this.reportWindow = new ReportWindow(primaryStage, "Vacation Report");
+        this.uiState = uiState;
+        this.reportWindow = new ReportWindow(primaryStage, uiState, "vacation-report", "Vacation Report");
         this.report = report;
     }
 
     public void show()
     {
-        reportWindow.show(createReportView());
-    }
-
-    private Node createReportView()
-    {
         final TableView<VacationYear> yearsTable = createYearsTable();
         final TableView<VacationMonth> monthsTable = createMonthsTable();
 
         final SplitPane mainPane = new SplitPane(yearsTable, monthsTable);
+        mainPane.setId("vacationReportMainPane");
         mainPane.setOrientation(Orientation.VERTICAL);
         mainPane.setDividerPositions(0.2);
-        return mainPane;
+        final Node reportView = mainPane;
+
+        reportWindow.show(reportView);
+
+        uiState.register(mainPane);
+        uiState.register(yearsTable);
+        uiState.register(monthsTable);
     }
 
     private TableView<VacationMonth> createMonthsTable()
@@ -63,7 +68,7 @@ public class VacationReportViewer
         final TableView<VacationMonth> table = new TableView<>(FXCollections.observableArrayList(report.months));
         table.setEditable(false);
         table.getColumns().addAll(createMonthTableColumns());
-        table.setId("month-table");
+        table.setId("vacation-report-month-table");
         return table;
     }
 
@@ -85,7 +90,7 @@ public class VacationReportViewer
         final TableView<VacationYear> table = new TableView<>(FXCollections.observableArrayList(report.years));
         table.setEditable(false);
         table.getColumns().addAll(createYearTableColumns());
-        table.setId("year-table");
+        table.setId("vacation-report-year-table");
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {

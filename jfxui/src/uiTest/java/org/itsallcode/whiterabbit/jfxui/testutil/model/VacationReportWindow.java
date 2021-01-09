@@ -20,8 +20,8 @@ public class VacationReportWindow
         this.robot = robot;
         this.window = window;
 
-        yearsTable = JavaFxTable.find(robot, "#year-table", VacationYear.class);
-        monthTable = JavaFxTable.find(robot, "#month-table", VacationMonth.class);
+        yearsTable = JavaFxTable.find(robot, "#vacation-report-year-table", VacationYear.class);
+        monthTable = JavaFxTable.find(robot, "#vacation-report-month-table", VacationMonth.class);
     }
 
     public JavaFxTable<VacationYear> getYearsTable()

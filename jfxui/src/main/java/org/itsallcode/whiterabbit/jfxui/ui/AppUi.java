@@ -13,6 +13,8 @@ import org.itsallcode.whiterabbit.jfxui.JavaFxApp;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.feature.InterruptionPresetFeature;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
+import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
@@ -34,6 +36,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
@@ -137,6 +140,8 @@ public class AppUi
                     primaryStage.hide();
                 }
             });
+
+            state.uiState.register("main-window", primaryStage);
             LOG.debug("User interface finished");
             return new AppUi(this);
         }
@@ -189,9 +194,9 @@ public class AppUi
 
         private BorderPane createMainPane()
         {
-            final Node daysTable = dayRecordTable.initTable();
+            final TableView<DayRecordPropertyAdapter> daysTable = dayRecordTable.initTable();
             state.currentDateProperty.property().addListener(this::dateChanged);
-            final Node activitiesTab = activitiesTable.initTable();
+            final TableView<ActivityPropertyAdapter> activitiesTab = activitiesTable.initTable();
             final Button addActivityButton = UiWidget.button("add-activity-button", "+", "Add activity",
                     e -> app.addActivity());
             final Button removeActivityButton = UiWidget.button("remove-activity-button", "-", "Remove activity",
@@ -202,6 +207,7 @@ public class AppUi
             final SplitPane mainPane = new SplitPane(daysTable,
                     new TitledPane("Activities", new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab)));
             HBox.setHgrow(activitiesTab, Priority.ALWAYS);
+            mainPane.setId("mainSplitPane");
             mainPane.setOrientation(Orientation.VERTICAL);
             mainPane.setDividerPositions(0.8);
 
@@ -213,6 +219,9 @@ public class AppUi
             BorderPane.setMargin(createStatusBar(), new Insets(0, UiResources.GAP_PIXEL, 0, UiResources.GAP_PIXEL));
             pane.setBottom(createStatusBar());
 
+            state.uiState.register(daysTable);
+            state.uiState.register(activitiesTab);
+            state.uiState.register(mainPane);
             return pane;
         }
 

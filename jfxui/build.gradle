@@ -53,9 +53,11 @@ dependencies {
 
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    
     runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
     
-    testImplementation "javax.json.bind:javax.json.bind-api:1.0"
+    testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
     
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
