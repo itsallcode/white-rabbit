@@ -51,12 +51,14 @@ public class VacationReportViewer
         final TableView<VacationMonth> monthsTable = createMonthsTable();
 
         final SplitPane mainPane = new SplitPane(yearsTable, monthsTable);
+        mainPane.setId("vacationReportMainPane");
         mainPane.setOrientation(Orientation.VERTICAL);
         mainPane.setDividerPositions(0.2);
         final Node reportView = mainPane;
 
         reportWindow.show(reportView);
 
+        uiState.register(mainPane);
         uiState.register(yearsTable);
         uiState.register(monthsTable);
     }

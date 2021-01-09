@@ -195,10 +195,8 @@ public class AppUi
         private BorderPane createMainPane()
         {
             final TableView<DayRecordPropertyAdapter> daysTable = dayRecordTable.initTable();
-            state.uiState.register(daysTable);
             state.currentDateProperty.property().addListener(this::dateChanged);
             final TableView<ActivityPropertyAdapter> activitiesTab = activitiesTable.initTable();
-            state.uiState.register(activitiesTab);
             final Button addActivityButton = UiWidget.button("add-activity-button", "+", "Add activity",
                     e -> app.addActivity());
             final Button removeActivityButton = UiWidget.button("remove-activity-button", "-", "Remove activity",
@@ -209,6 +207,7 @@ public class AppUi
             final SplitPane mainPane = new SplitPane(daysTable,
                     new TitledPane("Activities", new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab)));
             HBox.setHgrow(activitiesTab, Priority.ALWAYS);
+            mainPane.setId("mainSplitPane");
             mainPane.setOrientation(Orientation.VERTICAL);
             mainPane.setDividerPositions(0.8);
 
@@ -220,6 +219,9 @@ public class AppUi
             BorderPane.setMargin(createStatusBar(), new Insets(0, UiResources.GAP_PIXEL, 0, UiResources.GAP_PIXEL));
             pane.setBottom(createStatusBar());
 
+            state.uiState.register(daysTable);
+            state.uiState.register(activitiesTab);
+            state.uiState.register(mainPane);
             return pane;
         }
 

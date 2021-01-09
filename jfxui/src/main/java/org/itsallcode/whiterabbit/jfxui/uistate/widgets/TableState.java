@@ -11,10 +11,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 @JsonbVisibility(FieldAccessStrategy.class)
-class TableState implements WidgetState<TableView<?>>
+public class TableState implements WidgetState<TableView<?>>
 {
     private final String tableId;
-    private List<ColumnState> columns;
+    List<ColumnState> columns;
+
+    public TableState()
+    {
+        this(null);
+    }
 
     TableState(String tableId)
     {
@@ -54,10 +59,15 @@ class TableState implements WidgetState<TableView<?>>
     }
 
     @JsonbVisibility(FieldAccessStrategy.class)
-    private static class ColumnState implements WidgetState<TableColumn<?, ?>>
+    public static class ColumnState implements WidgetState<TableColumn<?, ?>>
     {
-        private final String columnId;
-        private double width;
+        String columnId;
+        double width;
+
+        public ColumnState()
+        {
+            this(null);
+        }
 
         ColumnState(String columnId)
         {

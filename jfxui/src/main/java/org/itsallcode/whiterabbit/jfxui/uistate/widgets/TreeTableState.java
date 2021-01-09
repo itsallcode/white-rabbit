@@ -11,10 +11,15 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 
 @JsonbVisibility(FieldAccessStrategy.class)
-class TreeTableState implements WidgetState<TreeTableView<?>>
+public class TreeTableState implements WidgetState<TreeTableView<?>>
 {
     private final String treeTableId;
-    private List<TreeColumnState> columns;
+    List<TreeColumnState> columns;
+
+    public TreeTableState()
+    {
+        this(null);
+    }
 
     TreeTableState(String treeTableId)
     {
@@ -54,10 +59,15 @@ class TreeTableState implements WidgetState<TreeTableView<?>>
     }
 
     @JsonbVisibility(FieldAccessStrategy.class)
-    private static class TreeColumnState implements WidgetState<TreeTableColumn<?, ?>>
+    public static class TreeColumnState implements WidgetState<TreeTableColumn<?, ?>>
     {
-        private final String columnId;
-        private double width;
+        String columnId;
+        double width;
+
+        public TreeColumnState()
+        {
+            this(null);
+        }
 
         TreeColumnState(String columnId)
         {
