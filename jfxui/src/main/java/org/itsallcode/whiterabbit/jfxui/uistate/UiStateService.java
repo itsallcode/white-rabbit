@@ -83,6 +83,10 @@ public class UiStateService
         {
             throw new UncheckedIOException("Error writing ui state to " + config.getUiStatePath(), e);
         }
+        catch (final JsonbException e)
+        {
+            throw new IllegalStateException("Error serializing ui state", e);
+        }
     }
 
     public void register(String id, Stage node)

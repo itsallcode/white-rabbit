@@ -12,7 +12,7 @@ import javafx.beans.value.ObservableValue;
 public class DelayedPropertyListener
 {
     private static final Logger LOG = LogManager.getLogger(DelayedPropertyListener.class);
-    private static final Duration DELAY = Duration.ofMillis(500);
+    public static final Duration DELAY = Duration.ofMillis(500);
 
     private final SchedulingService schedulingService;
 

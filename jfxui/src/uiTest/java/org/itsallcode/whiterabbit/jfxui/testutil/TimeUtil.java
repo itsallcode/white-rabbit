@@ -1,20 +1,32 @@
 package org.itsallcode.whiterabbit.jfxui.testutil;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mockito.ArgumentCaptor;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
+import org.mockito.ArgumentCaptor;
 
 public class TimeUtil
 {
@@ -42,7 +54,17 @@ public class TimeUtil
                 .thenAnswer(invocation -> {
                     final Long delayMillis = invocation.getArgument(1, Long.class);
                     final Runnable runnable = invocation.getArgument(0, Runnable.class);
-                    LOG.trace("Mock scheduler called: {} -> {}", Duration.ofMillis(delayMillis), runnable);
+
+                    if (shouldRunExecutor(delayMillis.longValue(), runnable))
+                    {
+                        LOG.debug("Run real execution with delay {}ms of {}", delayMillis, runnable);
+                        runnable.run();
+                    }
+                    else
+                    {
+                        LOG.trace("Mock scheduler called: {} -> {}", Duration.ofMillis(delayMillis), runnable);
+                    }
+
                     return scheduledFutureMock;
                 });
 
@@ -50,6 +72,14 @@ public class TimeUtil
         when(clockMock.instant()).thenReturn(initialTime);
 
         return new TimeUtil(clockMock, executorServiceMock);
+    }
+
+    private static boolean shouldRunExecutor(long delayMillis, Runnable runnable)
+    {
+        System.out.println(runnable.toString());
+        return delayMillis == DelayedPropertyListener.DELAY.toMillis()
+                && runnable.toString()
+                        .startsWith("DelegatingErrorHandlingRunnable for " + DelayedPropertyListener.class.getName());
     }
 
     public LocalDate getCurrentDate()
