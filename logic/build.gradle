@@ -1,6 +1,6 @@
 
 dependencies {
-    implementation "javax.json.bind:javax.json.bind-api:1.0"
+    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     runtimeOnly "org.eclipse:yasson:${yassonVersion}"
     
     testImplementation "nl.jqno.equalsverifier:equalsverifier:3.5"
