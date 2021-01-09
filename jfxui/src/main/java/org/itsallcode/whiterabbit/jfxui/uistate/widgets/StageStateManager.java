@@ -14,7 +14,6 @@ class StageStateManager implements WidgetStateManager<Stage, StageStateModel>
 
     public StageStateManager(DelayedPropertyListener propertyListener)
     {
-        super();
         this.propertyListener = propertyListener;
     }
 

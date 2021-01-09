@@ -2,7 +2,6 @@ package org.itsallcode.whiterabbit.logic.service.scheduling;
 
 import java.time.Duration;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.itsallcode.whiterabbit.logic.service.ClockService;
@@ -24,10 +23,10 @@ public class SchedulingService implements AutoCloseable
         return new ReschedulingRunnable(command, trigger, executorService, clockService, errorHandler).schedule();
     }
 
-    public ScheduledFuture<?> schedule(Duration delay, Runnable command)
+    public void schedule(Duration delay, Runnable command)
     {
         final ErrorHandler errorHandler = new DefaultErrorHandler();
-        return executorService.schedule(new DelegatingErrorHandlingRunnable(command, errorHandler), delay.toMillis(),
+        executorService.schedule(new DelegatingErrorHandlingRunnable(command, errorHandler), delay.toMillis(),
                 TimeUnit.MILLISECONDS);
     }
 

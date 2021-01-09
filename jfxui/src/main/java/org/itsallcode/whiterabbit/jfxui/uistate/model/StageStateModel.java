@@ -5,6 +5,7 @@ import javax.json.bind.annotation.JsonbVisibility;
 import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
 
 @JsonbVisibility(FieldAccessStrategy.class)
+@SuppressWarnings("java:S1104") // Encapsulation not necessary for model
 public class StageStateModel
 {
     public String id;

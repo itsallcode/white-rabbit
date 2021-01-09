@@ -57,7 +57,7 @@ public class TimeUtil
 
                     if (shouldRunExecutor(delayMillis.longValue(), runnable))
                     {
-                        LOG.debug("Run real execution with delay {}ms of {}", delayMillis, runnable);
+                        LOG.trace("Run real execution: delay {}ms, runnable: {}", delayMillis, runnable);
                         runnable.run();
                     }
                     else

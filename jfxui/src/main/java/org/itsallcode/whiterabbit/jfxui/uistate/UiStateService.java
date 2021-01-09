@@ -65,7 +65,7 @@ public class UiStateService
             }
             catch (final IOException | JsonbException e)
             {
-                LOG.warn("Error loading ui-state from " + path + ": use default values", e);
+                LOG.warn("Error loading ui-state from {}: use default values", path, e);
             }
         }
         LOG.info("Using fresh ui-state");
