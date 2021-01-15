@@ -1,22 +1,28 @@
-apply plugin: 'base'
+plugins {
+    id 'base'
+}
 
 def jfxuiProject = project(':jfxui')
 def shadowJarTask = jfxuiProject.tasks['shadowJar']
 def props = loadProperties()
 
 task updateJarManifest(type: Jar, dependsOn: shadowJarTask, description: 'Update manifest', group: 'Build') {
+    def domain = props.get('domain')
+    def mainClass = jfxuiProject.mainClass
+    doFirst {
+        assert domain != null : "Please define 'domain' in ${projectDir}/webstart.properties. See ${projectDir}/README.md for details"
+        logger.info "Using domain '${domain}' in jar manifest"
+    }
     from(zipTree(shadowJarTask.outputs.files.singleFile)) {
         exclude('META-INF/MANIFEST.MF')
     }
-    def codeBaseUrl = "https://${props.get('domain', 'Please define "domain" in webstart.properties')}/"
-    def mainClass = jfxuiProject.mainClass
     manifest {
         attributes(
             'Main-Class': mainClass,
             'Application-Name': 'WhiteRabbit Time Recording',
             'Permissions': 'all-permissions',
             'Entry-Point': mainClass,
-            'Codebase': codeBaseUrl,
+            'Codebase': "https://${domain}/",
             'Trusted-Only': true,
             'Trusted-Library': true
         )
@@ -29,7 +35,7 @@ task signJar(dependsOn: updateJarManifest, description: 'Sign shadowJar', group:
     inputs.file(inputJar)
     outputs.file(signedJar)
     doLast {
-        assert props.get('keystoreFile') != null : "Please create and fill webstart.properties. See webstart/README.md for details"
+        assert props.get('keystoreFile') != null : "Please create and fill ${projectDir}/webstart.properties. See ${projectDir}/README.md for details"
         ant.signjar (
             jar: inputJar,
             signedjar: signedJar,

@@ -5,3 +5,9 @@ include 'textui'
 include 'jfxui'
 include 'webstart'
 include 'webstart-infrastructure'
+
+dependencyResolutionManagement {
+    repositories {
+        jcenter()
+    }
+}
