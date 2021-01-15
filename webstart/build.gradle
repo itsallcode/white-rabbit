@@ -1,4 +1,6 @@
-apply plugin: 'base'
+plugins {
+    id 'base'
+}
 
 def jfxuiProject = project(':jfxui')
 def shadowJarTask = jfxuiProject.tasks['shadowJar']
