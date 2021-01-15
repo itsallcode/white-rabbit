@@ -29,11 +29,11 @@ subprojects {
     apply plugin: "jacoco"
 
     version = getProjectVersion()
-    sourceCompatibility = 11
-    targetCompatibility = 11
 
-    repositories {
-        jcenter()
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(11)
+        }
     }
 
     dependencies {
