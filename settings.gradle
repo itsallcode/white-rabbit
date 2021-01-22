@@ -3,6 +3,8 @@ rootProject.name = 'white-rabbit'
 include 'logic'
 include 'textui'
 include 'jfxui'
+include 'plugin-api'
+include 'pmsmart-export-plugin'
 include 'webstart'
 include 'webstart-infrastructure'
 

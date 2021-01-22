@@ -21,8 +21,10 @@ def getProjectVersion() {
     return "dev-SNAPSHOT"
 }
 
+def nonJavaProjects = ['webstart-infrastructure', 'webstart']
+
 subprojects {
-    if(!['logic', 'textui', 'jfxui'].contains(project.name)) {
+    if(nonJavaProjects.contains(project.name)) {
         return
     }
     apply plugin: "java"
