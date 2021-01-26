@@ -7,4 +7,6 @@ public interface WhiteRabbitPlugin
     void init(PluginConfiguration config);
 
     Optional<ProjectReportExporter> projectReportExporter();
+
+    String getId();
 }

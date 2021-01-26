@@ -35,4 +35,6 @@ public interface Config
     {
         return getDataDir().resolve("ui-state.json");
     }
+
+    String getMandatoryValue(String key);
 }

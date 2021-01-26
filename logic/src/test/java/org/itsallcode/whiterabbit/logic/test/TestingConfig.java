@@ -56,6 +56,12 @@ public class TestingConfig implements Config
         return null;
     }
 
+    @Override
+    public String getMandatoryValue(String key)
+    {
+        return null;
+    }
+
     public static Builder builder()
     {
         return new Builder();

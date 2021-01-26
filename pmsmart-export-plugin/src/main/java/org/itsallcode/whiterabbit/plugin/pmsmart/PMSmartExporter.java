@@ -1,9 +1,11 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.time.Duration;
+import java.util.Map;
 
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
+import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
+import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.plugin.PluginConfiguration;
 import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
@@ -24,15 +26,30 @@ public class PMSmartExporter implements ProjectReportExporter
     public void export(ProjectReport report)
     {
         final Driver driver = new WebDriverFactory().createWebDriver();
-        final String url = config.getOption("pmsmart.baseurl");
+        final String url = config.getMandatoryValue("pmsmart.baseurl");
         driver.get(url + "/Pages/TimeTracking/TimeBookingWeek.aspx");
         final WeekViewPage weekViewPage = new WeekViewPage(driver);
         weekViewPage.assertOnPage();
-        for (int i = 1; i <= 31; i++)
+        final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
+
+        for (final Day day : report.days)
         {
-            weekViewPage.selectWeek(LocalDate.of(2021, 1, i));
+            weekViewPage.selectWeek(day.date);
+            for (final ProjectActivity project : day.projects)
+            {
+                weekViewPage.selectWeek(day.date);
+                final String costCarrier = project.getProject().getCostCarrier();
+                final ProjectRow projectRow = projects.get(costCarrier);
+                if (projectRow == null)
+                {
+                    throw new AssertionError("Project '" + costCarrier + "' not found as favorite");
+                }
+                final Duration workingTime = project.getWorkingTime();
+                if (!workingTime.isZero())
+                {
+                    projectRow.enterDuration(day.date, workingTime);
+                }
+            }
         }
-        final List<ProjectRow> projects = weekViewPage.getProjectTable().getRows();
-        System.out.println(projects);
     }
 }

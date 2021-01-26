@@ -58,13 +58,15 @@ public class AppService implements Closeable
 
     private final AutocompleteService autocompleteService;
 
+    private final PluginManager pluginManager;
+
     @SuppressWarnings("java:S107") // Large number of parameters is ok here.
     AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, ActivityService activityService,
             ProjectService projectService, AutocompleteService autocompleteService,
             AppPropertiesService appPropertiesService, VacationReportGenerator vacationReportGenerator,
-            ProjectReportGenerator projectReportGenerator)
+            ProjectReportGenerator projectReportGenerator, PluginManager pluginManager)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -79,6 +81,7 @@ public class AppService implements Closeable
         this.projectReportGenerator = projectReportGenerator;
         this.autocompleteService = autocompleteService;
         this.appPropertiesService = appPropertiesService;
+        this.pluginManager = pluginManager;
     }
 
     public static AppService create(final Config config)
@@ -102,10 +105,11 @@ public class AppService implements Closeable
         final ProjectReportGenerator projectReportGenerator = new ProjectReportGenerator(storage);
         final ActivityService activityService = new ActivityService(storage, autocompleteService, appServiceCallback);
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
+        final PluginManager pluginManager = PluginManager.create(config);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, activityService, projectService, autocompleteService,
                 new AppPropertiesService(), vacationReportGenerator,
-                projectReportGenerator);
+                projectReportGenerator, pluginManager);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -260,6 +264,11 @@ public class AppService implements Closeable
     public AutocompleteService autocomplete()
     {
         return autocompleteService;
+    }
+
+    public PluginManager pluginManager()
+    {
+        return pluginManager;
     }
 
     @Override

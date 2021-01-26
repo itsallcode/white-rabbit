@@ -1,11 +1,12 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart.web.page;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +17,6 @@ import org.openqa.selenium.By;
 public class ProjectTable
 {
     private static final Logger LOG = LogManager.getLogger(ProjectTable.class);
-    private static final String BACKSPACE_CHAR = "\u0008";
     private final Driver driver;
     private final Element table;
     private final WeekViewPage weekViewPage;
@@ -28,43 +28,38 @@ public class ProjectTable
         this.weekViewPage = weekViewPage;
     }
 
-    public List<ProjectRow> getRows()
+    public Map<String, ProjectRow> getProjects()
     {
         final List<Element> tableRows = table.findElements(By.xpath("./tbody/tr"));
-        final LocalDate firstWeekDay = weekViewPage.getSelectedWeekFirstDay();
-
-        final List<LocalDate> days = tableRows.get(1).findChildren().stream().skip(4).map(e -> e.getText().trim())
-                .map(label -> convertColumnLabelToDate(label, firstWeekDay)).collect(toList());
-        System.out.println(days);
-
-        return tableRows.stream()
-                .map(this::convert)
-                .filter(Objects::nonNull)
-                .collect(toList());
+        return convertRows(tableRows).stream()
+                .collect(toMap(ProjectRow::getProjectId, Function.identity()));
     }
 
-    private LocalDate convertColumnLabelToDate(String label, LocalDate firstWeekDay)
+    private List<ProjectRow> convertRows(final List<Element> tableRows)
     {
-        final String[] parts = label.split("[\\s,]");
-        final int day = Integer.parseInt(parts[2]);
-        if (firstWeekDay.getDayOfMonth() <= day)
+        final List<ProjectRow> projectList = new ArrayList<>();
+        for (int i = 0; i < tableRows.size(); i++)
         {
-            return firstWeekDay.withDayOfMonth(day);
+            final ProjectRow convertedRow = convert(i, tableRows.get(i));
+            if (convertedRow != null)
+            {
+                projectList.add(convertedRow);
+            }
         }
-        return firstWeekDay.withDayOfMonth(day).plusMonths(1);
+        return projectList;
     }
 
-    private ProjectRow convert(Element row)
+    private ProjectRow convert(int rowIndex, Element row)
     {
         LOG.info("Converting row {}", row);
-        final List<Element> columns = row.findElements(By.xpath("./td"));
+        final List<Element> cells = row.findElements(By.xpath("./td"));
 
-        if (columns.size() != 11)
+        if (cells.size() != 11)
         {
-            throw new AssertionError("Expected 11 columns but got " + columns.size());
+            throw new AssertionError("Expected 11 columns but got " + cells.size());
         }
 
-        final Optional<Element> firstColImage = columns.get(0).findOptionalElement(By.xpath("./img"));
+        final Optional<Element> firstColImage = cells.get(0).findOptionalElement(By.xpath("./img"));
         if (firstColImage.isEmpty())
         {
             LOG.trace("Skip row, now img");
@@ -78,10 +73,10 @@ public class ProjectTable
             return null;
         }
 
-        final Optional<String> projectId = columns.get(1).findOptionalElement(By.className("shortNameDiv"))
+        final Optional<String> projectId = cells.get(1).findOptionalElement(By.className("shortNameDiv"))
                 .map(Element::getText).filter(s -> !s.isBlank());
 
-        final Optional<String> activityId = columns.get(3).findOptionalElement(By.className("shortNameDiv"))
+        final Optional<String> activityId = cells.get(3).findOptionalElement(By.className("shortNameDiv"))
                 .map(Element::getText)
                 .filter(s -> !s.isBlank());
 
@@ -89,21 +84,15 @@ public class ProjectTable
         {
             throw new AssertionError("Both project and activity ids are empty");
         }
-        LOG.debug("Found project id {} / activity id {}", projectId, activityId);
+        if (activityId.isPresent() && projectId.isPresent())
+        {
+            throw new AssertionError("Both project and activity ids are present");
+        }
 
-        return new ProjectRow();
+        final String rowId = activityId.orElseGet(projectId::get);
+        LOG.debug("Found project {}", rowId);
+
+        return new ProjectRow(driver, rowId, rowIndex, weekViewPage);
     }
 
-    public void enter(String string)
-    {
-        final Element field = table
-                .findElement(By.id("MainContent_ASPxCpWbGrid_WeekBookingGrid_cell5_4_Row_2_Col_Monday_5_I"));
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(string);
-        field.sendKeys("\t");
-    }
 }

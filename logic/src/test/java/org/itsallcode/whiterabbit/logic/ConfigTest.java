@@ -70,5 +70,11 @@ class ConfigTest
         {
             return null;
         }
+
+        @Override
+        public String getMandatoryValue(String key)
+        {
+            return null;
+        }
     }
 }

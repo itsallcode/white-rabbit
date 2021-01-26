@@ -34,7 +34,7 @@ public class WeekViewPage implements Page
     {
         if (isDaySelected(day))
         {
-            LOG.debug("Week for day {} already selected", day);
+            LOG.trace("Week for day {} already selected", day);
             return;
         }
         LOG.debug("Selecting week for day {}...", day);
@@ -53,7 +53,7 @@ public class WeekViewPage implements Page
     {
         final LocalDate firstWeekDay = getSelectedWeekFirstDay();
         final int diff = Period.between(firstWeekDay, day).getDays();
-        return diff >= 0 && diff <= 7;
+        return diff >= 0 && diff < 7;
     }
 
     public ProjectTable getProjectTable()

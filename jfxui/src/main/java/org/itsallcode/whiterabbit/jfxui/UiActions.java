@@ -77,7 +77,8 @@ public final class UiActions
             return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService.formatter(), report).show();
+        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService.formatter(), appService.pluginManager(),
+                report).show();
     }
 
     private Stage getPrimaryStage()

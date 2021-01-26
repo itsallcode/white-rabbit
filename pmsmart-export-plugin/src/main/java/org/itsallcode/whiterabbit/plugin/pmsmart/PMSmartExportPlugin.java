@@ -21,4 +21,10 @@ public class PMSmartExportPlugin implements WhiteRabbitPlugin
     {
         return Optional.of(new PMSmartExporter(config));
     }
+
+    @Override
+    public String getId()
+    {
+        return "pmsmart";
+    }
 }

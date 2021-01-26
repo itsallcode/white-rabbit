@@ -16,6 +16,7 @@ import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
+import org.itsallcode.whiterabbit.logic.service.PluginManager;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
 import javafx.scene.control.TreeItem;
@@ -30,11 +31,13 @@ public class ProjectReportViewer
     private final FormatterService formatterService;
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
+    private final PluginManager pluginManager;
 
     public ProjectReportViewer(Stage primaryStage, UiStateService uiState, FormatterService formatterService,
-            ProjectReport report)
+            PluginManager pluginManager, ProjectReport report)
     {
         this.uiState = uiState;
+        this.pluginManager = pluginManager;
         this.reportWindow = new ReportWindow(primaryStage, uiState, "project-report", "Project Report");
         this.formatterService = formatterService;
         this.report = report;
@@ -43,8 +46,14 @@ public class ProjectReportViewer
     public void show()
     {
         final TreeTableView<ReportRow> treeTable = createTreeTable();
-        reportWindow.show(treeTable);
+        reportWindow.show(treeTable,
+                UiWidget.button("pmsmart-export-button", "Export to PMSmart", e -> pmSmartExport()));
         uiState.register(treeTable);
+    }
+
+    private void pmSmartExport()
+    {
+        pluginManager.getProjectReportExporter("pmsmart").export(report);
     }
 
     private TreeTableView<ReportRow> createTreeTable()

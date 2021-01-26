@@ -79,6 +79,8 @@ class AppServiceTest
     private AppPropertiesService appPropertiesServiceMock;
     @Mock
     private AutocompleteService autocompleteServiceMock;
+    @Mock
+    private PluginManager pluginManagerMock;
 
     private AppService appService;
 
@@ -91,7 +93,7 @@ class AppServiceTest
         appService = new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock, singleInstanceService, appServiceCallback, activityService, projectServiceMock,
                 autocompleteServiceMock, appPropertiesServiceMock, vacationReportGeneratorMock,
-                projectReportGeneratorMock);
+                projectReportGeneratorMock, pluginManagerMock);
         appService.setUpdateListener(updateListenerMock);
     }
 
