@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart.web;
 
+import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
 
@@ -10,41 +11,48 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class Driver
+public class Driver implements Closeable
 {
     private static final Logger LOG = LogManager.getLogger(Driver.class);
 
-    private final WebDriver driver;
+    private final WebDriver webDriver;
 
     public Driver(WebDriver driver)
     {
-        this.driver = driver;
+        this.webDriver = driver;
     }
 
     public void get(String url)
     {
-        driver.get(url);
+        webDriver.get(url);
     }
 
     public String getTitle()
     {
-        return driver.getTitle();
+        return webDriver.getTitle();
     }
 
     public Element findElement(By by)
     {
-        return Element.wrap(this, driver.findElement(by));
+        return Element.wrap(this, webDriver.findElement(by));
     }
 
     public List<Element> findElements(By by)
     {
-        return Element.wrap(this, driver.findElements(by));
+        return Element.wrap(this, webDriver.findElements(by));
     }
 
     public void waitUntil(Duration timeout, ExpectedCondition<?> condition)
     {
-        final WebDriverWait wait = new WebDriverWait(driver, timeout.toSeconds());
+        final WebDriverWait wait = new WebDriverWait(webDriver, timeout.toSeconds());
         wait.until(condition);
+    }
+
+    @Override
+    public void close()
+    {
+        LOG.debug("Close browser window");
+        webDriver.close();
     }
 
     public void sleep(Duration duration)

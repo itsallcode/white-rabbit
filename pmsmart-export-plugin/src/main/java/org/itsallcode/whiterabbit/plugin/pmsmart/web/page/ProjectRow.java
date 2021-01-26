@@ -33,10 +33,6 @@ public class ProjectRow
 
     public void enterDuration(LocalDate day, Duration duration)
     {
-        if (duration.isZero())
-        {
-            throw new IllegalStateException("Duration " + duration + " is zero for " + day);
-        }
         final int dayOffset = dayOffset(day);
         final String text = format(duration);
         LOG.info("Enter duration {} ({}) for project {} (row {}) day {}: day offset = {}", duration, text, projectId,

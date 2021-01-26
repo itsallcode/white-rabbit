@@ -32,11 +32,6 @@ public class WeekViewPage implements Page
 
     public void selectWeek(LocalDate day)
     {
-        if (isDaySelected(day))
-        {
-            LOG.trace("Week for day {} already selected", day);
-            return;
-        }
         LOG.debug("Selecting week for day {}...", day);
 
         driver.findElement(By.id("MainContent_EdtDate_B-1")).click();
@@ -49,7 +44,7 @@ public class WeekViewPage implements Page
         }
     }
 
-    private boolean isDaySelected(LocalDate day) throws AssertionError
+    public boolean isDaySelected(LocalDate day) throws AssertionError
     {
         final LocalDate firstWeekDay = getSelectedWeekFirstDay();
         final int diff = Period.between(firstWeekDay, day).getDays();
@@ -78,5 +73,11 @@ public class WeekViewPage implements Page
     private String getCurrentWeek()
     {
         return driver.findElement(By.id("MainContent_ASPxCPWeek_ASPxLblWeek")).waitUntilVisible().getText();
+    }
+
+    public void saveWeek()
+    {
+        LOG.info("Saving current week");
+        driver.findElement(By.id("MainContent_BTSubmit")).click();
     }
 }

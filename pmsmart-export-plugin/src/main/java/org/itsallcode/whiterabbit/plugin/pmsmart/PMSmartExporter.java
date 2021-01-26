@@ -1,12 +1,10 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
-import org.itsallcode.whiterabbit.plugin.PluginConfiguration;
 import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
@@ -15,41 +13,42 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 
 public class PMSmartExporter implements ProjectReportExporter
 {
-    private final PluginConfiguration config;
+    private final String baseUrl;
 
-    public PMSmartExporter(PluginConfiguration config)
+    public PMSmartExporter(String baseUrl)
     {
-        this.config = config;
+        this.baseUrl = baseUrl;
     }
 
     @Override
     public void export(ProjectReport report)
     {
-        final Driver driver = new WebDriverFactory().createWebDriver();
-        final String url = config.getMandatoryValue("pmsmart.baseurl");
-        driver.get(url + "/Pages/TimeTracking/TimeBookingWeek.aspx");
-        final WeekViewPage weekViewPage = new WeekViewPage(driver);
-        weekViewPage.assertOnPage();
-        final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
-
-        for (final Day day : report.days)
+        try (final Driver driver = new WebDriverFactory().createWebDriver())
         {
-            weekViewPage.selectWeek(day.date);
-            for (final ProjectActivity project : day.projects)
+            driver.get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
+            final WeekViewPage weekViewPage = new WeekViewPage(driver);
+            weekViewPage.assertOnPage();
+            final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
+
+            for (final Day day : report.days)
             {
-                weekViewPage.selectWeek(day.date);
-                final String costCarrier = project.getProject().getCostCarrier();
-                final ProjectRow projectRow = projects.get(costCarrier);
-                if (projectRow == null)
+                if (!weekViewPage.isDaySelected(day.date))
                 {
-                    throw new AssertionError("Project '" + costCarrier + "' not found as favorite");
+                    weekViewPage.saveWeek();
+                    weekViewPage.selectWeek(day.date);
                 }
-                final Duration workingTime = project.getWorkingTime();
-                if (!workingTime.isZero())
+                for (final ProjectActivity project : day.projects)
                 {
-                    projectRow.enterDuration(day.date, workingTime);
+                    final String costCarrier = project.getProject().getCostCarrier();
+                    final ProjectRow projectRow = projects.get(costCarrier);
+                    if (projectRow == null)
+                    {
+                        throw new AssertionError("Project '" + costCarrier + "' not found as favorite");
+                    }
+                    projectRow.enterDuration(day.date, project.getWorkingTime());
                 }
             }
+            weekViewPage.saveWeek();
         }
     }
 }
