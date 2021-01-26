@@ -45,6 +45,7 @@ configurations {
 
 dependencies {
     implementation project(':logic')
+    implementation project(':logic')
     ['win', 'mac', 'linux'].forEach {platform ->
         implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"

@@ -1,3 +1,6 @@
+plugins {
+    id 'java-library'
+}
 
 dependencies {
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
