@@ -72,7 +72,7 @@ public class ProjectRow
         {
             return offset;
         }
-        throw new AssertionError("Got invalid day offset " + offset);
+        throw new IllegalStateException("Got invalid day offset " + offset);
     }
 
     private void enterText(Element field, String text)

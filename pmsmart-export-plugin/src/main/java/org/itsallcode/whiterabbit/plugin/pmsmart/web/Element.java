@@ -66,7 +66,7 @@ public class Element
         final List<WebElement> elements = element.findElements(by);
         if (elements.size() > 1)
         {
-            throw new AssertionError("Expected 1 element but found " + elements.size());
+            throw new IllegalStateException("Expected 1 element but found " + elements.size());
         }
         if (elements.isEmpty())
         {
@@ -80,7 +80,7 @@ public class Element
         final List<Element> children = findChildren();
         if (children.size() != 1)
         {
-            throw new AssertionError("Expected 1 child but found " + children.size() + ": " + children);
+            throw new IllegalStateException("Expected 1 child but found " + children.size() + ": " + children);
         }
         return children.get(0);
     }

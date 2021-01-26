@@ -26,6 +26,11 @@ public class SchedulingService implements AutoCloseable
     public void schedule(Duration delay, Runnable command)
     {
         final ErrorHandler errorHandler = new DefaultErrorHandler();
+        schedule(delay, command, errorHandler);
+    }
+
+    public void schedule(Duration delay, Runnable command, final ErrorHandler errorHandler)
+    {
         executorService.schedule(new DelegatingErrorHandlingRunnable(command, errorHandler), delay.toMillis(),
                 TimeUnit.MILLISECONDS);
     }

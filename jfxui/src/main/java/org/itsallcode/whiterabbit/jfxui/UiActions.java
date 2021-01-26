@@ -15,6 +15,9 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 public final class UiActions
@@ -77,8 +80,15 @@ public final class UiActions
             return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService.formatter(), appService.pluginManager(),
-                report).show();
+        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService, this, report).show();
+    }
+
+    public void showErrorDialog(String message)
+    {
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+            alert.show();
+        });
     }
 
     private Stage getPrimaryStage()

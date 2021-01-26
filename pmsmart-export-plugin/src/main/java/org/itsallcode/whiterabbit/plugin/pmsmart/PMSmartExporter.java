@@ -43,7 +43,7 @@ public class PMSmartExporter implements ProjectReportExporter
                     final ProjectRow projectRow = projects.get(costCarrier);
                     if (projectRow == null)
                     {
-                        throw new AssertionError("Project '" + costCarrier + "' not found as favorite");
+                        throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
                     }
                     projectRow.enterDuration(day.date, project.getWorkingTime());
                 }

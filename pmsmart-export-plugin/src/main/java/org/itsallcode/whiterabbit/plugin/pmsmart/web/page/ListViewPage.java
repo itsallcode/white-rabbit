@@ -20,7 +20,7 @@ public class ListViewPage implements Page
     {
         if (!driver.getTitle().equals("Zeiterfassung - Listenansicht"))
         {
-            throw new AssertionError("Not on list view page");
+            throw new IllegalStateException("Not on list view page");
         }
     }
 
@@ -36,7 +36,7 @@ public class ListViewPage implements Page
         {
             return new CreateTimeBookingDialog(driver, popups.get(0));
         }
-        throw new AssertionError("Create time booking dialog not found");
+        throw new IllegalStateException("Create time booking dialog not found");
     }
 
     private List<Element> findPopups()

@@ -26,7 +26,7 @@ public class WeekViewPage implements Page
     {
         if (!driver.getTitle().equals("Zeiterfassung - Wochenansicht"))
         {
-            throw new AssertionError("Not on week view page");
+            throw new IllegalStateException("Not on week view page");
         }
     }
 
@@ -40,11 +40,11 @@ public class WeekViewPage implements Page
         dateSelector.select(day);
         if (!isDaySelected(day))
         {
-            throw new AssertionError("Expected day " + day + " selected");
+            throw new IllegalStateException("Expected day " + day + " selected");
         }
     }
 
-    public boolean isDaySelected(LocalDate day) throws AssertionError
+    public boolean isDaySelected(LocalDate day)
     {
         final LocalDate firstWeekDay = getSelectedWeekFirstDay();
         final int diff = Period.between(firstWeekDay, day).getDays();

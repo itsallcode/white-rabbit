@@ -56,7 +56,7 @@ public class ProjectTable
 
         if (cells.size() != 11)
         {
-            throw new AssertionError("Expected 11 columns but got " + cells.size());
+            throw new IllegalStateException("Expected 11 columns but got " + cells.size());
         }
 
         final Optional<Element> firstColImage = cells.get(0).findOptionalElement(By.xpath("./img"));
@@ -82,11 +82,11 @@ public class ProjectTable
 
         if (activityId.isEmpty() && projectId.isEmpty())
         {
-            throw new AssertionError("Both project and activity ids are empty");
+            throw new IllegalStateException("Both project and activity ids are empty");
         }
         if (activityId.isPresent() && projectId.isPresent())
         {
-            throw new AssertionError("Both project and activity ids are present");
+            throw new IllegalStateException("Both project and activity ids are present");
         }
 
         final String rowId = activityId.orElseGet(projectId::get);

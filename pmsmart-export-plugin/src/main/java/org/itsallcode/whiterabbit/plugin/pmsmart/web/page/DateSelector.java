@@ -37,7 +37,7 @@ public class DateSelector
         final YearMonth selectedMonth = YearMonth.parse(selectedMonthText, monthFormatter);
         if (!month.equals(selectedMonth))
         {
-            throw new AssertionError("Expected month " + month + " but " + selectedMonth + " is selected");
+            throw new IllegalStateException("Expected month " + month + " but " + selectedMonth + " is selected");
         }
     }
 }

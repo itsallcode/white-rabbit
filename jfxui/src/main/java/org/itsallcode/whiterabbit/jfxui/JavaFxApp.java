@@ -349,17 +349,9 @@ public class JavaFxApp extends Application
         @Override
         public void exceptionOccurred(Exception e)
         {
-            showErrorDialog(e);
-        }
-
-        private void showErrorDialog(Throwable e)
-        {
             final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
             LOG.error(message, e);
-            JavaFxUtil.runOnFxApplicationThread(() -> {
-                final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
-                alert.show();
-            });
+            actions.showErrorDialog(message);
         }
 
         @Override

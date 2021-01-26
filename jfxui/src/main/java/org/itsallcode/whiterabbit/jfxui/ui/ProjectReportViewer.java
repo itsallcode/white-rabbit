@@ -6,6 +6,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
@@ -15,9 +18,9 @@ import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
-import org.itsallcode.whiterabbit.logic.service.FormatterService;
-import org.itsallcode.whiterabbit.logic.service.PluginManager;
+import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
@@ -27,19 +30,21 @@ import javafx.util.converter.LocalDateStringConverter;
 
 public class ProjectReportViewer
 {
+    private static final Logger LOG = LogManager.getLogger(ProjectReportViewer.class);
+
     private final ProjectReport report;
-    private final FormatterService formatterService;
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
-    private final PluginManager pluginManager;
+    private final AppService appService;
+    private final UiActions uiActions;
 
-    public ProjectReportViewer(Stage primaryStage, UiStateService uiState, FormatterService formatterService,
-            PluginManager pluginManager, ProjectReport report)
+    public ProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService, UiActions uiActions,
+            ProjectReport report)
     {
         this.uiState = uiState;
-        this.pluginManager = pluginManager;
+        this.appService = appService;
+        this.uiActions = uiActions;
         this.reportWindow = new ReportWindow(primaryStage, uiState, "project-report", "Project Report");
-        this.formatterService = formatterService;
         this.report = report;
     }
 
@@ -47,13 +52,19 @@ public class ProjectReportViewer
     {
         final TreeTableView<ReportRow> treeTable = createTreeTable();
         reportWindow.show(treeTable,
-                UiWidget.button("pmsmart-export-button", "Export to PMSmart", e -> pmSmartExport()));
+                UiWidget.button("pmsmart-export-button", "Export to PMSmart", e -> exportReport("pmsmart")));
         uiState.register(treeTable);
     }
 
-    private void pmSmartExport()
+    private void exportReport(String pluginId)
     {
-        pluginManager.getProjectReportExporter("pmsmart").export(report);
+        final ProjectReportExporter projectReportExporter = appService.pluginManager()
+                .getProjectReportExporter(pluginId);
+        appService.scheduler().schedule(Duration.ZERO, () -> projectReportExporter.export(report),
+                throwable -> {
+                    LOG.error("Error exporting project report", throwable);
+                    uiActions.showErrorDialog(throwable.getMessage());
+                });
     }
 
     private TreeTableView<ReportRow> createTreeTable()
@@ -73,7 +84,7 @@ public class ProjectReportViewer
                 UiWidget.treeTableColumn("project", "Project", ReportRow::getProject,
                         new ProjectStringConverter(null)),
                 UiWidget.treeTableColumn("workingtime", "Working time",
-                        ReportRow::getWorkingTime, new DurationStringConverter(formatterService)),
+                        ReportRow::getWorkingTime, new DurationStringConverter(appService.formatter())),
                 UiWidget.treeTableColumn("comment", "Comment",
                         ReportRow::getComment, new DefaultStringConverter())));
 
