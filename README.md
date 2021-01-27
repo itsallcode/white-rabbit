@@ -34,6 +34,7 @@ A time recording tool
 * Keeps track of the overtime in previous months to speed up reports
 * Generates vacation report (no UI yet, written to standard out)
 * Detects when a second instance is started to avoid data corruption
+* Export project working times to pm-smart. See [below](#pmsmart) for details.
 * Assumptions:
   * Working time of 8h Monday to Friday
   * Mandatory break of 45 minutes after 6 hours of working
@@ -176,6 +177,24 @@ To use activity tracking, create file `projects.json` in your data directory wit
 #### Logging
 
 WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).
+
+#### <a name="pmsmart"></a>Using pm-smart
+
+Requirements for using pm-smart export:
+* Microsoft Edge browser with password-less access to pm-smart
+
+1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
+2. Add the base URL of your pm-smart server to the configuration file:
+
+    ```properties
+    pmsmart.baseurl = http://my-pmsmart.example.com
+    ```
+
+3. Start the export in WhiteRabbit:
+
+    1. Select the month that you want to export
+    2. Select menu Reports > Project report
+    3. Click the "Export to pmsmart" button
 
 ### <a name="running"></a>Running WhiteRabbit
 
