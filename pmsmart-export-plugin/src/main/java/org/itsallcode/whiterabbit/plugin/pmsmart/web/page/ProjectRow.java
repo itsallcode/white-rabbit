@@ -35,9 +35,8 @@ public class ProjectRow
     {
         final int dayOffset = dayOffset(day);
         final String text = format(duration);
-        LOG.info("Enter duration {} ({}) for project {} (row {}) day {}: day offset = {}", duration, text, projectId,
-                rowIndex,
-                dayOffset);
+        LOG.debug("Enter duration {} ({}) for project {} (row {}) day {}: day offset = {}", duration, text, projectId,
+                rowIndex, day, dayOffset);
         final Element dayCell = findCell(dayOffset);
         enterText(dayCell, text);
     }

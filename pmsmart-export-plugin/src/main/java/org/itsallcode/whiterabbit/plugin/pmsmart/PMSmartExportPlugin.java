@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.itsallcode.whiterabbit.plugin.PluginConfiguration;
 import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 import org.itsallcode.whiterabbit.plugin.WhiteRabbitPlugin;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 
 public class PMSmartExportPlugin implements WhiteRabbitPlugin
 {
@@ -19,7 +20,7 @@ public class PMSmartExportPlugin implements WhiteRabbitPlugin
     @Override
     public Optional<ProjectReportExporter> projectReportExporter()
     {
-        return Optional.of(new PMSmartExporter(config));
+        return Optional.of(new PMSmartExporter(config, new WebDriverFactory()));
     }
 
     @Override

@@ -16,17 +16,19 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 public class PMSmartExporter implements ProjectReportExporter
 {
     private final PluginConfiguration config;
+    private final WebDriverFactory webDriverFactory;
 
-    public PMSmartExporter(PluginConfiguration config)
+    public PMSmartExporter(PluginConfiguration config, WebDriverFactory webDriverFactory)
     {
         this.config = config;
+        this.webDriverFactory = webDriverFactory;
     }
 
     @Override
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
-        try (final Driver driver = new WebDriverFactory().createWebDriver())
+        try (final Driver driver = webDriverFactory.createWebDriver())
         {
             if (progressMonitor.isCanceled())
             {

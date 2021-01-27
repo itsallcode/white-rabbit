@@ -13,57 +13,57 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class Element
 {
     private final Driver driver;
-    private final WebElement element;
+    private final WebElement webElement;
 
     private Element(Driver driver, WebElement element)
     {
         this.driver = driver;
-        this.element = element;
+        this.webElement = element;
     }
 
     public void click()
     {
-        element.click();
+        webElement.click();
     }
 
     public void sendKeys(String text)
     {
-        element.sendKeys(text);
+        webElement.sendKeys(text);
     }
 
     public void clear()
     {
-        element.clear();
+        webElement.clear();
     }
 
     public String getTagName()
     {
-        return element.getTagName();
+        return webElement.getTagName();
     }
 
     public String getAttribute(String name)
     {
-        return element.getAttribute(name);
+        return webElement.getAttribute(name);
     }
 
     public String getText()
     {
-        return element.getText();
+        return webElement.getText();
     }
 
     public boolean isEnabled()
     {
-        return element.isEnabled();
+        return webElement.isEnabled();
     }
 
     public Element findElement(By by)
     {
-        return wrap(driver, element.findElement(by));
+        return wrap(driver, webElement.findElement(by));
     }
 
     public Optional<Element> findOptionalElement(By by)
     {
-        final List<WebElement> elements = element.findElements(by);
+        final List<WebElement> elements = webElement.findElements(by);
         if (elements.size() > 1)
         {
             throw new IllegalStateException("Expected 1 element but found " + elements.size());
@@ -92,13 +92,13 @@ public class Element
 
     public Element waitUntilVisible()
     {
-        driver.waitUntil(Duration.ofSeconds(1), ExpectedConditions.visibilityOf(element));
+        driver.waitUntil(Duration.ofSeconds(1), ExpectedConditions.visibilityOf(webElement));
         return this;
     }
 
     public List<Element> findElements(By by)
     {
-        return wrap(driver, element.findElements(by));
+        return wrap(driver, webElement.findElements(by));
     }
 
     static Element wrap(Driver driver, WebElement element)
@@ -114,6 +114,6 @@ public class Element
     @Override
     public String toString()
     {
-        return "Element [element=" + element + "]";
+        return "Element [element=" + webElement + "]";
     }
 }

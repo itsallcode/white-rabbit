@@ -11,6 +11,7 @@ public class DemoPlugin implements WhiteRabbitPlugin
     @Override
     public void init(PluginConfiguration config)
     {
+        // ignore
     }
 
     @Override

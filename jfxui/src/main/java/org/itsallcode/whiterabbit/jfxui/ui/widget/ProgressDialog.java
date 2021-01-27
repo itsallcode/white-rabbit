@@ -22,6 +22,11 @@ public class ProgressDialog
 {
     private static final Logger LOG = LogManager.getLogger(ProgressDialog.class);
 
+    private ProgressDialog()
+    {
+        // not instantiable
+    }
+
     public static DialogProgressMonitor show(Stage primaryStage, String windowTitle)
     {
         final Dialog dialog = new Dialog(primaryStage, windowTitle);

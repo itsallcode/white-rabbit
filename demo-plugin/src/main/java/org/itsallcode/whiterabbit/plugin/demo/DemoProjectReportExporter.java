@@ -10,6 +10,7 @@ import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 
 public class DemoProjectReportExporter implements ProjectReportExporter
 {
+    @SuppressWarnings("unused")
     @Override
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
@@ -32,8 +33,7 @@ public class DemoProjectReportExporter implements ProjectReportExporter
             progressMonitor.setTaskName("Exporting day " + day.date + "...");
 
             sleep(Duration.ofMillis(200));
-            for (@SuppressWarnings("unused")
-            final ProjectActivity project : day.projects)
+            for (final ProjectActivity project : day.projects)
             {
                 if (progressMonitor.isCanceled())
                 {
