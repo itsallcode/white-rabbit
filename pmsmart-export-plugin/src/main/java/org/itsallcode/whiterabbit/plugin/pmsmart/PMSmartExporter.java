@@ -5,6 +5,7 @@ import java.util.Map;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
+import org.itsallcode.whiterabbit.plugin.PluginConfiguration;
 import org.itsallcode.whiterabbit.plugin.ProgressMonitor;
 import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
@@ -14,11 +15,11 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 
 public class PMSmartExporter implements ProjectReportExporter
 {
-    private final String baseUrl;
+    private final PluginConfiguration config;
 
-    public PMSmartExporter(String baseUrl)
+    public PMSmartExporter(PluginConfiguration config)
     {
-        this.baseUrl = baseUrl;
+        this.config = config;
     }
 
     @Override
@@ -31,6 +32,7 @@ public class PMSmartExporter implements ProjectReportExporter
             {
                 return;
             }
+            final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");
             driver.get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
             final WeekViewPage weekViewPage = new WeekViewPage(driver);
             weekViewPage.assertOnPage();

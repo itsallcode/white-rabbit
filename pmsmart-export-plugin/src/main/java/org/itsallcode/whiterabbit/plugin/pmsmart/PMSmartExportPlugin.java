@@ -19,8 +19,7 @@ public class PMSmartExportPlugin implements WhiteRabbitPlugin
     @Override
     public Optional<ProjectReportExporter> projectReportExporter()
     {
-        final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");
-        return Optional.of(new PMSmartExporter(baseUrl));
+        return Optional.of(new PMSmartExporter(config));
     }
 
     @Override
