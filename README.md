@@ -180,8 +180,11 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
 #### <a name="pmsmart"></a>Using pm-smart
 
-Requirements for using pm-smart export:
+##### Requirements for using pm-smart export
+
 * Microsoft Edge browser with password-less access to pm-smart
+
+##### Setup and usage
 
 1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
 2. Add the base URL of your pm-smart server to the configuration file:
