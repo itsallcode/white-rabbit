@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -24,7 +25,15 @@ public class Driver implements Closeable
 
     public void get(String url)
     {
-        webDriver.get(url);
+        LOG.debug("Getting URL '{}'", url);
+        try
+        {
+            webDriver.get(url);
+        }
+        catch (final WebDriverException e)
+        {
+            throw new IllegalStateException("Error getting URL '" + url + "'", e);
+        }
     }
 
     public String getTitle()

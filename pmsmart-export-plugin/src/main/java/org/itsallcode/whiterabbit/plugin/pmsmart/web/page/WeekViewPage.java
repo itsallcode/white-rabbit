@@ -48,7 +48,12 @@ public class WeekViewPage implements Page
     {
         final LocalDate firstWeekDay = getSelectedWeekFirstDay();
         final int diff = Period.between(firstWeekDay, day).getDays();
-        return diff >= 0 && diff < 7;
+        final boolean daySelected = diff >= 0 && diff < 7;
+        if (!daySelected)
+        {
+            LOG.debug("Day {} is not selected. First week day: {}, difference: {}", day, firstWeekDay, diff);
+        }
+        return daySelected;
     }
 
     public ProjectTable getProjectTable()

@@ -12,6 +12,8 @@ import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressMonitor;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
@@ -38,9 +40,12 @@ public class ProjectReportViewer
     private final AppService appService;
     private final UiActions uiActions;
 
+    private final Stage primaryStage;
+
     public ProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService, UiActions uiActions,
             ProjectReport report)
     {
+        this.primaryStage = primaryStage;
         this.uiState = uiState;
         this.appService = appService;
         this.uiActions = uiActions;
@@ -60,8 +65,13 @@ public class ProjectReportViewer
     {
         final ProjectReportExporter projectReportExporter = appService.pluginManager()
                 .getProjectReportExporter(pluginId);
-        appService.scheduler().schedule(Duration.ZERO, () -> projectReportExporter.export(report),
+        final DialogProgressMonitor progressMonitor = ProgressDialog.show(primaryStage, "Exporting project report...");
+        appService.scheduler().schedule(Duration.ZERO, () -> {
+            projectReportExporter.export(report, progressMonitor);
+            progressMonitor.done();
+        },
                 throwable -> {
+                    progressMonitor.done();
                     LOG.error("Error exporting project report", throwable);
                     uiActions.showErrorDialog(throwable.getMessage());
                 });

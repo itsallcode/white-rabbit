@@ -5,6 +5,7 @@ import java.util.Map;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
+import org.itsallcode.whiterabbit.plugin.ProgressMonitor;
 import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
@@ -21,17 +22,29 @@ public class PMSmartExporter implements ProjectReportExporter
     }
 
     @Override
-    public void export(ProjectReport report)
+    public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
+        progressMonitor.setTaskName("Initializing...");
         try (final Driver driver = new WebDriverFactory().createWebDriver())
         {
+            if (progressMonitor.isCanceled())
+            {
+                return;
+            }
             driver.get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
             final WeekViewPage weekViewPage = new WeekViewPage(driver);
             weekViewPage.assertOnPage();
             final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
+            progressMonitor.beginTask("Initializing...", report.days.size());
             for (final Day day : report.days)
             {
+                if (progressMonitor.isCanceled())
+                {
+                    return;
+                }
+                progressMonitor.worked(1);
+                progressMonitor.setTaskName("Exporting day " + day.date + "...");
                 if (!weekViewPage.isDaySelected(day.date))
                 {
                     weekViewPage.saveWeek();
@@ -39,6 +52,10 @@ public class PMSmartExporter implements ProjectReportExporter
                 }
                 for (final ProjectActivity project : day.projects)
                 {
+                    if (progressMonitor.isCanceled())
+                    {
+                        return;
+                    }
                     final String costCarrier = project.getProject().getCostCarrier();
                     final ProjectRow projectRow = projects.get(costCarrier);
                     if (projectRow == null)
