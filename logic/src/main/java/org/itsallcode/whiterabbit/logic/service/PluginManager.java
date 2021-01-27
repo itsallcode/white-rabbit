@@ -1,7 +1,9 @@
 package org.itsallcode.whiterabbit.logic.service;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
@@ -40,6 +42,14 @@ public class PluginManager
         final WhiteRabbitPlugin plugin = provider.get();
         plugin.init(pluginConfig);
         return plugin;
+    }
+
+    public List<String> getProjectReportExporterPlugins()
+    {
+        return this.plugins.values().stream()
+                .filter(plugin -> plugin.projectReportExporter().isPresent())
+                .map(WhiteRabbitPlugin::getId)
+                .collect(toList());
     }
 
     public ProjectReportExporter getProjectReportExporter(String id)

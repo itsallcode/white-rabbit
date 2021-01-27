@@ -45,7 +45,6 @@ configurations {
 
 dependencies {
     implementation project(':logic')
-    implementation project(':pmsmart-export-plugin')
     ['win', 'mac', 'linux'].forEach {platform ->
         implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
@@ -56,6 +55,8 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     
+    runtimeOnly project(':demo-plugin')
+    runtimeOnly project(':pmsmart-export-plugin')
     runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
     
     testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"

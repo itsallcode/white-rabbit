@@ -24,6 +24,7 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
@@ -56,9 +57,16 @@ public class ProjectReportViewer
     public void show()
     {
         final TreeTableView<ReportRow> treeTable = createTreeTable();
-        reportWindow.show(treeTable,
-                UiWidget.button("pmsmart-export-button", "Export to PMSmart", e -> exportReport("pmsmart")));
+        final Node[] exportButtons = getExportButtons();
+        reportWindow.show(treeTable, exportButtons);
         uiState.register(treeTable);
+    }
+
+    private Node[] getExportButtons()
+    {
+        return appService.pluginManager().getProjectReportExporterPlugins().stream().map(pluginId -> UiWidget
+                .button(pluginId + "-export-button", "Export to " + pluginId, e -> exportReport(pluginId)))
+                .toArray(Node[]::new);
     }
 
     private void exportReport(String pluginId)
