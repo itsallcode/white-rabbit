@@ -11,6 +11,7 @@ shadowJar {
     archiveBaseName.set('white-rabbit-fx')
     archiveClassifier.set(null)
     archiveVersion.set(project.version)
+    mergeServiceFiles()
 }
 
 ext {
