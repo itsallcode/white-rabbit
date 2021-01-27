@@ -193,7 +193,8 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
     pmsmart.baseurl = http://my-pmsmart.example.com
     ```
 
-3. Start the export in WhiteRabbit:
+3. In pm-smart open the week view ("Wochenansicht") and add favorites for all projects you use. The export will only work for projects added as favorite.
+4. Start the export in WhiteRabbit:
 
     1. Select the month that you want to export
     2. Select menu Reports > Project report
