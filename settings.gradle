@@ -3,10 +3,13 @@ rootProject.name = 'white-rabbit'
 include 'logic'
 include 'textui'
 include 'jfxui'
-include 'demo-plugin'
-include 'pmsmart-export-plugin'
+
 include 'webstart'
 include 'webstart-infrastructure'
+
+include 'plugins:api'
+include 'plugins:demo'
+include 'plugins:pmsmart'
 
 dependencyResolutionManagement {
     repositories {

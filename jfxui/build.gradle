@@ -10,7 +10,7 @@ ext {
 shadowJar {
     archiveBaseName.set('white-rabbit-fx')
     archiveClassifier.set(null)
-    archiveVersion.set(project.version)
+    archiveVersion.set(project.version.toString())
     mergeServiceFiles()
 }
 
@@ -56,8 +56,8 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     
-    runtimeOnly project(':demo-plugin')
-    runtimeOnly project(':pmsmart-export-plugin')
+    runtimeOnly project(':plugins:demo')
+    runtimeOnly project(':plugins:pmsmart')
     runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
     
     testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"

@@ -28,13 +28,13 @@ public class PMSmartExporter implements ProjectReportExporter
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
+        final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");
         try (final Driver driver = webDriverFactory.createWebDriver())
         {
             if (progressMonitor.isCanceled())
             {
                 return;
             }
-            final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");
             driver.get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
             final WeekViewPage weekViewPage = new WeekViewPage(driver);
             weekViewPage.assertOnPage();
