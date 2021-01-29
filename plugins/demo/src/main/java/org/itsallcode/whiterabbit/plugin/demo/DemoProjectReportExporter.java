@@ -22,18 +22,18 @@ public class DemoProjectReportExporter implements ProjectReportExporter
 
         sleep(Duration.ofSeconds(2));
 
-        progressMonitor.beginTask("Initializing...", report.days.size());
-        for (final Day day : report.days)
+        progressMonitor.beginTask("Initializing...", report.getDays().size());
+        for (final Day day : report.getDays())
         {
             if (progressMonitor.isCanceled())
             {
                 return;
             }
             progressMonitor.worked(1);
-            progressMonitor.setTaskName("Exporting day " + day.date + "...");
+            progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
 
             sleep(Duration.ofMillis(200));
-            for (final ProjectActivity project : day.projects)
+            for (final ProjectActivity project : day.getProjects())
             {
                 if (progressMonitor.isCanceled())
                 {

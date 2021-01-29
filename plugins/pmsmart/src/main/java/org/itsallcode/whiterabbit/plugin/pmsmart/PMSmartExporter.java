@@ -40,21 +40,21 @@ public class PMSmartExporter implements ProjectReportExporter
             weekViewPage.assertOnPage();
             final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
-            progressMonitor.beginTask("Initializing...", report.days.size());
-            for (final Day day : report.days)
+            progressMonitor.beginTask("Initializing...", report.getDays().size());
+            for (final Day day : report.getDays())
             {
                 if (progressMonitor.isCanceled())
                 {
                     return;
                 }
                 progressMonitor.worked(1);
-                progressMonitor.setTaskName("Exporting day " + day.date + "...");
-                if (!weekViewPage.isDaySelected(day.date))
+                progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
+                if (!weekViewPage.isDaySelected(day.getDate()))
                 {
                     weekViewPage.saveWeek();
-                    weekViewPage.selectWeek(day.date);
+                    weekViewPage.selectWeek(day.getDate());
                 }
-                for (final ProjectActivity project : day.projects)
+                for (final ProjectActivity project : day.getProjects())
                 {
                     if (progressMonitor.isCanceled())
                     {
@@ -66,7 +66,7 @@ public class PMSmartExporter implements ProjectReportExporter
                     {
                         throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
                     }
-                    projectRow.enterDuration(day.date, project.getWorkingTime());
+                    projectRow.enterDuration(day.getDate(), project.getWorkingTime());
                 }
             }
             weekViewPage.saveWeek();

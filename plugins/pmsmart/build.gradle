@@ -1,5 +1,6 @@
 
 dependencies {
+    implementation project(':plugins:api')
     implementation project(':logic')
     
     def seleniumVersion = "3.141.59"

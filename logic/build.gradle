@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api project(':plugins:api')
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     runtimeOnly "org.eclipse:yasson:${yassonVersion}"
 }

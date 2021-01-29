@@ -89,7 +89,7 @@ public class ProjectReportViewer
     {
         final TreeItem<ReportRow> root = new TreeItem<>();
 
-        root.getChildren().addAll(report.days.stream()
+        root.getChildren().addAll(report.getDays().stream()
                 .map(this::createDayTreeItem)
                 .collect(toList()));
 
@@ -117,7 +117,7 @@ public class ProjectReportViewer
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);
         treeItem.getChildren().addAll(
-                day.projects.stream()
+                day.getProjects().stream()
                         .map(project -> new ReportRow(day, project))
                         .map(TreeItem::new)
                         .collect(toList()));
@@ -141,14 +141,14 @@ public class ProjectReportViewer
         {
             if (project == null)
             {
-                this.date = day.date;
-                this.dayType = day.type;
+                this.date = day.getDate();
+                this.dayType = day.getType();
                 this.project = null;
-                this.workingTime = day.projects.stream()
+                this.workingTime = day.getProjects().stream()
                         .map(ProjectActivity::getWorkingTime)
                         .reduce((a, b) -> a.plus(b))
                         .orElse(Duration.ZERO);
-                this.comment = day.comment;
+                this.comment = day.getComment();
             }
             else
             {

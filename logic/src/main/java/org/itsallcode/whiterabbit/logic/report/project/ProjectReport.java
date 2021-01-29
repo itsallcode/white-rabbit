@@ -10,8 +10,8 @@ import org.itsallcode.whiterabbit.logic.service.project.Project;
 
 public class ProjectReport
 {
-    public final YearMonth month;
-    public final List<Day> days;
+    private final YearMonth month;
+    private final List<Day> days;
 
     ProjectReport(YearMonth month, List<Day> days)
     {
@@ -19,12 +19,22 @@ public class ProjectReport
         this.days = days;
     }
 
+    public YearMonth getMonth()
+    {
+        return month;
+    }
+
+    public List<Day> getDays()
+    {
+        return days;
+    }
+
     public static class Day
     {
-        public final LocalDate date;
-        public final DayType type;
-        public final String comment;
-        public final List<ProjectActivity> projects;
+        private final LocalDate date;
+        private final DayType type;
+        private final String comment;
+        private final List<ProjectActivity> projects;
 
         Day(LocalDate date, DayType type, String comment, List<ProjectActivity> projects)
         {
@@ -32,6 +42,26 @@ public class ProjectReport
             this.type = type;
             this.comment = comment;
             this.projects = projects;
+        }
+
+        public LocalDate getDate()
+        {
+            return date;
+        }
+
+        public DayType getType()
+        {
+            return type;
+        }
+
+        public String getComment()
+        {
+            return comment;
+        }
+
+        public List<ProjectActivity> getProjects()
+        {
+            return projects;
         }
     }
 
