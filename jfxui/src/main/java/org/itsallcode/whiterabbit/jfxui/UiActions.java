@@ -60,6 +60,16 @@ public final class UiActions
         openFileWithDefaultProgram(config.getDataDir());
     }
 
+    public void openLogDir()
+    {
+        openFileWithDefaultProgram(config.getLogDir());
+    }
+
+    public void openPluginDir()
+    {
+        openFileWithDefaultProgram(config.getPluginDir());
+    }
+
     private void openFileWithDefaultProgram(Path file)
     {
         desktopService.open(file);

@@ -26,6 +26,11 @@ public interface Config
 
     Path getUserDir();
 
+    default Path getLogDir()
+    {
+        return getUserDir().resolve("logs");
+    }
+
     default Path getPluginDir()
     {
         return getUserDir().resolve("plugins");
