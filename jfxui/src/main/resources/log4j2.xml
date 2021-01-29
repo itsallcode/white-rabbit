@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="debug">
+<Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout charset="UTF-8" noConsoleNoAnsi="true"
@@ -21,9 +21,10 @@
 
 
     <Loggers>
-        <Root level="debug">
+        <Root level="INFO">
             <AppenderRef ref="Console" />
             <AppenderRef ref="File" />
         </Root>
+        <Logger level="DEBUG" name="org.itsallcode" />
     </Loggers>
 </Configuration>
