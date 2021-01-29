@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.WhiteRabbitPlugin;
+import org.itsallcode.whiterabbit.api.Plugin;
 
-public class DemoPlugin implements WhiteRabbitPlugin
+public class DemoPlugin implements Plugin
 {
     @Override
     public void init(PluginConfiguration config)

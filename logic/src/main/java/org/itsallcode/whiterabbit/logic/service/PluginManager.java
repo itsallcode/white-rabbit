@@ -13,15 +13,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.WhiteRabbitPlugin;
+import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.logic.Config;
 
 public class PluginManager
 {
     private static final Logger LOG = LogManager.getLogger(PluginManager.class);
-    private final Map<String, WhiteRabbitPlugin> plugins;
+    private final Map<String, Plugin> plugins;
 
-    public PluginManager(Map<String, WhiteRabbitPlugin> plugins)
+    public PluginManager(Map<String, Plugin> plugins)
     {
         this.plugins = plugins;
     }
@@ -29,17 +29,17 @@ public class PluginManager
     public static PluginManager create(Config config)
     {
         final PluginConfiguration pluginConfig = new PluginConfigImpl(config);
-        final ServiceLoader<WhiteRabbitPlugin> serviceLoader = ServiceLoader.load(WhiteRabbitPlugin.class);
-        final Map<String, WhiteRabbitPlugin> plugins = serviceLoader.stream()
+        final ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class);
+        final Map<String, Plugin> plugins = serviceLoader.stream()
                 .map(provider -> loadPlugin(pluginConfig, provider))
-                .collect(toMap(WhiteRabbitPlugin::getId, Function.identity()));
+                .collect(toMap(Plugin::getId, Function.identity()));
         return new PluginManager(plugins);
     }
 
-    private static WhiteRabbitPlugin loadPlugin(PluginConfiguration pluginConfig, Provider<WhiteRabbitPlugin> provider)
+    private static Plugin loadPlugin(PluginConfiguration pluginConfig, Provider<Plugin> provider)
     {
         LOG.info("Loading plugin {}", provider.type());
-        final WhiteRabbitPlugin plugin = provider.get();
+        final Plugin plugin = provider.get();
         plugin.init(pluginConfig);
         return plugin;
     }
@@ -48,7 +48,7 @@ public class PluginManager
     {
         return this.plugins.values().stream()
                 .filter(plugin -> plugin.projectReportExporter().isPresent())
-                .map(WhiteRabbitPlugin::getId)
+                .map(Plugin::getId)
                 .collect(toList());
     }
 
@@ -59,9 +59,9 @@ public class PluginManager
                         () -> new IllegalStateException("Plugin " + id + " does not support project report exporter"));
     }
 
-    private WhiteRabbitPlugin getPlugin(String id)
+    private Plugin getPlugin(String id)
     {
-        final WhiteRabbitPlugin plugin = plugins.get(id);
+        final Plugin plugin = plugins.get(id);
         if (plugin == null)
         {
             throw new IllegalStateException("Plugin '" + id + "' not found. Available plugins: " + plugins.keySet());

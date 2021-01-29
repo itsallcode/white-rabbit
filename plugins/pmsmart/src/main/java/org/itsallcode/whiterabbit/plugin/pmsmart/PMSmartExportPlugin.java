@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.WhiteRabbitPlugin;
+import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 
-public class PMSmartExportPlugin implements WhiteRabbitPlugin
+public class PMSmartExportPlugin implements Plugin
 {
     private PluginConfiguration config;
 
