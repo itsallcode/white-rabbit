@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ProjectReportWindow;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -43,6 +44,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
         report.closeViaEscKey();
     }
 
+    @Disabled("Plugins not loaded by default")
     @Test
     void exportButtonsFromPluginsAvailable()
     {
