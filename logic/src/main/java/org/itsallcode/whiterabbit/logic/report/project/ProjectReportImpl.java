@@ -6,17 +6,17 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.api.model.IProjectReport;
-import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
-import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
-public class ProjectReport implements IProjectReport
+public class ProjectReportImpl implements ProjectReport
 {
     private final YearMonth month;
-    private final List<IProjectReportDay> days;
+    private final List<ProjectReportDay> days;
 
-    ProjectReport(YearMonth month, List<IProjectReportDay> days)
+    ProjectReportImpl(YearMonth month, List<ProjectReportDay> days)
     {
         this.month = month;
         this.days = days;
@@ -29,19 +29,19 @@ public class ProjectReport implements IProjectReport
     }
 
     @Override
-    public List<IProjectReportDay> getDays()
+    public List<ProjectReportDay> getDays()
     {
         return days;
     }
 
-    public static class Day implements IProjectReportDay
+    public static class DayImpl implements ProjectReportDay
     {
         private final LocalDate date;
         private final DayType type;
         private final String comment;
-        private final List<IProjectReportActivity> projects;
+        private final List<ProjectReportActivity> projects;
 
-        Day(LocalDate date, DayType type, String comment, List<IProjectReportActivity> projects)
+        DayImpl(LocalDate date, DayType type, String comment, List<ProjectReportActivity> projects)
         {
             this.date = date;
             this.type = type;
@@ -68,19 +68,19 @@ public class ProjectReport implements IProjectReport
         }
 
         @Override
-        public List<IProjectReportActivity> getProjects()
+        public List<ProjectReportActivity> getProjects()
         {
             return projects;
         }
     }
 
-    public static class ProjectActivity implements IProjectReportActivity
+    public static class ProjectActivityImpl implements ProjectReportActivity
     {
-        private final Project project;
+        private final ProjectImpl project;
         private final Duration workingTime;
         private final String comment;
 
-        public ProjectActivity(Project project, Duration workingTime, String comment)
+        public ProjectActivityImpl(ProjectImpl project, Duration workingTime, String comment)
         {
             this.project = project;
             this.workingTime = workingTime;
@@ -88,7 +88,7 @@ public class ProjectReport implements IProjectReport
         }
 
         @Override
-        public Project getProject()
+        public ProjectImpl getProject()
         {
             return project;
         }

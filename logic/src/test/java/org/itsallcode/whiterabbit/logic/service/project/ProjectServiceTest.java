@@ -14,7 +14,7 @@ class ProjectServiceTest
     @Test
     void doesNotFailWhenConfigFileMissing()
     {
-        final Collection<Project> availableProjects = create(Paths.get("no-such-dir"))
+        final Collection<ProjectImpl> availableProjects = create(Paths.get("no-such-dir"))
                 .getAvailableProjects();
         assertThat(availableProjects).isEmpty();
     }
@@ -22,10 +22,10 @@ class ProjectServiceTest
     @Test
     void loadsProjects()
     {
-        final Collection<Project> availableProjects = create(Paths.get("src/test/resources/projects"))
+        final Collection<ProjectImpl> availableProjects = create(Paths.get("src/test/resources/projects"))
                 .getAvailableProjects();
         assertThat(availableProjects).hasSize(4)
-                .extracting(Project::getProjectId).containsExactly("p1", "p2", "general", "training");
+                .extracting(ProjectImpl::getProjectId).containsExactly("p1", "p2", "general", "training");
     }
 
     private ProjectService create(Path dataDir)

@@ -1,8 +1,8 @@
 package org.itsallcode.whiterabbit.api;
 
-import org.itsallcode.whiterabbit.api.model.IProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
 
 public interface ProjectReportExporter
 {
-    void export(IProjectReport report, ProgressMonitor progressMonitor);
+    void export(ProjectReport report, ProgressMonitor progressMonitor);
 }

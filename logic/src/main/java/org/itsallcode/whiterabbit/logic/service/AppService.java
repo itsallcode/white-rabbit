@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.api.model.IProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -236,7 +236,7 @@ public class AppService implements Closeable
         return vacationReportGenerator.generateReport();
     }
 
-    public IProjectReport generateProjectReport(YearMonth month)
+    public ProjectReport generateProjectReport(YearMonth month)
     {
         return projectReportGenerator.generateReport(month);
     }

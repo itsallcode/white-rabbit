@@ -4,15 +4,15 @@ import java.time.Duration;
 
 import org.itsallcode.whiterabbit.api.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.model.IProjectReport;
-import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
-import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 
 public class DemoProjectReportExporter implements ProjectReportExporter
 {
     @SuppressWarnings("unused")
     @Override
-    public void export(IProjectReport report, ProgressMonitor progressMonitor)
+    public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
         if (progressMonitor.isCanceled())
@@ -23,7 +23,7 @@ public class DemoProjectReportExporter implements ProjectReportExporter
         sleep(Duration.ofSeconds(2));
 
         progressMonitor.beginTask("Initializing...", report.getDays().size());
-        for (final IProjectReportDay day : report.getDays())
+        for (final ProjectReportDay day : report.getDays())
         {
             if (progressMonitor.isCanceled())
             {
@@ -33,7 +33,7 @@ public class DemoProjectReportExporter implements ProjectReportExporter
             progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
 
             sleep(Duration.ofMillis(200));
-            for (final IProjectReportActivity project : day.getProjects())
+            for (final ProjectReportActivity project : day.getProjects())
             {
                 if (progressMonitor.isCanceled())
                 {

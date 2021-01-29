@@ -19,7 +19,7 @@ import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayActivities;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
 
 public class AutocompleteService
@@ -80,18 +80,18 @@ public class AutocompleteService
         return storage.getLatestDays(maxAge);
     }
 
-    public Optional<Project> getSuggestedProject()
+    public Optional<ProjectImpl> getSuggestedProject()
     {
-        final List<Project> projects = getActivities().map(Activity::getProject)
+        final List<ProjectImpl> projects = getActivities().map(Activity::getProject)
                 .filter(Objects::nonNull)
                 .collect(toList());
-        final Map<String, List<Project>> groupedProjects = projects.stream()
+        final Map<String, List<ProjectImpl>> groupedProjects = projects.stream()
                 .filter(Objects::nonNull)
-                .collect(groupingBy(Project::getProjectId));
+                .collect(groupingBy(ProjectImpl::getProjectId));
         final Map<String, Long> frequencyMap = projects.stream()
-                .map(Project::getProjectId)
+                .map(ProjectImpl::getProjectId)
                 .collect(groupingBy(identity(), counting()));
-        final Optional<Project> mostFrequentlyUsedProject = frequencyMap
+        final Optional<ProjectImpl> mostFrequentlyUsedProject = frequencyMap
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)

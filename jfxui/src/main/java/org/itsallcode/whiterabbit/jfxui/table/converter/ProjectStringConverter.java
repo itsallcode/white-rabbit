@@ -1,11 +1,11 @@
 package org.itsallcode.whiterabbit.jfxui.table.converter;
 
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 import javafx.util.StringConverter;
 
-public class ProjectStringConverter extends StringConverter<Project>
+public class ProjectStringConverter extends StringConverter<ProjectImpl>
 {
     private final ProjectService projectService;
 
@@ -15,13 +15,13 @@ public class ProjectStringConverter extends StringConverter<Project>
     }
 
     @Override
-    public String toString(Project object)
+    public String toString(ProjectImpl object)
     {
         return object != null ? object.getLabel() : null;
     }
 
     @Override
-    public Project fromString(String label)
+    public ProjectImpl fromString(String label)
     {
         return projectService.getProjectByLabel(label).orElse(null);
     }

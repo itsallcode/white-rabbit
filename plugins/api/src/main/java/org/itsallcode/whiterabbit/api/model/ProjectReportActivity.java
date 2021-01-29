@@ -2,9 +2,9 @@ package org.itsallcode.whiterabbit.api.model;
 
 import java.time.Duration;
 
-public interface IProjectReportActivity
+public interface ProjectReportActivity
 {
-    IProject getProject();
+    Project getProject();
 
     Duration getWorkingTime();
 

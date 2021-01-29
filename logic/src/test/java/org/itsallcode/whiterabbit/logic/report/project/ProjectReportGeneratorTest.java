@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
-import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
+import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayActivities;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ class ProjectReportGeneratorTest
     private static final YearMonth MONTH = YearMonth.of(2020, Month.DECEMBER);
     private static final LocalDate DATE1 = MONTH.atDay(1);
     private static final LocalDate DATE2 = MONTH.atDay(2);
-    private static final Project PROJECT1 = new Project("p1", "Project 1", "P01");
-    private static final Project PROJECT2 = new Project("p2", "Project 2", "P02");
+    private static final ProjectImpl PROJECT1 = new ProjectImpl("p1", "Project 1", "P01");
+    private static final ProjectImpl PROJECT2 = new ProjectImpl("p2", "Project 2", "P02");
 
     @Mock
     Storage storageMock;
@@ -76,7 +76,7 @@ class ProjectReportGeneratorTest
     {
         simulateDays(day(DATE1, DayType.WORK));
 
-        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         assertThat(days).hasSize(1);
         assertThat(days.get(0).getDate()).isEqualTo(DATE1);
         assertThat(days.get(0).getType()).isEqualTo(DayType.WORK);
@@ -88,8 +88,8 @@ class ProjectReportGeneratorTest
     {
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2))));
 
-        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<IProjectReportActivity> projects = days.get(0).getProjects();
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
@@ -108,8 +108,8 @@ class ProjectReportGeneratorTest
     {
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, null)));
 
-        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<IProjectReportActivity> projects = days.get(0).getProjects();
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).isZero();
@@ -122,8 +122,8 @@ class ProjectReportGeneratorTest
                 activity(PROJECT1, Duration.ofHours(2)),
                 activity(PROJECT2, Duration.ofHours(3))));
 
-        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<IProjectReportActivity> projects = days.get(0).getProjects();
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(2);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
@@ -138,8 +138,8 @@ class ProjectReportGeneratorTest
                 activity(PROJECT1, Duration.ofHours(2)),
                 activity(PROJECT1, Duration.ofHours(3))));
 
-        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<IProjectReportActivity> projects = days.get(0).getProjects();
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(5);
@@ -151,14 +151,14 @@ class ProjectReportGeneratorTest
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2))),
                 day(DATE2, DayType.WORK, activity(PROJECT1, Duration.ofHours(3))));
 
-        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         assertThat(days).hasSize(2);
         assertThat(days.get(0).getDate()).isEqualTo(DATE1);
         assertThat(days.get(0).getType()).isEqualTo(DayType.WORK);
         assertThat(days.get(1).getDate()).isEqualTo(DATE2);
         assertThat(days.get(1).getType()).isEqualTo(DayType.WORK);
 
-        List<IProjectReportActivity> projects = days.get(0).getProjects();
+        List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
@@ -169,7 +169,7 @@ class ProjectReportGeneratorTest
         assertThat(projects.get(0).getWorkingTime()).hasHours(3);
     }
 
-    private Activity activity(Project project, Duration duration)
+    private Activity activity(ProjectImpl project, Duration duration)
     {
         final Activity activityMock = mock(Activity.class);
         when(activityMock.getProject()).thenReturn(project);

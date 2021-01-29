@@ -5,9 +5,9 @@ import java.util.Map;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.model.IProjectReport;
-import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
-import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.ProjectRow;
@@ -25,7 +25,7 @@ public class PMSmartExporter implements ProjectReportExporter
     }
 
     @Override
-    public void export(IProjectReport report, ProgressMonitor progressMonitor)
+    public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
         final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");
@@ -41,7 +41,7 @@ public class PMSmartExporter implements ProjectReportExporter
             final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
             progressMonitor.beginTask("Initializing...", report.getDays().size());
-            for (final IProjectReportDay day : report.getDays())
+            for (final ProjectReportDay day : report.getDays())
             {
                 if (progressMonitor.isCanceled())
                 {
@@ -54,7 +54,7 @@ public class PMSmartExporter implements ProjectReportExporter
                     weekViewPage.saveWeek();
                     weekViewPage.selectWeek(day.getDate());
                 }
-                for (final IProjectReportActivity project : day.getProjects())
+                for (final ProjectReportActivity project : day.getProjects())
                 {
                     if (progressMonitor.isCanceled())
                     {

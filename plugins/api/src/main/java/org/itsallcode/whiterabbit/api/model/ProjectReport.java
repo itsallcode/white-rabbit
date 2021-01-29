@@ -3,9 +3,9 @@ package org.itsallcode.whiterabbit.api.model;
 import java.time.YearMonth;
 import java.util.List;
 
-public interface IProjectReport
+public interface ProjectReport
 {
     YearMonth getMonth();
 
-    List<IProjectReportDay> getDays();
+    List<ProjectReportDay> getDays();
 }

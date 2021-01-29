@@ -3,7 +3,7 @@ package org.itsallcode.whiterabbit.api.model;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IProjectReportDay
+public interface ProjectReportDay
 {
     LocalDate getDate();
 
@@ -11,5 +11,5 @@ public interface IProjectReportDay
 
     String getComment();
 
-    List<IProjectReportActivity> getProjects();
+    List<ProjectReportActivity> getProjects();
 }

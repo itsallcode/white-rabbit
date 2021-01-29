@@ -2,11 +2,11 @@ package org.itsallcode.whiterabbit.jfxui.testutil;
 
 import java.time.Duration;
 
-import org.itsallcode.whiterabbit.api.model.IProject;
+import org.itsallcode.whiterabbit.api.model.Project;
 
 public class ActivitiesTableExpectedRow implements TableRowExpectedContent
 {
-    private final IProject project;
+    private final Project project;
     private final Duration duration;
     private final boolean remainder;
     private final String comment;
@@ -42,7 +42,7 @@ public class ActivitiesTableExpectedRow implements TableRowExpectedContent
 
     public static final class Builder
     {
-        private IProject project;
+        private Project project;
         private Duration duration;
         private boolean remainder;
         private String comment;
@@ -59,7 +59,7 @@ public class ActivitiesTableExpectedRow implements TableRowExpectedContent
             this.comment = activitiesTableExpectedRow.comment;
         }
 
-        public Builder withProject(IProject project)
+        public Builder withProject(Project project)
         {
             this.project = project;
             return this;

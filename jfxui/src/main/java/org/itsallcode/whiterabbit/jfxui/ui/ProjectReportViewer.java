@@ -10,9 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.api.model.IProjectReport;
-import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
-import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
@@ -22,7 +22,7 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressM
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.service.AppService;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
@@ -35,7 +35,7 @@ public class ProjectReportViewer
 {
     private static final Logger LOG = LogManager.getLogger(ProjectReportViewer.class);
 
-    private final IProjectReport report;
+    private final ProjectReport report;
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
     private final AppService appService;
@@ -44,7 +44,7 @@ public class ProjectReportViewer
     private final Stage primaryStage;
 
     public ProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService, UiActions uiActions,
-            IProjectReport report)
+            ProjectReport report)
     {
         this.primaryStage = primaryStage;
         this.uiState = uiState;
@@ -112,7 +112,7 @@ public class ProjectReportViewer
         return treeTable;
     }
 
-    private TreeItem<ReportRow> createDayTreeItem(IProjectReportDay day)
+    private TreeItem<ReportRow> createDayTreeItem(ProjectReportDay day)
     {
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);
@@ -128,16 +128,16 @@ public class ProjectReportViewer
     {
         private final LocalDate date;
         private final DayType dayType;
-        private final Project project;
+        private final ProjectImpl project;
         private final Duration workingTime;
         private final String comment;
 
-        private ReportRow(IProjectReportDay day)
+        private ReportRow(ProjectReportDay day)
         {
             this(day, null);
         }
 
-        private ReportRow(IProjectReportDay day, IProjectReportActivity project)
+        private ReportRow(ProjectReportDay day, ProjectReportActivity project)
         {
             if (project == null)
             {
@@ -145,7 +145,7 @@ public class ProjectReportViewer
                 this.dayType = day.getType();
                 this.project = null;
                 this.workingTime = day.getProjects().stream()
-                        .map(IProjectReportActivity::getWorkingTime)
+                        .map(ProjectReportActivity::getWorkingTime)
                         .reduce((a, b) -> a.plus(b))
                         .orElse(Duration.ZERO);
                 this.comment = day.getComment();
@@ -154,7 +154,7 @@ public class ProjectReportViewer
             {
                 this.date = null;
                 this.dayType = null;
-                this.project = (Project) project.getProject();
+                this.project = (ProjectImpl) project.getProject();
                 this.workingTime = project.getWorkingTime();
                 this.comment = project.getComment();
             }
@@ -170,7 +170,7 @@ public class ProjectReportViewer
             return dayType;
         }
 
-        public Project getProject()
+        public ProjectImpl getProject()
         {
             return project;
         }

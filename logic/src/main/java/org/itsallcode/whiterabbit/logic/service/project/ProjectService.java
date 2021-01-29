@@ -28,8 +28,8 @@ public class ProjectService
 
     private final Jsonb jsonb;
 
-    private final Map<String, Project> projectsById;
-    private final Map<String, Project> projectsByLabel;
+    private final Map<String, ProjectImpl> projectsById;
+    private final Map<String, ProjectImpl> projectsByLabel;
 
     public ProjectService(Config config)
     {
@@ -43,9 +43,9 @@ public class ProjectService
         final Path projectConfigFile = config.getProjectFile();
         if (Files.exists(projectConfigFile))
         {
-            final List<Project> allProjects = loadAvailableProjects(projectConfigFile);
-            projectsById = groupBy(allProjects, Project::getProjectId);
-            projectsByLabel = groupBy(allProjects, Project::getLabel);
+            final List<ProjectImpl> allProjects = loadAvailableProjects(projectConfigFile);
+            projectsById = groupBy(allProjects, ProjectImpl::getProjectId);
+            projectsByLabel = groupBy(allProjects, ProjectImpl::getLabel);
         }
         else
         {
@@ -55,31 +55,31 @@ public class ProjectService
         }
     }
 
-    private LinkedHashMap<String, Project> groupBy(final List<Project> allProjects,
-            Function<Project, String> keyMapper)
+    private LinkedHashMap<String, ProjectImpl> groupBy(final List<ProjectImpl> allProjects,
+            Function<ProjectImpl, String> keyMapper)
     {
         return allProjects.stream()
                 .collect(toMap(keyMapper, Function.identity(), (e1, e2) -> e1, LinkedHashMap::new));
     }
 
-    public Optional<Project> getProjectById(String projectId)
+    public Optional<ProjectImpl> getProjectById(String projectId)
     {
         return Optional.ofNullable(projectsById.get(projectId));
     }
 
-    public Optional<Project> getProjectByLabel(String label)
+    public Optional<ProjectImpl> getProjectByLabel(String label)
     {
         return Optional.ofNullable(projectsByLabel.get(label));
     }
 
-    public Collection<Project> getAvailableProjects()
+    public Collection<ProjectImpl> getAvailableProjects()
     {
         return projectsById.values();
     }
 
-    private List<Project> loadAvailableProjects(Path projectConfigFile)
+    private List<ProjectImpl> loadAvailableProjects(Path projectConfigFile)
     {
-        final List<Project> projectList = readProjectConfig(projectConfigFile)
+        final List<ProjectImpl> projectList = readProjectConfig(projectConfigFile)
                 .map(ProjectConfig::getProjects)
                 .orElse(emptyList());
         LOG.info("Found {} projects in file {}: {}", projectList.size(), projectConfigFile, projectList);

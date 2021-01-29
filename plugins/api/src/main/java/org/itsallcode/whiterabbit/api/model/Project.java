@@ -1,6 +1,6 @@
 package org.itsallcode.whiterabbit.api.model;
 
-public interface IProject
+public interface Project
 {
     String getProjectId();
 

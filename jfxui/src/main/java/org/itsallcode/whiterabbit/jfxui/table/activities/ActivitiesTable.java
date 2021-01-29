@@ -18,7 +18,7 @@ import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 import javafx.beans.binding.Bindings;
@@ -126,9 +126,9 @@ public class ActivitiesTable
                     return prop;
                 });
 
-        final TableColumn<ActivityPropertyAdapter, Project> projectCol = UiWidget.column("project", "Project",
+        final TableColumn<ActivityPropertyAdapter, ProjectImpl> projectCol = UiWidget.column("project", "Project",
                 param -> new ChoiceBoxTableCell<>(new ProjectStringConverter(projectService),
-                        projectService.getAvailableProjects().toArray(new Project[0])),
+                        projectService.getAvailableProjects().toArray(new ProjectImpl[0])),
                 data -> data.getValue().projectId);
         final TableColumn<ActivityPropertyAdapter, Duration> durationCol = UiWidget.column("duration", "Duration",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),

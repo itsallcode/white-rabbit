@@ -12,7 +12,7 @@ import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.RecordPropertyAdapter;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
 import javafx.beans.property.ObjectProperty;
 
@@ -20,7 +20,7 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
 {
     private static final Logger LOG = LogManager.getLogger(ActivityPropertyAdapter.class);
 
-    final ObjectProperty<Project> projectId;
+    final ObjectProperty<ProjectImpl> projectId;
     final ObjectProperty<Duration> duration;
     final ObjectProperty<Boolean> remainder;
     final ObjectProperty<String> comment;
