@@ -1,0 +1,7 @@
+plugins {
+    id 'com.install4j.gradle' version '8.0.10'
+}
+
+def jfxUiShadowJarTask = project(':jfxui').tasks['shadowJar']
+
+// jfxUiShadowJarTask.outputs.files.singleFile

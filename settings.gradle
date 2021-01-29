@@ -5,6 +5,7 @@ include 'textui'
 include 'jfxui'
 include 'webstart'
 include 'webstart-infrastructure'
+include 'install4j'
 
 dependencyResolutionManagement {
     repositories {
