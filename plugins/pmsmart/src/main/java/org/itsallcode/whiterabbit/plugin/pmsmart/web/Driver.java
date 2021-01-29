@@ -32,7 +32,7 @@ public class Driver implements Closeable
         }
         catch (final WebDriverException e)
         {
-            throw new IllegalStateException("Error getting URL '" + url + "'", e);
+            throw new IllegalStateException("Error getting URL '" + url + "': " + e.getMessage(), e);
         }
     }
 

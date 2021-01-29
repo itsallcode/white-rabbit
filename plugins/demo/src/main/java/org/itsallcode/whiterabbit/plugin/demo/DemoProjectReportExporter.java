@@ -10,7 +10,6 @@ import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 
 public class DemoProjectReportExporter implements ProjectReportExporter
 {
-    @SuppressWarnings("unused")
     @Override
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
@@ -30,11 +29,12 @@ public class DemoProjectReportExporter implements ProjectReportExporter
                 return;
             }
             progressMonitor.worked(1);
-            progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
+            progressMonitor.setTaskName(getTaskName(day, null));
 
             sleep(Duration.ofMillis(200));
             for (final ProjectReportActivity project : day.getProjects())
             {
+                progressMonitor.setTaskName(getTaskName(day, project));
                 if (progressMonitor.isCanceled())
                 {
                     return;
@@ -42,6 +42,15 @@ public class DemoProjectReportExporter implements ProjectReportExporter
                 sleep(Duration.ofMillis(200));
             }
         }
+    }
+
+    private String getTaskName(final ProjectReportDay day, ProjectReportActivity project)
+    {
+        if (project == null)
+        {
+            return "Exporting " + day.getDate() + "...";
+        }
+        return "Exporting " + day.getDate() + " / " + project.getProject().getLabel() + "...";
     }
 
     private void sleep(Duration duration)
