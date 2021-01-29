@@ -12,6 +12,8 @@ import org.openqa.selenium.By;
 
 public class WeekViewPage implements Page
 {
+    private static final String EXPECTED_PAGE_TITLE = "Zeiterfassung - Wochenansicht";
+
     private static final Logger LOG = LogManager.getLogger(WeekViewPage.class);
 
     private final Driver driver;
@@ -24,9 +26,11 @@ public class WeekViewPage implements Page
     @Override
     public void assertOnPage()
     {
-        if (!driver.getTitle().equals("Zeiterfassung - Wochenansicht"))
+        final String title = driver.getTitle();
+        if (!title.equals(EXPECTED_PAGE_TITLE))
         {
-            throw new IllegalStateException("Not on week view page");
+            throw new IllegalStateException(
+                    "Not on week view page. Expected title '" + EXPECTED_PAGE_TITLE + "' but was '" + title + "'");
         }
     }
 
