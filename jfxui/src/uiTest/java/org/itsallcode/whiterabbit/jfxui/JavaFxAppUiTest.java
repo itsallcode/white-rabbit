@@ -124,6 +124,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     void newMonthSelectedUserChangesMonth()
     {
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+        TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
