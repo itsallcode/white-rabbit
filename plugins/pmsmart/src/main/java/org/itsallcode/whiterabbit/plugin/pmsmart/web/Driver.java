@@ -53,7 +53,7 @@ public class Driver implements Closeable
 
     public void waitUntil(Duration timeout, ExpectedCondition<?> condition)
     {
-        final WebDriverWait wait = new WebDriverWait(webDriver, timeout.toSeconds());
+        final WebDriverWait wait = new WebDriverWait(webDriver, timeout);
         wait.until(condition);
     }
 
