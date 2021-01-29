@@ -7,6 +7,7 @@ plugins {
     id 'com.install4j.gradle' version '8.0.10' apply true
 }
 
+
 ext {
     junitVersion = '5.7.0'
     log4jVersion = '2.14.0'
