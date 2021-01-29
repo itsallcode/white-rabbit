@@ -13,13 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
+import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayActivities;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +76,7 @@ class ProjectReportGeneratorTest
     {
         simulateDays(day(DATE1, DayType.WORK));
 
-        final List<Day> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         assertThat(days).hasSize(1);
         assertThat(days.get(0).getDate()).isEqualTo(DATE1);
         assertThat(days.get(0).getType()).isEqualTo(DayType.WORK);
@@ -88,8 +88,8 @@ class ProjectReportGeneratorTest
     {
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2))));
 
-        final List<Day> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<ProjectActivity> projects = days.get(0).getProjects();
+        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<IProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
@@ -108,8 +108,8 @@ class ProjectReportGeneratorTest
     {
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, null)));
 
-        final List<Day> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<ProjectActivity> projects = days.get(0).getProjects();
+        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<IProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).isZero();
@@ -122,8 +122,8 @@ class ProjectReportGeneratorTest
                 activity(PROJECT1, Duration.ofHours(2)),
                 activity(PROJECT2, Duration.ofHours(3))));
 
-        final List<Day> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<ProjectActivity> projects = days.get(0).getProjects();
+        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<IProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(2);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
@@ -138,8 +138,8 @@ class ProjectReportGeneratorTest
                 activity(PROJECT1, Duration.ofHours(2)),
                 activity(PROJECT1, Duration.ofHours(3))));
 
-        final List<Day> days = reportGenerator.generateReport(MONTH).getDays();
-        final List<ProjectActivity> projects = days.get(0).getProjects();
+        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<IProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(5);
@@ -151,14 +151,14 @@ class ProjectReportGeneratorTest
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2))),
                 day(DATE2, DayType.WORK, activity(PROJECT1, Duration.ofHours(3))));
 
-        final List<Day> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<IProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         assertThat(days).hasSize(2);
         assertThat(days.get(0).getDate()).isEqualTo(DATE1);
         assertThat(days.get(0).getType()).isEqualTo(DayType.WORK);
         assertThat(days.get(1).getDate()).isEqualTo(DATE2);
         assertThat(days.get(1).getType()).isEqualTo(DayType.WORK);
 
-        List<ProjectActivity> projects = days.get(0).getProjects();
+        List<IProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);

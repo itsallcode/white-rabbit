@@ -8,6 +8,8 @@ import java.util.List;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
+
 @JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "workingHours", "comment", "activities" })
 public class JsonDay
 {

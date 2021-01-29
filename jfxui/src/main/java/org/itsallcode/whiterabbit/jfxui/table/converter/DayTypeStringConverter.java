@@ -1,6 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.table.converter;
 
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.itsallcode.whiterabbit.api.model.DayType;
 
 import javafx.util.StringConverter;
 

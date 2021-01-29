@@ -2,7 +2,9 @@ package org.itsallcode.whiterabbit.logic.service.project;
 
 import javax.json.bind.annotation.JsonbProperty;
 
-public class Project
+import org.itsallcode.whiterabbit.api.model.IProject;
+
+public class Project implements IProject
 {
     @JsonbProperty("projectId")
     private String projectId;
@@ -23,6 +25,7 @@ public class Project
         this(null, null, null);
     }
 
+    @Override
     public String getProjectId()
     {
         return projectId;
@@ -33,6 +36,7 @@ public class Project
         this.projectId = projectId;
     }
 
+    @Override
     public String getLabel()
     {
         return label;
@@ -43,6 +47,7 @@ public class Project
         this.label = label;
     }
 
+    @Override
     public String getCostCarrier()
     {
         return costCarrier;

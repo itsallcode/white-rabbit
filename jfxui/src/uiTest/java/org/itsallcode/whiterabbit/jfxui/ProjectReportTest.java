@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.IProject;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ProjectReportWindow;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     {
         time().tickSeparateMinutes(3);
 
-        final Project project = new Project("p1", "Project 1", null);
+        final IProject project = new Project("p1", "Project 1", null);
         app().activitiesTable().addRemainderActivity(project, "a1");
 
         final ProjectReportWindow report = app().openProjectReport();

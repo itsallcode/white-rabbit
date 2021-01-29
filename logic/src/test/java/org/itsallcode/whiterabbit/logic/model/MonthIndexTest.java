@@ -9,8 +9,8 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.YearMonth;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;

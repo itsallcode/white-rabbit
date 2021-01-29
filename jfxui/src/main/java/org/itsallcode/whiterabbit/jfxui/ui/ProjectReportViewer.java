@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
@@ -20,8 +21,6 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressMonitor;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
@@ -146,7 +145,7 @@ public class ProjectReportViewer
                 this.dayType = day.getType();
                 this.project = null;
                 this.workingTime = day.getProjects().stream()
-                        .map(ProjectActivity::getWorkingTime)
+                        .map(IProjectReportActivity::getWorkingTime)
                         .reduce((a, b) -> a.plus(b))
                         .orElse(Duration.ZERO);
                 this.comment = day.getComment();
@@ -155,7 +154,7 @@ public class ProjectReportViewer
             {
                 this.date = null;
                 this.dayType = null;
-                this.project = project.getProject();
+                this.project = (Project) project.getProject();
                 this.workingTime = project.getWorkingTime();
                 this.comment = project.getComment();
             }

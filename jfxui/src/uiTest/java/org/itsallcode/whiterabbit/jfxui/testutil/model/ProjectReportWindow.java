@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
 
+import org.itsallcode.whiterabbit.api.model.IProject;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer.ReportRow;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
@@ -50,7 +50,7 @@ public class ProjectReportWindow
         return this;
     }
 
-    public ProjectReportWindow assertProject(int dayIndex, int projectIndex, Project expectedProject,
+    public ProjectReportWindow assertProject(int dayIndex, int projectIndex, IProject expectedProject,
             Duration expectedWorkingTime, String expectedComment)
     {
         final ReportRow row = table.getChildNodes(dayIndex).get(projectIndex);

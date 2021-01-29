@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.model;
 import java.time.Duration;
 import java.util.Objects;
 
+import org.itsallcode.whiterabbit.api.model.IProject;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
@@ -40,7 +41,7 @@ public class Activity implements RowRecord
         return projectService.getProjectById(projectId).orElse(null);
     }
 
-    public void setProject(Project project)
+    public void setProject(IProject project)
     {
         this.jsonActivity.setProjectId(project.getProjectId());
     }

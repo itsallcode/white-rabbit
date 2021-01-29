@@ -11,8 +11,8 @@ import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 public class FormatterService
 {

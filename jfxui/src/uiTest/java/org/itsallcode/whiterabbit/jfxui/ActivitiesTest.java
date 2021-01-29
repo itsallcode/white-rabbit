@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.IProject;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
@@ -125,7 +126,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         time().tickMinute();
         final ActivitiesTable activities = app().activitiesTable();
 
-        final Project project = new Project("p1", "Project 1", null);
+        final IProject project = new Project("p1", "Project 1", null);
         activities.addRemainderActivity(project, "tst");
 
         activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()
@@ -142,7 +143,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         time().tickMinute();
         final ActivitiesTable activities = app().activitiesTable();
 
-        final Project project = new Project("p1", "Project 1", null);
+        final IProject project = new Project("p1", "Project 1", null);
         activities.addActivity(project, Duration.ofMinutes(5), "tst");
 
         activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()

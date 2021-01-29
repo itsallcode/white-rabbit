@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jdt.annotation.NonNull;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
@@ -24,7 +24,6 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTab
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ObjectProperty;
@@ -99,9 +98,10 @@ public class DayRecordTable
                 data -> data.getValue().date);
         final DurationStringConverter durationConverter = new DurationStringConverter(formatterService);
         final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT, locale);
-        final TableColumn<DayRecordPropertyAdapter, @NonNull DayType> dayTypeCol = UiWidget.column("day-type", "Type",
-                param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
-                data -> data.getValue().dayType);
+        final TableColumn<DayRecordPropertyAdapter, org.itsallcode.whiterabbit.api.model.DayType> dayTypeCol = UiWidget
+                .column("day-type", "Type",
+                        param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
+                        data -> data.getValue().dayType);
         final TableColumn<DayRecordPropertyAdapter, LocalTime> beginCol = UiWidget.column("begin", "Begin",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(localTimeConverter),
                 data -> data.getValue().begin);

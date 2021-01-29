@@ -2,8 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import java.time.Duration;
 
+import org.itsallcode.whiterabbit.api.model.IProject;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.testfx.api.FxRobot;
 
 import javafx.scene.Node;
@@ -32,7 +32,7 @@ public class ActivitiesTable
         addRemainderActivity(null, comment);
     }
 
-    public void addRemainderActivity(Project project, String comment)
+    public void addRemainderActivity(IProject project, String comment)
     {
         final int rowIndex = addActivity();
 
@@ -54,7 +54,7 @@ public class ActivitiesTable
         addActivity(null, duration, comment);
     }
 
-    public void addActivity(Project project, Duration duration, String comment)
+    public void addActivity(IProject project, Duration duration, String comment)
     {
         final int rowIndex = addActivity();
 

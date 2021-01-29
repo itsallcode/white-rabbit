@@ -7,11 +7,11 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;

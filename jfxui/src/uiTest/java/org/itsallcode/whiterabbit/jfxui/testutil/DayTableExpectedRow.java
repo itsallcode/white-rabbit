@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
+import org.itsallcode.whiterabbit.api.model.DayType;
 
 public class DayTableExpectedRow implements TableRowExpectedContent
 {

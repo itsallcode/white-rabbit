@@ -11,11 +11,12 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.itsallcode.whiterabbit.api.model.IProjectReport;
+import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class ProjectReportGenerator
@@ -35,9 +36,9 @@ public class ProjectReportGenerator
                 .collect(toList()));
     }
 
-    private ProjectReport.Day generateDayReport(DayRecord record)
+    private IProjectReportDay generateDayReport(DayRecord record)
     {
-        final List<ProjectActivity> projects = record.activities()
+        final List<IProjectReportActivity> projects = record.activities()
                 .getAll().stream()
                 .filter(activity -> activity.getProject() != null)
                 .collect(groupingBy(this::activityProject))

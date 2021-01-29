@@ -9,11 +9,11 @@ import java.time.LocalTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.testfx.api.FxRobot;
 
 import javafx.scene.control.TableCell;

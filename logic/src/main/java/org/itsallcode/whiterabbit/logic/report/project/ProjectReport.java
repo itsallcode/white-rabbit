@@ -5,18 +5,18 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
 public class ProjectReport implements IProjectReport
 {
     private final YearMonth month;
-    private final List<Day> days;
+    private final List<IProjectReportDay> days;
 
-    ProjectReport(YearMonth month, List<Day> days)
+    ProjectReport(YearMonth month, List<IProjectReportDay> days)
     {
         this.month = month;
         this.days = days;
@@ -29,7 +29,7 @@ public class ProjectReport implements IProjectReport
     }
 
     @Override
-    public List<Day> getDays()
+    public List<IProjectReportDay> getDays()
     {
         return days;
     }
@@ -39,9 +39,9 @@ public class ProjectReport implements IProjectReport
         private final LocalDate date;
         private final DayType type;
         private final String comment;
-        private final List<ProjectActivity> projects;
+        private final List<IProjectReportActivity> projects;
 
-        Day(LocalDate date, DayType type, String comment, List<ProjectActivity> projects)
+        Day(LocalDate date, DayType type, String comment, List<IProjectReportActivity> projects)
         {
             this.date = date;
             this.type = type;
@@ -68,7 +68,7 @@ public class ProjectReport implements IProjectReport
         }
 
         @Override
-        public List<ProjectActivity> getProjects()
+        public List<IProjectReportActivity> getProjects()
         {
             return projects;
         }
