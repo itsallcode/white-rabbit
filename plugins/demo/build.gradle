@@ -1,4 +1,7 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
 
 dependencies {
-    implementation project(':plugins:api')
+    compileOnly project(':plugins:api')
 }

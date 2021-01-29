@@ -55,7 +55,10 @@ class PluginRegistry
     private ClassLoader createClassLoader()
     {
         final URL[] urls = getPluginClasspath();
-        LOG.info("Found {} plugin jars: {}", urls.length, Arrays.toString(urls));
+        if (LOG.isInfoEnabled())
+        {
+            LOG.info("Found {} plugin jars: {}", urls.length, Arrays.toString(urls));
+        }
         return new URLClassLoader("PluginClassLoader", urls, getClass().getClassLoader());
     }
 

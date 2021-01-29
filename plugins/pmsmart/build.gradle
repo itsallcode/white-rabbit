@@ -1,6 +1,9 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
 
 dependencies {
-    implementation project(':plugins:api')
+    compileOnly project(':plugins:api')
     
     def seleniumVersion = "3.141.59"
 
@@ -11,5 +14,4 @@ dependencies {
     runtimeOnly "org.seleniumhq.selenium:selenium-devtools-v87:4.0.0-alpha-7"
     
     runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:2.14.0"
-    runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 }
