@@ -2,9 +2,9 @@ package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.ProgressMonitor;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.ui.UiResources;
-import org.itsallcode.whiterabbit.plugin.ProgressMonitor;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;

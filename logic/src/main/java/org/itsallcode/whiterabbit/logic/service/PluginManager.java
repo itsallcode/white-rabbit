@@ -11,10 +11,10 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.PluginConfiguration;
+import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.WhiteRabbitPlugin;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.plugin.PluginConfiguration;
-import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
-import org.itsallcode.whiterabbit.plugin.WhiteRabbitPlugin;
 
 public class PluginManager
 {

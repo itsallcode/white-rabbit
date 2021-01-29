@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -26,7 +27,7 @@ public class ProjectReportGenerator
         this.storage = storage;
     }
 
-    public ProjectReport generateReport(YearMonth month)
+    public IProjectReport generateReport(YearMonth month)
     {
         return new ProjectReport(month, storage.loadMonth(month)
                 .map(MonthIndex::getSortedDays).orElse(Stream.empty())

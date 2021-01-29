@@ -2,12 +2,12 @@ package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import java.util.Map;
 
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
+import org.itsallcode.whiterabbit.api.PluginConfiguration;
+import org.itsallcode.whiterabbit.api.ProgressMonitor;
+import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
-import org.itsallcode.whiterabbit.plugin.PluginConfiguration;
-import org.itsallcode.whiterabbit.plugin.ProgressMonitor;
-import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.ProjectRow;
@@ -25,7 +25,7 @@ public class PMSmartExporter implements ProjectReportExporter
     }
 
     @Override
-    public void export(ProjectReport report, ProgressMonitor progressMonitor)
+    public void export(IProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
         final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");

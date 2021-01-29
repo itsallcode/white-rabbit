@@ -5,10 +5,11 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
-public class ProjectReport
+public class ProjectReport implements IProjectReport
 {
     private final YearMonth month;
     private final List<Day> days;
@@ -19,11 +20,13 @@ public class ProjectReport
         this.days = days;
     }
 
+    @Override
     public YearMonth getMonth()
     {
         return month;
     }
 
+    @Override
     public List<Day> getDays()
     {
         return days;

@@ -4,12 +4,12 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
@@ -79,7 +79,7 @@ public final class UiActions
             LOG.warn("No month selected, can't generate project report");
             return;
         }
-        final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
+        final IProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
         new ProjectReportViewer(getPrimaryStage(), state.uiState, appService, this, report).show();
     }
 

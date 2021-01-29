@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.plugin;
+package org.itsallcode.whiterabbit.api;
 
 import java.util.Optional;
 

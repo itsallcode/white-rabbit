@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
@@ -17,12 +19,10 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressM
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
-import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
@@ -35,7 +35,7 @@ public class ProjectReportViewer
 {
     private static final Logger LOG = LogManager.getLogger(ProjectReportViewer.class);
 
-    private final ProjectReport report;
+    private final IProjectReport report;
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
     private final AppService appService;
@@ -44,7 +44,7 @@ public class ProjectReportViewer
     private final Stage primaryStage;
 
     public ProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService, UiActions uiActions,
-            ProjectReport report)
+            IProjectReport report)
     {
         this.primaryStage = primaryStage;
         this.uiState = uiState;

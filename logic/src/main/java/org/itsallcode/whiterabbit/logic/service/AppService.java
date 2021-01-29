@@ -17,11 +17,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportGenerator;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
@@ -236,7 +236,7 @@ public class AppService implements Closeable
         return vacationReportGenerator.generateReport();
     }
 
-    public ProjectReport generateProjectReport(YearMonth month)
+    public IProjectReport generateProjectReport(YearMonth month)
     {
         return projectReportGenerator.generateReport(month);
     }

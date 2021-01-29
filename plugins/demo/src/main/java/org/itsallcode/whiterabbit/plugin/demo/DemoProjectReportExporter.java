@@ -2,17 +2,17 @@ package org.itsallcode.whiterabbit.plugin.demo;
 
 import java.time.Duration;
 
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
+import org.itsallcode.whiterabbit.api.ProgressMonitor;
+import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.IProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
-import org.itsallcode.whiterabbit.plugin.ProgressMonitor;
-import org.itsallcode.whiterabbit.plugin.ProjectReportExporter;
 
 public class DemoProjectReportExporter implements ProjectReportExporter
 {
     @SuppressWarnings("unused")
     @Override
-    public void export(ProjectReport report, ProgressMonitor progressMonitor)
+    public void export(IProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
         if (progressMonitor.isCanceled())
