@@ -1,0 +1,16 @@
+
+subprojects {
+    apply plugin: "com.github.johnrengelman.shadow"
+    dependencies {
+        compileOnly project(':api')
+        compileOnly "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    }
+
+    shadowJar {
+        archiveBaseName.set("${project.name}-plugin")
+        archiveClassifier.set(null)
+        archiveVersion.set(project.version.toString())
+    }
+}
+
+ext.pluginBuildTasks = project.subprojects.collect {it.tasks['shadowJar']}

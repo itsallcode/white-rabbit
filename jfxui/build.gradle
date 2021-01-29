@@ -25,10 +25,15 @@ jar {
 
 build.dependsOn shadowJar
 
-task runJfxui(type: JavaExec, dependsOn: shadowJar) {
-    classpath = shadowJar.outputs.files
-    main = project.mainClass
-    workingDir = rootProject.projectDir
+project(':plugins').afterEvaluate {
+    List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
+
+    task runJfxui(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks) {
+        def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
+        classpath = shadowJar.outputs.files + pluginJars
+        main = project.mainClass
+        workingDir = rootProject.projectDir
+    }
 }
 
 sourceSets {
@@ -51,11 +56,10 @@ dependencies {
         implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
     }
 
+    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
-    
-    runtimeOnly project(':plugins:demo')
-    runtimeOnly project(':plugins:pmsmart')
+
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
     
