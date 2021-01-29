@@ -70,6 +70,7 @@ class PluginRegistry
             LOG.info("Plugin directory {} does not exist", pluginDir);
             return new URL[0];
         }
+        LOG.info("Searching plugin jars in {}", pluginDir);
         try (Stream<Path> stream = Files.list(pluginDir))
         {
             return stream.filter(file -> file.getFileName().toString().endsWith(".jar"))
