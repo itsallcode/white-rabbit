@@ -39,6 +39,16 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     {
         time().tickSeparateMinutes(2);
         final ProjectReportWindow report = app().openProjectReport();
+        report.assertExportButtons();
+        report.closeViaEscKey();
+    }
+
+    @Test
+    void exportButtonsFromPluginsAvailable()
+    {
+        time().tickSeparateMinutes(2);
+        final ProjectReportWindow report = app().openProjectReport();
+        report.assertExportButtons("Export to demo", "Export to pmsmart");
         report.closeViaEscKey();
     }
 
