@@ -25,8 +25,11 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="File" />
         </Root>
+        <Logger level="INFO" name="javafx.scene" />
         <Logger level="INFO" name="org.apache.hc.client5.http" />
         <Logger level="INFO" name="org.asynchttpclient.netty" />
+        <Logger level="INFO" name="io.netty" />
+        <Logger level="INFO" name="org.openqa.selenium" />
         <Logger level="DEBUG" name="org.itsallcode" />
     </Loggers>
 </Configuration>
