@@ -21,15 +21,15 @@ class ConfigTest
     }
 
     @Test
-    void getLogPath()
+    void getUiStatePath()
     {
-        assertThat(config.getLogPath()).isEqualTo(Paths.get("data/logs"));
+        assertThat(config.getUiStatePath()).isEqualTo(Paths.get("userDir/ui-state.json"));
     }
 
     @Test
-    void getUiStatePath()
+    void getPluginDir()
     {
-        assertThat(config.getUiStatePath()).isEqualTo(Paths.get("data/ui-state.json"));
+        assertThat(config.getPluginDir()).isEqualTo(Paths.get("userDir/plugins"));
     }
 
     private static class TestingConfig implements Config
@@ -60,12 +60,6 @@ class ConfigTest
         }
 
         @Override
-        public boolean writeLogFile()
-        {
-            return false;
-        }
-
-        @Override
         public Path getConfigFile()
         {
             return null;
@@ -75,6 +69,12 @@ class ConfigTest
         public String getMandatoryValue(String key)
         {
             return null;
+        }
+
+        @Override
+        public Path getUserDir()
+        {
+            return Paths.get("userDir");
         }
     }
 }

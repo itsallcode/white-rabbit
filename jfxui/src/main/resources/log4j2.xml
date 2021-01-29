@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="debug">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout charset="UTF-8" noConsoleNoAnsi="true" pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
+            <PatternLayout charset="UTF-8" noConsoleNoAnsi="true"
+                pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
         </Console>
+        <RollingFile name="File" fileName="${sys:user.home}/.whiterabbit/logs/white-rabbit.log"
+            filePattern="${sys:user.home}/.whiterabbit/logs/white-rabbit-%d{yyyy-MM}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %-5level %logger{36} - %msg%n</Pattern>
+                <Header>Runtime: ${java:runtime}\nJVM: ${java:vm}\nOS: ${java:os}\nHardware: ${java:hw}\nLocale:
+                    ${java:locale}\n</Header>
+                <Charset>UTF-8</Charset>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50 MB" />
+            </Policies>
+        </RollingFile>
     </Appenders>
-    
+
+
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
         </Root>
     </Loggers>
 </Configuration>

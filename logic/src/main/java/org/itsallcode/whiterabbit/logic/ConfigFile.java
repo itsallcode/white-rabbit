@@ -78,12 +78,6 @@ class ConfigFile implements Config
     }
 
     @Override
-    public boolean writeLogFile()
-    {
-        return getOptionalValue("write_log_file").map(Boolean::valueOf).orElse(true);
-    }
-
-    @Override
     public Path getConfigFile()
     {
         return file;
@@ -94,6 +88,13 @@ class ConfigFile implements Config
     {
         return getOptionalValue(param).orElseThrow(
                 () -> new IllegalStateException("Property '" + param + "' not found in config file " + file));
+    }
+
+    @Override
+    public Path getUserDir()
+    {
+        final String home = System.getProperty("user.home");
+        return Paths.get(home).resolve(".whiterabbit");
     }
 
     private Optional<String> getOptionalValue(String param)

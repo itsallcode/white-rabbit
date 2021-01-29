@@ -17,8 +17,6 @@ public interface Config
 
     boolean allowMultipleInstances();
 
-    boolean writeLogFile();
-
     Path getConfigFile();
 
     default Path getProjectFile()
@@ -26,14 +24,16 @@ public interface Config
         return getDataDir().resolve(PROJECTS_JSON);
     }
 
-    default Path getLogPath()
+    Path getUserDir();
+
+    default Path getPluginDir()
     {
-        return getDataDir().resolve("logs");
+        return getUserDir().resolve("plugins");
     }
 
     default Path getUiStatePath()
     {
-        return getDataDir().resolve("ui-state.json");
+        return getUserDir().resolve("ui-state.json");
     }
 
     String getMandatoryValue(String key);
