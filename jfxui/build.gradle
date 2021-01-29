@@ -20,6 +20,7 @@ dependencies {
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
 
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
     runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
 
     testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
