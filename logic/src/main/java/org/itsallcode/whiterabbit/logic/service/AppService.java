@@ -280,5 +280,6 @@ public class AppService implements Closeable
             singleInstanceRegistration.close();
         }
         schedulingService.close();
+        pluginManager.close();
     }
 }

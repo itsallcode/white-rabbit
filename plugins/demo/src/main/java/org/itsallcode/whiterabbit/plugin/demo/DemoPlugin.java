@@ -2,9 +2,9 @@ package org.itsallcode.whiterabbit.plugin.demo;
 
 import java.util.Optional;
 
+import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.Plugin;
 
 public class DemoPlugin implements Plugin
 {
@@ -24,5 +24,11 @@ public class DemoPlugin implements Plugin
     public String getId()
     {
         return "demo";
+    }
+
+    @Override
+    public void close()
+    {
+        // ignore
     }
 }

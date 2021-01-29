@@ -2,9 +2,9 @@ package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import java.util.Optional;
 
+import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
-import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 
 public class PMSmartExportPlugin implements Plugin
@@ -27,5 +27,11 @@ public class PMSmartExportPlugin implements Plugin
     public String getId()
     {
         return "pmsmart";
+    }
+
+    @Override
+    public void close()
+    {
+        // ignore
     }
 }

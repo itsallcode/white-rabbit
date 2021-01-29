@@ -9,4 +9,6 @@ public interface Plugin
     Optional<ProjectReportExporter> projectReportExporter();
 
     String getId();
+
+    void close();
 }
