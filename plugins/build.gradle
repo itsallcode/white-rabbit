@@ -9,8 +9,15 @@ subprojects {
     shadowJar {
         archiveBaseName.set("${project.name}-plugin")
         archiveClassifier.set(null)
-        archiveVersion.set(project.version.toString())
+        archiveVersion.set("")
     }
 }
+def pluginBuildTasks = project.subprojects.collect {it.tasks['shadowJar']}
+ext.pluginBuildTasks = pluginBuildTasks
 
-ext.pluginBuildTasks = project.subprojects.collect {it.tasks['shadowJar']}
+task installPlugins(type: Copy, dependsOn: pluginBuildTasks) {
+    pluginBuildTasks.forEach {
+        from(it.outputs)
+    }
+    into("${System.properties['user.home']}/.whiterabbit/plugins")
+}
