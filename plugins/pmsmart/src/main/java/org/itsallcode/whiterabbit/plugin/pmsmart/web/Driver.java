@@ -61,7 +61,7 @@ public class Driver implements Closeable
     public void close()
     {
         LOG.debug("Close browser window");
-        webDriver.close();
+        webDriver.quit();
     }
 
     public void sleep(Duration duration)
