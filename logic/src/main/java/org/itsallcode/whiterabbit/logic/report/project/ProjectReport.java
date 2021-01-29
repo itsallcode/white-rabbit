@@ -6,6 +6,8 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.itsallcode.whiterabbit.api.model.IProjectReport;
+import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
 
@@ -32,7 +34,7 @@ public class ProjectReport implements IProjectReport
         return days;
     }
 
-    public static class Day
+    public static class Day implements IProjectReportDay
     {
         private final LocalDate date;
         private final DayType type;
@@ -47,28 +49,32 @@ public class ProjectReport implements IProjectReport
             this.projects = projects;
         }
 
+        @Override
         public LocalDate getDate()
         {
             return date;
         }
 
+        @Override
         public DayType getType()
         {
             return type;
         }
 
+        @Override
         public String getComment()
         {
             return comment;
         }
 
+        @Override
         public List<ProjectActivity> getProjects()
         {
             return projects;
         }
     }
 
-    public static class ProjectActivity
+    public static class ProjectActivity implements IProjectReportActivity
     {
         private final Project project;
         private final Duration workingTime;
@@ -81,16 +87,19 @@ public class ProjectReport implements IProjectReport
             this.comment = comment;
         }
 
+        @Override
         public Project getProject()
         {
             return project;
         }
 
+        @Override
         public Duration getWorkingTime()
         {
             return workingTime;
         }
 
+        @Override
         public String getComment()
         {
             return comment;

@@ -7,9 +7,7 @@ import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 
 public interface IProjectReport
 {
-
     YearMonth getMonth();
 
     List<Day> getDays();
-
 }

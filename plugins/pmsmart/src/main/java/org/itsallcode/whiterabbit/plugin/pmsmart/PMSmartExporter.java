@@ -6,8 +6,8 @@ import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
 import org.itsallcode.whiterabbit.api.model.IProjectReport;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
+import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.ProjectRow;
@@ -41,7 +41,7 @@ public class PMSmartExporter implements ProjectReportExporter
             final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
             progressMonitor.beginTask("Initializing...", report.getDays().size());
-            for (final Day day : report.getDays())
+            for (final IProjectReportDay day : report.getDays())
             {
                 if (progressMonitor.isCanceled())
                 {
@@ -54,7 +54,7 @@ public class PMSmartExporter implements ProjectReportExporter
                     weekViewPage.saveWeek();
                     weekViewPage.selectWeek(day.getDate());
                 }
-                for (final ProjectActivity project : day.getProjects())
+                for (final IProjectReportActivity project : day.getProjects())
                 {
                     if (progressMonitor.isCanceled())
                     {

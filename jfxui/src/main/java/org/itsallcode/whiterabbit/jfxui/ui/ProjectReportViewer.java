@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
 import org.itsallcode.whiterabbit.api.model.IProjectReport;
+import org.itsallcode.whiterabbit.api.model.IProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.IProjectReportDay;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
@@ -19,7 +21,6 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressM
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.project.Project;
@@ -112,7 +113,7 @@ public class ProjectReportViewer
         return treeTable;
     }
 
-    private TreeItem<ReportRow> createDayTreeItem(Day day)
+    private TreeItem<ReportRow> createDayTreeItem(IProjectReportDay day)
     {
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);
@@ -132,12 +133,12 @@ public class ProjectReportViewer
         private final Duration workingTime;
         private final String comment;
 
-        private ReportRow(Day day)
+        private ReportRow(IProjectReportDay day)
         {
             this(day, null);
         }
 
-        private ReportRow(Day day, ProjectActivity project)
+        private ReportRow(IProjectReportDay day, IProjectReportActivity project)
         {
             if (project == null)
             {
