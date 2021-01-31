@@ -51,7 +51,7 @@ build.dependsOn shadowJar
 project(':plugins').afterEvaluate {
     List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
 
-    task runJfxui(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks) {
+    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks) {
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
         main = project.mainClass
@@ -59,7 +59,7 @@ project(':plugins').afterEvaluate {
     }
 }
 
-task runJfxuiWithoutPlugins(type: JavaExec, dependsOn: shadowJar) {
+task runJfxui(type: JavaExec, dependsOn: shadowJar) {
     classpath = shadowJar.outputs.files
     main = project.mainClass
     workingDir = rootProject.projectDir

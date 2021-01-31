@@ -174,6 +174,13 @@ To use activity tracking, create file `projects.json` in your data directory wit
 }
 ```
 
+#### <a name="plugins"></a>Using Plugins
+
+1. Download one of the available plugins:
+    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart. See [details](#pmsmart).
+    * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Test plugin without real functionality.
+1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
+
 #### Logging
 
 WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).
@@ -187,20 +194,21 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 ##### Setup and usage
 
 1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
-2. Add the base URL of your pm-smart server to the configuration file:
+1. Make sure to install the latest version of the pmsmart plugin, see [above](#plugins) for details.
+1. Add the base URL of your pm-smart server to the configuration file:
 
     ```properties
     pmsmart.baseurl = http://my-pmsmart.example.com
     ```
 
-3. In pm-smart open the week view ("Wochenansicht") and add favorites for all projects you use. The export will only work for projects added as favorite.
-4. Start the export in WhiteRabbit:
+1. In pm-smart open the week view ("Wochenansicht") and add favorites for all projects you use. The export will only work for projects added as favorite.
+1. Start the export in WhiteRabbit:
 
     1. Select the month that you want to export
-    2. Select menu Reports > Project report
-    3. Click the "Export to pmsmart" button
+    1. Select menu Reports > Project report
+    1. Click the "Export to pmsmart" button
 
-### <a name="running"></a>Running WhiteRabbit
+### Development
 
 #### Clone and configure
 
@@ -209,20 +217,23 @@ mkdir time-recording-data
 git clone https://github.com/itsallcode/white-rabbit.git
 cd white-rabbit
 # Configure
-echo "data = ../time-recording-data/" > time.properties
+echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 ```
 
 #### Build and launch
 
 ```bash
-./gradlew build
+# Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
+./gradlew build installPlugins
+# Run
 java -jar jfxui/build/libs/jfxui.jar
-```
 
-#### Build and launch with gradle
-
-```bash
+# Build and run, loading plugins from $HOME/.whiterabbit/plugins/
 ./gradlew runJfxui
+
+# Build and run including plugins. Useful when developing plugins.
+# Make sure to remove unwanted plugins from $HOME/.whiterabbit/plugins/
+./gradlew runJfxuiWithPlugins
 ```
 
 #### Run UI-Tests
@@ -259,6 +270,6 @@ When switching from `private-master` to the public `develop` branch, git will de
 
 ```bash
 git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts \
-        && git show private-master:webstart/webstart.properties > webstart/webstart.properties \
-        && git show private-master:webstart/keystore.jks > webstart/keystore.jks
+    && git show private-master:webstart/webstart.properties > webstart/webstart.properties \
+    && git show private-master:webstart/keystore.jks > webstart/keystore.jks
 ```
