@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -47,7 +48,19 @@ class PluginRegistry
     private Map<String, PluginWrapper> loadPlugins()
     {
         return Stream.concat(pluginsFromClasspath(), pluginsFromJars())
-                .collect(toMap(PluginWrapper::getId, Function.identity()));
+                .collect(toMap(PluginWrapper::getId, Function.identity(), preferExternalJars()));
+    }
+
+    private BinaryOperator<PluginWrapper> preferExternalJars()
+    {
+        return (a, b) -> {
+            LOG.warn("Found two plugins with same ID '{}':\n- {}\n- {}", a.getId(), a, b);
+            if (b.isLoadedFromExternalJar())
+            {
+                return b;
+            }
+            return a;
+        };
     }
 
     private Stream<PluginWrapper> pluginsFromJars()

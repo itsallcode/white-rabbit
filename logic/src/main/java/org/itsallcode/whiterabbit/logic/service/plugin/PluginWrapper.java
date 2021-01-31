@@ -1,10 +1,12 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
+import java.net.URLClassLoader;
+
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.logic.Config;
 
-public class PluginWrapper
+class PluginWrapper
 {
     private final ClassLoader classLoader;
     private final Plugin plugin;
@@ -22,27 +24,32 @@ public class PluginWrapper
         return new PluginWrapper(config, pluginClassLoader, plugin);
     }
 
-    public void init()
+    void init()
     {
         plugin.init(new PluginConfigImpl());
     }
 
-    public String getId()
+    String getId()
     {
         return plugin.getId();
     }
 
-    public boolean supports(Class<?> featureType)
+    boolean supports(Class<?> featureType)
     {
         return plugin.supports(featureType);
     }
 
-    public <T> T getFeature(Class<T> featureType)
+    <T> T getFeature(Class<T> featureType)
     {
         return plugin.getFeature(featureType);
     }
 
-    public void close()
+    boolean isLoadedFromExternalJar()
+    {
+        return URLClassLoader.class.isInstance(classLoader);
+    }
+
+    void close()
     {
         plugin.close();
     }
