@@ -9,8 +9,7 @@
             filePattern="${sys:user.home}/.whiterabbit/logs/white-rabbit-%d{yyyy-MM}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%d %p %c{1.} [%t] %-5level %logger{36} - %msg%n</Pattern>
-                <Header>Runtime: ${java:runtime}\nJVM: ${java:vm}\nOS: ${java:os}\nHardware: ${java:hw}\nLocale:
-                    ${java:locale}\n</Header>
+                <Header>Runtime: ${java:runtime}\nJVM: ${java:vm}\nOS: ${java:os}\nHardware: ${java:hw}\nLocale: ${java:locale}\n</Header>
                 <Charset>UTF-8</Charset>
             </PatternLayout>
             <Policies>
