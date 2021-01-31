@@ -181,6 +181,15 @@ To use activity tracking, create file `projects.json` in your data directory wit
     * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Test plugin without real functionality.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
+```bash
+for plugin in pmsmart demo
+do
+    fileName=$plugin-plugin-signed.jar
+    curl https://whiterabbit.chp1.net/plugins/$fileName --output $HOME/.whiterabbit/plugins/$fileName
+done
+```
+
+
 #### Logging
 
 WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).

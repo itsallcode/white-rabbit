@@ -12,6 +12,7 @@ subprojects {
         archiveVersion.set("")
     }
 }
+
 def pluginBuildTasks = project.subprojects.collect {it.tasks['shadowJar']}
 ext.pluginBuildTasks = pluginBuildTasks
 
