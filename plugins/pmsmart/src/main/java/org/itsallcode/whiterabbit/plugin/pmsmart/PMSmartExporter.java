@@ -28,7 +28,7 @@ public class PMSmartExporter implements ProjectReportExporter
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
         progressMonitor.setTaskName("Initializing...");
-        final String baseUrl = config.getMandatoryValue("pmsmart.baseurl");
+        final String baseUrl = config.getMandatoryValue("baseurl");
         try (final Driver driver = webDriverFactory.createWebDriver())
         {
             if (progressMonitor.isCanceled())

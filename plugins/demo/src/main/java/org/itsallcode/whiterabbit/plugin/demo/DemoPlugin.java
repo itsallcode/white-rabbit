@@ -1,10 +1,7 @@
 package org.itsallcode.whiterabbit.plugin.demo;
 
-import java.util.Optional;
-
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
-import org.itsallcode.whiterabbit.api.ProjectReportExporter;
 
 public class DemoPlugin implements Plugin
 {
@@ -12,12 +9,6 @@ public class DemoPlugin implements Plugin
     public void init(PluginConfiguration config)
     {
         // ignore
-    }
-
-    @Override
-    public Optional<ProjectReportExporter> projectReportExporter()
-    {
-        return Optional.of(new DemoProjectReportExporter());
     }
 
     @Override
@@ -30,5 +21,21 @@ public class DemoPlugin implements Plugin
     public void close()
     {
         // ignore
+    }
+
+    @Override
+    public boolean supports(Class<?> featureType)
+    {
+        return featureType.isAssignableFrom(DemoProjectReportExporter.class);
+    }
+
+    @Override
+    public <T> T getFeature(Class<T> featureType)
+    {
+        if (featureType.isAssignableFrom(DemoProjectReportExporter.class))
+        {
+            return featureType.cast(new DemoProjectReportExporter());
+        }
+        throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
     }
 }

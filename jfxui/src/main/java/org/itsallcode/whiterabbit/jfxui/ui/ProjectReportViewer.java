@@ -64,8 +64,9 @@ public class ProjectReportViewer
 
     private Node[] getExportButtons()
     {
-        return appService.pluginManager().getProjectReportExporterPlugins().stream().map(pluginId -> UiWidget
-                .button(pluginId + "-export-button", "Export to " + pluginId, e -> exportReport(pluginId)))
+        return appService.pluginManager().getProjectReportExporterPlugins().stream()
+                .map(pluginId -> UiWidget.button(pluginId + "-export-button", "Export to " + pluginId,
+                        e -> exportReport(pluginId)))
                 .toArray(Node[]::new);
     }
 

@@ -8,7 +8,7 @@ import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 
-public class DemoProjectReportExporter implements ProjectReportExporter
+class DemoProjectReportExporter implements ProjectReportExporter
 {
     @Override
     public void export(ProjectReport report, ProgressMonitor progressMonitor)

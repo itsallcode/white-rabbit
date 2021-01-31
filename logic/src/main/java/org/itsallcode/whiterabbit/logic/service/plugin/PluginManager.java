@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.service;
+package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import static java.util.stream.Collectors.toList;
 
@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 
@@ -30,17 +29,25 @@ public class PluginManager
 
     public List<String> getProjectReportExporterPlugins()
     {
+        return findPluginsSupporting(ProjectReportExporter.class);
+    }
+
+    private List<String> findPluginsSupporting(Class<?> featureType)
+    {
         return pluginRegistry.getAllPlugins().stream()
-                .filter(plugin -> plugin.projectReportExporter().isPresent())
-                .map(Plugin::getId)
+                .filter(plugin -> plugin.supports(featureType))
+                .map(PluginWrapper::getId)
                 .collect(toList());
     }
 
     public ProjectReportExporter getProjectReportExporter(String id)
     {
-        return pluginRegistry.getPlugin(id).projectReportExporter()
-                .orElseThrow(
-                        () -> new IllegalStateException("Plugin " + id + " does not support project report exporter"));
+        return getFeature(id, ProjectReportExporter.class);
+    }
+
+    private <T> T getFeature(String id, final Class<T> featureType)
+    {
+        return pluginRegistry.getPlugin(id).getFeature(featureType);
     }
 
     public void close()
