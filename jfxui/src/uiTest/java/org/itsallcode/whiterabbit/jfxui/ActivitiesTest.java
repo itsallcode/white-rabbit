@@ -7,13 +7,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow;
 import org.itsallcode.whiterabbit.jfxui.testutil.ActivitiesTableExpectedRow.Builder;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +30,8 @@ import javafx.stage.Stage;
 @ExtendWith(ApplicationExtension.class)
 class ActivitiesTest extends JavaFxAppUiTestBase
 {
-    private static final Project PROJECT1 = project("p1", "Project 1");
-    private static final Project PROJECT2 = project("p2", "Project 2");
+    private static final ProjectImpl PROJECT1 = project("p1", "Project 1");
+    private static final ProjectImpl PROJECT2 = project("p2", "Project 2");
 
     FxRobot robot;
 
@@ -125,7 +126,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         time().tickMinute();
         final ActivitiesTable activities = app().activitiesTable();
 
-        final Project project = new Project("p1", "Project 1", null);
+        final Project project = new ProjectImpl("p1", "Project 1", null);
         activities.addRemainderActivity(project, "tst");
 
         activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()
@@ -142,7 +143,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         time().tickMinute();
         final ActivitiesTable activities = app().activitiesTable();
 
-        final Project project = new Project("p1", "Project 1", null);
+        final Project project = new ProjectImpl("p1", "Project 1", null);
         activities.addActivity(project, Duration.ofMinutes(5), "tst");
 
         activities.table().assertContent(ActivitiesTableExpectedRow.defaultRow()

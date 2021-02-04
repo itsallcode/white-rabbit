@@ -17,7 +17,7 @@ import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayActivities;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +85,7 @@ class AutocompleteServiceTest
 
     private void assertProjectFound(String expectedProjectId)
     {
-        final Optional<Project> suggestedProject = autocompleteService.getSuggestedProject();
+        final Optional<ProjectImpl> suggestedProject = autocompleteService.getSuggestedProject();
         assertThat(suggestedProject).isPresent();
         assertThat(suggestedProject.get().getProjectId()).isEqualTo(expectedProjectId);
     }
@@ -111,7 +111,7 @@ class AutocompleteServiceTest
     private DayRecord createDayRecordWithProject(String projectId)
     {
         final Activity activity = mock(Activity.class);
-        final Project project = new Project(projectId, "Project " + projectId, null);
+        final ProjectImpl project = new ProjectImpl(projectId, "Project " + projectId, null);
         when(activity.getProject()).thenReturn(project);
         return dayWithActivities(activity);
     }

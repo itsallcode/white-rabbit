@@ -4,10 +4,10 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.RecordPropertyAdapter;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;

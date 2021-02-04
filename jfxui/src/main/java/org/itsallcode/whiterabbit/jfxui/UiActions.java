@@ -4,17 +4,20 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 public final class UiActions
@@ -57,6 +60,16 @@ public final class UiActions
         openFileWithDefaultProgram(config.getDataDir());
     }
 
+    public void openLogDir()
+    {
+        openFileWithDefaultProgram(config.getLogDir());
+    }
+
+    public void openPluginDir()
+    {
+        openFileWithDefaultProgram(config.getPluginDir());
+    }
+
     private void openFileWithDefaultProgram(Path file)
     {
         desktopService.open(file);
@@ -77,7 +90,15 @@ public final class UiActions
             return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService.formatter(), report).show();
+        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService, this, report).show();
+    }
+
+    public void showErrorDialog(String message)
+    {
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+            alert.show();
+        });
     }
 
     private Stage getPrimaryStage()

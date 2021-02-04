@@ -8,7 +8,7 @@ import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class ActivityService
@@ -31,7 +31,7 @@ public class ActivityService
         final DayRecord day = monthIndex.getDay(date);
 
         final Activity newActivity = day.activities().add();
-        final Optional<Project> suggestedProject = autocompleteService.getSuggestedProject();
+        final Optional<ProjectImpl> suggestedProject = autocompleteService.getSuggestedProject();
         if (suggestedProject.isPresent())
         {
             newActivity.setProject(suggestedProject.get());

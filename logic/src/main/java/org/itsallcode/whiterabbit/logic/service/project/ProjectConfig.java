@@ -9,14 +9,14 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 public class ProjectConfig
 {
     @JsonbProperty("projects")
-    private List<Project> projects;
+    private List<ProjectImpl> projects;
 
-    public List<Project> getProjects()
+    public List<ProjectImpl> getProjects()
     {
         return projects;
     }
 
-    public void setProjects(List<Project> projects)
+    public void setProjects(List<ProjectImpl> projects)
     {
         this.projects = projects;
     }

@@ -4,11 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
 
+import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer.ReportRow;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Window;
 
@@ -58,5 +59,14 @@ public class ProjectReportWindow
         assertThat(row.getWorkingTime()).isEqualTo(expectedWorkingTime);
         assertThat(row.getComment()).isEqualTo(expectedComment);
         return this;
+    }
+
+    public void assertExportButtons(String... buttonLabels)
+    {
+        for (final String label : buttonLabels)
+        {
+            final Button exportButton = robot.from(robot.rootNode(window)).lookup(label).queryButton();
+            Assertions.assertThat(exportButton).as("Button " + label).isEnabled();
+        }
     }
 }

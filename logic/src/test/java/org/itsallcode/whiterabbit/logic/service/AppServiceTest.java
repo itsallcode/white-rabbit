@@ -31,6 +31,7 @@ import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionDetectedDecision;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.plugin.PluginManager;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
@@ -79,6 +80,8 @@ class AppServiceTest
     private AppPropertiesService appPropertiesServiceMock;
     @Mock
     private AutocompleteService autocompleteServiceMock;
+    @Mock
+    private PluginManager pluginManagerMock;
 
     private AppService appService;
 
@@ -91,7 +94,7 @@ class AppServiceTest
         appService = new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock, singleInstanceService, appServiceCallback, activityService, projectServiceMock,
                 autocompleteServiceMock, appPropertiesServiceMock, vacationReportGeneratorMock,
-                projectReportGeneratorMock);
+                projectReportGeneratorMock, pluginManagerMock);
         appService.setUpdateListener(updateListenerMock);
     }
 

@@ -1,0 +1,17 @@
+
+dependencies {
+    def seleniumVersion = "4.0.0-alpha-7"
+
+    implementation "org.seleniumhq.selenium:selenium-edge-driver:$seleniumVersion"
+    implementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+    runtimeOnly "org.seleniumhq.selenium:selenium-devtools-v87:$seleniumVersion"
+    implementation "io.github.bonigarcia:webdrivermanager:4.2.2"
+    
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0") {
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+    }
+}
+
+
+

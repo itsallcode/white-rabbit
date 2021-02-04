@@ -4,8 +4,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ProjectReportWindow;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -18,8 +20,8 @@ import javafx.stage.Stage;
 @ExtendWith(ApplicationExtension.class)
 class ProjectReportTest extends JavaFxAppUiTestBase
 {
-    private static final Project PROJECT1 = project("p1", "Project 1");
-    private static final Project PROJECT2 = project("p2", "Project 2");
+    private static final ProjectImpl PROJECT1 = project("p1", "Project 1");
+    private static final ProjectImpl PROJECT2 = project("p2", "Project 2");
 
     FxRobot robot;
 
@@ -38,6 +40,17 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     {
         time().tickSeparateMinutes(2);
         final ProjectReportWindow report = app().openProjectReport();
+        report.assertExportButtons();
+        report.closeViaEscKey();
+    }
+
+    @Disabled("Plugins not loaded by default")
+    @Test
+    void exportButtonsFromPluginsAvailable()
+    {
+        time().tickSeparateMinutes(2);
+        final ProjectReportWindow report = app().openProjectReport();
+        report.assertExportButtons("Export to demo", "Export to pmsmart");
         report.closeViaEscKey();
     }
 
@@ -46,7 +59,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     {
         time().tickSeparateMinutes(3);
 
-        final Project project = new Project("p1", "Project 1", null);
+        final Project project = new ProjectImpl("p1", "Project 1", null);
         app().activitiesTable().addRemainderActivity(project, "a1");
 
         final ProjectReportWindow report = app().openProjectReport();

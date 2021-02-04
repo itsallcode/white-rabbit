@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-class ProjectTest
+class ProjectImplTest
 {
     @Test
     void equalsContract()
     {
-        EqualsVerifier.simple().forClass(Project.class).verify();
+        EqualsVerifier.simple().forClass(ProjectImpl.class).verify();
     }
 }

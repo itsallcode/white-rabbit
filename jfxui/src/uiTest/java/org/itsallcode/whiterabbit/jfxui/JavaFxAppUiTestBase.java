@@ -27,7 +27,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -166,16 +166,16 @@ abstract class JavaFxAppUiTestBase
         }
     }
 
-    protected ProjectConfig projectConfig(final Project... projects)
+    protected ProjectConfig projectConfig(final ProjectImpl... projects)
     {
         final ProjectConfig projectConfig = new ProjectConfig();
         projectConfig.setProjects(asList(projects));
         return projectConfig;
     }
 
-    protected static Project project(final String id, final String label)
+    protected static ProjectImpl project(final String id, final String label)
     {
-        final Project project = new Project();
+        final ProjectImpl project = new ProjectImpl();
         project.setProjectId(id);
         project.setLabel(label);
         return project;

@@ -2,7 +2,9 @@ package org.itsallcode.whiterabbit.logic.service.project;
 
 import javax.json.bind.annotation.JsonbProperty;
 
-public class Project
+import org.itsallcode.whiterabbit.api.model.Project;
+
+public class ProjectImpl implements Project
 {
     @JsonbProperty("projectId")
     private String projectId;
@@ -11,18 +13,19 @@ public class Project
     @JsonbProperty("costCarrier")
     private String costCarrier;
 
-    public Project(String projectId, String label, String costCarrier)
+    public ProjectImpl(String projectId, String label, String costCarrier)
     {
         this.projectId = projectId;
         this.label = label;
         this.costCarrier = costCarrier;
     }
 
-    public Project()
+    public ProjectImpl()
     {
         this(null, null, null);
     }
 
+    @Override
     public String getProjectId()
     {
         return projectId;
@@ -33,6 +36,7 @@ public class Project
         this.projectId = projectId;
     }
 
+    @Override
     public String getLabel()
     {
         return label;
@@ -43,6 +47,7 @@ public class Project
         this.label = label;
     }
 
+    @Override
     public String getCostCarrier()
     {
         return costCarrier;
@@ -79,7 +84,7 @@ public class Project
         {
             return false;
         }
-        final Project other = (Project) obj;
+        final ProjectImpl other = (ProjectImpl) obj;
         if (costCarrier == null)
         {
             if (other.costCarrier != null)

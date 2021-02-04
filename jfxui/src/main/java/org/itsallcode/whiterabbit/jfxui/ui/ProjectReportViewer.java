@@ -6,18 +6,25 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.DayType;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
+import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
+import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
+import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog;
+import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressMonitor;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
-import org.itsallcode.whiterabbit.logic.model.json.DayType;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.Day;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport.ProjectActivity;
-import org.itsallcode.whiterabbit.logic.service.FormatterService;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
@@ -26,32 +33,64 @@ import javafx.util.converter.LocalDateStringConverter;
 
 public class ProjectReportViewer
 {
+    private static final Logger LOG = LogManager.getLogger(ProjectReportViewer.class);
+
     private final ProjectReport report;
-    private final FormatterService formatterService;
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
+    private final AppService appService;
+    private final UiActions uiActions;
 
-    public ProjectReportViewer(Stage primaryStage, UiStateService uiState, FormatterService formatterService,
+    private final Stage primaryStage;
+
+    public ProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService, UiActions uiActions,
             ProjectReport report)
     {
+        this.primaryStage = primaryStage;
         this.uiState = uiState;
+        this.appService = appService;
+        this.uiActions = uiActions;
         this.reportWindow = new ReportWindow(primaryStage, uiState, "project-report", "Project Report");
-        this.formatterService = formatterService;
         this.report = report;
     }
 
     public void show()
     {
         final TreeTableView<ReportRow> treeTable = createTreeTable();
-        reportWindow.show(treeTable);
+        final Node[] exportButtons = getExportButtons();
+        reportWindow.show(treeTable, exportButtons);
         uiState.register(treeTable);
+    }
+
+    private Node[] getExportButtons()
+    {
+        return appService.pluginManager().getProjectReportExporterPlugins().stream()
+                .map(pluginId -> UiWidget.button(pluginId + "-export-button", "Export to " + pluginId,
+                        e -> exportReport(pluginId)))
+                .toArray(Node[]::new);
+    }
+
+    private void exportReport(String pluginId)
+    {
+        final ProjectReportExporter projectReportExporter = appService.pluginManager()
+                .getProjectReportExporter(pluginId);
+        final DialogProgressMonitor progressMonitor = ProgressDialog.show(primaryStage, "Exporting project report...");
+        appService.scheduler().schedule(Duration.ZERO, () -> {
+            projectReportExporter.export(report, progressMonitor);
+            progressMonitor.done();
+        },
+                throwable -> {
+                    progressMonitor.done();
+                    LOG.error("Error exporting project report", throwable);
+                    uiActions.showErrorDialog(throwable.getMessage());
+                });
     }
 
     private TreeTableView<ReportRow> createTreeTable()
     {
         final TreeItem<ReportRow> root = new TreeItem<>();
 
-        root.getChildren().addAll(report.days.stream()
+        root.getChildren().addAll(report.getDays().stream()
                 .map(this::createDayTreeItem)
                 .collect(toList()));
 
@@ -64,7 +103,7 @@ public class ProjectReportViewer
                 UiWidget.treeTableColumn("project", "Project", ReportRow::getProject,
                         new ProjectStringConverter(null)),
                 UiWidget.treeTableColumn("workingtime", "Working time",
-                        ReportRow::getWorkingTime, new DurationStringConverter(formatterService)),
+                        ReportRow::getWorkingTime, new DurationStringConverter(appService.formatter())),
                 UiWidget.treeTableColumn("comment", "Comment",
                         ReportRow::getComment, new DefaultStringConverter())));
 
@@ -74,12 +113,12 @@ public class ProjectReportViewer
         return treeTable;
     }
 
-    private TreeItem<ReportRow> createDayTreeItem(Day day)
+    private TreeItem<ReportRow> createDayTreeItem(ProjectReportDay day)
     {
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);
         treeItem.getChildren().addAll(
-                day.projects.stream()
+                day.getProjects().stream()
                         .map(project -> new ReportRow(day, project))
                         .map(TreeItem::new)
                         .collect(toList()));
@@ -90,33 +129,33 @@ public class ProjectReportViewer
     {
         private final LocalDate date;
         private final DayType dayType;
-        private final Project project;
+        private final ProjectImpl project;
         private final Duration workingTime;
         private final String comment;
 
-        private ReportRow(Day day)
+        private ReportRow(ProjectReportDay day)
         {
             this(day, null);
         }
 
-        private ReportRow(Day day, ProjectActivity project)
+        private ReportRow(ProjectReportDay day, ProjectReportActivity project)
         {
             if (project == null)
             {
-                this.date = day.date;
-                this.dayType = day.type;
+                this.date = day.getDate();
+                this.dayType = day.getType();
                 this.project = null;
-                this.workingTime = day.projects.stream()
-                        .map(ProjectActivity::getWorkingTime)
+                this.workingTime = day.getProjects().stream()
+                        .map(ProjectReportActivity::getWorkingTime)
                         .reduce((a, b) -> a.plus(b))
                         .orElse(Duration.ZERO);
-                this.comment = day.comment;
+                this.comment = day.getComment();
             }
             else
             {
                 this.date = null;
                 this.dayType = null;
-                this.project = project.getProject();
+                this.project = (ProjectImpl) project.getProject();
                 this.workingTime = project.getWorkingTime();
                 this.comment = project.getComment();
             }
@@ -132,7 +171,7 @@ public class ProjectReportViewer
             return dayType;
         }
 
-        public Project getProject()
+        public ProjectImpl getProject()
         {
             return project;
         }

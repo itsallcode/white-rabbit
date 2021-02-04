@@ -29,7 +29,8 @@ class ConfigFile implements Config
 
     static ConfigFile read(Path configFile)
     {
-        return new ConfigFile(loadProperties(configFile), configFile);
+        final Path file = configFile.normalize();
+        return new ConfigFile(loadProperties(file), file);
     }
 
     private static Properties loadProperties(Path configFile)
@@ -77,21 +78,23 @@ class ConfigFile implements Config
     }
 
     @Override
-    public boolean writeLogFile()
-    {
-        return getOptionalValue("write_log_file").map(Boolean::valueOf).orElse(true);
-    }
-
-    @Override
     public Path getConfigFile()
     {
         return file;
     }
 
-    private String getMandatoryValue(String param)
+    @Override
+    public String getMandatoryValue(String param)
     {
         return getOptionalValue(param).orElseThrow(
                 () -> new IllegalStateException("Property '" + param + "' not found in config file " + file));
+    }
+
+    @Override
+    public Path getUserDir()
+    {
+        final String home = System.getProperty("user.home");
+        return Paths.get(home).resolve(".whiterabbit");
     }
 
     private Optional<String> getOptionalValue(String param)

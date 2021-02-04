@@ -1,5 +1,10 @@
+plugins {
+    id 'java-library'
+}
 
 dependencies {
+    api project(':api')
+    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     runtimeOnly "org.eclipse:yasson:${yassonVersion}"
 }

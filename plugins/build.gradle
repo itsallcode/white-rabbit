@@ -1,0 +1,24 @@
+
+subprojects {
+    apply plugin: "com.github.johnrengelman.shadow"
+    dependencies {
+        compileOnly project(':api')
+        compileOnly "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    }
+
+    shadowJar {
+        archiveBaseName.set("${project.name}-plugin")
+        archiveClassifier.set(null)
+        archiveVersion.set("")
+    }
+}
+
+def pluginBuildTasks = project.subprojects.collect {it.tasks['shadowJar']}
+ext.pluginBuildTasks = pluginBuildTasks
+
+task installPlugins(type: Copy, dependsOn: pluginBuildTasks) {
+    pluginBuildTasks.forEach {
+        from(it.outputs)
+    }
+    into("${System.properties['user.home']}/.whiterabbit/plugins")
+}

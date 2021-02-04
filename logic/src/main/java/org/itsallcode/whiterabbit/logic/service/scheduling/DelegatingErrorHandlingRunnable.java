@@ -14,6 +14,7 @@ public class DelegatingErrorHandlingRunnable implements Runnable
         this.errorHandler = errorHandler;
     }
 
+    @SuppressWarnings("java:S1181") // Catching Throwable by intention
     @Override
     public void run()
     {
@@ -25,7 +26,7 @@ public class DelegatingErrorHandlingRunnable implements Runnable
         {
             this.errorHandler.handleError(ex.getUndeclaredThrowable());
         }
-        catch (final Exception ex)
+        catch (final Throwable ex)
         {
             this.errorHandler.handleError(ex);
         }

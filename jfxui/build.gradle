@@ -7,10 +7,33 @@ ext {
     monocleVersion = '12.0.1+2'
 }
 
+dependencies {
+    implementation project(':logic')
+    ['win', 'mac', 'linux'].forEach {platform ->
+        implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
+        implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
+        implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
+    }
+
+    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
+    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+
+    runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
+    runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
+
+    testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
+
+    testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
+    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-$monocleVersion"
+}
+
 shadowJar {
     archiveBaseName.set('white-rabbit-fx')
     archiveClassifier.set(null)
-    archiveVersion.set(project.version)
+    archiveVersion.set(project.version.toString())
 }
 
 ext {
@@ -24,6 +47,17 @@ jar {
 }
 
 build.dependsOn shadowJar
+
+project(':plugins').afterEvaluate {
+    List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
+
+    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks) {
+        def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
+        classpath = shadowJar.outputs.files + pluginJars
+        main = project.mainClass
+        workingDir = rootProject.projectDir
+    }
+}
 
 task runJfxui(type: JavaExec, dependsOn: shadowJar) {
     classpath = shadowJar.outputs.files
@@ -41,27 +75,6 @@ sourceSets {
 configurations {
     uiTestImplementation.extendsFrom testImplementation
     uiTestRuntimeOnly.extendsFrom testRuntimeOnly
-}
-
-dependencies {
-    implementation project(':logic')
-    ['win', 'mac', 'linux'].forEach {platform ->
-        implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
-        implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
-        implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
-    }
-
-    implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
-    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
-    
-    runtimeOnly "org.fusesource.jansi:jansi:2.1.1"
-    
-    testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
-    testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
-    
-    testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
-    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-$monocleVersion"
 }
 
 task uiTest(type: Test) {

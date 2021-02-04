@@ -2,7 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.testutil;
 
 import java.time.Duration;
 
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.api.model.Project;
 
 public class ActivitiesTableExpectedRow implements TableRowExpectedContent
 {

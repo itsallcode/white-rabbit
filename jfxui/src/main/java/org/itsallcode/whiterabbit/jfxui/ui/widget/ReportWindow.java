@@ -1,5 +1,10 @@
 package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.itsallcode.whiterabbit.jfxui.ui.UiResources;
 import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
@@ -30,24 +35,28 @@ public class ReportWindow
         this.windowTitle = windowTitle;
     }
 
-    public void show(Node reportView)
+    public void show(Node reportView, Node... toolBarItems)
     {
-        stage = createStage(reportView);
+        stage = createStage(reportView, toolBarItems);
         stage.show();
     }
 
-    private Stage createStage(Node reportView)
+    private Stage createStage(Node reportView, Node... toolBarItems)
     {
         final BorderPane pane = new BorderPane();
-        pane.setTop(createToolBar());
+        pane.setTop(createToolBar(toolBarItems));
         pane.setCenter(reportView);
         BorderPane.setMargin(reportView, UiResources.DEFAULT_MARGIN);
         return createStage(pane);
     }
 
-    private ToolBar createToolBar()
+    private ToolBar createToolBar(Node... items)
     {
-        return new ToolBar(UiWidget.button("close-button", "Close Report", e -> closeReportWindow()));
+        final Node closeButton = UiWidget.button("close-button", "Close Report", e -> closeReportWindow());
+        final List<Node> allItems = new ArrayList<>();
+        allItems.add(closeButton);
+        allItems.addAll(asList(items));
+        return new ToolBar(allItems.toArray(new Node[0]));
     }
 
     private Stage createStage(final Parent root)

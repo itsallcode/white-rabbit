@@ -45,13 +45,19 @@ public class TestingConfig implements Config
     }
 
     @Override
-    public boolean writeLogFile()
+    public Path getConfigFile()
     {
-        return false;
+        return null;
     }
 
     @Override
-    public Path getConfigFile()
+    public String getMandatoryValue(String key)
+    {
+        return null;
+    }
+
+    @Override
+    public Path getUserDir()
     {
         return null;
     }

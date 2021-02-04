@@ -17,16 +17,17 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.report.project.ProjectReport;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportGenerator;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.plugin.PluginManager;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
 import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
@@ -58,13 +59,15 @@ public class AppService implements Closeable
 
     private final AutocompleteService autocompleteService;
 
+    private final PluginManager pluginManager;
+
     @SuppressWarnings("java:S107") // Large number of parameters is ok here.
     AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, ActivityService activityService,
             ProjectService projectService, AutocompleteService autocompleteService,
             AppPropertiesService appPropertiesService, VacationReportGenerator vacationReportGenerator,
-            ProjectReportGenerator projectReportGenerator)
+            ProjectReportGenerator projectReportGenerator, PluginManager pluginManager)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -79,6 +82,7 @@ public class AppService implements Closeable
         this.projectReportGenerator = projectReportGenerator;
         this.autocompleteService = autocompleteService;
         this.appPropertiesService = appPropertiesService;
+        this.pluginManager = pluginManager;
     }
 
     public static AppService create(final Config config)
@@ -102,10 +106,11 @@ public class AppService implements Closeable
         final ProjectReportGenerator projectReportGenerator = new ProjectReportGenerator(storage);
         final ActivityService activityService = new ActivityService(storage, autocompleteService, appServiceCallback);
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
+        final PluginManager pluginManager = PluginManager.create(config);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, activityService, projectService, autocompleteService,
                 new AppPropertiesService(), vacationReportGenerator,
-                projectReportGenerator);
+                projectReportGenerator, pluginManager);
     }
 
     public void setUpdateListener(AppServiceCallback callback)
@@ -262,6 +267,11 @@ public class AppService implements Closeable
         return autocompleteService;
     }
 
+    public PluginManager pluginManager()
+    {
+        return pluginManager;
+    }
+
     @Override
     public void close()
     {
@@ -271,5 +281,6 @@ public class AppService implements Closeable
             singleInstanceRegistration.close();
         }
         schedulingService.close();
+        pluginManager.close();
     }
 }

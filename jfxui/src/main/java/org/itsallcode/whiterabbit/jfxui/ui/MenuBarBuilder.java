@@ -52,7 +52,10 @@ class MenuBarBuilder
         menuFile.getItems().addAll(
                 menuItem("Edit config file", "menuitem_edit_config", actions::editConfigFile),
                 menuItem("Edit project file", "menuitem_edit_project", actions::editProjectFile),
+                separatorItem(),
                 menuItem("Open data directory", "menuitem_open_datadir", actions::openDataDir),
+                menuItem("Open log directory", "menuitem_open_logdir", actions::openLogDir),
+                menuItem("Open plugin directory", "menuitem_open_plugindir", actions::openPluginDir),
                 separatorItem(),
                 menuItem("_Quit", "menuitem_quit", actions::exitApp));
         menuCalculations.getItems().addAll(

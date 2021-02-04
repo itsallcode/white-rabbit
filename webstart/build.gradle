@@ -29,31 +29,59 @@ task updateJarManifest(type: Jar, dependsOn: shadowJarTask, description: 'Update
     }
 }
 
-task signJar(dependsOn: updateJarManifest, description: 'Sign shadowJar', group: 'Build') {
-    def inputJar = updateJarManifest.outputs.files.singleFile
-    def signedJar = file("$buildDir/libs/whiterabbitfx-signed.jar")
-    inputs.file(inputJar)
-    outputs.file(signedJar)
-    doLast {
-        assert props.get('keystoreFile') != null : "Please create and fill ${projectDir}/webstart.properties. See ${projectDir}/README.md for details"
-        ant.signjar (
+def signJar(File inputJar, File outputJar, Properties props) {
+    assert props.get('keystoreFile') != null : "Please create and fill ${projectDir}/webstart.properties. See ${projectDir}/README.md for details"
+    logger.info("Signing jar $inputJar, writing to $outputJar")
+    ant.signjar (
             jar: inputJar,
-            signedjar: signedJar,
+            signedjar: outputJar,
             alias: props.get('keystoreAlias'),
             storetype: "jks",
             keystore: props.get('keystoreFile'),
             storepass: props.get('keystorePassword'),
             verbose: false,
             preservelastmodified: "true"
-        )
+    )
+}
+
+task signMainJar(dependsOn: updateJarManifest, description: 'Sign shadowJar', group: 'Build') {
+    def inputJar = updateJarManifest.outputs.files.singleFile
+    def signedJar = file("$buildDir/libs/whiterabbitfx-signed.jar")
+    inputs.file(inputJar)
+    outputs.file(signedJar)
+    doLast {
+        signJar(inputJar, signedJar, props)
     }
 }
 
-task prepareStaticContent(dependsOn: signJar, type: Copy) {
-    from "$projectDir/content"
-    include "*"
-    from signJar.outputs.files.singleFile
+List<Task> pluginBuildTasks = project(':plugins').ext.pluginBuildTasks
+
+task signPluginJars(dependsOn: pluginBuildTasks, description: 'Sign plugin jars', group: 'Build') {
+    def inputJars = pluginBuildTasks.collect {it.outputs.files.singleFile }
+    def getOutputJar = { File input -> new File("$buildDir/libs/${input.name.replace('.jar', '-signed.jar')}") }
+    inputs.files(inputJars)
+    outputs.files(inputJars.collect(getOutputJar))
+    doLast {
+        inputJars.forEach {
+            signJar(it, getOutputJar(it), props)
+        }
+    }
+}
+
+task prepareStaticContentPlugins(dependsOn: signPluginJars, type: Copy) {
+    from(signPluginJars.outputs.files)
+    into "$buildDir/content/plugins"
+}
+
+task prepareStaticContentMain(dependsOn: [signMainJar, prepareStaticContentPlugins], type: Copy) {
+    from("$projectDir/content") {
+        include "*"
+    }
+    from(signMainJar.outputs.files.singleFile)
     into "$buildDir/content"
+}
+
+task prepareStaticContent(dependsOn: [prepareStaticContentMain, prepareStaticContentPlugins]) {
 }
 
 task invalidateCloudFrontCache(type: Exec) {

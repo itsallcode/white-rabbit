@@ -13,7 +13,7 @@ import javax.json.bind.JsonbBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 
 public class ConfigLoader
@@ -75,7 +75,7 @@ public class ConfigLoader
     private ProjectConfig createDefaultProjectConfig()
     {
         final ProjectConfig projectConfig = new ProjectConfig();
-        final Project project = new Project();
+        final ProjectImpl project = new ProjectImpl();
         project.setLabel("My project");
         project.setCostCarrier("P100");
         project.setProjectId("mp");

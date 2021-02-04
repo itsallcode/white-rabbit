@@ -18,7 +18,7 @@ import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +80,7 @@ class ActivityServiceTest
         when(storageMock.loadMonth(YearMonth.from(DATE)))
                 .thenReturn(Optional.of(month));
 
-        final Project project = mock(Project.class);
+        final ProjectImpl project = mock(ProjectImpl.class);
         when(project.getProjectId()).thenReturn("projectId");
         when(projectService.getProjectById(project.getProjectId())).thenReturn(Optional.of(project));
 

@@ -2,8 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import java.time.Duration;
 
+import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
-import org.itsallcode.whiterabbit.logic.service.project.Project;
 import org.testfx.api.FxRobot;
 
 import javafx.scene.Node;
