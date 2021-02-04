@@ -85,13 +85,8 @@ task prepareStaticContent(dependsOn: [prepareStaticContentMain, prepareStaticCon
 }
 
 task invalidateCloudFrontCache(type: Exec) {
-    def getCloudfrontDistributionId = {
-        def id = props.get('cloudfrontDistribution')
-        assert id != null: 'Please define "cloudfrontDistribution" in webstart.properties'
-        return id
-    }
     executable("aws")
-    args('cloudfront', 'create-invalidation', '--distribution-id', getCloudfrontDistributionId(), '--paths', '/*')
+    args('cloudfront', 'create-invalidation', '--distribution-id', props.get('cloudfrontDistribution', 'Please define "cloudfrontDistribution" in webstart.properties'), '--paths', '/*')
 }
 
 task publishWebstart(dependsOn: prepareStaticContent, type: Exec) {
