@@ -11,13 +11,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
-import org.itsallcode.whiterabbit.logic.storage.data.MonthDataStorage;
 
 class MonthIndexStorage implements Storage
 {

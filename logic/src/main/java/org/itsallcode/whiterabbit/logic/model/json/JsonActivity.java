@@ -6,6 +6,8 @@ import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbVisibility;
 
+import org.itsallcode.whiterabbit.api.model.ActivityData;
+
 @JsonbPropertyOrder({ "projectId", "duration", "comment" })
 @JsonbVisibility(FieldAccessStrategy.class)
 public class JsonActivity implements ActivityData

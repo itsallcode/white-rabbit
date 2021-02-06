@@ -23,11 +23,11 @@ import javax.json.bind.JsonbConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.junit.jupiter.api.extension.ExtendWith;

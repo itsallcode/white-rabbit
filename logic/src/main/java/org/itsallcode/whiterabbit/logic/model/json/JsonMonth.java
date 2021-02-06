@@ -7,6 +7,9 @@ import java.util.List;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
+import org.itsallcode.whiterabbit.api.model.DayData;
+import org.itsallcode.whiterabbit.api.model.MonthData;
+
 @JsonbPropertyOrder({ "year", "month", "overtimePreviousMonth", "days" })
 public class JsonMonth implements MonthData
 {

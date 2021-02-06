@@ -11,9 +11,9 @@ import java.time.Month;
 import java.time.YearMonth;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.DayData;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
-import org.itsallcode.whiterabbit.logic.model.json.DayData;
-import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;

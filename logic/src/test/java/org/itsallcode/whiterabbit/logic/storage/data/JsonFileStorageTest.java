@@ -19,8 +19,8 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +81,7 @@ class JsonFileStorageTest
 
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
         when(dateToFileMapperMock.getLegacyPathForDate(YEAR_MONTH)).thenReturn(file);
-        final Optional<JsonMonth> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
+        final Optional<MonthData> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
     }
@@ -94,7 +94,7 @@ class JsonFileStorageTest
         final Path file = writeTempFile(month);
 
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
-        final Optional<JsonMonth> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
+        final Optional<MonthData> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
     }
@@ -154,7 +154,7 @@ class JsonFileStorageTest
         writeMonth(month1, file1);
         writeMonth(month2, file2);
 
-        final List<JsonMonth> months = jsonFileStorage.loadAll();
+        final List<MonthData> months = jsonFileStorage.loadAll();
         assertThat(months).hasSize(2);
 
         assertMonth(months.get(0), month1);
@@ -176,7 +176,7 @@ class JsonFileStorageTest
         writeMonth(month2, file2);
         writeMonth(month3, file3);
 
-        final List<JsonMonth> months = jsonFileStorage.loadAll();
+        final List<MonthData> months = jsonFileStorage.loadAll();
         assertThat(months).hasSize(3);
 
         assertMonth(months.get(0), month1);

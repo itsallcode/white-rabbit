@@ -14,11 +14,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.logic.model.json.DayData;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 

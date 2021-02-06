@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.util.ArrayList;
 
-import org.itsallcode.whiterabbit.logic.model.json.ActivityData;
+import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;

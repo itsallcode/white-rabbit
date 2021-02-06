@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.model.json.ActivityData;
-import org.itsallcode.whiterabbit.logic.model.json.DayData;
+import org.itsallcode.whiterabbit.api.model.ActivityData;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 

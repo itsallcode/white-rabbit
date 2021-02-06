@@ -8,11 +8,11 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
+import org.itsallcode.whiterabbit.api.MonthDataStorage;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonFileStorage;
-import org.itsallcode.whiterabbit.logic.storage.data.MonthDataStorage;
 
 public interface CachingStorage extends Storage
 {

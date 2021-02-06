@@ -18,9 +18,10 @@ import javax.json.bind.Jsonb;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 
 public class JsonFileStorage implements MonthDataStorage
 {
@@ -41,7 +42,7 @@ public class JsonFileStorage implements MonthDataStorage
     }
 
     @Override
-    public Optional<JsonMonth> load(YearMonth date)
+    public Optional<MonthData> load(YearMonth date)
     {
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
@@ -112,7 +113,7 @@ public class JsonFileStorage implements MonthDataStorage
     }
 
     @Override
-    public List<JsonMonth> loadAll()
+    public List<MonthData> loadAll()
     {
         return dateToFileMapper.getAllFiles()
                 .filter(file -> !file.getFileName().toString().equals(Config.PROJECTS_JSON))

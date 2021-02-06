@@ -3,8 +3,8 @@ package org.itsallcode.whiterabbit.logic.model;
 import java.time.Duration;
 import java.util.Objects;
 
+import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.Project;
-import org.itsallcode.whiterabbit.logic.model.json.ActivityData;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 

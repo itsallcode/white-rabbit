@@ -1,11 +1,9 @@
-package org.itsallcode.whiterabbit.logic.model.json;
+package org.itsallcode.whiterabbit.api.model;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-
-import org.itsallcode.whiterabbit.api.model.DayType;
 
 public interface DayData
 {
