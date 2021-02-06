@@ -17,6 +17,6 @@ public interface Storage
 
     MultiMonthIndex loadAll();
 
-    List<YearMonth> getAvailableDataYearMonth();
+    List<YearMonth> getAvailableDataMonths();
 
 }

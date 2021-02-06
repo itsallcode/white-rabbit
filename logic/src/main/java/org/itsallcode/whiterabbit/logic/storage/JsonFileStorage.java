@@ -97,7 +97,7 @@ public class JsonFileStorage
         }
     }
 
-    List<YearMonth> getAvailableDataYearMonth()
+    List<YearMonth> getAvailableDataMonths()
     {
         return dateToFileMapper.getAllYearMonths().sorted().collect(toList());
     }

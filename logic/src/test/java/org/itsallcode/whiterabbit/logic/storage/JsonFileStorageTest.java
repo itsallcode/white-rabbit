@@ -53,14 +53,14 @@ class JsonFileStorageTest
         final YearMonth january2020 = YearMonth.of(2020, Month.JANUARY);
         final YearMonth december2019 = YearMonth.of(2019, Month.DECEMBER);
         when(dateToFileMapperMock.getAllYearMonths()).thenReturn(Stream.of(april2020, january2020, december2019));
-        assertThat(jsonFileStorage.getAvailableDataYearMonth()).containsExactly(december2019, january2020, april2020);
+        assertThat(jsonFileStorage.getAvailableDataMonths()).containsExactly(december2019, january2020, april2020);
     }
 
     @Test
     void returnsEmptyAvailableMonths()
     {
         when(dateToFileMapperMock.getAllYearMonths()).thenReturn(Stream.empty());
-        assertThat(jsonFileStorage.getAvailableDataYearMonth()).isEmpty();
+        assertThat(jsonFileStorage.getAvailableDataMonths()).isEmpty();
     }
 
     @Test

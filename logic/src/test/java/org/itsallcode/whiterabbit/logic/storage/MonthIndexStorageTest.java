@@ -140,9 +140,9 @@ class MonthIndexStorageTest
     void getAvailableDataYearMonth()
     {
         final List<YearMonth> availableYearMonths = List.of(YEAR_MONTH);
-        when(fileStorageMock.getAvailableDataYearMonth()).thenReturn(availableYearMonths);
+        when(fileStorageMock.getAvailableDataMonths()).thenReturn(availableYearMonths);
 
-        assertThat(storage.getAvailableDataYearMonth()).isSameAs(availableYearMonths);
+        assertThat(storage.getAvailableDataMonths()).isSameAs(availableYearMonths);
     }
 
     private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth)

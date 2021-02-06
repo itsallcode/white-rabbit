@@ -433,7 +433,7 @@ class DayRecordTest
         jsonMonth.setMonth(date.getMonth());
         jsonMonth.setYear(date.getYear());
         jsonMonth.setOvertimePreviousMonth(overtimePreviousMonth);
-        return MonthIndex.create(contractTerms(), jsonMonth, projectServiceMock);
+        return MonthIndex.create(contractTerms(), projectServiceMock, jsonMonth);
     }
 
     private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)

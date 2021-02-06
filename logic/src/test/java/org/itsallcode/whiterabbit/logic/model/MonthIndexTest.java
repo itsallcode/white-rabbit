@@ -207,6 +207,6 @@ class MonthIndexTest
 
     private MonthIndex create(Config config, JsonMonth record)
     {
-        return MonthIndex.create(new ContractTermsService(config), record, projectServiceMock);
+        return MonthIndex.create(new ContractTermsService(config), projectServiceMock, record);
     }
 }

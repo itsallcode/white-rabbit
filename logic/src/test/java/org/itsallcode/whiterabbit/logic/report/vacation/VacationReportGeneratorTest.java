@@ -254,7 +254,7 @@ class VacationReportGeneratorTest
     {
         final List<YearMonth> availableDataYearMonth = Arrays.stream(months).map(MonthIndex::getYearMonth)
                 .collect(toList());
-        when(storageMock.getAvailableDataYearMonth()).thenReturn(availableDataYearMonth);
+        when(storageMock.getAvailableDataMonths()).thenReturn(availableDataYearMonth);
 
         for (final MonthIndex monthIndex : months)
         {

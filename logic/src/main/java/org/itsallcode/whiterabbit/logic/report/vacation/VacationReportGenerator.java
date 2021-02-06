@@ -43,7 +43,7 @@ public class VacationReportGenerator
 
     private class Calculator
     {
-        final List<YearMonth> availableDataYearMonth = storage.getAvailableDataYearMonth();
+        final List<YearMonth> availableDataYearMonth = storage.getAvailableDataMonths();
         final Map<YearMonth, MonthIndex> monthData = availableDataYearMonth.stream() //
                 .map(storage::loadMonth) //
                 .map(Optional::orElseThrow) //

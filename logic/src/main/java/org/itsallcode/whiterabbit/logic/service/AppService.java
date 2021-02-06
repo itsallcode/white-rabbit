@@ -191,7 +191,7 @@ public class AppService implements Closeable
 
     public List<YearMonth> getAvailableDataYearMonth()
     {
-        return storage.getAvailableDataYearMonth();
+        return storage.getAvailableDataMonths();
     }
 
     public Optional<MonthIndex> getMonth(YearMonth yearMonth)

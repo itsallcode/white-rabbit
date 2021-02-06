@@ -61,9 +61,9 @@ class MonthIndexStorage implements Storage
     }
 
     @Override
-    public List<YearMonth> getAvailableDataYearMonth()
+    public List<YearMonth> getAvailableDataMonths()
     {
-        return fileStorage.getAvailableDataYearMonth();
+        return fileStorage.getAvailableDataMonths();
     }
 
     private MonthIndex createNewMonth(YearMonth date)
@@ -78,7 +78,7 @@ class MonthIndexStorage implements Storage
 
     private MonthIndex createMonthIndex(final JsonMonth jsonMonth)
     {
-        return MonthIndex.create(contractTerms, jsonMonth, projectService);
+        return MonthIndex.create(contractTerms, projectService, jsonMonth);
     }
 
     Duration loadPreviousMonthOvertime(YearMonth date)

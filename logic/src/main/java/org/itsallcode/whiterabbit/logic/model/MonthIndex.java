@@ -31,7 +31,7 @@ public class MonthIndex
         this.days = days;
     }
 
-    public static MonthIndex create(ContractTermsService contractTerms, JsonMonth record, ProjectService projectService)
+    public static MonthIndex create(ContractTermsService contractTerms, ProjectService projectService, JsonMonth record)
     {
         final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
                 .collect(toMap(JsonDay::getDate, Function.identity()));

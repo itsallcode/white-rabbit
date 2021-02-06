@@ -130,6 +130,6 @@ class ActivityServiceTest
         monthRecord.setDays(new ArrayList<>());
         monthRecord.setYear(DATE.getYear());
         monthRecord.setMonth(DATE.getMonth());
-        return MonthIndex.create(contractTermsServiceMock, monthRecord, projectService);
+        return MonthIndex.create(contractTermsServiceMock, projectService, monthRecord);
     }
 }
