@@ -19,6 +19,7 @@ import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+import org.itsallcode.whiterabbit.logic.storage.data.MonthDataStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +37,7 @@ class MonthIndexStorageTest
     @Mock
     ProjectService projectServiceMock;
     @Mock
-    JsonFileStorage fileStorageMock;
+    MonthDataStorage fileStorageMock;
     @Mock
     MonthIndex monthIndexMock;
 
@@ -51,7 +52,7 @@ class MonthIndexStorageTest
     @Test
     void loadPreviousMonthOvertime_returnsZero_whenNoPreviousMonth()
     {
-        when(fileStorageMock.loadMonth(YearMonth.of(2020, Month.OCTOBER))).thenReturn(Optional.empty());
+        when(fileStorageMock.load(YearMonth.of(2020, Month.OCTOBER))).thenReturn(Optional.empty());
 
         assertThat(storage.loadPreviousMonthOvertime(YEAR_MONTH)).isZero();
     }
@@ -59,7 +60,7 @@ class MonthIndexStorageTest
     @Test
     void loadPreviousMonthOvertime_returnsPreviousMonthOvertime()
     {
-        when(fileStorageMock.loadMonth(PREVIOUS_MONTH))
+        when(fileStorageMock.load(PREVIOUS_MONTH))
                 .thenReturn(Optional.of(jsonMonth(PREVIOUS_MONTH, Duration.ofMinutes(5))));
 
         assertThat(storage.loadPreviousMonthOvertime(YEAR_MONTH)).hasMinutes(5);
@@ -68,7 +69,7 @@ class MonthIndexStorageTest
     @Test
     void loadPreviousMonthOvertime_truncatesToMinute()
     {
-        when(fileStorageMock.loadMonth(PREVIOUS_MONTH))
+        when(fileStorageMock.load(PREVIOUS_MONTH))
                 .thenReturn(Optional.of(jsonMonth(PREVIOUS_MONTH, Duration.ofMinutes(5).plusSeconds(50))));
 
         assertThat(storage.loadPreviousMonthOvertime(YEAR_MONTH)).hasMinutes(5);
@@ -77,7 +78,7 @@ class MonthIndexStorageTest
     @Test
     void loadOrCreate_createsNewMonthIfNotExists()
     {
-        when(fileStorageMock.loadMonth(YEAR_MONTH)).thenReturn(Optional.empty());
+        when(fileStorageMock.load(YEAR_MONTH)).thenReturn(Optional.empty());
 
         final MonthIndex newMonth = storage.loadOrCreate(YEAR_MONTH);
 
@@ -91,7 +92,7 @@ class MonthIndexStorageTest
     void loadOrCreate_loadsExistingMonth()
     {
         final JsonMonth month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
-        when(fileStorageMock.loadMonth(YEAR_MONTH)).thenReturn(Optional.of(month));
+        when(fileStorageMock.load(YEAR_MONTH)).thenReturn(Optional.of(month));
 
         final MonthIndex newMonth = storage.loadOrCreate(YEAR_MONTH);
 

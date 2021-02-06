@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.time.Month;
 import java.time.YearMonth;
 
-import org.itsallcode.whiterabbit.logic.storage.data.DateToFileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

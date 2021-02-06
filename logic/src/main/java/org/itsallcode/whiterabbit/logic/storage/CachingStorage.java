@@ -12,13 +12,14 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonFileStorage;
+import org.itsallcode.whiterabbit.logic.storage.data.MonthDataStorage;
 
 public interface CachingStorage extends Storage
 {
     static CachingStorage create(Path dataDir, ContractTermsService contractTerms, ProjectService projectService)
     {
         final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-        final JsonFileStorage fileStorage = new JsonFileStorage(jsonb, dataDir);
+        final MonthDataStorage fileStorage = new JsonFileStorage(jsonb, dataDir);
         final MonthIndexStorage monthIndexStorage = new MonthIndexStorage(contractTerms, projectService, fileStorage);
         return new CachingStorageImpl(monthIndexStorage);
     }

@@ -11,7 +11,7 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 import org.itsallcode.whiterabbit.api.model.DayType;
 
 @JsonbPropertyOrder({ "date", "type", "begin", "end", "interruption", "workingHours", "comment", "activities" })
-public class JsonDay
+public class JsonDay implements DayData
 {
     @JsonbProperty("date")
     private LocalDate date;
@@ -30,81 +30,97 @@ public class JsonDay
     @JsonbProperty("activities")
     private List<JsonActivity> activities;
 
+    @Override
     public LocalDate getDate()
     {
         return date;
     }
 
+    @Override
     public DayType getType()
     {
         return type;
     }
 
+    @Override
     public LocalTime getBegin()
     {
         return begin;
     }
 
+    @Override
     public LocalTime getEnd()
     {
         return end;
     }
 
+    @Override
     public Duration getInterruption()
     {
         return interruption;
     }
 
+    @Override
     public Duration getWorkingHours()
     {
         return workingHours;
     }
 
+    @Override
     public String getComment()
     {
         return comment;
     }
 
+    @Override
     public void setDate(LocalDate date)
     {
         this.date = date;
     }
 
+    @Override
     public void setType(DayType type)
     {
         this.type = type;
     }
 
+    @Override
     public void setBegin(LocalTime begin)
     {
         this.begin = begin;
     }
 
+    @Override
     public void setEnd(LocalTime end)
     {
         this.end = end;
     }
 
+    @Override
     public void setWorkingHours(Duration workingHours)
     {
         this.workingHours = workingHours;
     }
 
+    @Override
     public void setComment(String comment)
     {
         this.comment = comment;
     }
 
+    @Override
     public void setInterruption(Duration interruption)
     {
         this.interruption = interruption;
     }
 
+    @Override
     public List<JsonActivity> getActivities()
     {
         return activities;
     }
 
+    @Override
     public void setActivities(List<JsonActivity> activities)
     {
         this.activities = activities;

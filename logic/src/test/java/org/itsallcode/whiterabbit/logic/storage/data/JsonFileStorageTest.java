@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.storage;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +20,7 @@ import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.storage.data.DateToFileMapper;
+import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,19 +69,19 @@ class JsonFileStorageTest
     {
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
         when(dateToFileMapperMock.getLegacyPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
-        assertThat(jsonFileStorage.loadMonth(YEAR_MONTH)).isEmpty();
+        assertThat(jsonFileStorage.load(YEAR_MONTH)).isEmpty();
     }
 
     @Test
     void loadMonthReturnsMonth_WhenLegacyFileExists() throws IOException
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonMonth();
         month.setYear(2020);
         final Path file = writeTempFile(month);
 
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
         when(dateToFileMapperMock.getLegacyPathForDate(YEAR_MONTH)).thenReturn(file);
-        final Optional<JsonMonth> loadedMonth = jsonFileStorage.loadMonth(YEAR_MONTH);
+        final Optional<JsonMonth> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
     }
@@ -89,12 +89,12 @@ class JsonFileStorageTest
     @Test
     void loadMonthReturnsMonth_WhenFileExists() throws IOException
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonMonth();
         month.setYear(2020);
         final Path file = writeTempFile(month);
 
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
-        final Optional<JsonMonth> loadedMonth = jsonFileStorage.loadMonth(YEAR_MONTH);
+        final Optional<JsonMonth> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
     }
@@ -105,7 +105,7 @@ class JsonFileStorageTest
         final Path file = createTempFile();
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
 
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonMonth();
         month.setYear(2020);
         jsonFileStorage.store(YEAR_MONTH, month);
 
@@ -118,7 +118,7 @@ class JsonFileStorageTest
         final Path file = tempDir.resolve("sub-dir1").resolve("sub-dir2").resolve("file.json");
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
 
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonMonth();
         month.setYear(2020);
         jsonFileStorage.store(YEAR_MONTH, month);
 
@@ -149,8 +149,8 @@ class JsonFileStorageTest
         final Path file2 = tempDir.resolve("file2.json");
         when(dateToFileMapperMock.getAllFiles()).thenReturn(Stream.of(file1, file2));
 
-        final JsonMonth month1 = month(2019, Month.DECEMBER);
-        final JsonMonth month2 = month(2020, Month.JANUARY);
+        final MonthData month1 = month(2019, Month.DECEMBER);
+        final MonthData month2 = month(2020, Month.JANUARY);
         writeMonth(month1, file1);
         writeMonth(month2, file2);
 
@@ -169,9 +169,9 @@ class JsonFileStorageTest
         final Path file3 = tempDir.resolve("file3.json");
         when(dateToFileMapperMock.getAllFiles()).thenReturn(Stream.of(file3, file2, file1));
 
-        final JsonMonth month1 = month(2019, Month.DECEMBER);
-        final JsonMonth month2 = month(2020, Month.JANUARY);
-        final JsonMonth month3 = month(2020, Month.APRIL);
+        final MonthData month1 = month(2019, Month.DECEMBER);
+        final MonthData month2 = month(2020, Month.JANUARY);
+        final MonthData month3 = month(2020, Month.APRIL);
         writeMonth(month1, file1);
         writeMonth(month2, file2);
         writeMonth(month3, file3);
@@ -184,28 +184,28 @@ class JsonFileStorageTest
         assertMonth(months.get(2), month3);
     }
 
-    private void assertMonth(JsonMonth actual, JsonMonth expected)
+    private void assertMonth(MonthData actual, MonthData expected)
     {
         assertAll(() -> assertThat(actual.getYear()).isEqualTo(expected.getYear()),
                 () -> assertThat(actual.getMonth()).isEqualTo(expected.getMonth()));
     }
 
-    private JsonMonth month(int year, Month month)
+    private MonthData month(int year, Month month)
     {
-        final JsonMonth jsonMonth = new JsonMonth();
+        final MonthData jsonMonth = new JsonMonth();
         jsonMonth.setYear(year);
         jsonMonth.setMonth(month);
         return jsonMonth;
     }
 
-    private Path writeTempFile(JsonMonth month) throws IOException
+    private Path writeTempFile(MonthData month) throws IOException
     {
         final Path file = createTempFile();
         writeMonth(month, file);
         return file;
     }
 
-    private void writeMonth(JsonMonth month, final Path file) throws IOException
+    private void writeMonth(MonthData month, final Path file) throws IOException
     {
         Files.writeString(file, jsonb.toJson(month));
     }

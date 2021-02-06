@@ -20,8 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 
-public class JsonFileStorage
+public class JsonFileStorage implements MonthDataStorage
 {
     private static final Logger LOG = LogManager.getLogger(JsonFileStorage.class);
 
@@ -39,7 +40,8 @@ public class JsonFileStorage
         this.dateToFileMapper = dateToFileMapper;
     }
 
-    public Optional<JsonMonth> loadMonth(YearMonth date)
+    @Override
+    public Optional<JsonMonth> load(YearMonth date)
     {
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
@@ -70,7 +72,8 @@ public class JsonFileStorage
         }
     }
 
-    public void store(YearMonth yearMonth, JsonMonth record)
+    @Override
+    public void store(YearMonth yearMonth, MonthData record)
     {
         final Path file = dateToFileMapper.getPathForDate(yearMonth);
         LOG.trace("Write month {} to file {}", yearMonth, file);
@@ -102,11 +105,13 @@ public class JsonFileStorage
         }
     }
 
+    @Override
     public List<YearMonth> getAvailableDataMonths()
     {
         return dateToFileMapper.getAllYearMonths().sorted().collect(toList());
     }
 
+    @Override
     public List<JsonMonth> loadAll()
     {
         return dateToFileMapper.getAllFiles()

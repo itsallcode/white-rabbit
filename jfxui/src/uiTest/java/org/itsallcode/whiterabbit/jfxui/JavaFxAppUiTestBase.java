@@ -27,6 +27,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -181,7 +182,7 @@ abstract class JavaFxAppUiTestBase
         return project;
     }
 
-    protected JsonMonth loadMonth(final LocalDate date)
+    protected MonthData loadMonth(final LocalDate date)
     {
         final Path file = this.dataDir.resolve(String.valueOf(date.getYear()))
                 .resolve(YearMonth.from(date).toString() + ".json");

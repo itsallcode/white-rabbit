@@ -13,6 +13,7 @@ import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
@@ -76,7 +77,7 @@ class MonthIndexTest
     @Test
     void testSetOvertimePreviousMonthUpdatesJsonRecord()
     {
-        final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
+        final MonthData jsonMonth = jsonMonth(Duration.ofHours(1));
         final MonthIndex monthIndex = create(jsonMonth);
         monthIndex.setOvertimePreviousMonth(Duration.ofHours(2));
 
@@ -86,7 +87,7 @@ class MonthIndexTest
     @Test
     void testSetOvertimePreviousMonthUpdatesTotalOvertime()
     {
-        final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
+        final MonthData jsonMonth = jsonMonth(Duration.ofHours(1));
         final MonthIndex monthIndex = create(jsonMonth);
 
         assertThat(monthIndex.getTotalOvertime()).isEqualTo(Duration.ofHours(1));
@@ -127,7 +128,7 @@ class MonthIndexTest
     void gettingDaysDoesNotAddThemToJson()
     {
         final LocalDate date = LocalDate.of(2020, 5, 4);
-        final JsonMonth jsonMonth = jsonMonth(YearMonth.from(date), null);
+        final MonthData jsonMonth = jsonMonth(YearMonth.from(date), null);
         final MonthIndex monthIndex = create(TestingConfig.builder().build(), jsonMonth);
 
         final DayRecord day = monthIndex.getDay(date);
@@ -172,14 +173,14 @@ class MonthIndexTest
         return create(jsonMonth(overtimePreviousMonth, days)).getTotalOvertime();
     }
 
-    private JsonMonth jsonMonth(Duration overtimePreviousMonth, JsonDay... days)
+    private MonthData jsonMonth(Duration overtimePreviousMonth, JsonDay... days)
     {
         return jsonMonth(YearMonth.of(2019, Month.MAY), overtimePreviousMonth, days);
     }
 
-    private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth, JsonDay... days)
+    private MonthData jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth, JsonDay... days)
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonMonth();
         month.setYear(yearMonth.getYear());
         month.setMonth(yearMonth.getMonth());
         month.setDays(asList(days));
@@ -200,12 +201,12 @@ class MonthIndexTest
         return day;
     }
 
-    private MonthIndex create(JsonMonth record)
+    private MonthIndex create(MonthData record)
     {
         return create(TestingConfig.builder().build(), record);
     }
 
-    private MonthIndex create(Config config, JsonMonth record)
+    private MonthIndex create(Config config, MonthData record)
     {
         return MonthIndex.create(new ContractTermsService(config), projectServiceMock, record);
     }

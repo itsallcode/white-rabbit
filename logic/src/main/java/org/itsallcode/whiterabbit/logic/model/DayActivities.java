@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.logic.model.json.DayData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class DayActivities
@@ -22,7 +22,7 @@ public class DayActivities
     private static final Logger LOG = LogManager.getLogger(DayActivities.class);
 
     private final ProjectService projectService;
-    private final JsonDay day;
+    private final DayData day;
     final DayRecord dayRecord;
 
     DayActivities(DayRecord dayRecord, ProjectService projectService)

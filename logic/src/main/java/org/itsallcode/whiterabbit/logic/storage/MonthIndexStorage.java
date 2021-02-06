@@ -14,9 +14,10 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
-import org.itsallcode.whiterabbit.logic.storage.data.JsonFileStorage;
+import org.itsallcode.whiterabbit.logic.storage.data.MonthDataStorage;
 
 class MonthIndexStorage implements Storage
 {
@@ -24,10 +25,10 @@ class MonthIndexStorage implements Storage
 
     private final ContractTermsService contractTerms;
     private final ProjectService projectService;
-    private final JsonFileStorage fileStorage;
+    private final MonthDataStorage fileStorage;
 
     MonthIndexStorage(ContractTermsService contractTerms, ProjectService projectService,
-            JsonFileStorage fileStorage)
+            MonthDataStorage fileStorage)
     {
         this.contractTerms = contractTerms;
         this.projectService = projectService;
@@ -37,7 +38,7 @@ class MonthIndexStorage implements Storage
     @Override
     public Optional<MonthIndex> loadMonth(YearMonth date)
     {
-        return fileStorage.loadMonth(date).map(this::createMonthIndex);
+        return fileStorage.load(date).map(this::createMonthIndex);
     }
 
     @Override
@@ -69,7 +70,7 @@ class MonthIndexStorage implements Storage
 
     private MonthIndex createNewMonth(YearMonth date)
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonMonth();
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
         month.setDays(new ArrayList<>());
@@ -77,7 +78,7 @@ class MonthIndexStorage implements Storage
         return createMonthIndex(month);
     }
 
-    private MonthIndex createMonthIndex(final JsonMonth jsonMonth)
+    private MonthIndex createMonthIndex(final MonthData jsonMonth)
     {
         return MonthIndex.create(contractTerms, projectService, jsonMonth);
     }

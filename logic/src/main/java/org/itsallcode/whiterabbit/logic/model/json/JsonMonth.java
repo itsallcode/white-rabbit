@@ -8,7 +8,7 @@ import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({ "year", "month", "overtimePreviousMonth", "days" })
-public class JsonMonth
+public class JsonMonth implements MonthData
 {
     @JsonbProperty("year")
     private int year;
@@ -17,9 +17,9 @@ public class JsonMonth
     @JsonbProperty("overtimePreviousMonth")
     private Duration overtimePreviousMonth;
     @JsonbProperty("days")
-    private List<JsonDay> days;
+    private List<DayData> days;
 
-    public static JsonMonth create(JsonMonth record, List<JsonDay> sortedDays)
+    public static JsonMonth create(MonthData record, List<DayData> sortedDays)
     {
         final JsonMonth month = new JsonMonth();
         month.setOvertimePreviousMonth(record.getOvertimePreviousMonth());
@@ -29,42 +29,50 @@ public class JsonMonth
         return month;
     }
 
+    @Override
     public int getYear()
     {
         return year;
     }
 
+    @Override
     public void setYear(int year)
     {
         this.year = year;
     }
 
+    @Override
     public Month getMonth()
     {
         return month;
     }
 
+    @Override
     public void setMonth(Month month)
     {
         this.month = month;
     }
 
+    @Override
     public Duration getOvertimePreviousMonth()
     {
         return overtimePreviousMonth;
     }
 
+    @Override
     public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
     {
         this.overtimePreviousMonth = overtimePreviousMonth;
     }
 
-    public List<JsonDay> getDays()
+    @Override
+    public List<DayData> getDays()
     {
         return days;
     }
 
-    public void setDays(List<JsonDay> days)
+    @Override
+    public void setDays(List<DayData> days)
     {
         this.days = days;
     }

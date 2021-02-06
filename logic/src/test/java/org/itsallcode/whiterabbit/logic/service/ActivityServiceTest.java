@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
@@ -126,7 +127,7 @@ class ActivityServiceTest
 
     private MonthIndex createMonth()
     {
-        final JsonMonth monthRecord = new JsonMonth();
+        final MonthData monthRecord = new JsonMonth();
         monthRecord.setDays(new ArrayList<>());
         monthRecord.setYear(DATE.getYear());
         monthRecord.setMonth(DATE.getMonth());
