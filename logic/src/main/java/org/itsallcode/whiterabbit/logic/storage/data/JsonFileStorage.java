@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,15 +32,16 @@ public class JsonFileStorage implements MonthDataStorage
     private final Jsonb jsonb;
     private final DateToFileMapper dateToFileMapper;
 
-    public JsonFileStorage(Jsonb jsonb, Path dataDir)
-    {
-        this(jsonb, new DateToFileMapper(dataDir));
-    }
-
     JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper)
     {
         this.jsonb = jsonb;
         this.dateToFileMapper = dateToFileMapper;
+    }
+
+    public static MonthDataStorage create(Path dataDir)
+    {
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        return new JsonFileStorage(jsonb, new DateToFileMapper(dataDir));
     }
 
     @Override

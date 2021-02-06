@@ -17,6 +17,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
@@ -37,6 +38,7 @@ import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCa
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonFileStorage;
 
 public class AppService implements Closeable
 {
@@ -94,8 +96,10 @@ public class AppService implements Closeable
     {
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
         final ProjectService projectService = new ProjectService(config);
+        final PluginManager pluginManager = PluginManager.create(config);
 
-        final CachingStorage storage = CachingStorage.create(config.getDataDir(), new ContractTermsService(config),
+        final MonthDataStorage dataStorage = createMonthDataStorage(config, pluginManager);
+        final CachingStorage storage = CachingStorage.create(dataStorage, new ContractTermsService(config),
                 projectService);
         final ClockService clockService = new ClockService(clock);
         final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService);
@@ -106,11 +110,22 @@ public class AppService implements Closeable
         final ProjectReportGenerator projectReportGenerator = new ProjectReportGenerator(storage);
         final ActivityService activityService = new ActivityService(storage, autocompleteService, appServiceCallback);
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
-        final PluginManager pluginManager = PluginManager.create(config);
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, activityService, projectService, autocompleteService,
                 new AppPropertiesService(), vacationReportGenerator,
                 projectReportGenerator, pluginManager);
+    }
+
+    private static MonthDataStorage createMonthDataStorage(final Config config, final PluginManager pluginManager)
+    {
+        final Optional<MonthDataStorage> dataStorage = pluginManager.getMonthDataStorage();
+        if (dataStorage.isPresent())
+        {
+            LOG.info("Using storage plugin {}", dataStorage.get().getClass().getName());
+            return dataStorage.get();
+        }
+        LOG.debug("No storage plugin found, using default json file storage");
+        return JsonFileStorage.create(config.getDataDir());
     }
 
     public void setUpdateListener(AppServiceCallback callback)

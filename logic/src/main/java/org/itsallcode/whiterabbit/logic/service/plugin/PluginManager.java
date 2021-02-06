@@ -3,9 +3,11 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 
@@ -43,6 +45,21 @@ public class PluginManager
     public ProjectReportExporter getProjectReportExporter(String id)
     {
         return getFeature(id, ProjectReportExporter.class);
+    }
+
+    public Optional<MonthDataStorage> getMonthDataStorage()
+    {
+        final List<String> pluginIds = findPluginsSupporting(MonthDataStorage.class);
+        if (pluginIds.isEmpty())
+        {
+            return Optional.empty();
+        }
+        if (pluginIds.size() > 1)
+        {
+            throw new IllegalStateException("Found multiple plugins supporting " + MonthDataStorage.class.getName()
+                    + ": " + pluginIds + ". Please add only one storage plugin to the classpath.");
+        }
+        return Optional.of(getFeature(pluginIds.get(0), MonthDataStorage.class));
     }
 
     private <T> T getFeature(String id, final Class<T> featureType)

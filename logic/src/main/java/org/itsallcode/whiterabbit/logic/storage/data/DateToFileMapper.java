@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DateToFileMapper
+class DateToFileMapper
 {
     private static final Logger LOG = LogManager.getLogger(DateToFileMapper.class);
 
@@ -23,7 +23,7 @@ public class DateToFileMapper
     private final DateTimeFormatter formatter;
     private final Pattern fileNamePattern = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)\\.json$");
 
-    public DateToFileMapper(Path dataDir)
+    DateToFileMapper(Path dataDir)
     {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM", Locale.ENGLISH);
         this.dataDir = dataDir;
