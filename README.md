@@ -254,21 +254,41 @@ java -jar jfxui/build/libs/jfxui.jar
 ./gradlew check -PuiTestsHeadless=false
 ```
 
-#### <a name="building_release"></a>Building a release and deploy WebStart
+#### Deployment
 
-This will build a signed JAR and upload it to the AWS S3 bucket.
+This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plugin api to Maven Central.
 
-Precondition: initial setup of [keystore and AWS configuration](webstart/README.md).
+#### Initial setup
+
+1. Setup of [keystore and AWS configuration](webstart/README.md).
+2. Add the following to your `~/.gradle/gradle.properties`:
+
+    ```properties
+    ossrhUsername=<your maven central username>
+    ossrhPassword=<your maven central passwort>
+
+    signing.keyId=<gpg key id (last 8 chars)>
+    signing.password=<gpg key password>
+    signing.secretKeyRingFile=<path to secret keyring file>
+    ```
+
+#### Build and deploy
 
 1. Make sure the [Changelog](CHANGELOG.md) is updated
 2. Run the following command:
 
     ```bash
-    ./gradlew clean build webstart:publishWebstart --info -PreleaseVersion=<version>
+    ./gradlew clean build publish webstart:publishWebstart --info -PreleaseVersion=<version>
     ```
 
-    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).
+    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net). Snapshots will be available at [https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
 
+4. Release the artifacts at Maven Central:
+    1. Login at [oss.sonatype.org](https://oss.sonatype.org).
+    2. Go to the [staging repositories](https://oss.sonatype.org/#stagingRepositories).
+    3. Select repository named `orgitsallcode-*` and click the "Close" button.
+    4. When closing was successfull, click the "Release" button.
+    5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
 3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
 
 #### Managing WebStart configuration in a private branch

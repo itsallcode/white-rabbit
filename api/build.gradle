@@ -1,0 +1,72 @@
+plugins {
+    id "java-library"
+    id "signing"
+    id "maven-publish"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    options.addBooleanOption('html5', true)
+}
+
+def getOptionalProperty(String name) {
+    if(project.hasProperty(name)) {
+        return project.property(name)
+    }
+    logger.info("Project property '${name}' not available. Please it to ~/.gradle/gradle.properties")
+    return null
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'whiterabbit-plugin-api'
+            from components.java
+            pom {
+                name = 'WhiteRabbit Plugin API'
+                description = 'API implemented by plugins for the WhiteRabbit time recording application'
+                url = 'https://github.com/itsallcode/white-rabbit'
+
+                licenses {
+                    license {
+                        name = 'GNU General Public License, Version 3.0'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'kaklakariada'
+                        name = 'Christoph'
+                        email = 'kaklakariada@chp1.net'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/itsallcode/white-rabbit.git'
+                    developerConnection = 'scm:git:https://github.com/itsallcode/white-rabbit.git'
+                    url = 'https://github.com/itsallcode/white-rabbit'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            allowInsecureProtocol = false
+            credentials(PasswordCredentials) {
+                username = getOptionalProperty("ossrhUsername")
+                password = getOptionalProperty("ossrhPassword")
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}

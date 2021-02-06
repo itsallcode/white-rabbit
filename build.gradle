@@ -18,19 +18,23 @@ def getProjectVersion() {
     if(project.hasProperty("releaseVersion")) {
         return project.property("releaseVersion")
     }
-    return "dev-SNAPSHOT"
+    return "1.4.0-SNAPSHOT"
 }
+
+version = getProjectVersion()
+group = "org.itsallcode.whiterabbit"
 
 def nonJavaProjects = ['webstart-infrastructure', 'webstart']
 
 subprojects {
+    group = rootProject.group
+    version = rootProject.version
+
     if(nonJavaProjects.contains(project.name)) {
         return
     }
     apply plugin: "java"
     apply plugin: "jacoco"
-
-    version = getProjectVersion()
 
     java {
         toolchain {
