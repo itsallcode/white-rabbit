@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.storage;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.time.Month;
 import java.time.YearMonth;
 
+import org.itsallcode.whiterabbit.logic.storage.data.DateToFileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

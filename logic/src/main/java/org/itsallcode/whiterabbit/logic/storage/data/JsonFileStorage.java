@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.storage;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -28,26 +28,18 @@ public class JsonFileStorage
     private final Jsonb jsonb;
     private final DateToFileMapper dateToFileMapper;
 
+    public JsonFileStorage(Jsonb jsonb, Path dataDir)
+    {
+        this(jsonb, new DateToFileMapper(dataDir));
+    }
+
     JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper)
     {
         this.jsonb = jsonb;
         this.dateToFileMapper = dateToFileMapper;
     }
 
-    private JsonMonth loadFromFile(Path file)
-    {
-        LOG.trace("Reading file {}", file);
-        try (InputStream stream = Files.newInputStream(file))
-        {
-            return jsonb.fromJson(stream, JsonMonth.class);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error reading file " + file, e);
-        }
-    }
-
-    Optional<JsonMonth> loadMonthRecord(YearMonth date)
+    public Optional<JsonMonth> loadMonth(YearMonth date)
     {
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
@@ -65,7 +57,20 @@ public class JsonFileStorage
         return Optional.empty();
     }
 
-    void writeToFile(YearMonth yearMonth, JsonMonth record)
+    private JsonMonth loadFromFile(Path file)
+    {
+        LOG.trace("Reading file {}", file);
+        try (InputStream stream = Files.newInputStream(file))
+        {
+            return jsonb.fromJson(stream, JsonMonth.class);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error reading file " + file, e);
+        }
+    }
+
+    public void store(YearMonth yearMonth, JsonMonth record)
     {
         final Path file = dateToFileMapper.getPathForDate(yearMonth);
         LOG.trace("Write month {} to file {}", yearMonth, file);
@@ -97,12 +102,12 @@ public class JsonFileStorage
         }
     }
 
-    List<YearMonth> getAvailableDataMonths()
+    public List<YearMonth> getAvailableDataMonths()
     {
         return dateToFileMapper.getAllYearMonths().sorted().collect(toList());
     }
 
-    List<JsonMonth> loadAll()
+    public List<JsonMonth> loadAll()
     {
         return dateToFileMapper.getAllFiles()
                 .filter(file -> !file.getFileName().toString().equals(Config.PROJECTS_JSON))

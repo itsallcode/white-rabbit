@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.storage;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -23,7 +23,7 @@ public class DateToFileMapper
     private final DateTimeFormatter formatter;
     private final Pattern fileNamePattern = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)\\.json$");
 
-    DateToFileMapper(Path dataDir)
+    public DateToFileMapper(Path dataDir)
     {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM", Locale.ENGLISH);
         this.dataDir = dataDir;

@@ -20,6 +20,7 @@ import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.storage.data.DateToFileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +69,7 @@ class JsonFileStorageTest
     {
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
         when(dateToFileMapperMock.getLegacyPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
-        assertThat(jsonFileStorage.loadMonthRecord(YEAR_MONTH)).isEmpty();
+        assertThat(jsonFileStorage.loadMonth(YEAR_MONTH)).isEmpty();
     }
 
     @Test
@@ -80,7 +81,7 @@ class JsonFileStorageTest
 
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(tempDir.resolve("does-not-exist"));
         when(dateToFileMapperMock.getLegacyPathForDate(YEAR_MONTH)).thenReturn(file);
-        final Optional<JsonMonth> loadedMonth = jsonFileStorage.loadMonthRecord(YEAR_MONTH);
+        final Optional<JsonMonth> loadedMonth = jsonFileStorage.loadMonth(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
     }
@@ -93,7 +94,7 @@ class JsonFileStorageTest
         final Path file = writeTempFile(month);
 
         when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
-        final Optional<JsonMonth> loadedMonth = jsonFileStorage.loadMonthRecord(YEAR_MONTH);
+        final Optional<JsonMonth> loadedMonth = jsonFileStorage.loadMonth(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
     }
@@ -106,7 +107,7 @@ class JsonFileStorageTest
 
         final JsonMonth month = new JsonMonth();
         month.setYear(2020);
-        jsonFileStorage.writeToFile(YEAR_MONTH, month);
+        jsonFileStorage.store(YEAR_MONTH, month);
 
         assertThat(file).exists().hasContent("{\"year\":2020}");
     }
@@ -119,7 +120,7 @@ class JsonFileStorageTest
 
         final JsonMonth month = new JsonMonth();
         month.setYear(2020);
-        jsonFileStorage.writeToFile(YEAR_MONTH, month);
+        jsonFileStorage.store(YEAR_MONTH, month);
 
         assertThat(file).exists().hasContent("{\"year\":2020}");
     }
