@@ -118,13 +118,11 @@ class UiStateModelTest
 
     private UiStateModel deserialize(String json)
     {
-        final Jsonb jsonb = JsonbBuilder.create();
         return jsonb.fromJson(json, UiStateModel.class);
     }
 
     private void assertSerialized(String expectedJson)
     {
-        final Jsonb jsonb = JsonbBuilder.create();
         final String json = jsonb.toJson(model);
         assertThat(json).isEqualTo(expectedJson);
     }

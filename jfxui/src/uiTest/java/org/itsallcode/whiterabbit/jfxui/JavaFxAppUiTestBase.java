@@ -18,8 +18,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +26,9 @@ import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
+import org.itsallcode.whiterabbit.logic.model.json.JsonbFactory;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,7 +44,7 @@ import javafx.stage.Stage;
 abstract class JavaFxAppUiTestBase
 {
     private static final Logger LOG = LogManager.getLogger(JavaFxAppUiTestBase.class);
-    private static final Jsonb JSONB = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+    private static final Jsonb JSONB = new JsonbFactory().create();
 
     private JavaFxApp javaFxApp;
 

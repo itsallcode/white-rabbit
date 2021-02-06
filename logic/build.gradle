@@ -6,7 +6,7 @@ dependencies {
     api project(':api')
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
-    runtimeOnly "org.eclipse:yasson:${yassonVersion}"
+    implementation "org.eclipse:yasson:${yassonVersion}"
 }
 
 ext.generatedResourcesFolder = file("$buildDir/generated-resources")

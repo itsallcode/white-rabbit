@@ -30,6 +30,7 @@ public class JsonDay implements DayData
     @JsonbProperty("comment")
     private String comment;
     @JsonbProperty("activities")
+    // @JsonbTypeDeserializer(JsonActivityDeserializer.class)
     private List<ActivityData> activities;
 
     @Override

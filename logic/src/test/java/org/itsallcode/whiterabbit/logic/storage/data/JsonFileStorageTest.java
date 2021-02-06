@@ -16,11 +16,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 
+import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
+import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
+import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.JsonbFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +45,7 @@ class JsonFileStorageTest
     @BeforeEach
     void setUp()
     {
-        jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(false));
+        jsonb = new JsonbFactory().createNonFormatting();
         jsonFileStorage = new JsonFileStorage(jsonb, dateToFileMapperMock);
     }
 
@@ -97,6 +99,41 @@ class JsonFileStorageTest
         final Optional<MonthData> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
         assertThat(loadedMonth).isNotEmpty();
         assertThat(loadedMonth.get().getYear()).isEqualTo(2020);
+    }
+
+    @Test
+    void loadMonthReturnsMonth_WithDays() throws IOException
+    {
+        final MonthData month = new JsonMonth();
+        month.setYear(2020);
+        final JsonDay day = new JsonDay();
+        day.setComment("comment");
+        month.setDays(List.of(day));
+        final Path file = writeTempFile(month);
+
+        when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
+        final Optional<MonthData> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
+        assertThat(loadedMonth.get().getDays()).hasSize(1);
+        assertThat(loadedMonth.get().getDays().get(0).getComment()).isEqualTo("comment");
+    }
+
+    @Test
+    void loadMonthReturnsMonth_WithActivities() throws IOException
+    {
+        final MonthData month = new JsonMonth();
+        month.setYear(2020);
+        final JsonDay day = new JsonDay();
+        final JsonActivity activity = new JsonActivity();
+        activity.setProjectId("project");
+        day.setActivities(List.of(activity));
+        month.setDays(List.of(day));
+        final Path file = writeTempFile(month);
+
+        when(dateToFileMapperMock.getPathForDate(YEAR_MONTH)).thenReturn(file);
+        final Optional<MonthData> loadedMonth = jsonFileStorage.load(YEAR_MONTH);
+        final List<ActivityData> activities = loadedMonth.get().getDays().get(0).getActivities();
+        assertThat(activities).hasSize(1);
+        assertThat(activities.get(0).getProjectId()).isEqualTo("project");
     }
 
     @Test

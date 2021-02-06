@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +22,7 @@ import org.itsallcode.whiterabbit.api.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.logic.model.json.JsonbFactory;
 
 public class JsonFileStorage implements MonthDataStorage
 {
@@ -40,7 +39,7 @@ public class JsonFileStorage implements MonthDataStorage
 
     public static MonthDataStorage create(Path dataDir)
     {
-        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        final Jsonb jsonb = new JsonbFactory().createNonFormatting();
         return new JsonFileStorage(jsonb, new DateToFileMapper(dataDir));
     }
 

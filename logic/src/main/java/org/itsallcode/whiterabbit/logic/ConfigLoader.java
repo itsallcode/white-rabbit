@@ -13,8 +13,8 @@ import javax.json.bind.JsonbBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
 public class ConfigLoader
 {
