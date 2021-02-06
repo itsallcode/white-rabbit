@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import org.itsallcode.whiterabbit.logic.model.json.ActivityData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
@@ -282,7 +283,7 @@ class DayActivitiesTest
 
         when(contractTermsMock.getWorkingTime(same(dayRecord))).thenReturn(Duration.ofHours(7));
 
-        final JsonActivity activity = new JsonActivity();
+        final ActivityData activity = new JsonActivity();
         activity.setDuration(null);
 
         activities.setRemainderActivity(activity, false);
@@ -299,7 +300,7 @@ class DayActivitiesTest
         when(contractTermsMock.getWorkingTime(same(dayRecord))).thenReturn(Duration.ofHours(7));
         activities.add().setDuration(Duration.ofHours(3));
 
-        final JsonActivity activity = new JsonActivity();
+        final ActivityData activity = new JsonActivity();
         activity.setDuration(null);
 
         activities.setRemainderActivity(activity, false);
@@ -317,7 +318,7 @@ class DayActivitiesTest
         activities.add().setDuration(Duration.ofHours(3));
         activities.add().setDuration(Duration.ofMinutes(30));
 
-        final JsonActivity activity = new JsonActivity();
+        final ActivityData activity = new JsonActivity();
         activity.setDuration(null);
 
         activities.setRemainderActivity(activity, false);

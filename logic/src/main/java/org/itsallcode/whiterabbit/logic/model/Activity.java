@@ -4,18 +4,18 @@ import java.time.Duration;
 import java.util.Objects;
 
 import org.itsallcode.whiterabbit.api.model.Project;
-import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
+import org.itsallcode.whiterabbit.logic.model.json.ActivityData;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class Activity implements RowRecord
 {
-    final JsonActivity jsonActivity;
+    final ActivityData jsonActivity;
     private final DayActivities day;
     private final int index;
     private final ProjectService projectService;
 
-    public Activity(int index, JsonActivity jsonActivity, DayActivities day, ProjectService projectService)
+    public Activity(int index, ActivityData jsonActivity, DayActivities day, ProjectService projectService)
     {
         this.index = index;
         this.jsonActivity = jsonActivity;

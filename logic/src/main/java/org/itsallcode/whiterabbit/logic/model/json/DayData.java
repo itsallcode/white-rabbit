@@ -9,7 +9,6 @@ import org.itsallcode.whiterabbit.api.model.DayType;
 
 public interface DayData
 {
-
     LocalDate getDate();
 
     DayType getType();
@@ -38,8 +37,7 @@ public interface DayData
 
     void setInterruption(Duration interruption);
 
-    List<JsonActivity> getActivities();
+    List<ActivityData> getActivities();
 
-    void setActivities(List<JsonActivity> activities);
-
+    void setActivities(List<ActivityData> activities);
 }

@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.logic.model.json.ActivityData;
 import org.itsallcode.whiterabbit.logic.model.json.DayData;
 import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
@@ -53,7 +54,7 @@ public class DayActivities
 
     public List<Activity> getAll()
     {
-        final List<JsonActivity> jsonActivities = getActivities().collect(toList());
+        final List<ActivityData> jsonActivities = getActivities().collect(toList());
         return IntStream.range(0, jsonActivities.size())
                 .mapToObj(i -> wrapActivity(jsonActivities.get(i), i))
                 .collect(toList());
@@ -65,14 +66,14 @@ public class DayActivities
                 .findFirst().orElse(true);
     }
 
-    private Stream<JsonActivity> getActivities()
+    private Stream<ActivityData> getActivities()
     {
         return Optional.ofNullable(day.getActivities())
                 .orElse(emptyList())
                 .stream();
     }
 
-    private Activity wrapActivity(JsonActivity activity, int index)
+    private Activity wrapActivity(ActivityData activity, int index)
     {
         return new Activity(index, activity, this, projectService);
     }
@@ -98,7 +99,7 @@ public class DayActivities
         }
     }
 
-    public void setRemainderActivity(JsonActivity activity, boolean remainder)
+    public void setRemainderActivity(ActivityData activity, boolean remainder)
     {
         if (activity.isRemainder() == remainder)
         {
@@ -113,9 +114,9 @@ public class DayActivities
             return;
         }
 
-        final List<JsonActivity> currentRemainders = getRemainderActivities();
+        final List<ActivityData> currentRemainders = getRemainderActivities();
         LOG.debug("Found {} remainder activities: deactivate them", currentRemainders.size());
-        for (final JsonActivity remainderActivity : currentRemainders)
+        for (final ActivityData remainderActivity : currentRemainders)
         {
             final Duration unallocatedDuration = getUnallocatedDuration();
             remainderActivity.setDuration(unallocatedDuration);
@@ -127,7 +128,7 @@ public class DayActivities
 
     private Duration getUnallocatedDuration()
     {
-        final Duration allocatedDuration = getActivities().map(JsonActivity::getDuration)
+        final Duration allocatedDuration = getActivities().map(ActivityData::getDuration)
                 .filter(Objects::nonNull)
                 .reduce((d1, d2) -> d1.plus(d2))
                 .orElse(Duration.ZERO);
@@ -136,7 +137,7 @@ public class DayActivities
 
     public boolean isValidAllocation()
     {
-        final List<JsonActivity> remainderActivities = getActivities()
+        final List<ActivityData> remainderActivities = getActivities()
                 .filter(a -> a.getDuration() == null)
                 .collect(toList());
         if (remainderActivities.size() > 1)
@@ -159,7 +160,7 @@ public class DayActivities
         return true;
     }
 
-    private List<JsonActivity> getRemainderActivities()
+    private List<ActivityData> getRemainderActivities()
     {
         return getActivities().filter(a -> a.getDuration() == null).collect(toList());
     }

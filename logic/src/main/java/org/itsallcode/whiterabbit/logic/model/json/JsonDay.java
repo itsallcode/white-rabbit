@@ -28,7 +28,7 @@ public class JsonDay implements DayData
     @JsonbProperty("comment")
     private String comment;
     @JsonbProperty("activities")
-    private List<JsonActivity> activities;
+    private List<ActivityData> activities;
 
     @Override
     public LocalDate getDate()
@@ -115,13 +115,13 @@ public class JsonDay implements DayData
     }
 
     @Override
-    public List<JsonActivity> getActivities()
+    public List<ActivityData> getActivities()
     {
         return activities;
     }
 
     @Override
-    public void setActivities(List<JsonActivity> activities)
+    public void setActivities(List<ActivityData> activities)
     {
         this.activities = activities;
     }
