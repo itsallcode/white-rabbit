@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Model class representing a day with date, time for begin and end of work,
+ * activities etc.
+ */
 public interface DayData
 {
     LocalDate getDate();

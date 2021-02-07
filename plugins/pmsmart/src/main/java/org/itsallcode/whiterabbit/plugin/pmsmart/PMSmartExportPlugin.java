@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
+import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 
 public class PMSmartExportPlugin implements Plugin
@@ -15,13 +16,13 @@ public class PMSmartExportPlugin implements Plugin
     }
 
     @Override
-    public boolean supports(Class<?> featureType)
+    public boolean supports(Class<? extends PluginFeature> featureType)
     {
         return featureType.isAssignableFrom(PMSmartExporter.class);
     }
 
     @Override
-    public <T> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> T getFeature(Class<T> featureType)
     {
         if (featureType.isAssignableFrom(PMSmartExporter.class))
         {

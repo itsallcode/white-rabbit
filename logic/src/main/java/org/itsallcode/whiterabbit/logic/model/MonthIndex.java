@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;

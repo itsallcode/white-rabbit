@@ -1,6 +1,21 @@
 package org.itsallcode.whiterabbit.api;
 
+/**
+ * The configuration of a {@link Plugin} that allows retrieving configuration
+ * values from the WhiteRabbit properties file
+ * {@code ~/.whiterabbit.properties}.
+ */
 public interface PluginConfiguration
 {
-    String getMandatoryValue(String string);
+    /**
+     * Get property {@code pluginId.propertyName} from the config file. Throws
+     * an exception if the property is not available.
+     * 
+     * @param propertyName
+     *            the property name to get.
+     * @return the value of the property.
+     * @throws RuntimeException
+     *             if the property is not available in the config file.
+     */
+    String getMandatoryValue(String propertyName);
 }

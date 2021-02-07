@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.time.Month;
 import java.util.List;
 
+/**
+ * Model class for data of a single month containing year, month, day data etc.
+ */
 public interface MonthData
 {
     int getYear();

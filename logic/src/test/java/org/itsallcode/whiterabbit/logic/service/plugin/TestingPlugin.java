@@ -2,8 +2,9 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
+import org.itsallcode.whiterabbit.api.features.PluginFeature;
 
-public class TestingPlugin implements Plugin
+public class TestingPlugin implements Plugin, PluginFeature
 {
     static final String PLUGIN_ID = "testingPlugin";
     private PluginConfiguration config;
@@ -28,13 +29,13 @@ public class TestingPlugin implements Plugin
     }
 
     @Override
-    public boolean supports(Class<?> featureType)
+    public boolean supports(Class<? extends PluginFeature> featureType)
     {
         return TestingPlugin.class.isAssignableFrom(featureType);
     }
 
     @Override
-    public <T> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> T getFeature(Class<T> featureType)
     {
         return featureType.cast(this);
     }

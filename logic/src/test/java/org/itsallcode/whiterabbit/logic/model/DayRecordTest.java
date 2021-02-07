@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;

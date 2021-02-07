@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import javax.json.bind.Jsonb;
 
-import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.junit.jupiter.api.BeforeEach;

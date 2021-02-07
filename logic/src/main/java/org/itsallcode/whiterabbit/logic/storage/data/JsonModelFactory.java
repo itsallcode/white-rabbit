@@ -1,6 +1,6 @@
 package org.itsallcode.whiterabbit.logic.storage.data;
 
-import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.MonthData;

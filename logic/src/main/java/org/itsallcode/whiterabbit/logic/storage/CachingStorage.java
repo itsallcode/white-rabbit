@@ -3,7 +3,7 @@ package org.itsallcode.whiterabbit.logic.storage;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.itsallcode.whiterabbit.api.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;

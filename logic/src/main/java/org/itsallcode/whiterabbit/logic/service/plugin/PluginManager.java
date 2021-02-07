@@ -7,8 +7,9 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.api.MonthDataStorage;
-import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.features.PluginFeature;
+import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 
 public class PluginManager
@@ -34,7 +35,7 @@ public class PluginManager
         return findPluginsSupporting(ProjectReportExporter.class);
     }
 
-    private List<String> findPluginsSupporting(Class<?> featureType)
+    private List<String> findPluginsSupporting(Class<? extends PluginFeature> featureType)
     {
         return pluginRegistry.getAllPlugins().stream()
                 .filter(plugin -> plugin.supports(featureType))
@@ -67,7 +68,7 @@ public class PluginManager
         return Optional.of(getFeature(pluginIds.get(0), featureType));
     }
 
-    private <T> T getFeature(String id, final Class<T> featureType)
+    private <T extends PluginFeature> T getFeature(String id, final Class<T> featureType)
     {
         final PluginWrapper plugin = pluginRegistry.getPlugin(id);
         if (plugin == null)

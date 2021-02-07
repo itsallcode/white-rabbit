@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.itsallcode.whiterabbit.api.MonthDataStorage;
-import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,7 +137,8 @@ class PluginManagerTest
         assertThatThrownBy(() -> pluginManager.getMonthDataStorage())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage(
-                        "Found multiple plugins supporting org.itsallcode.whiterabbit.api.MonthDataStorage: [plugin1, plugin2]. Please add only one storage plugin to the classpath.");
+                        "Found multiple plugins supporting " + MonthDataStorage.class.getName()
+                                + ": [plugin1, plugin2]. Please add only one storage plugin to the classpath.");
     }
 
     @Test
