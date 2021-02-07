@@ -95,7 +95,7 @@ class PluginRegistry
     private List<Path> getPluginJars()
     {
         final Path pluginDir = config.getPluginDir();
-        if (!Files.exists(pluginDir))
+        if (pluginDir == null || !Files.exists(pluginDir))
         {
             LOG.info("Plugin directory {} does not exist", pluginDir);
             return emptyList();

@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
@@ -170,6 +169,7 @@ public class AppService implements Closeable
         return this.schedulingService;
     }
 
+    @Deprecated
     public void report()
     {
         final DayReporter reporter = new DayReporter(formatterService);
@@ -197,21 +197,9 @@ public class AppService implements Closeable
         return clock;
     }
 
-    public List<DayRecord> getRecords(YearMonth yearMonth)
-    {
-        return getMonth(yearMonth) //
-                .map(record -> record.getSortedDays().collect(toList())) //
-                .orElse(emptyList());
-    }
-
     public List<YearMonth> getAvailableDataYearMonth()
     {
         return storage.getAvailableDataMonths();
-    }
-
-    public Optional<MonthIndex> getMonth(YearMonth yearMonth)
-    {
-        return storage.loadMonth(yearMonth);
     }
 
     public MonthIndex getOrCreateMonth(YearMonth yearMonth)
