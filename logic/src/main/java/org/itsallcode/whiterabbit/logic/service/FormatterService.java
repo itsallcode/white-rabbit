@@ -30,6 +30,9 @@ public class FormatterService
                 .withLocale(locale).withZone(timeZoneId);
     }
 
+    /**
+     * @deprecated will be removed in the next version.
+     */
     @Deprecated
     public String format(DayRecord day)
     {
@@ -45,6 +48,9 @@ public class FormatterService
                 format(day.getOverallOvertime()));
     }
 
+    /**
+     * @deprecated will be removed in the next version.
+     */
     @Deprecated
     private String formatDayType(DayType type)
     {

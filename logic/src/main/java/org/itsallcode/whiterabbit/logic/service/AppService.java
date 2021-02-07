@@ -169,6 +169,9 @@ public class AppService implements Closeable
         return this.schedulingService;
     }
 
+    /**
+     * @deprecated will be removed in the next version.
+     */
     @Deprecated
     public void report()
     {
