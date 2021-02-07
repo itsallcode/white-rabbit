@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,11 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +49,7 @@ class MonthIndexStorageTest
     void setUp()
     {
         storage = new MonthIndexStorage(contractTermsMock, projectServiceMock, fileStorageMock);
+        lenient().when(fileStorageMock.getModelFactory()).thenReturn(new JsonModelFactory());
     }
 
     @Test
@@ -91,7 +94,7 @@ class MonthIndexStorageTest
     @Test
     void loadOrCreate_loadsExistingMonth()
     {
-        final JsonMonth month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
+        final MonthData month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
         when(fileStorageMock.load(YEAR_MONTH)).thenReturn(Optional.of(month));
 
         final MonthIndex newMonth = storage.loadOrCreate(YEAR_MONTH);
@@ -106,7 +109,7 @@ class MonthIndexStorageTest
     @Test
     void storeMonth()
     {
-        final JsonMonth month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
+        final MonthData month = jsonMonth(YEAR_MONTH, Duration.ofMinutes(4));
         when(monthIndexMock.getMonthRecord()).thenReturn(month);
         when(monthIndexMock.getYearMonth()).thenReturn(YEAR_MONTH);
 
@@ -146,9 +149,9 @@ class MonthIndexStorageTest
         assertThat(storage.getAvailableDataMonths()).isSameAs(availableYearMonths);
     }
 
-    private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth)
+    private MonthData jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth)
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = new JsonModelFactory().createMonthData();
         month.setYear(yearMonth.getYear());
         month.setMonth(yearMonth.getMonth());
         month.setOvertimePreviousMonth(overtimePreviousMonth);

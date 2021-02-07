@@ -15,7 +15,6 @@ import org.itsallcode.whiterabbit.api.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
@@ -70,7 +69,7 @@ class MonthIndexStorage implements Storage
 
     private MonthIndex createNewMonth(YearMonth date)
     {
-        final MonthData month = new JsonMonth();
+        final MonthData month = fileStorage.getModelFactory().createMonthData();
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
         month.setDays(new ArrayList<>());
@@ -80,7 +79,7 @@ class MonthIndexStorage implements Storage
 
     private MonthIndex createMonthIndex(final MonthData jsonMonth)
     {
-        return MonthIndex.create(contractTerms, projectService, jsonMonth);
+        return MonthIndex.create(contractTerms, projectService, fileStorage.getModelFactory(), jsonMonth);
     }
 
     Duration loadPreviousMonthOvertime(YearMonth date)

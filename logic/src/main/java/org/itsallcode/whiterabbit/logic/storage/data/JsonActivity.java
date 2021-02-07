@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.model.json;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.time.Duration;
 
@@ -7,6 +7,7 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbVisibility;
 
 import org.itsallcode.whiterabbit.api.model.ActivityData;
+import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
 
 @JsonbPropertyOrder({ "projectId", "duration", "comment" })
 @JsonbVisibility(FieldAccessStrategy.class)
@@ -18,13 +19,6 @@ public class JsonActivity implements ActivityData
     private Duration duration;
     @JsonbProperty("comment")
     private String comment;
-
-    public JsonActivity()
-    {
-        this.projectId = null;
-        this.duration = null;
-        this.comment = null;
-    }
 
     @Override
     public String getProjectId()

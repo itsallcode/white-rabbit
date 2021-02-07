@@ -8,11 +8,12 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.ActivityData;
-import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +27,15 @@ class DayActivitiesTest
     private ProjectService projectServiceMock;
     @Mock
     private ContractTermsService contractTermsMock;
-    private JsonDay jsonDay;
+    private ModelFactory modelFactory;
+    private DayData jsonDay;
     private DayRecord dayRecord;
 
     @BeforeEach
     void setup()
     {
-        jsonDay = new JsonDay();
+        modelFactory = new JsonModelFactory();
+        jsonDay = modelFactory.createDayData();
     }
 
     @Test
@@ -283,7 +286,7 @@ class DayActivitiesTest
 
         when(contractTermsMock.getWorkingTime(same(dayRecord))).thenReturn(Duration.ofHours(7));
 
-        final ActivityData activity = new JsonActivity();
+        final ActivityData activity = modelFactory.createActivityData();
         activity.setDuration(null);
 
         activities.setRemainderActivity(activity, false);
@@ -300,7 +303,7 @@ class DayActivitiesTest
         when(contractTermsMock.getWorkingTime(same(dayRecord))).thenReturn(Duration.ofHours(7));
         activities.add().setDuration(Duration.ofHours(3));
 
-        final ActivityData activity = new JsonActivity();
+        final ActivityData activity = modelFactory.createActivityData();
         activity.setDuration(null);
 
         activities.setRemainderActivity(activity, false);
@@ -318,7 +321,7 @@ class DayActivitiesTest
         activities.add().setDuration(Duration.ofHours(3));
         activities.add().setDuration(Duration.ofMinutes(30));
 
-        final ActivityData activity = new JsonActivity();
+        final ActivityData activity = modelFactory.createActivityData();
         activity.setDuration(null);
 
         activities.setRemainderActivity(activity, false);
@@ -331,7 +334,7 @@ class DayActivitiesTest
     {
         final DayRecord previousDay = null;
         final MonthIndex month = null;
-        dayRecord = new DayRecord(contractTermsMock, jsonDay, previousDay, month, projectServiceMock);
-        return new DayActivities(dayRecord, projectServiceMock);
+        dayRecord = new DayRecord(contractTermsMock, jsonDay, previousDay, month, projectServiceMock, modelFactory);
+        return new DayActivities(dayRecord, projectServiceMock, modelFactory);
     }
 }

@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.model.json;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.time.Duration;
 import java.time.Month;
@@ -21,16 +21,6 @@ public class JsonMonth implements MonthData
     private Duration overtimePreviousMonth;
     @JsonbProperty("days")
     private List<DayData> days;
-
-    public static JsonMonth create(MonthData record, List<DayData> sortedDays)
-    {
-        final JsonMonth month = new JsonMonth();
-        month.setOvertimePreviousMonth(record.getOvertimePreviousMonth());
-        month.setYear(record.getYear());
-        month.setMonth(record.getMonth());
-        month.setDays(sortedDays);
-        return month;
-    }
 
     @Override
     public int getYear()

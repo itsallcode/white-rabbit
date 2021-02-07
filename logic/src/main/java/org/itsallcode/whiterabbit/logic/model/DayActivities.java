@@ -13,9 +13,9 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.DayData;
-import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class DayActivities
@@ -23,11 +23,13 @@ public class DayActivities
     private static final Logger LOG = LogManager.getLogger(DayActivities.class);
 
     private final ProjectService projectService;
+    private final ModelFactory modelFactory;
     private final DayData day;
     final DayRecord dayRecord;
 
-    DayActivities(DayRecord dayRecord, ProjectService projectService)
+    DayActivities(DayRecord dayRecord, ProjectService projectService, ModelFactory modelFactory)
     {
+        this.modelFactory = modelFactory;
         this.day = dayRecord.getJsonDay();
         this.dayRecord = dayRecord;
         this.projectService = Objects.requireNonNull(projectService);
@@ -41,7 +43,7 @@ public class DayActivities
         }
         final boolean isFirstActivity = getActivities().findAny().isEmpty();
 
-        final JsonActivity jsonActivity = new JsonActivity();
+        final ActivityData jsonActivity = modelFactory.createActivityData();
         jsonActivity.setProjectId("");
         jsonActivity.setDuration(Duration.ZERO);
         final int newRowIndex = day.getActivities().size();

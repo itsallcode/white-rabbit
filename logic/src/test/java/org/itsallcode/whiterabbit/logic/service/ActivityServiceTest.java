@@ -17,11 +17,11 @@ import java.util.Optional;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +42,7 @@ class ActivityServiceTest
     private ProjectService projectService;
     @Mock
     private AutocompleteService autocompleteServiceMock;
+    private JsonModelFactory modelFactory;
 
     private ActivityService service;
 
@@ -49,6 +50,7 @@ class ActivityServiceTest
     void setUp()
     {
         service = new ActivityService(storageMock, autocompleteServiceMock, appServiceCallbackMock);
+        modelFactory = new JsonModelFactory();
     }
 
     @Test
@@ -127,10 +129,10 @@ class ActivityServiceTest
 
     private MonthIndex createMonth()
     {
-        final MonthData monthRecord = new JsonMonth();
+        final MonthData monthRecord = modelFactory.createMonthData();
         monthRecord.setDays(new ArrayList<>());
         monthRecord.setYear(DATE.getYear());
         monthRecord.setMonth(DATE.getMonth());
-        return MonthIndex.create(contractTermsServiceMock, projectService, monthRecord);
+        return MonthIndex.create(contractTermsServiceMock, projectService, modelFactory, monthRecord);
     }
 }

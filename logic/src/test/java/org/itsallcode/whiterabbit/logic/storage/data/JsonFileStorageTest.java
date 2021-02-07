@@ -17,12 +17,9 @@ import java.util.stream.Stream;
 
 import javax.json.bind.Jsonb;
 
+import org.itsallcode.whiterabbit.api.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
-import org.itsallcode.whiterabbit.logic.model.json.JsonActivity;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
-import org.itsallcode.whiterabbit.logic.model.json.JsonbFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +35,8 @@ class JsonFileStorageTest
     Path tempDir;
     @Mock
     DateToFileMapper dateToFileMapperMock;
+    @Mock
+    private ModelFactory modelFactoryMock;
 
     JsonFileStorage jsonFileStorage;
     Jsonb jsonb;
@@ -46,7 +45,7 @@ class JsonFileStorageTest
     void setUp()
     {
         jsonb = new JsonbFactory().createNonFormatting();
-        jsonFileStorage = new JsonFileStorage(jsonb, dateToFileMapperMock);
+        jsonFileStorage = new JsonFileStorage(jsonb, dateToFileMapperMock, modelFactoryMock);
     }
 
     @Test
@@ -219,6 +218,12 @@ class JsonFileStorageTest
         assertMonth(months.get(0), month1);
         assertMonth(months.get(1), month2);
         assertMonth(months.get(2), month3);
+    }
+
+    @Test
+    void getModelFactory()
+    {
+        assertThat(jsonFileStorage.getModelFactory()).isSameAs(modelFactoryMock);
     }
 
     private void assertMonth(MonthData actual, MonthData expected)

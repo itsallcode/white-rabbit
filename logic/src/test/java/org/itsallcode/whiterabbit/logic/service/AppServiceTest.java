@@ -21,11 +21,11 @@ import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportGenerator;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
@@ -39,6 +39,7 @@ import org.itsallcode.whiterabbit.logic.service.singleinstance.RegistrationResul
 import org.itsallcode.whiterabbit.logic.service.singleinstance.RunningInstanceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.SingleInstanceService;
 import org.itsallcode.whiterabbit.logic.storage.Storage;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,8 @@ class AppServiceTest
 
     private AppService appService;
 
+    private JsonModelFactory modelFactory;
+
     @BeforeEach
     void setUp()
     {
@@ -96,6 +99,7 @@ class AppServiceTest
                 autocompleteServiceMock, appPropertiesServiceMock, vacationReportGeneratorMock,
                 projectReportGeneratorMock, pluginManagerMock);
         appService.setUpdateListener(updateListenerMock);
+        modelFactory = new JsonModelFactory();
     }
 
     @Test
@@ -103,7 +107,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 9);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
 
         updateNow(now, day);
@@ -117,7 +121,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 9);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
 
         updateNow(now, day);
@@ -130,7 +134,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(8, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
 
         final DayRecord updatedRecord = updateNow(now, day);
@@ -143,7 +147,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(8, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
 
         updateNow(now, day);
@@ -158,7 +162,7 @@ class AppServiceTest
         final LocalTime begin = LocalTime.of(8, 0);
         final LocalTime now = LocalTime.of(8, 1);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(begin);
         day.setEnd(begin);
@@ -175,7 +179,7 @@ class AppServiceTest
         final LocalTime begin = LocalTime.of(8, 0);
         final LocalTime now = LocalTime.of(8, 2);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(begin);
         day.setEnd(begin);
@@ -196,7 +200,7 @@ class AppServiceTest
         final LocalTime end = LocalTime.of(16, 0);
         final LocalTime now = LocalTime.of(9, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(begin);
         day.setEnd(end);
@@ -213,7 +217,7 @@ class AppServiceTest
         final LocalTime begin = LocalTime.of(8, 0);
         final LocalTime now = LocalTime.of(8, 3);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(begin);
         day.setEnd(begin);
@@ -232,7 +236,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
@@ -251,7 +255,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
@@ -271,7 +275,7 @@ class AppServiceTest
         final LocalTime beforeInterruption = LocalTime.of(13, 0);
         final LocalTime now = beforeInterruption.plusHours(1);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(beforeInterruption);
@@ -290,7 +294,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(9, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         final LocalTime begin = LocalTime.of(8, 0);
         day.setBegin(begin);
@@ -307,7 +311,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(9, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         final LocalTime begin = LocalTime.of(10, 0);
         day.setBegin(begin);
@@ -324,7 +328,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
@@ -344,7 +348,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
@@ -368,7 +372,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(LocalTime.of(13, 0));
@@ -434,7 +438,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(now);
@@ -450,7 +454,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(now);
@@ -468,7 +472,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(now);
@@ -491,7 +495,7 @@ class AppServiceTest
     {
         final LocalTime now = LocalTime.of(14, 0);
         final LocalDate today = LocalDate.of(2019, 3, 8);
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(today);
         day.setBegin(LocalTime.of(8, 0));
         day.setEnd(now);
@@ -519,13 +523,13 @@ class AppServiceTest
         assertThat(appService.getAppProperties()).isSameAs(appPropertiesMock);
     }
 
-    private DayRecord updateNow(final LocalTime now, final JsonDay day)
+    private DayRecord updateNow(final LocalTime now, final DayData day)
     {
         when(clockMock.getCurrentDate()).thenReturn(day.getDate());
         when(clockMock.getCurrentTime()).thenReturn(now);
         when(storageMock.loadOrCreate(YearMonth.from(day.getDate()))).thenReturn(monthIndexMock);
         final DayRecord dayRecord = new DayRecord(new ContractTermsService(TestingConfig.builder().build()), day, null,
-                monthIndexMock, projectServiceMock);
+                monthIndexMock, projectServiceMock, modelFactory);
         when(monthIndexMock.getDay(day.getDate())).thenReturn(dayRecord);
 
         appService.updateNow();

@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.model.json;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.util.Map;
 

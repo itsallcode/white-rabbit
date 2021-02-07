@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.model.json;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -30,7 +30,6 @@ public class JsonDay implements DayData
     @JsonbProperty("comment")
     private String comment;
     @JsonbProperty("activities")
-    // @JsonbTypeDeserializer(JsonActivityDeserializer.class)
     private List<ActivityData> activities;
 
     @Override
