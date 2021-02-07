@@ -49,22 +49,36 @@ public class PluginManager
 
     public Optional<MonthDataStorage> getMonthDataStorage()
     {
-        final List<String> pluginIds = findPluginsSupporting(MonthDataStorage.class);
+        return getUniqueFeature(MonthDataStorage.class);
+    }
+
+    private Optional<MonthDataStorage> getUniqueFeature(Class<MonthDataStorage> featureType)
+    {
+        final List<String> pluginIds = findPluginsSupporting(featureType);
         if (pluginIds.isEmpty())
         {
             return Optional.empty();
         }
         if (pluginIds.size() > 1)
         {
-            throw new IllegalStateException("Found multiple plugins supporting " + MonthDataStorage.class.getName()
+            throw new IllegalStateException("Found multiple plugins supporting " + featureType.getName()
                     + ": " + pluginIds + ". Please add only one storage plugin to the classpath.");
         }
-        return Optional.of(getFeature(pluginIds.get(0), MonthDataStorage.class));
+        return Optional.of(getFeature(pluginIds.get(0), featureType));
     }
 
     private <T> T getFeature(String id, final Class<T> featureType)
     {
-        return pluginRegistry.getPlugin(id).getFeature(featureType);
+        final PluginWrapper plugin = pluginRegistry.getPlugin(id);
+        if (plugin == null)
+        {
+            throw new IllegalStateException("Plugin '" + id + "' not found");
+        }
+        if (!plugin.supports(featureType))
+        {
+            throw new IllegalStateException("Plugin '" + id + "' does not support feature " + featureType.getName());
+        }
+        return plugin.getFeature(featureType);
     }
 
     public void close()
