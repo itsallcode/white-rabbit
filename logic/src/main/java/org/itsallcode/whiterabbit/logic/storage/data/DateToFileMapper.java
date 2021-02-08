@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.storage;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DateToFileMapper
+class DateToFileMapper
 {
     private static final Logger LOG = LogManager.getLogger(DateToFileMapper.class);
 

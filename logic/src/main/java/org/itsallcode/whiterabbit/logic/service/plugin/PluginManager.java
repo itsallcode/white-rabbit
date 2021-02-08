@@ -3,10 +3,13 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.features.PluginFeature;
+import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 
 public class PluginManager
@@ -32,7 +35,7 @@ public class PluginManager
         return findPluginsSupporting(ProjectReportExporter.class);
     }
 
-    private List<String> findPluginsSupporting(Class<?> featureType)
+    private List<String> findPluginsSupporting(Class<? extends PluginFeature> featureType)
     {
         return pluginRegistry.getAllPlugins().stream()
                 .filter(plugin -> plugin.supports(featureType))
@@ -45,9 +48,38 @@ public class PluginManager
         return getFeature(id, ProjectReportExporter.class);
     }
 
-    private <T> T getFeature(String id, final Class<T> featureType)
+    public Optional<MonthDataStorage> getMonthDataStorage()
     {
-        return pluginRegistry.getPlugin(id).getFeature(featureType);
+        return getUniqueFeature(MonthDataStorage.class);
+    }
+
+    private Optional<MonthDataStorage> getUniqueFeature(Class<MonthDataStorage> featureType)
+    {
+        final List<String> pluginIds = findPluginsSupporting(featureType);
+        if (pluginIds.isEmpty())
+        {
+            return Optional.empty();
+        }
+        if (pluginIds.size() > 1)
+        {
+            throw new IllegalStateException("Found multiple plugins supporting " + featureType.getName()
+                    + ": " + pluginIds + ". Please add only one storage plugin to the classpath.");
+        }
+        return Optional.of(getFeature(pluginIds.get(0), featureType));
+    }
+
+    private <T extends PluginFeature> T getFeature(String id, final Class<T> featureType)
+    {
+        final PluginWrapper plugin = pluginRegistry.getPlugin(id);
+        if (plugin == null)
+        {
+            throw new IllegalStateException("Plugin '" + id + "' not found");
+        }
+        if (!plugin.supports(featureType))
+        {
+            throw new IllegalStateException("Plugin '" + id + "' does not support feature " + featureType.getName());
+        }
+        return plugin.getFeature(featureType);
     }
 
     public void close()

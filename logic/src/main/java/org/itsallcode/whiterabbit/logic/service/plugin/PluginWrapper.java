@@ -4,6 +4,7 @@ import java.net.URLClassLoader;
 
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
+import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
 class PluginWrapper
@@ -34,12 +35,12 @@ class PluginWrapper
         return plugin.getId();
     }
 
-    boolean supports(Class<?> featureType)
+    boolean supports(Class<? extends PluginFeature> featureType)
     {
         return plugin.supports(featureType);
     }
 
-    <T> T getFeature(Class<T> featureType)
+    <T extends PluginFeature> T getFeature(Class<T> featureType)
     {
         return plugin.getFeature(featureType);
     }

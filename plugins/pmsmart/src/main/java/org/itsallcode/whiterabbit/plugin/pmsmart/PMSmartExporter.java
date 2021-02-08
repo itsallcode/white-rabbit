@@ -3,8 +3,8 @@ package org.itsallcode.whiterabbit.plugin.pmsmart;
 import java.util.Map;
 
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
-import org.itsallcode.whiterabbit.api.ProgressMonitor;
-import org.itsallcode.whiterabbit.api.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
+import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;

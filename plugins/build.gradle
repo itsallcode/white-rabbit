@@ -11,6 +11,12 @@ subprojects {
         archiveClassifier.set(null)
         archiveVersion.set("")
     }
+    
+    eclipse {
+        classpath {
+            plusConfigurations += [ configurations.compileOnly ]
+        }
+    }
 }
 
 def pluginBuildTasks = project.subprojects.collect {it.tasks['shadowJar']}

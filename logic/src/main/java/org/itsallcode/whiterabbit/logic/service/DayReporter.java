@@ -6,6 +6,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
+/**
+ * @deprecated will be removed in the next version.
+ */
+@Deprecated
 public class DayReporter
 {
     private static final Logger LOG = LogManager.getLogger(DayReporter.class);

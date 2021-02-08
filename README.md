@@ -2,8 +2,8 @@
 A time recording tool
 
 [![Build](https://github.com/itsallcode/white-rabbit/workflows/Build/badge.svg)](https://github.com/itsallcode/white-rabbit/actions?query=workflow%3ABuild)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=white-rabbit)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=white-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=white-rabbit)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
 
 * [Features](#features)
 * [Usage](#usage)

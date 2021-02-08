@@ -99,7 +99,7 @@ class CachingStorageImplTest
     @Test
     void getRequiredYearMonths_returnsEmptyList_whenNoDataAvailable()
     {
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(emptyList());
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(emptyList());
 
         assertThat(storage.getRequiredYearMonths(LocalDate.of(2020, Month.JANUARY, 1))).isEmpty();
     }
@@ -111,7 +111,7 @@ class CachingStorageImplTest
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
         final YearMonth march = YearMonth.of(2020, Month.MARCH);
         final YearMonth april = YearMonth.of(2020, Month.APRIL);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february, march, april));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february, march, april));
 
         assertThat(storage.getRequiredYearMonths(LocalDate.of(2020, Month.JANUARY, 1)))
                 .containsExactly(january, february, march, april);
@@ -124,7 +124,7 @@ class CachingStorageImplTest
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
         final YearMonth march = YearMonth.of(2020, Month.MARCH);
         final YearMonth april = YearMonth.of(2020, Month.APRIL);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february, march, april));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february, march, april));
 
         assertThat(storage.getRequiredYearMonths(LocalDate.of(2020, Month.JANUARY, 31)))
                 .containsExactly(january, february, march, april);
@@ -137,7 +137,7 @@ class CachingStorageImplTest
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
         final YearMonth march = YearMonth.of(2020, Month.MARCH);
         final YearMonth april = YearMonth.of(2020, Month.APRIL);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february, march, april));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february, march, april));
 
         assertThat(storage.getRequiredYearMonths(LocalDate.of(2020, Month.FEBRUARY, 1)))
                 .containsExactly(february, march, april);
@@ -148,7 +148,7 @@ class CachingStorageImplTest
     {
         final YearMonth january = YearMonth.of(2020, Month.JANUARY);
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february));
 
         when(cacheMock.contains(january)).thenReturn(false);
         when(cacheMock.contains(february)).thenReturn(false);
@@ -172,7 +172,7 @@ class CachingStorageImplTest
     {
         final YearMonth january = YearMonth.of(2020, Month.JANUARY);
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february));
 
         when(cacheMock.contains(january)).thenReturn(true);
         when(cacheMock.contains(february)).thenReturn(true);
@@ -188,7 +188,7 @@ class CachingStorageImplTest
     {
         final YearMonth january = YearMonth.of(2020, Month.JANUARY);
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february));
 
         when(delegateStorageMock.loadMonth(january)).thenReturn(Optional.empty());
         when(delegateStorageMock.loadMonth(february)).thenReturn(Optional.empty());
@@ -204,7 +204,7 @@ class CachingStorageImplTest
 
         final YearMonth january = YearMonth.of(2020, Month.JANUARY);
         final YearMonth february = YearMonth.of(2020, Month.FEBRUARY);
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(List.of(january, february));
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(List.of(january, february));
 
         when(cacheMock.contains(january)).thenReturn(false);
         when(cacheMock.contains(february)).thenReturn(false);
@@ -237,7 +237,7 @@ class CachingStorageImplTest
     void getAvailableDataYearMonth_delegates()
     {
         final List<YearMonth> list = new ArrayList<>();
-        when(delegateStorageMock.getAvailableDataYearMonth()).thenReturn(list);
-        assertThat(storage.getAvailableDataYearMonth()).isSameAs(list);
+        when(delegateStorageMock.getAvailableDataMonths()).thenReturn(list);
+        assertThat(storage.getAvailableDataMonths()).isSameAs(list);
     }
 }

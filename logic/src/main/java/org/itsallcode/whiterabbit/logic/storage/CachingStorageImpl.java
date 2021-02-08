@@ -68,9 +68,9 @@ class CachingStorageImpl implements CachingStorage
     }
 
     @Override
-    public List<YearMonth> getAvailableDataYearMonth()
+    public List<YearMonth> getAvailableDataMonths()
     {
-        return delegateStorage.getAvailableDataYearMonth();
+        return delegateStorage.getAvailableDataMonths();
     }
 
     @Override
@@ -95,7 +95,7 @@ class CachingStorageImpl implements CachingStorage
     List<YearMonth> getRequiredYearMonths(LocalDate maxAge)
     {
         final YearMonth oldestYearMonth = YearMonth.from(maxAge);
-        return delegateStorage.getAvailableDataYearMonth().stream()
+        return delegateStorage.getAvailableDataMonths().stream()
                 .filter(month -> !month.isBefore(oldestYearMonth))
                 .collect(toList());
     }

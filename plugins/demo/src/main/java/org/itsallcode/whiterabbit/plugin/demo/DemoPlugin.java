@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.plugin.demo;
 
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
+import org.itsallcode.whiterabbit.api.features.PluginFeature;
 
 public class DemoPlugin implements Plugin
 {
@@ -24,13 +25,13 @@ public class DemoPlugin implements Plugin
     }
 
     @Override
-    public boolean supports(Class<?> featureType)
+    public boolean supports(Class<? extends PluginFeature> featureType)
     {
         return featureType.isAssignableFrom(DemoProjectReportExporter.class);
     }
 
     @Override
-    public <T> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> T getFeature(Class<T> featureType)
     {
         if (featureType.isAssignableFrom(DemoProjectReportExporter.class))
         {

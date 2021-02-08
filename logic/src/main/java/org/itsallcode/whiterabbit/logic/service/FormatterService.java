@@ -30,6 +30,10 @@ public class FormatterService
                 .withLocale(locale).withZone(timeZoneId);
     }
 
+    /**
+     * @deprecated will be removed in the next version.
+     */
+    @Deprecated
     public String format(DayRecord day)
     {
         final String dayOfWeek = day.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, locale);
@@ -44,6 +48,10 @@ public class FormatterService
                 format(day.getOverallOvertime()));
     }
 
+    /**
+     * @deprecated will be removed in the next version.
+     */
+    @Deprecated
     private String formatDayType(DayType type)
     {
         final String formatPattern = "%1$-" + MAX_DAY_TYPE_LENGTH + "s";

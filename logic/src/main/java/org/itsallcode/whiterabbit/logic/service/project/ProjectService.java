@@ -41,7 +41,7 @@ public class ProjectService
         this.jsonb = jsonb;
 
         final Path projectConfigFile = config.getProjectFile();
-        if (Files.exists(projectConfigFile))
+        if (projectConfigFile != null && Files.exists(projectConfigFile))
         {
             final List<ProjectImpl> allProjects = loadAvailableProjects(projectConfigFile);
             projectsById = groupBy(allProjects, ProjectImpl::getProjectId);

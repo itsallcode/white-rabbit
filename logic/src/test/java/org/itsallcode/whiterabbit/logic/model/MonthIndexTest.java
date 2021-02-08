@@ -9,12 +9,14 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.YearMonth;
 
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,8 @@ class MonthIndexTest
 {
     @Mock
     private ProjectService projectServiceMock;
+
+    private final ModelFactory modelFactory = new JsonModelFactory();
 
     @Test
     void testCalculateTotalOvertimeOvertimeNoDays()
@@ -76,7 +80,7 @@ class MonthIndexTest
     @Test
     void testSetOvertimePreviousMonthUpdatesJsonRecord()
     {
-        final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
+        final MonthData jsonMonth = jsonMonth(Duration.ofHours(1));
         final MonthIndex monthIndex = create(jsonMonth);
         monthIndex.setOvertimePreviousMonth(Duration.ofHours(2));
 
@@ -86,7 +90,7 @@ class MonthIndexTest
     @Test
     void testSetOvertimePreviousMonthUpdatesTotalOvertime()
     {
-        final JsonMonth jsonMonth = jsonMonth(Duration.ofHours(1));
+        final MonthData jsonMonth = jsonMonth(Duration.ofHours(1));
         final MonthIndex monthIndex = create(jsonMonth);
 
         assertThat(monthIndex.getTotalOvertime()).isEqualTo(Duration.ofHours(1));
@@ -127,7 +131,7 @@ class MonthIndexTest
     void gettingDaysDoesNotAddThemToJson()
     {
         final LocalDate date = LocalDate.of(2020, 5, 4);
-        final JsonMonth jsonMonth = jsonMonth(YearMonth.from(date), null);
+        final MonthData jsonMonth = jsonMonth(YearMonth.from(date), null);
         final MonthIndex monthIndex = create(TestingConfig.builder().build(), jsonMonth);
 
         final DayRecord day = monthIndex.getDay(date);
@@ -162,24 +166,24 @@ class MonthIndexTest
         assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
     }
 
-    private Duration calculateTotalOvertime(JsonDay... days)
+    private Duration calculateTotalOvertime(DayData... days)
     {
         return calculateTotalOvertime(null, days);
     }
 
-    private Duration calculateTotalOvertime(Duration overtimePreviousMonth, JsonDay... days)
+    private Duration calculateTotalOvertime(Duration overtimePreviousMonth, DayData... days)
     {
         return create(jsonMonth(overtimePreviousMonth, days)).getTotalOvertime();
     }
 
-    private JsonMonth jsonMonth(Duration overtimePreviousMonth, JsonDay... days)
+    private MonthData jsonMonth(Duration overtimePreviousMonth, DayData... days)
     {
         return jsonMonth(YearMonth.of(2019, Month.MAY), overtimePreviousMonth, days);
     }
 
-    private JsonMonth jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth, JsonDay... days)
+    private MonthData jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth, DayData... days)
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = modelFactory.createMonthData();
         month.setYear(yearMonth.getYear());
         month.setMonth(yearMonth.getMonth());
         month.setDays(asList(days));
@@ -187,12 +191,12 @@ class MonthIndexTest
         return month;
     }
 
-    private JsonDay day(Duration overtime, int dayOfMonth)
+    private DayData day(Duration overtime, int dayOfMonth)
     {
         final LocalTime begin = LocalTime.of(8, 0);
         final LocalTime end = begin.plus(Duration.ofHours(8)).plus(Duration.ofMinutes(45).plus(overtime));
 
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(LocalDate.of(2019, Month.MAY, dayOfMonth));
         day.setBegin(begin);
         day.setEnd(end);
@@ -200,13 +204,13 @@ class MonthIndexTest
         return day;
     }
 
-    private MonthIndex create(JsonMonth record)
+    private MonthIndex create(MonthData record)
     {
         return create(TestingConfig.builder().build(), record);
     }
 
-    private MonthIndex create(Config config, JsonMonth record)
+    private MonthIndex create(Config config, MonthData record)
     {
-        return MonthIndex.create(new ContractTermsService(config), record, projectServiceMock);
+        return MonthIndex.create(new ContractTermsService(config), projectServiceMock, modelFactory, record);
     }
 }

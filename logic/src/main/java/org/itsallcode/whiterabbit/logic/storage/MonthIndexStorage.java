@@ -11,9 +11,10 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
@@ -23,10 +24,10 @@ class MonthIndexStorage implements Storage
 
     private final ContractTermsService contractTerms;
     private final ProjectService projectService;
-    private final JsonFileStorage fileStorage;
+    private final MonthDataStorage fileStorage;
 
     MonthIndexStorage(ContractTermsService contractTerms, ProjectService projectService,
-            JsonFileStorage fileStorage)
+            MonthDataStorage fileStorage)
     {
         this.contractTerms = contractTerms;
         this.projectService = projectService;
@@ -36,7 +37,7 @@ class MonthIndexStorage implements Storage
     @Override
     public Optional<MonthIndex> loadMonth(YearMonth date)
     {
-        return fileStorage.loadMonthRecord(date).map(this::createMonthIndex);
+        return fileStorage.load(date).map(this::createMonthIndex);
     }
 
     @Override
@@ -49,7 +50,7 @@ class MonthIndexStorage implements Storage
     @Override
     public void storeMonth(MonthIndex month)
     {
-        fileStorage.writeToFile(month.getYearMonth(), month.getMonthRecord());
+        fileStorage.store(month.getYearMonth(), month.getMonthRecord());
     }
 
     @Override
@@ -61,14 +62,14 @@ class MonthIndexStorage implements Storage
     }
 
     @Override
-    public List<YearMonth> getAvailableDataYearMonth()
+    public List<YearMonth> getAvailableDataMonths()
     {
-        return fileStorage.getAvailableDataYearMonth();
+        return fileStorage.getAvailableDataMonths();
     }
 
     private MonthIndex createNewMonth(YearMonth date)
     {
-        final JsonMonth month = new JsonMonth();
+        final MonthData month = fileStorage.getModelFactory().createMonthData();
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
         month.setDays(new ArrayList<>());
@@ -76,9 +77,9 @@ class MonthIndexStorage implements Storage
         return createMonthIndex(month);
     }
 
-    private MonthIndex createMonthIndex(final JsonMonth jsonMonth)
+    private MonthIndex createMonthIndex(final MonthData jsonMonth)
     {
-        return MonthIndex.create(contractTerms, jsonMonth, projectService);
+        return MonthIndex.create(contractTerms, projectService, fileStorage.getModelFactory(), jsonMonth);
     }
 
     Duration loadPreviousMonthOvertime(YearMonth date)

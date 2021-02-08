@@ -10,33 +10,38 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 public class MonthIndex
 {
-    private final JsonMonth record;
+    private final ModelFactory modelFactory;
+    private final MonthData record;
     private final Map<LocalDate, DayRecord> days;
 
-    private MonthIndex(JsonMonth record, Map<LocalDate, DayRecord> days)
+    private MonthIndex(ModelFactory modelFactory, MonthData record, Map<LocalDate, DayRecord> days)
     {
+        this.modelFactory = Objects.requireNonNull(modelFactory, "modelFactory");
         this.record = record;
         this.days = days;
     }
 
-    public static MonthIndex create(ContractTermsService contractTerms, JsonMonth record, ProjectService projectService)
+    public static MonthIndex create(ContractTermsService contractTerms, ProjectService projectService,
+            ModelFactory modelFactory, MonthData record)
     {
-        final Map<LocalDate, JsonDay> jsonDays = record.getDays().stream()
-                .collect(toMap(JsonDay::getDate, Function.identity()));
+        final Map<LocalDate, DayData> jsonDays = record.getDays().stream()
+                .collect(toMap(DayData::getDate, Function.identity()));
         final Map<LocalDate, DayRecord> days = new HashMap<>();
-        final MonthIndex monthIndex = new MonthIndex(record, days);
+        final MonthIndex monthIndex = new MonthIndex(modelFactory, record, days);
 
         final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
 
@@ -44,8 +49,9 @@ public class MonthIndex
         for (int day = 1; day <= yearMonth.lengthOfMonth(); day++)
         {
             final LocalDate date = yearMonth.atDay(day);
-            final JsonDay jsonDay = jsonDays.computeIfAbsent(date, d -> createDummyDay(d, contractTerms));
-            final DayRecord dayRecord = new DayRecord(contractTerms, jsonDay, previousDay, monthIndex, projectService);
+            final DayData jsonDay = jsonDays.computeIfAbsent(date, d -> createDummyDay(d, contractTerms, modelFactory));
+            final DayRecord dayRecord = new DayRecord(contractTerms, jsonDay, previousDay, monthIndex, projectService,
+                    modelFactory);
             days.put(dayRecord.getDate(), dayRecord);
             previousDay = dayRecord;
         }
@@ -53,9 +59,9 @@ public class MonthIndex
         return monthIndex;
     }
 
-    private static JsonDay createDummyDay(LocalDate date, ContractTermsService contractTerms)
+    private static DayData createDummyDay(LocalDate date, ContractTermsService contractTerms, ModelFactory modelFactory)
     {
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setDate(date);
         if (contractTerms.getContractedWorkingTimePerDay() != null
                 && !contractTerms.getContractedWorkingTimePerDay().equals(contractTerms.getCurrentWorkingTimePerDay()))
@@ -80,13 +86,19 @@ public class MonthIndex
         this.days.put(day.getDate(), day);
     }
 
-    public JsonMonth getMonthRecord()
+    public MonthData getMonthRecord()
     {
-        final List<JsonDay> sortedNonDummyJsonDays = getSortedDays() //
+        final List<DayData> sortedNonDummyJsonDays = getSortedDays() //
                 .filter(d -> !d.isDummyDay()) //
                 .map(DayRecord::getJsonDay) //
                 .collect(toList());
-        return JsonMonth.create(record, sortedNonDummyJsonDays);
+
+        final MonthData month = modelFactory.createMonthData();
+        month.setOvertimePreviousMonth(record.getOvertimePreviousMonth());
+        month.setYear(record.getYear());
+        month.setMonth(record.getMonth());
+        month.setDays(sortedNonDummyJsonDays);
+        return month;
     }
 
     public Duration getOvertimePreviousMonth()
@@ -126,7 +138,7 @@ public class MonthIndex
     {
         return record.getDays().stream()
                 .filter(day -> day.getType() == DayType.VACATION)
-                .map(JsonDay::getDate)
+                .map(DayData::getDate)
                 .collect(toList());
     }
 }

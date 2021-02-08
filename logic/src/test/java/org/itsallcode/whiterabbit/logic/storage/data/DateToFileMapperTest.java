@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.storage;
+package org.itsallcode.whiterabbit.logic.storage.data;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -8,12 +8,14 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
+import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +27,7 @@ class DayRecordTest
 {
     @Mock
     private ProjectService projectServiceMock;
+    private final ModelFactory modelFactory = new JsonModelFactory();
 
     @Test
     void mandatoryWorkingTimeIsZeroOnWeekend()
@@ -323,7 +326,7 @@ class DayRecordTest
     @Test
     void setInterruptionToZeroUsesNullForJsonRecord()
     {
-        final JsonDay day1 = new JsonDay();
+        final DayData day1 = modelFactory.createDayData();
         day1.setInterruption(Duration.ofHours(1));
         final DayRecord day = dayRecord(day1, null, null);
 
@@ -336,7 +339,7 @@ class DayRecordTest
     @Test
     void setCommentToEmptyStringUsesNullForJsonRecord()
     {
-        final JsonDay day1 = new JsonDay();
+        final DayData day1 = modelFactory.createDayData();
         day1.setComment("comment");
         final DayRecord day = dayRecord(day1, null, null);
 
@@ -349,7 +352,7 @@ class DayRecordTest
     @Test
     void setCommentToValueSetsCommentForJsonRecord()
     {
-        final JsonDay day1 = new JsonDay();
+        final DayData day1 = modelFactory.createDayData();
         final DayRecord day = dayRecord(day1, null, null);
 
         day.setComment("comment");
@@ -399,41 +402,41 @@ class DayRecordTest
     }
 
     @Test
-    void getJsonDayReturnsMonth()
+    void getDayDataReturnsMonth()
     {
-        final JsonDay jsonDay = new JsonDay();
-        final DayRecord day = createDay(jsonDay);
-        assertThat(day.getJsonDay()).isSameAs(jsonDay);
+        final DayData dayData = modelFactory.createDayData();
+        final DayRecord day = createDay(dayData);
+        assertThat(day.getJsonDay()).isSameAs(dayData);
     }
 
     @Test
     void getCustomWorkingTimeReturnsEmptyOptionalByDefault()
     {
-        final JsonDay jsonDay = new JsonDay();
-        jsonDay.setWorkingHours(null);
+        final DayData DayData = modelFactory.createDayData();
+        DayData.setWorkingHours(null);
 
-        final DayRecord day = createDay(jsonDay);
+        final DayRecord day = createDay(DayData);
         assertThat(day.getCustomWorkingTime()).isEmpty();
     }
 
     @Test
     void getCustomWorkingTimeReturnsRealValue()
     {
-        final JsonDay jsonDay = new JsonDay();
-        jsonDay.setWorkingHours(Duration.ofHours(5));
+        final DayData DayData = modelFactory.createDayData();
+        DayData.setWorkingHours(Duration.ofHours(5));
 
-        final DayRecord day = createDay(jsonDay);
+        final DayRecord day = createDay(DayData);
         assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
     }
 
-    private MonthIndex month(LocalDate date, Duration overtimePreviousMonth, JsonDay... days)
+    private MonthIndex month(LocalDate date, Duration overtimePreviousMonth, DayData... days)
     {
-        final JsonMonth jsonMonth = new JsonMonth();
+        final MonthData jsonMonth = modelFactory.createMonthData();
         jsonMonth.setDays(asList(days));
         jsonMonth.setMonth(date.getMonth());
         jsonMonth.setYear(date.getYear());
         jsonMonth.setOvertimePreviousMonth(overtimePreviousMonth);
-        return MonthIndex.create(contractTerms(), jsonMonth, projectServiceMock);
+        return MonthIndex.create(contractTerms(), projectServiceMock, modelFactory, jsonMonth);
     }
 
     private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
@@ -517,7 +520,7 @@ class DayRecordTest
     private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end, DayType type, Duration interruption,
             DayRecord previousDay, MonthIndex month)
     {
-        final JsonDay day = new JsonDay();
+        final DayData day = modelFactory.createDayData();
         day.setBegin(begin);
         day.setEnd(end);
         day.setDate(date);
@@ -527,15 +530,15 @@ class DayRecordTest
         return dayRecord(day, previousDay, month);
     }
 
-    private DayRecord createDay(final JsonDay jsonDay)
+    private DayRecord createDay(final DayData DayData)
     {
-        return new DayRecord(null, jsonDay, null, null, projectServiceMock);
+        return new DayRecord(null, DayData, null, null, projectServiceMock, modelFactory);
     }
 
-    private DayRecord dayRecord(JsonDay day, DayRecord previousDay, MonthIndex month)
+    private DayRecord dayRecord(DayData day, DayRecord previousDay, MonthIndex month)
     {
         final ContractTermsService contractTerms = contractTerms();
-        return new DayRecord(contractTerms, day, previousDay, month, projectServiceMock);
+        return new DayRecord(contractTerms, day, previousDay, month, projectServiceMock, modelFactory);
     }
 
     private ContractTermsService contractTerms()

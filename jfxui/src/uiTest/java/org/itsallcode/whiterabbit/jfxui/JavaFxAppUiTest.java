@@ -11,9 +11,9 @@ import java.time.Month;
 import java.time.YearMonth;
 import java.util.Locale;
 
+import org.itsallcode.whiterabbit.api.model.DayData;
+import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
-import org.itsallcode.whiterabbit.logic.model.json.JsonMonth;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -97,12 +97,12 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         time().tickMinute();
         final LocalTime end = time().getCurrentTimeMinutes();
 
-        final JsonMonth month = loadMonth(today);
+        final MonthData month = loadMonth(today);
 
         assertAll(
                 () -> assertThat(month.getDays()).hasSize(1),
-                () -> assertThat(month.getDays()).extracting(JsonDay::getBegin).containsExactly(begin),
-                () -> assertThat(month.getDays()).extracting(JsonDay::getEnd).containsExactly(end));
+                () -> assertThat(month.getDays()).extracting(DayData::getBegin).containsExactly(begin),
+                () -> assertThat(month.getDays()).extracting(DayData::getEnd).containsExactly(end));
     }
 
     @Test

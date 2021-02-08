@@ -8,8 +8,9 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.logic.model.json.JsonDay;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
@@ -19,18 +20,20 @@ public class DayRecord implements RowRecord
 
     private final ContractTermsService contractTerms;
     private final ProjectService projectService;
-    private final JsonDay day;
+    private final ModelFactory modelFactory;
+    private final DayData day;
     private final MonthIndex month;
     private final DayRecord previousDay;
 
-    public DayRecord(ContractTermsService contractTerms, JsonDay day, DayRecord previousDay, MonthIndex month,
-            ProjectService projectService)
+    public DayRecord(ContractTermsService contractTerms, DayData day, DayRecord previousDay, MonthIndex month,
+            ProjectService projectService, ModelFactory modelFactory)
     {
         this.contractTerms = contractTerms;
+        this.projectService = Objects.requireNonNull(projectService);
+        this.modelFactory = modelFactory;
         this.day = day;
         this.previousDay = previousDay;
         this.month = month;
-        this.projectService = Objects.requireNonNull(projectService);
     }
 
     public Duration getMandatoryBreak()
@@ -148,7 +151,7 @@ public class DayRecord implements RowRecord
         day.setInterruption(interruption.isZero() ? null : interruption);
     }
 
-    JsonDay getJsonDay()
+    DayData getJsonDay()
     {
         return day;
     }
@@ -184,7 +187,7 @@ public class DayRecord implements RowRecord
 
     public DayActivities activities()
     {
-        return new DayActivities(this, projectService);
+        return new DayActivities(this, projectService, modelFactory);
     }
 
     @Override
