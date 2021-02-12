@@ -7,12 +7,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public class FormatterService
 {
@@ -28,34 +26,6 @@ public class FormatterService
         this.timeZoneId = timeZoneId;
         this.dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
                 .withLocale(locale).withZone(timeZoneId);
-    }
-
-    /**
-     * @deprecated will be removed in the next version.
-     */
-    @Deprecated
-    public String format(DayRecord day)
-    {
-        final String dayOfWeek = day.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, locale);
-        final String dayType = formatDayType(day.getType());
-        final String date = format("{0} {1} {2}", day.getDate(), dayOfWeek, dayType);
-        final String time = day.getBegin() != null ? format("{0} - {1}", day.getBegin(), day.getEnd())
-                : "             ";
-        final String interruption = day.getInterruption().isZero() ? ""
-                : "interr.: " + format(day.getInterruption()) + ", ";
-        return format("{0} {1} break: {2}, {3}working time: {4}, overtime: {5}, total: {6}", date, time,
-                format(day.getMandatoryBreak()), interruption, format(day.getWorkingTime()), format(day.getOvertime()),
-                format(day.getOverallOvertime()));
-    }
-
-    /**
-     * @deprecated will be removed in the next version.
-     */
-    @Deprecated
-    private String formatDayType(DayType type)
-    {
-        final String formatPattern = "%1$-" + MAX_DAY_TYPE_LENGTH + "s";
-        return String.format(locale, formatPattern, type);
     }
 
     public String format(Duration duration)
