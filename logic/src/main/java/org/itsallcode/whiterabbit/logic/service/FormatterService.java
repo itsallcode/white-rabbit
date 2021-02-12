@@ -14,8 +14,6 @@ import org.itsallcode.whiterabbit.api.model.DayType;
 
 public class FormatterService
 {
-    private static final int MAX_DAY_TYPE_LENGTH = getMaxDayTypeLength();
-
     private final Locale locale;
     private final ZoneId timeZoneId;
     private final DateTimeFormatter dateTimeFormatter;
