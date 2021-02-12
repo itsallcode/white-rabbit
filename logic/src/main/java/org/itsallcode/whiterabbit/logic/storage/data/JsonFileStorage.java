@@ -39,7 +39,7 @@ public class JsonFileStorage implements MonthDataStorage
 
     public static MonthDataStorage create(Path dataDir)
     {
-        final Jsonb jsonb = new JsonbFactory().createNonFormatting();
+        final Jsonb jsonb = new JsonbFactory().create();
         return new JsonFileStorage(jsonb, new DateToFileMapper(dataDir), new JsonModelFactory());
     }
 
