@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import java.net.URLClassLoader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
@@ -9,6 +11,8 @@ import org.itsallcode.whiterabbit.logic.Config;
 
 class PluginWrapper
 {
+    private static final Logger LOG = LogManager.getLogger(PluginWrapper.class);
+
     private final ClassLoader classLoader;
     private final Plugin plugin;
     private final Config config;
@@ -37,7 +41,15 @@ class PluginWrapper
 
     boolean supports(Class<? extends PluginFeature> featureType)
     {
-        return plugin.supports(featureType);
+        try
+        {
+            return plugin.supports(featureType);
+        }
+        catch (final Exception e)
+        {
+            LOG.warn("Error loading plugin '{}'", getId(), e);
+            return false;
+        }
     }
 
     <T extends PluginFeature> T getFeature(Class<T> featureType)
