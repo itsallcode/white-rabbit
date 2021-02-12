@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.uistate.widgets;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.ColumnStateModel;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.TableStateModel;
@@ -11,6 +13,8 @@ import javafx.scene.control.TreeTableView;
 
 class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, TableStateModel>
 {
+    private static final Logger LOG = LogManager.getLogger(TreeTableStateManager.class);
+
     private final DelayedPropertyListener propertyListener;
 
     TreeTableStateManager(DelayedPropertyListener propertyListener)
@@ -26,15 +30,24 @@ class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, Tabl
             return;
         }
 
+        if (model.columns.size() != widget.getColumns().size())
+        {
+            LOG.warn("Number of columns has changed from {} to {}. Skip restoring column widths.", model.columns.size(),
+                    widget.getColumns().size());
+            return;
+        }
+
         for (int i = 0; i < widget.getColumns().size(); i++)
         {
             final double width = model.columns.get(i).width;
-            if (width == 0)
+            if (width <= 0)
             {
-                return;
+                LOG.warn("Invalid width {} for column {}: Skip restoring.", width, i);
             }
-
-            widget.getColumns().get(i).setPrefWidth(width);
+            else
+            {
+                widget.getColumns().get(i).setPrefWidth(width);
+            }
         }
     }
 
