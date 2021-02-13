@@ -169,17 +169,6 @@ public class AppService implements Closeable
         return this.schedulingService;
     }
 
-    /**
-     * @deprecated will be removed in the next version.
-     */
-    @Deprecated
-    public void report()
-    {
-        final DayReporter reporter = new DayReporter(formatterService);
-        storage.loadAll().getDays().forEach(reporter::add);
-        reporter.finish();
-    }
-
     public void updatePreviousMonthOvertimeField()
     {
         final List<MonthIndex> months = storage.loadAll().getMonths().stream()

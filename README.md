@@ -17,27 +17,24 @@ A time recording tool
 * Data storage in human readable json files, one file per month
   * Backup data by creating a git repository for the data folder and commit every day
 * Supported day types (see json example):
-  * normal working day (default for Monday to Friday): `WORK`
-  * weekend (Saturday and Sunday, detected automatically): `WEEKEND`
-  * public holiday (won't deduct overtime): `HOLIDAY`
-  * vacation (won't deduct overtime): `VACATION`
-  * flex time (will deduct overtime): `FLEX_TIME`
-  * sickness (won't deduct overtime): `SICK`
-* Automatic update in the background: just keep it running, and it will record your working time
-  * Start of work is detected via
+  * Normal working day (default for Monday to Friday): `WORK`
+  * Weekend (Saturday and Sunday, detected automatically): `WEEKEND`
+  * Public holiday (won't deduct overtime): `HOLIDAY`
+  * Vacation (won't deduct overtime): `VACATION`
+  * Flex time (will deduct overtime): `FLEX_TIME`
+  * Sickness (won't deduct overtime): `SICK`
+* Automatic update in the background: just keep it running, and it will record your working time:
+  * Start of work is detected when
     * Program start
     * Computer resumes from sleep in the morning
-  * Detects the end of work via
+  * Detects the end of work when
     * Program shutdown
     * Computer sleeps for the rest of the day
+    * You click the "Stop working for today" button
   * Interruptions detected when computer sleeps for more than 2 minutes
-* Keeps track of the overtime in previous months to speed up reports
-* Generates vacation report (no UI yet, written to standard out)
+* Generates reports for your vacation and monthly working time
 * Detects when a second instance is started to avoid data corruption
 * Export project working times to pm-smart. See [below](#pmsmart) for details.
-* Assumptions:
-  * Working time of 8h Monday to Friday
-  * Mandatory break of 45 minutes after 6 hours of working
 
 ### Java FX user interface
 
@@ -47,71 +44,14 @@ A time recording tool
   * Double click <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/> to open the window again
   * Right click on <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/> to add an interruption or exit the program
 
-### Example data file `<data>/2019/2019-03.json`
-
-This is generated automatically. The Java FX user interface allows you to edit it. When using the text ui you need to edit the file with your favorite text editor.
-
-```json
-{
-    "year": 2019,
-    "month": "MARCH",
-    "overtimePreviousMonth": "PT3H10M",
-    "days": [
-        {
-            "date": "2019-03-01",
-            "begin": "08:00:00",
-            "end": "17:00:00",
-            "comment": "First working day (type WORK is optional)"
-        },
-        {
-            "date": "2019-03-04",
-            "type": "VACATION",
-            "comment": "Vacation day, no change to working time"
-        },
-        {
-            "date": "2019-03-05",
-            "type": "FLEX_TIME",
-            "comment": "Flex time, deducts 8h from your time"
-        },
-        {
-            "date": "2019-03-06",
-            "type": "HOLIDAY",
-            "comment": "A public holiday, not working"
-        },
-        {
-            "date": "2019-03-07",
-            "type": "SICK",
-            "comment": "Sick day, no change to working time"
-        },
-        {
-            "date": "2019-03-08",
-            "begin": "08:00:00",
-            "end": "18:30:00",
-            "interruption": "PT1H20M",
-            "comment": "1h 20min of interruption"
-        },
-        {
-            "date": "2019-03-09",
-            "type": "WEEKEND",
-            "comment": "Saturday and Sunday automatically detected, no need to add them here."
-        },
-        {
-            "date": "2019-03-11",
-            "begin": "08:00:00",
-            "end": "15:00:00",
-            "workingHours": "PT6H",
-            "comment": "Working short time, 6 hours per day"
-        }
-    ]
-}
-```
-
 ### Notes
 
-* Won't work on weekends. To force working on a weekend, manually create an entry with `"type" = "WORK"`.
+* Won't work on weekends. To force working on a weekend, manually change the day type to `WORK`.
 * Public holidays are not detected automatically. Set the day type to `HOLIDAY` manually.
-* If you change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months` in the Java FX UI.
-* When you modify config file `time.properties` you need to restart WhiteRabbit manually.
+* If you manually change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months`.
+* Assumptions:
+    * Working time of 8h Monday to Friday
+    * Mandatory break of 45 minutes after 6 hours of working
 
 ## <a name="usage"></a>Usage
 
