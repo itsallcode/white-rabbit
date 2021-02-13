@@ -7,10 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Arrays;
 import java.util.Locale;
-
-import org.itsallcode.whiterabbit.api.model.DayType;
 
 public class FormatterService
 {
@@ -38,14 +35,6 @@ public class FormatterService
     {
         final MessageFormat temp = new MessageFormat(pattern, locale);
         return temp.format(arguments);
-    }
-
-    private static int getMaxDayTypeLength()
-    {
-        return Arrays.stream(DayType.values()) //
-                .map(DayType::toString) //
-                .mapToInt(String::length) //
-                .max().getAsInt();
     }
 
     public String formatDateAndTime(Instant instant)
