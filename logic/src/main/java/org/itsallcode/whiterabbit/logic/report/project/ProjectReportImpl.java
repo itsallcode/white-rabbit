@@ -16,7 +16,7 @@ public class ProjectReportImpl implements ProjectReport
     private final YearMonth month;
     private final List<ProjectReportDay> days;
 
-    ProjectReportImpl(YearMonth month, List<ProjectReportDay> days)
+    public ProjectReportImpl(YearMonth month, List<ProjectReportDay> days)
     {
         this.month = month;
         this.days = days;
@@ -41,7 +41,7 @@ public class ProjectReportImpl implements ProjectReport
         private final String comment;
         private final List<ProjectReportActivity> projects;
 
-        DayImpl(LocalDate date, DayType type, String comment, List<ProjectReportActivity> projects)
+        public DayImpl(LocalDate date, DayType type, String comment, List<ProjectReportActivity> projects)
         {
             this.date = date;
             this.type = type;

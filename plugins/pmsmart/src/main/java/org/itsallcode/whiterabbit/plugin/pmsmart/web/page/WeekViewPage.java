@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart.web.page;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -88,5 +89,6 @@ public class WeekViewPage implements Page
     {
         LOG.info("Saving current week");
         driver.findElement(By.id("MainContent_BTSubmit")).click();
+        driver.sleep(Duration.ofSeconds(1));
     }
 }
