@@ -6,7 +6,7 @@
 **/build/
 /time.properties
 /.idea
-/textui/logs/
+/plugins/pmsmart/src/test/java/org/itsallcode/whiterabbit/plugin/pmsmart/Tester.java
 /webstart/keystore.jks
 /webstart/webstart.properties
 /webstart-infrastructure/node_modules/

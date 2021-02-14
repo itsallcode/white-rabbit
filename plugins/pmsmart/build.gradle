@@ -7,6 +7,8 @@ dependencies {
     runtimeOnly "org.seleniumhq.selenium:selenium-devtools-v87:$seleniumVersion"
     implementation "io.github.bonigarcia:webdrivermanager:4.2.2"
     
+    testImplementation project(':logic')
+    
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0") {
         exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
         exclude group: 'org.apache.logging.log4j', module: 'log4j-core'

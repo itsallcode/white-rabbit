@@ -96,6 +96,12 @@ public class Element
         return this;
     }
 
+    public Element waitUntilClickable()
+    {
+        driver.waitUntil(Duration.ofSeconds(1), ExpectedConditions.elementToBeClickable(webElement));
+        return this;
+    }
+
     public List<Element> findElements(By by)
     {
         return wrap(driver, webElement.findElements(by));

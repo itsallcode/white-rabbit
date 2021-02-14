@@ -17,6 +17,8 @@ public class ProjectRow
     private static final Logger LOG = LogManager.getLogger(ProjectRow.class);
 
     private static final String BACKSPACE_CHAR = "\u0008";
+    private static final int MAX_COMMENT_LENGTH = 250;
+    private static final String COMMENT_FILLER = "...";
 
     private final Driver driver;
     private final String projectId;
@@ -33,12 +35,47 @@ public class ProjectRow
 
     public void enterDuration(LocalDate day, Duration duration)
     {
-        final int dayOffset = dayOffset(day);
         final String text = format(duration);
-        LOG.debug("Enter duration {} ({}) for project {} (row {}) day {}: day offset = {}", duration, text, projectId,
-                rowIndex, day, dayOffset);
-        final Element dayCell = findCell(dayOffset);
-        enterText(dayCell, text);
+        LOG.debug("Enter duration {} ({}) for project {} (row {}) day {}", duration, text, projectId,
+                rowIndex, day);
+        final Element textField = findCell(day).findElement(By.xpath(".//input"));
+        clearAndEnterDuration(textField, text);
+    }
+
+    private Element findCell(LocalDate day)
+    {
+        final int dayOffset = dayOffset(day);
+        LOG.debug("Found day offset {} for day {}", dayOffset, day);
+        return findCell(dayOffset);
+    }
+
+    public void enterComment(LocalDate day, String comment)
+    {
+        final Element infoButton = findCell(day).findElement(By.xpath(".//img"));
+        infoButton.click();
+
+        final Element popup = driver.findElement(By.xpath("//div[@id='MainContent_TimePopup_PW-1']"));
+        popup.waitUntilVisible();
+        final Element commentField = popup.findElement(By.xpath(
+                "//textarea[@id='MainContent_TimePopup_ASPxRoundPanel2_ASPeLookupMemo_ASPxCpMemo_ASPxMemoRemark_I']"));
+        commentField.waitUntilClickable();
+        commentField.clear();
+        final String shortenedComment = shortenComment(comment);
+        LOG.debug("Enter comment '{}' for {}", shortenedComment, day);
+        commentField.sendKeys(shortenedComment);
+        commentField.sendKeys("\t");
+        driver.sleep(Duration.ofMillis(200));
+        final Element button = popup.findElement(By.xpath("//div[@id='MainContent_TimePopup_BTPopupOK_CD']"));
+        button.click();
+    }
+
+    static String shortenComment(String comment)
+    {
+        if (comment.length() <= MAX_COMMENT_LENGTH)
+        {
+            return comment;
+        }
+        return comment.substring(0, MAX_COMMENT_LENGTH - COMMENT_FILLER.length()) + COMMENT_FILLER;
     }
 
     private Element findCell(int dayOffset)
@@ -47,7 +84,7 @@ public class ProjectRow
         final int columnPosition = 5 + dayOffset;
         return driver.findElement(
                 By.xpath("//table[@id='MainContent_ASPxCpWbGrid_WeekBookingGrid_DXMainTable']/tbody/tr[position()="
-                        + rowPosition + "]/td[position()=" + columnPosition + "]//input"));
+                        + rowPosition + "]/td[position()=" + columnPosition + "]"));
     }
 
     private String format(Duration duration)
@@ -74,7 +111,7 @@ public class ProjectRow
         throw new IllegalStateException("Got invalid day offset " + offset);
     }
 
-    private void enterText(Element field, String text)
+    private void clearAndEnterDuration(Element field, String text)
     {
         field.sendKeys(BACKSPACE_CHAR);
         field.sendKeys(BACKSPACE_CHAR);

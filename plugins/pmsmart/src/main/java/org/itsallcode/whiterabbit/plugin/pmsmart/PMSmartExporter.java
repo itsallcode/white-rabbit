@@ -67,6 +67,7 @@ public class PMSmartExporter implements ProjectReportExporter
                         throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
                     }
                     projectRow.enterDuration(day.getDate(), project.getWorkingTime());
+                    projectRow.enterComment(day.getDate(), project.getComment());
                 }
             }
             weekViewPage.saveWeek();
