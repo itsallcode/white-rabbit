@@ -51,7 +51,8 @@ build.dependsOn shadowJar
 project(':plugins').afterEvaluate {
     List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
 
-    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks) {
+    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
+        group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
         main = project.mainClass
@@ -59,7 +60,7 @@ project(':plugins').afterEvaluate {
     }
 }
 
-task runJfxui(type: JavaExec, dependsOn: shadowJar) {
+task runJfxui(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
     main = project.mainClass
     workingDir = rootProject.projectDir
@@ -77,9 +78,8 @@ configurations {
     uiTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
-task uiTest(type: Test) {
+task uiTest(type: Test, group: 'verification') {
     description = 'Runs integration tests.'
-    group = 'verification'
 
     useJUnitPlatform()
 
