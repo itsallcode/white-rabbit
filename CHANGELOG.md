@@ -4,13 +4,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - unreleased
+## [1.6.0] - unreleased
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
+
+## [1.5.0] - 2021-02-20
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.5.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/7?closed=1)
+
+### Breaking change
+
+* [#76](https://github.com/itsallcode/white-rabbit/issues/76): Remove deprecated text ui
+
+### Added
+
+* [#74](https://github.com/itsallcode/white-rabbit/issues/74): Map activity comments to PMSmart comment
+
+### Fixed
+
+* [#78](https://github.com/itsallcode/white-rabbit/issues/78): Don't fail when restoring UI-State when the number of table columns etc. changes.
+
+## [1.4.0] - 2021-02-09
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.4.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/6?closed=1)
 
 ### Added
 
 * [#69](https://github.com/itsallcode/white-rabbit/pull/69) Export monthly project report to [pm-smart](https://www.pm-smart.com/en/projekt-management-software). See [README.md for details](README.md#pmsmart)
+* [#75](https://github.com/itsallcode/white-rabbit/pull/75): Allow plugins to contribute a storage plugin
 
 ## [1.3.0] 2021-01-09
 

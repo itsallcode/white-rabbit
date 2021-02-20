@@ -68,6 +68,11 @@ task signPluginJars(dependsOn: pluginBuildTasks, description: 'Sign plugin jars'
     }
 }
 
+task installSignedPlugins(type: Copy, dependsOn: signPluginJars) {
+    from(signPluginJars.outputs)
+    into("${System.properties['user.home']}/.whiterabbit/plugins")
+}
+
 task prepareStaticContentPlugins(dependsOn: signPluginJars, type: Copy) {
     from(signPluginJars.outputs.files)
     into "$buildDir/content/plugins"
