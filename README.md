@@ -230,6 +230,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     4. When closing was successfull, click the "Release" button.
     5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
 3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
+4. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
 
 #### Managing WebStart configuration in a private branch
 
