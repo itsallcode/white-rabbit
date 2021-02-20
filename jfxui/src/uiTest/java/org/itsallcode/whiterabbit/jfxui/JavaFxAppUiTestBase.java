@@ -25,6 +25,7 @@ import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
+import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonMonth;
@@ -49,7 +50,7 @@ abstract class JavaFxAppUiTestBase
     private JavaFxApp javaFxApp;
 
     @TempDir
-    Path workingDir;
+    Path tempDir;
 
     private Path dataDir;
     private Locale locale = Locale.GERMANY;
@@ -95,10 +96,11 @@ abstract class JavaFxAppUiTestBase
         LOG.info("Starting application using stage {}", stage);
 
         timeUtil = TimeUtil.start(initialTime);
+        final TestDirProvider testDirProvider = TestDirProvider.create(tempDir);
 
-        prepareConfiguration(projectConfig);
+        prepareConfiguration(projectConfig, testDirProvider);
 
-        this.javaFxApp = new JavaFxApp(() -> this.workingDir, timeUtil.clock(), timeUtil.executorService());
+        this.javaFxApp = new JavaFxApp(testDirProvider, timeUtil.clock(), timeUtil.executorService());
 
         ParametersImpl.registerParameters(javaFxApp, new ParametersImpl(commandLineArgs));
 
@@ -116,17 +118,17 @@ abstract class JavaFxAppUiTestBase
         LOG.info("Application shutdown done");
     }
 
-    private void prepareConfiguration(final ProjectConfig projectConfig)
+    private void prepareConfiguration(final ProjectConfig projectConfig, WorkingDirProvider testDirProvider)
     {
-        this.dataDir = this.workingDir.resolve("data");
+        this.dataDir = this.tempDir.resolve("data-dir");
         String configFileContent = "data = " + this.dataDir.toString().replace('\\', '/') + "\n";
         configFileContent += "locale = " + this.locale.getLanguage() + "\n";
         configFileContent += "allow_multiple_instances = true\n";
-        configFileContent += "write_log_file = false\n";
         try
         {
             Files.createDirectories(this.dataDir);
-            Files.write(this.workingDir.resolve("time.properties"), configFileContent.getBytes(StandardCharsets.UTF_8));
+            Files.write(testDirProvider.getWorkingDir().resolve("time.properties"),
+                    configFileContent.getBytes(StandardCharsets.UTF_8));
         }
         catch (final IOException e)
         {
@@ -192,6 +194,43 @@ abstract class JavaFxAppUiTestBase
         catch (final IOException e)
         {
             throw new UncheckedIOException("Error reading file " + file, e);
+        }
+    }
+
+    private static class TestDirProvider implements WorkingDirProvider
+    {
+        private final Path tempDir;
+
+        private TestDirProvider(Path tempDir)
+        {
+            this.tempDir = Objects.requireNonNull(tempDir, "tempDir");
+        }
+
+        public static TestDirProvider create(Path tempDir)
+        {
+            final TestDirProvider dirProvider = new TestDirProvider(tempDir);
+            try
+            {
+                Files.createDirectories(dirProvider.getUserDir());
+                Files.createDirectories(dirProvider.getWorkingDir());
+            }
+            catch (final IOException e)
+            {
+                throw new UncheckedIOException("Error creating temp directories", e);
+            }
+            return dirProvider;
+        }
+
+        @Override
+        public Path getWorkingDir()
+        {
+            return tempDir.resolve("working-dir");
+        }
+
+        @Override
+        public Path getUserDir()
+        {
+            return tempDir.resolve("user-dir");
         }
     }
 }

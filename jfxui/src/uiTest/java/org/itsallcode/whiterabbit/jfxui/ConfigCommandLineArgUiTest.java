@@ -12,7 +12,6 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
@@ -23,8 +22,6 @@ import javafx.stage.Stage;
 @ExtendWith(ApplicationExtension.class)
 class ConfigCommandLineArgUiTest extends JavaFxAppUiTestBase
 {
-    @TempDir
-    Path tempDir;
     FxRobot robot;
 
     @Test
@@ -53,8 +50,7 @@ class ConfigCommandLineArgUiTest extends JavaFxAppUiTestBase
     private void prepareConfigFile(Path configPath)
     {
         final Path dataDir = getDataDir();
-        String config = "data = " + dataDir.toString().replace('\\', '/') + "\n";
-        config += "write_log_file = false\n";
+        final String config = "data = " + dataDir.toString().replace('\\', '/') + "\n";
         try
         {
             Files.writeString(configPath, config);

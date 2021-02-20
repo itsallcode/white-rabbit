@@ -10,4 +10,11 @@ public class DefaultWorkingDirProvider implements WorkingDirProvider
     {
         return Paths.get(".").toAbsolutePath();
     }
+
+    @Override
+    public Path getUserDir()
+    {
+        final String home = System.getProperty("user.home");
+        return Paths.get(home);
+    }
 }

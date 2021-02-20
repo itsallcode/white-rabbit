@@ -20,17 +20,17 @@ public class ConfigLoader
 {
     private static final Logger LOG = LogManager.getLogger(ConfigLoader.class);
 
-    private final WorkingDirProvider workingDirProvider;
+    private final WorkingDirProvider dirProvider;
     private final Jsonb jsonb;
 
-    public ConfigLoader(WorkingDirProvider workingDirProvider)
+    public ConfigLoader(WorkingDirProvider dirProvider)
     {
-        this(workingDirProvider, JsonbBuilder.create());
+        this(dirProvider, JsonbBuilder.create());
     }
 
-    private ConfigLoader(WorkingDirProvider workingDirProvider, Jsonb jsonb)
+    private ConfigLoader(WorkingDirProvider dirProvider, Jsonb jsonb)
     {
-        this.workingDirProvider = workingDirProvider;
+        this.dirProvider = dirProvider;
         this.jsonb = jsonb;
     }
 
@@ -42,7 +42,7 @@ public class ConfigLoader
 
     public Config loadConfig(Path location)
     {
-        return ConfigFile.read(location);
+        return ConfigFile.read(dirProvider, location);
     }
 
     private Path createDefaultConfig()
@@ -109,7 +109,7 @@ public class ConfigLoader
 
     private Optional<Path> findExistingConfigFile()
     {
-        final Path workingDirConfig = workingDirProvider.getWorkingDir().resolve("time.properties");
+        final Path workingDirConfig = dirProvider.getWorkingDir().resolve("time.properties");
         if (Files.exists(workingDirConfig))
         {
             return Optional.of(workingDirConfig);

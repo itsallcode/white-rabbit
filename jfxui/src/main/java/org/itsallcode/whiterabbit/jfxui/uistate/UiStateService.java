@@ -80,17 +80,35 @@ public class UiStateService
     public void persistState()
     {
         LOG.info("Writing ui-state {}", state);
-        try (OutputStream outputStream = Files.newOutputStream(config.getUiStatePath());)
+        final Path uiStatePath = config.getUiStatePath();
+        ensureDirectoryExists(uiStatePath.getParent());
+        try (OutputStream outputStream = Files.newOutputStream(uiStatePath))
         {
             jsonb.toJson(state, outputStream);
         }
         catch (final IOException e)
         {
-            throw new UncheckedIOException("Error writing ui state to " + config.getUiStatePath(), e);
+            throw new UncheckedIOException("Error writing ui state to " + uiStatePath, e);
         }
         catch (final JsonbException e)
         {
             throw new IllegalStateException("Error serializing ui state", e);
+        }
+    }
+
+    private void ensureDirectoryExists(Path dir)
+    {
+        if (Files.exists(dir))
+        {
+            return;
+        }
+        try
+        {
+            Files.createDirectories(dir);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error creating directory " + dir, e);
         }
     }
 

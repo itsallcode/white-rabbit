@@ -20,17 +20,19 @@ class ConfigFile implements Config
 
     private final Properties properties;
     private final Path file;
+    private final WorkingDirProvider dirProvider;
 
-    ConfigFile(Properties properties, Path configFile)
+    ConfigFile(WorkingDirProvider dirProvider, Properties properties, Path configFile)
     {
+        this.dirProvider = dirProvider;
         this.properties = properties;
         this.file = configFile;
     }
 
-    static ConfigFile read(Path configFile)
+    static ConfigFile read(WorkingDirProvider dirProvider, Path configFile)
     {
         final Path file = configFile.normalize();
-        return new ConfigFile(loadProperties(file), file);
+        return new ConfigFile(dirProvider, loadProperties(file), file);
     }
 
     private static Properties loadProperties(Path configFile)
@@ -93,8 +95,7 @@ class ConfigFile implements Config
     @Override
     public Path getUserDir()
     {
-        final String home = System.getProperty("user.home");
-        return Paths.get(home).resolve(".whiterabbit");
+        return dirProvider.getUserDir().resolve(".whiterabbit");
     }
 
     private Optional<String> getOptionalValue(String param)

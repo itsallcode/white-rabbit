@@ -24,12 +24,14 @@ class ConfigFileTest
 
     @Mock
     private Properties propertiesMock;
+    @Mock
+    private WorkingDirProvider dirProvider;
     private ConfigFile configFile;
 
     @BeforeEach
     void setUp()
     {
-        configFile = new ConfigFile(propertiesMock, CONFIG_FILE);
+        configFile = new ConfigFile(dirProvider, propertiesMock, CONFIG_FILE);
     }
 
     @Test
