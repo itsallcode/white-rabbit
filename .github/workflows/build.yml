@@ -18,7 +18,7 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: 11
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v2.1.5
       with:
         node-version: 12.x
     - uses: gradle/wrapper-validation-action@v1
