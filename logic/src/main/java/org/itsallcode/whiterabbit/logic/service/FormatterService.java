@@ -42,4 +42,14 @@ public class FormatterService
         final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
         return dateTime.format(dateTimeFormatter);
     }
+
+    public Locale getLocale()
+    {
+        return locale;
+    }
+
+    public DateTimeFormatter getShortDateFormatter()
+    {
+        return DateTimeFormatter.ofPattern("E dd.MM.", locale);
+    }
 }
