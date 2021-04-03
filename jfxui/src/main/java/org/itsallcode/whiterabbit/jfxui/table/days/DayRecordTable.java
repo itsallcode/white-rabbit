@@ -81,11 +81,7 @@ public class DayRecordTable
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
-                    if (newValue == null)
-                    {
-                        selectedDay.set(null);
-                    }
-                    else
+                    if (newValue != null)
                     {
                         LOG.debug("Table row selected: {}", newValue.getRecord());
                         selectedDay.set(newValue.getRecord());
