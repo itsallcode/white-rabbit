@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -175,8 +176,9 @@ public class DayRecordTable
 
     private void updateTableValues(MonthIndex newValue)
     {
+        final List<DayRecord> sortedDays = newValue.getSortedDays().collect(toList());
+        final Optional<LocalDate> tempSelectedDay = Optional.ofNullable(selectedDay.get()).map(DayRecord::getDate);
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            final List<DayRecord> sortedDays = newValue.getSortedDays().collect(toList());
             dayRecords.clear();
             for (final DayRecord day : sortedDays)
             {
@@ -184,6 +186,7 @@ public class DayRecordTable
                 adapter.update(day);
                 dayRecords.add(adapter);
             }
+            tempSelectedDay.ifPresent(this::selectRow);
         });
     }
 }

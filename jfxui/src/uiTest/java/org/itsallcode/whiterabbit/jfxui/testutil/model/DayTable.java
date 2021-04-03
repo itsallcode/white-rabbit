@@ -10,14 +10,16 @@ import java.time.LocalTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.DayType;
+import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
-import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
-import org.itsallcode.whiterabbit.jfxui.testutil.UiDebugTool;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.testfx.api.FxRobot;
+import org.testfx.assertions.api.Assertions;
 
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
 
 public class DayTable
 {
@@ -127,23 +129,26 @@ public class DayTable
 
     public void selectDayType(int row, DayType type)
     {
-        int tries = 0;
-        while (getDayType(row) != type && tries <= DayType.values().length)
-        {
-            final TableCell<?, ?> tableCell = getDayTypeCell(row);
-            robot.clickOn(tableCell);
-            TestUtil.sleepShort();
-            robot.clickOn(tableCell);
-            TestUtil.sleepShort();
-            robot.type(KeyCode.DOWN);
-            TestUtil.sleepShort();
-            UiDebugTool.printNode(tableCell);
-            robot.type(KeyCode.ENTER);
+        final ChoiceBox<DayType> choiceBox = getChoiceBox(getDayTypeCell(row));
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            choiceBox.getSelectionModel().select(type);
+        });
+        assertThat(getDayType(row)).as("day type after selecting " + type).isEqualTo(type);
+    }
 
-            tries++;
+    @SuppressWarnings("unchecked")
+    private ChoiceBox<DayType> getChoiceBox(final TableCell<?, ?> tableCell)
+    {
+        if (!tableCell.isSelected())
+        {
+            robot.clickOn(tableCell);
         }
 
-        assertThat(getDayType(row)).isEqualTo(type);
+        final StackPane openButton = robot.from(tableCell).lookup(".open-button").queryAs(StackPane.class);
+        robot.clickOn(openButton);
+        final ChoiceBox<DayType> choiceBox = (ChoiceBox<DayType>) tableCell.graphicProperty().get();
+        Assertions.assertThat(choiceBox).isVisible().isEnabled();
+        return choiceBox;
     }
 
     public DayType getDayType(int row)
