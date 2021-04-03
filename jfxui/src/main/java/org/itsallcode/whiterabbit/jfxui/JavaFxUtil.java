@@ -46,9 +46,13 @@ public class JavaFxUtil
         {
             return future.get();
         }
-        catch (InterruptedException | ExecutionException e)
+        catch (final InterruptedException e)
         {
             Thread.currentThread().interrupt();
+            throw new IllegalStateException("Error executing: " + e.getClass() + ": " + e.getMessage(), e);
+        }
+        catch (final ExecutionException e)
+        {
             throw new IllegalStateException("Error executing: " + e.getClass() + ": " + e.getMessage(), e);
         }
     }
