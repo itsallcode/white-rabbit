@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -43,6 +44,7 @@ public class InterruptionPresetFeature
         button.setId("add-interruption-button");
         button.setText("Add interruption");
         button.getItems().addAll(createPresetMenuItems());
+        button.getItems().add(createMenuitem(ContractTermsService.BASIC_BREAK.negated()));
         button.setOnAction(event -> showDialog());
         return button;
     }
@@ -62,8 +64,10 @@ public class InterruptionPresetFeature
 
     private MenuItem createMenuitem(Duration interruption)
     {
-        final MenuItem menuItem = new MenuItem("Add interruption of " + appService.formatter().format(interruption));
-        menuItem.setId("add-interruption-preset-" + interruption.toString());
+        final String verb = interruption.isNegative() ? "Subtract" : "Add";
+        final MenuItem menuItem = new MenuItem(
+                verb + " interruption of " + appService.formatter().format(interruption));
+        menuItem.setId(verb.toLowerCase() + "-interruption-preset-" + interruption.toString());
         menuItem.setOnAction(event -> addInterruptionForToday(interruption));
         return menuItem;
     }

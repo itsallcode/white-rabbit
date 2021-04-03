@@ -9,7 +9,7 @@ public class ContractTermsService
 {
     private static final Duration CONTRACTED_HOURS_PER_DAY = Duration.ofHours(8);
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
-    private static final Duration BASIC_BREAK = Duration.ofMinutes(45);
+    public static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
     private final Config config;
 
