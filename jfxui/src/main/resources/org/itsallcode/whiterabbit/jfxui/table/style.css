@@ -29,10 +29,16 @@ TableView#day-table {
   -fx-pref-width: 20em;
 }
 
-.working {
-  /* -fx-background-color: white; */
+.table-row-cell:not-working {
+	-fx-background-color: lightyellow;
+}
+.table-row-cell:weekend {
+	-fx-background-color: gainsboro;
 }
 
-.not-working {
-  /* -fx-background-color: gainsboro; */
+.table-row-cell:not-working:selected {
+	-fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-selection-bar;
+}
+.table-row-cell:weekend:selected {
+	-fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-selection-bar;
 }

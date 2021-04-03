@@ -30,8 +30,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.util.converter.DefaultStringConverter;
@@ -41,6 +43,8 @@ import javafx.util.converter.LocalTimeStringConverter;
 public class DayRecordTable
 {
     private static final Logger LOG = LogManager.getLogger(DayRecordTable.class);
+    private static final PseudoClass WEEKEND_PSEUDO_CLASS = PseudoClass.getPseudoClass("weekend");
+    private static final PseudoClass NOT_WORKING_PSEUDO_CLASS = PseudoClass.getPseudoClass("not-working");
 
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
     private final EditListener<DayRecord> editListener;
@@ -60,12 +64,15 @@ public class DayRecordTable
         this.locale = locale;
         this.selectedDay = selectedDay;
         this.autocompleteService = autocompleteService;
-        fillTableWith31EmptyRows();
         currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
     public TableView<DayRecordPropertyAdapter> initTable()
     {
+        if (table != null)
+        {
+            throw new IllegalStateException("Table already initialized");
+        }
         table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);
@@ -74,10 +81,46 @@ public class DayRecordTable
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
-                    LOG.debug("Table row selected: {}", newValue.getRecord());
-                    selectedDay.set(newValue.getRecord());
+                    if (newValue == null)
+                    {
+                        selectedDay.set(null);
+                    }
+                    else
+                    {
+                        LOG.debug("Table row selected: {}", newValue.getRecord());
+                        selectedDay.set(newValue.getRecord());
+                    }
                 });
+
+        table.setRowFactory(param -> new TableRow<>()
+        {
+            @Override
+            protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
+            {
+                super.updateItem(item, empty);
+                pseudoClassStateChanged(WEEKEND_PSEUDO_CLASS, isWeekend(item));
+                pseudoClassStateChanged(NOT_WORKING_PSEUDO_CLASS, isNotWorking(item));
+            }
+        });
         return table;
+    }
+
+    private boolean isWeekend(DayRecordPropertyAdapter item)
+    {
+        if (item == null || item.getRecord() == null)
+        {
+            return false;
+        }
+        return item.getRecord().getType() == DayType.WEEKEND;
+    }
+
+    private boolean isNotWorking(DayRecordPropertyAdapter item)
+    {
+        if (item == null || item.getRecord() == null || item.getRecord().getType() == DayType.WEEKEND)
+        {
+            return false;
+        }
+        return !item.getRecord().getType().isWorkDay();
     }
 
     public void selectRow(LocalDate date)
@@ -141,27 +184,13 @@ public class DayRecordTable
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final List<DayRecord> sortedDays = newValue.getSortedDays().collect(toList());
-            int index = 0;
-            for (final DayRecordPropertyAdapter row : dayRecords)
+            dayRecords.clear();
+            for (final DayRecord day : sortedDays)
             {
-                if (sortedDays.size() <= index)
-                {
-                    row.clear();
-                }
-                else
-                {
-                    row.update(sortedDays.get(index));
-                }
-                index++;
+                final DayRecordPropertyAdapter adapter = new DayRecordPropertyAdapter(editListener);
+                adapter.update(day);
+                dayRecords.add(adapter);
             }
         });
-    }
-
-    private void fillTableWith31EmptyRows()
-    {
-        while (dayRecords.size() < 31)
-        {
-            dayRecords.add(new DayRecordPropertyAdapter(editListener));
-        }
     }
 }
