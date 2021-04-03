@@ -71,36 +71,17 @@ public class ActivitiesTable
             final List<Activity> selectedDayActivities = day.activities().getAll();
             LOG.trace("Day {} selected with {} activities", day.getDate(), selectedDayActivities.size());
 
-            removeSurplusRows(selectedDayActivities);
             updateRows(selectedDayActivities);
         });
     }
 
-    private void removeSurplusRows(final List<Activity> selectedDayActivities)
-    {
-        final int activitiesToRemove = Math.max(0, activities.size() - selectedDayActivities.size());
-        LOG.trace("Removing {} surplus rows of {}", activitiesToRemove, activities.size());
-        for (int i = 0; i < activitiesToRemove; i++)
-        {
-            activities.remove(activities.size() - 1);
-        }
-    }
-
     private void updateRows(final List<Activity> selectedDayActivities)
     {
+        activities.clear();
         for (int i = 0; i < selectedDayActivities.size(); i++)
         {
             final Activity activity = selectedDayActivities.get(i);
-            if (activities.size() <= i)
-            {
-                LOG.trace("Add activity #{}: {}", i, activity);
-                activities.add(ActivityPropertyAdapter.wrap(editListener, activity));
-            }
-            else
-            {
-                LOG.trace("Update activity #{}: {}", i, activity);
-                activities.get(i).setActivity(activity);
-            }
+            activities.add(ActivityPropertyAdapter.wrap(editListener, activity));
         }
     }
 
