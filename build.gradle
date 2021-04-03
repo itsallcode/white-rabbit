@@ -10,7 +10,7 @@ ext {
     junitVersion = '5.7.1'
     log4jVersion = '2.14.1'
     mockitoVersion = '3.8.0'
-    yassonVersion = '1.0.8'
+    yassonVersion = '2.0.2'
     jsonBindApiVersion = '1.0'
 }
 
