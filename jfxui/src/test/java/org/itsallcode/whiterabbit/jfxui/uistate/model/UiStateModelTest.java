@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class UiStateModelTest
 {
+    private static final String EMPTY_JSON = "{\"splitPanes\":{},\"stages\":{},\"tables\":{},\"titledPanes\":{}}";
     Jsonb jsonb;
     UiStateModel model;
 
@@ -26,17 +27,18 @@ class UiStateModelTest
     void serializeEmptyModel()
     {
         model = new UiStateModel();
-        assertSerialized("{\"splitPanes\":{},\"stages\":{},\"tables\":{}}");
+        assertSerialized(EMPTY_JSON);
     }
 
     @Test
     void deserializeEmptyModel()
     {
-        model = deserialize("{\"splitPanes\":{},\"stages\":{},\"tables\":{}}");
+        model = deserialize(EMPTY_JSON);
         assertThat(model).isNotNull();
         assertThat(model.splitPanes).isEmpty();
         assertThat(model.tables).isEmpty();
         assertThat(model.stages).isEmpty();
+        assertThat(model.titledPanes).isEmpty();
     }
 
     @Test
@@ -50,14 +52,14 @@ class UiStateModelTest
         stage1.y = 4;
         model.stages.put("s1", stage1);
         assertSerialized(
-                "{\"splitPanes\":{},\"stages\":{\"s1\":{\"height\":1.0,\"id\":\"id\",\"width\":2.0,\"x\":3.0,\"y\":4.0}},\"tables\":{}}");
+                "{\"splitPanes\":{},\"stages\":{\"s1\":{\"height\":1.0,\"id\":\"id\",\"width\":2.0,\"x\":3.0,\"y\":4.0}},\"tables\":{},\"titledPanes\":{}}");
     }
 
     @Test
     void deserializeStage()
     {
         model = deserialize(
-                "{\"splitPanes\":{},\"stages\":{\"s1\":{\"height\":1.0,\"id\":\"id\",\"width\":2.0,\"x\":3.0,\"y\":4.0}},\"tables\":{}}");
+                "{\"stages\":{\"s1\":{\"height\":1.0,\"id\":\"id\",\"width\":2.0,\"x\":3.0,\"y\":4.0}}}");
         assertThat(model.stages).hasSize(1);
         final StageStateModel stage = model.stages.get("s1");
         assertThat(stage.height).isEqualTo(1);
@@ -78,14 +80,14 @@ class UiStateModelTest
         table1.columns = List.of(col1);
         model.tables.put("t1", table1);
         assertSerialized(
-                "{\"splitPanes\":{},\"stages\":{},\"tables\":{\"t1\":{\"columns\":[{\"id\":\"colId\",\"width\":42.1}],\"id\":\"id\"}}}");
+                "{\"splitPanes\":{},\"stages\":{},\"tables\":{\"t1\":{\"columns\":[{\"id\":\"colId\",\"width\":42.1}],\"id\":\"id\"}},\"titledPanes\":{}}");
     }
 
     @Test
     void deserializeTableState()
     {
         model = deserialize(
-                "{\"splitPanes\":{},\"stages\":{},\"tables\":{\"t1\":{\"columns\":[{\"id\":\"colId\",\"width\":42.1}],\"id\":\"id\"}}}");
+                "{\"tables\":{\"t1\":{\"columns\":[{\"id\":\"colId\",\"width\":42.1}],\"id\":\"id\"}}}");
         assertThat(model.tables).hasSize(1);
         final TableStateModel table = model.tables.get("t1");
         assertThat(table.id).isEqualTo("id");
@@ -102,14 +104,36 @@ class UiStateModelTest
         pane1.dividerPositions = List.of(0.42);
         model.splitPanes.put("s1", pane1);
         assertSerialized(
-                "{\"splitPanes\":{\"s1\":{\"dividerPositions\":[0.42],\"id\":\"id\"}},\"stages\":{},\"tables\":{}}");
+                "{\"splitPanes\":{\"s1\":{\"dividerPositions\":[0.42],\"id\":\"id\"}},\"stages\":{},\"tables\":{},\"titledPanes\":{}}");
     }
 
     @Test
     void deserializeSplitPaneState()
     {
         model = deserialize(
-                "{\"splitPanes\":{\"s1\":{\"dividerPositions\":[0.42],\"id\":\"id\"}},\"stages\":{},\"tables\":{}}");
+                "{\"titledPanes\":{\"s1\":{\"expanded\":true,\"id\":\"id\"}}}");
+        assertThat(model.titledPanes).hasSize(1);
+        final TitledPaneStateModel pane = model.titledPanes.get("s1");
+        assertThat(pane.id).isEqualTo("id");
+        assertThat(pane.expanded).isTrue();
+    }
+
+    @Test
+    void serializeTitledPaneState()
+    {
+        model = new UiStateModel();
+        final TitledPaneStateModel pane1 = new TitledPaneStateModel("id1");
+        pane1.expanded = true;
+        model.titledPanes.put("s1", pane1);
+        assertSerialized(
+                "{\"splitPanes\":{},\"stages\":{},\"tables\":{},\"titledPanes\":{\"s1\":{\"expanded\":true,\"id\":\"id1\"}}}");
+    }
+
+    @Test
+    void deserializeTitledPaneState()
+    {
+        model = deserialize(
+                "{\"splitPanes\":{\"s1\":{\"dividerPositions\":[0.42],\"id\":\"id\"}}}");
         assertThat(model.splitPanes).hasSize(1);
         final SplitPaneStateModel pane = model.splitPanes.get("s1");
         assertThat(pane.id).isEqualTo("id");

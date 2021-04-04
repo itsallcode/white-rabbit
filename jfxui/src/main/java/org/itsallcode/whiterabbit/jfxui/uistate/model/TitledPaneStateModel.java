@@ -8,8 +8,8 @@ import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
 @SuppressWarnings("java:S1104") // Encapsulation not necessary for model
 public class TitledPaneStateModel
 {
-    public String id;
     public Boolean expanded;
+    public String id;
 
     public TitledPaneStateModel()
     {

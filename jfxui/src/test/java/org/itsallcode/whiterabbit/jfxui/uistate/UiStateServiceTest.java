@@ -81,7 +81,7 @@ class UiStateServiceTest
         service.persistState();
 
         assertThat(uiStateFile).exists()
-                .hasContent("{\"splitPanes\":{},\"stages\":{},\"tables\":{}}");
+                .hasContent("{\"splitPanes\":{},\"stages\":{},\"tables\":{},\"titledPanes\":{}}");
     }
 
     @Test
