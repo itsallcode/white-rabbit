@@ -14,4 +14,5 @@ public class UiStateModel
     public Map<String, StageStateModel> stages = new HashMap<>();
     public Map<String, TableStateModel> tables = new HashMap<>();
     public Map<String, SplitPaneStateModel> splitPanes = new HashMap<>();
+    public Map<String, TitledPaneStateModel> titledPanes = new HashMap<>();
 }

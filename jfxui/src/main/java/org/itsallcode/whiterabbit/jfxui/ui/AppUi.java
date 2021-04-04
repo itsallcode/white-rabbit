@@ -205,6 +205,8 @@ public class AppUi
                     removeActivityButton);
             final TitledPane titledPane = new TitledPane("Activities",
                     new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab));
+            titledPane.setId("activities-titled-pane");
+            titledPane.setCollapsible(true);
             titledPane.textProperty().bind(Bindings.createStringBinding(this::getActivitiesTitle, state.selectedDay,
                     state.currentDateProperty.property()));
             final SplitPane mainPane = new SplitPane(daysTable, titledPane);
@@ -223,6 +225,7 @@ public class AppUi
 
             state.uiState.register(daysTable);
             state.uiState.register(activitiesTab);
+            state.uiState.register(titledPane);
             state.uiState.register(mainPane);
             return pane;
         }

@@ -22,8 +22,10 @@ import org.itsallcode.whiterabbit.jfxui.uistate.widgets.StateManagerRegistry;
 import org.itsallcode.whiterabbit.jfxui.uistate.widgets.WidgetStateManager;
 import org.itsallcode.whiterabbit.logic.Config;
 
+import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
 
@@ -119,17 +121,27 @@ public class UiStateService
 
     public void register(TableView<?> node)
     {
-        register(state.tables, node.getId(), node);
+        register(state.tables, node);
     }
 
     public void register(TreeTableView<?> node)
     {
-        register(state.tables, node.getId(), node);
+        register(state.tables, node);
     }
 
     public void register(SplitPane node)
     {
-        register(state.splitPanes, node.getId(), node);
+        register(state.splitPanes, node);
+    }
+
+    public void register(TitledPane node)
+    {
+        register(state.titledPanes, node);
+    }
+
+    private <T extends Node, M> void register(Map<String, M> models, T node)
+    {
+        register(models, node.getId(), node);
     }
 
     private <T, M> void register(Map<String, M> models, String id, T widget)
