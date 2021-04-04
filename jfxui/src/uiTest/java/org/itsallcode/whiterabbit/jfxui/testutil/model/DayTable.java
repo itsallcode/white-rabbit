@@ -147,7 +147,7 @@ public class DayTable
         final StackPane openButton = robot.from(tableCell).lookup(".open-button").queryAs(StackPane.class);
         robot.clickOn(openButton);
         final ChoiceBox<DayType> choiceBox = (ChoiceBox<DayType>) tableCell.graphicProperty().get();
-        Assertions.assertThat(choiceBox).isVisible().isEnabled();
+        Assertions.assertThat(choiceBox).isNotNull().isVisible().isEnabled();
         return choiceBox;
     }
 
