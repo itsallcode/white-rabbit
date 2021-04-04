@@ -1,5 +1,8 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
@@ -57,17 +60,39 @@ public final class UiActions
 
     public void openDataDir()
     {
-        openFileWithDefaultProgram(config.getDataDir());
+        createAndOpenDirectory(config.getDataDir());
     }
 
     public void openLogDir()
     {
-        openFileWithDefaultProgram(config.getLogDir());
+        createAndOpenDirectory(config.getLogDir());
     }
 
     public void openPluginDir()
     {
-        openFileWithDefaultProgram(config.getPluginDir());
+        createAndOpenDirectory(config.getPluginDir());
+    }
+
+    private void createAndOpenDirectory(Path directory)
+    {
+        if (!Files.exists(directory))
+        {
+            LOG.info("Directory {} does not exist: create it", directory);
+            createDir(directory);
+        }
+        openFileWithDefaultProgram(directory);
+    }
+
+    private void createDir(Path directory)
+    {
+        try
+        {
+            Files.createDirectories(directory);
+        }
+        catch (final IOException e)
+        {
+            throw new UncheckedIOException("Error creating directory " + directory, e);
+        }
     }
 
     private void openFileWithDefaultProgram(Path file)
