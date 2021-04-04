@@ -5,10 +5,8 @@ import static java.util.stream.Collectors.toList;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,19 +43,17 @@ public class DayRecordTable
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
-    private final Locale locale;
     private final SimpleObjectProperty<DayRecord> selectedDay;
     private TableView<DayRecordPropertyAdapter> table;
 
     private final AutocompleteService autocompleteService;
 
-    public DayRecordTable(Locale locale, SimpleObjectProperty<DayRecord> selectedDay,
+    public DayRecordTable(SimpleObjectProperty<DayRecord> selectedDay,
             ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
             FormatterService formatterService, AutocompleteService autocompleteService)
     {
         this.editListener = editListener;
         this.formatterService = formatterService;
-        this.locale = locale;
         this.selectedDay = selectedDay;
         this.autocompleteService = autocompleteService;
         fillTableWith31EmptyRows();
@@ -94,10 +90,11 @@ public class DayRecordTable
     {
         final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = UiWidget.readOnlyColumn("date", "Date",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(
-                        new LocalDateStringConverter(DateTimeFormatter.ofPattern("E dd.MM.", locale), null)),
+                        new LocalDateStringConverter(formatterService.getShortDateFormatter(), null)),
                 data -> data.getValue().date);
         final DurationStringConverter durationConverter = new DurationStringConverter(formatterService);
-        final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT, locale);
+        final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT,
+                formatterService.getLocale());
         final TableColumn<DayRecordPropertyAdapter, org.itsallcode.whiterabbit.api.model.DayType> dayTypeCol = UiWidget
                 .column("day-type", "Type",
                         param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),

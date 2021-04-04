@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -52,8 +51,6 @@ public class JavaFxApp extends Application
 
     private Stage primaryStage;
 
-    private Locale locale;
-
     private final WorkingDirProvider workingDirProvider;
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
@@ -96,7 +93,6 @@ public class JavaFxApp extends Application
     private void doInitialize()
     {
         final Config config = loadConfig();
-        this.locale = config.getLocale();
         this.appService = AppService.create(config, clock, scheduledExecutor);
         LOG.info("Starting white-rabbit version {}", appService.getAppProperties().getVersion());
         final Optional<OtherInstance> otherInstance = appService
@@ -134,7 +130,7 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, locale).build();
+        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state).build();
 
         primaryStage.show();
 

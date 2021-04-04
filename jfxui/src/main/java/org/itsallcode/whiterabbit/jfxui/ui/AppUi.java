@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Locale;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,30 +82,29 @@ public class AppUi
     {
         private final Stage primaryStage;
         private final AppService appService;
-        private final Locale locale;
         private final JavaFxApp app;
         private final AppState state;
         private final UiActions actions;
+        private final DateTimeFormatter shortDateFormatter;
 
         private DayRecordTable dayRecordTable;
         private ActivitiesTable activitiesTable;
         private Tray tray;
 
-        public Builder(JavaFxApp app, UiActions actions, AppService appService, Stage primaryStage, AppState appState,
-                Locale locale)
+        public Builder(JavaFxApp app, UiActions actions, AppService appService, Stage primaryStage, AppState appState)
         {
             this.app = app;
             this.actions = actions;
-            this.locale = locale;
             this.state = appState;
             this.appService = appService;
             this.primaryStage = primaryStage;
+            this.shortDateFormatter = appService.formatter().getShortDateFormatter();
         }
 
         public AppUi build()
         {
             LOG.debug("Creating user interface");
-            dayRecordTable = new DayRecordTable(locale, state.selectedDay, state.currentMonth, record -> {
+            dayRecordTable = new DayRecordTable(state.selectedDay, state.currentMonth, record -> {
                 appService.store(record);
                 if (record.getDate().equals(state.getSelectedDay().map(DayRecord::getDate).orElse(null)))
                 {
@@ -204,8 +203,11 @@ public class AppUi
             final VBox activitiesButtonPane = new VBox(UiResources.GAP_PIXEL,
                     addActivityButton,
                     removeActivityButton);
-            final SplitPane mainPane = new SplitPane(daysTable,
-                    new TitledPane("Activities", new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab)));
+            final TitledPane titledPane = new TitledPane("Activities",
+                    new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab));
+            titledPane.textProperty().bind(Bindings.createStringBinding(this::getActivitiesTitle, state.selectedDay,
+                    state.currentDateProperty.property()));
+            final SplitPane mainPane = new SplitPane(daysTable, titledPane);
             HBox.setHgrow(activitiesTab, Priority.ALWAYS);
             mainPane.setId("mainSplitPane");
             mainPane.setOrientation(Orientation.VERTICAL);
@@ -223,6 +225,26 @@ public class AppUi
             state.uiState.register(activitiesTab);
             state.uiState.register(mainPane);
             return pane;
+        }
+
+        private String getActivitiesTitle()
+        {
+            final DayRecord selectedDay = state.selectedDay.get();
+            String title = "Activities";
+            if (selectedDay == null)
+            {
+                return title;
+            }
+            final LocalDate date = selectedDay.getDate();
+            if (date.equals(state.currentDateProperty.property().getValue()))
+            {
+                title += " today";
+            }
+            else
+            {
+                title += " on " + shortDateFormatter.format(date);
+            }
+            return title;
         }
 
         private ToolBar createToolBar()
