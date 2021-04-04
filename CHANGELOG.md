@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
 
+### Added
+
+* Show the date of the selected day in the 'Activities' pane title.
+* Save and restore the expanded state of the 'Activities' pane.
+
+### Fixed
+
+* Opening the logs, data or plugin directory now creates the directory if it does not yet exist.
+
 ## [1.5.0] - 2021-02-20
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.5.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/7?closed=1)
