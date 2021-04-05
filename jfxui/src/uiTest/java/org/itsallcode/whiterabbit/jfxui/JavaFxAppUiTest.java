@@ -18,6 +18,7 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -261,6 +262,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    @Disabled("Test is instable")
     void higlightedWeekendsUpdatedWhenMonthChanges()
     {
         final DayTable dayTable = app().dayTable();
