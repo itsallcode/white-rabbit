@@ -108,4 +108,14 @@ public class JavaFxTable<T>
         }
         return getTableRow(selectedRowIndex);
     }
+
+    public void assertRowSelected(int expectedRow)
+    {
+        assertThat(getSelectedRowIndex()).as("selected row").isEqualTo(expectedRow);
+    }
+
+    public void assertNoRowSelected()
+    {
+        assertThat(getSelectedRowIndex()).as("selected row index").isLessThan(0);
+    }
 }

@@ -13,7 +13,9 @@ import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -136,6 +138,65 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
                 () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+    }
+
+    @Test
+    void selectedDayClearedWhenUserSelectsDifferentMonth()
+    {
+        app().genericDayTable().assertRowSelected(2);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        app().genericDayTable().assertRowSelected(1);
+
+        app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+        TestUtil.sleepShort();
+
+        app().genericDayTable().assertNoRowSelected();
+    }
+
+    @Test
+    void selectedDayUpdatedWhenMonthChanges()
+    {
+        app().genericDayTable().assertRowSelected(2);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        app().genericDayTable().assertRowSelected(4);
+    }
+
+    @Test
+    void selectedDayNotUpdatedWhenTimeChanges()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.assertRowSelected(2);
+
+        dayTable.clickRow(5);
+        dayTable.assertRowSelected(5);
+
+        time().tickMinute();
+        TestUtil.sleepShort();
+
+        dayTable.assertRowSelected(5);
+    }
+
+    @Test
+    void selectedDayUpdatedWhenDayChanges()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.assertRowSelected(2);
+
+        dayTable.clickRow(5);
+        dayTable.assertRowSelected(5);
+
+        time().tickDay();
+        TestUtil.sleepShort();
+
+        dayTable.assertRowSelected(3);
     }
 
     @Override

@@ -22,6 +22,8 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTab
 import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.beans.property.ObjectProperty;
@@ -49,16 +51,19 @@ public class DayRecordTable
 
     private TableView<DayRecordPropertyAdapter> table;
 
+    private final ClockService clockService;
+
     public DayRecordTable(SimpleObjectProperty<DayRecord> selectedDay,
             ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
-            FormatterService formatterService, AutocompleteService autocompleteService)
+            AppService appService)
     {
         this.editListener = editListener;
-        this.formatterService = formatterService;
+        this.formatterService = appService.formatter();
         this.selectedDay = selectedDay;
-        this.autocompleteService = autocompleteService;
+        this.autocompleteService = appService.autocomplete();
+        this.clockService = appService.getClock();
         fillTableWith31EmptyRows();
-        currentMonth.addListener((observable, oldValue, newValue) -> currentMonthChanged(newValue));
+        currentMonth.addListener((observable, oldValue, newValue) -> currentMonthChanged(oldValue, newValue));
     }
 
     private void fillTableWith31EmptyRows()
@@ -69,28 +74,45 @@ public class DayRecordTable
         }
     }
 
-    private void currentMonthChanged(MonthIndex month)
+    private void currentMonthChanged(MonthIndex previousMonth, MonthIndex month)
     {
         final List<DayRecord> sortedDays = month.getSortedDays().collect(toList());
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            LOG.debug("Current month changed to {}. Updating {} days.", month.getYearMonth(), sortedDays.size());
-            table.getSelectionModel().clearSelection();
-            int index = 0;
-            for (final DayRecordPropertyAdapter row : dayRecords)
-            {
-                if (sortedDays.size() <= index)
-                {
-                    row.clear();
-                }
-                else
-                {
-                    row.update(sortedDays.get(index));
-                }
-                index++;
-            }
-            table.requestLayout();
-            table.layout();
+            LOG.debug("Current month changed from {} to {}. Updating {} days.",
+                    previousMonth != null ? previousMonth.getYearMonth() : null, month.getYearMonth(),
+                    sortedDays.size());
+
+            updateSelectedRow(previousMonth, month);
+            updateRows(sortedDays);
         });
+    }
+
+    private void updateRows(final List<DayRecord> sortedDays)
+    {
+        int index = 0;
+        for (final DayRecordPropertyAdapter row : dayRecords)
+        {
+            if (sortedDays.size() <= index)
+            {
+                row.clear();
+            }
+            else
+            {
+                row.update(sortedDays.get(index));
+            }
+            index++;
+        }
+    }
+
+    private void updateSelectedRow(MonthIndex previousMonth, MonthIndex month)
+    {
+        final boolean isCurrentMonth = month.getYearMonth().equals(clockService.getCurrentYearMonth());
+        final boolean otherMonthSelected = previousMonth != null
+                && !month.getYearMonth().equals(previousMonth.getYearMonth());
+        if (!isCurrentMonth && otherMonthSelected)
+        {
+            table.getSelectionModel().clearSelection();
+        }
     }
 
     public TableView<DayRecordPropertyAdapter> initTable()
