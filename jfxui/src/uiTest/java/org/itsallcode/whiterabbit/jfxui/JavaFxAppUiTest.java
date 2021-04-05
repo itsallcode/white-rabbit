@@ -277,6 +277,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
                 23, 24, 27, 28, 29, 30);
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+        TestUtil.sleepShort();
 
         dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
         dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
