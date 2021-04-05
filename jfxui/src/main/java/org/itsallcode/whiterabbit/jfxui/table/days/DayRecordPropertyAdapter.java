@@ -89,7 +89,6 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
     {
         if (tableRow == null)
         {
-            System.out.println("No table row: don't update pseudo classes for " + date.get());
             return;
         }
         final boolean weekend = dayType.get() == DayType.WEEKEND;
@@ -98,7 +97,5 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
         tableRow.pseudoClassStateChanged(NOT_WORKING_PSEUDO_CLASS, notWorking);
         tableRow.requestLayout();
         tableRow.layout();
-        System.out
-                .println("Day " + date.get() + " of type " + dayType.get() + " -> " + tableRow.getPseudoClassStates());
     }
 }
