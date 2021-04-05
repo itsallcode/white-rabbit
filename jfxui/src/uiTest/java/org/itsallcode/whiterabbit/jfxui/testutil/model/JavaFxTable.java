@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
+import javafx.css.PseudoClass;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
@@ -117,5 +119,23 @@ public class JavaFxTable<T>
     public void assertNoRowSelected()
     {
         assertThat(getSelectedRowIndex()).as("selected row index").isLessThan(0);
+    }
+
+    public void assertRowHasPseudoClass(int rowIndex, String expectedClass)
+    {
+        assertThat(getPseudoClass(rowIndex, expectedClass))
+                .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).hasSize(1);
+    }
+
+    public void assertRowDoesNotHavePseudoClass(int rowIndex, String expectedClass)
+    {
+        assertThat(getPseudoClass(rowIndex, expectedClass))
+                .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).isEmpty();
+    }
+
+    private Stream<PseudoClass> getPseudoClass(int rowIndex, String pseudoClassName)
+    {
+        return getTableRow(rowIndex).getPseudoClassStates().stream()
+                .filter(pseudoClass -> pseudoClass.getPseudoClassName().equals(pseudoClassName));
     }
 }
