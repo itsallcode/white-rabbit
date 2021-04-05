@@ -168,6 +168,26 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    void selectedDayUpdatedWhenUserSwitchesBackToCurrentMonth()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.assertRowSelected(2);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        dayTable.assertRowSelected(4);
+
+        app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+
+        dayTable.assertNoRowSelected();
+
+        app().setSelectedMonth(YearMonth.of(2008, Month.JANUARY));
+        dayTable.assertRowSelected(4);
+    }
+
+    @Test
     void selectedDayNotUpdatedWhenTimeChanges()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();

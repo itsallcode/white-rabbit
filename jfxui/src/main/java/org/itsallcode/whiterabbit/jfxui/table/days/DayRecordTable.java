@@ -109,7 +109,15 @@ public class DayRecordTable
         final boolean isCurrentMonth = month.getYearMonth().equals(clockService.getCurrentYearMonth());
         final boolean otherMonthSelected = previousMonth != null
                 && !month.getYearMonth().equals(previousMonth.getYearMonth());
-        if (!isCurrentMonth && otherMonthSelected)
+        if (!otherMonthSelected)
+        {
+            return;
+        }
+        if (isCurrentMonth)
+        {
+            selectRow(clockService.getCurrentDate());
+        }
+        else
         {
             table.getSelectionModel().clearSelection();
         }
