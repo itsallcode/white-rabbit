@@ -111,7 +111,7 @@ public class AppUi
                     LOG.debug("Current day {} updated: refresh activities", record.getDate());
                     activitiesTable.refresh();
                 }
-            }, appService.formatter(), appService.autocomplete());
+            }, appService);
 
             activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
                 appService.store(record);

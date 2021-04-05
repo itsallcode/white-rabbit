@@ -164,6 +164,22 @@ public class DayTable
         return (TableCell<DayRecordPropertyAdapter, DayType>) table.getTableCell(row, "day-type");
     }
 
+    public void assertRowsHighlightedAsWeekend(int... rows)
+    {
+        for (final int i : rows)
+        {
+            table.assertRowHasPseudoClass(i, "weekend");
+        }
+    }
+
+    public void assertRowsNotHighlightedAsWeekend(int... rows)
+    {
+        for (final int i : rows)
+        {
+            table.assertRowDoesNotHavePseudoClass(i, "weekend");
+        }
+    }
+
     public JavaFxTable<DayRecordPropertyAdapter> table()
     {
         return table;

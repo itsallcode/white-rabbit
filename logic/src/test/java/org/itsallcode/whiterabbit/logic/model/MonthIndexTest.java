@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.logic.model;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -105,7 +107,8 @@ class MonthIndexTest
     void gettingNewDayReturnsEmptyDay()
     {
         final LocalDate date = LocalDate.of(2020, 5, 4);
-        final MonthIndex monthIndex = create(TestingConfig.builder().build(), jsonMonth(YearMonth.from(date), null));
+        final MonthIndex monthIndex = create(TestingConfig.builder().build(),
+                jsonMonthWithoutOvertime(YearMonth.from(date)));
 
         final DayRecord day = monthIndex.getDay(date);
 
@@ -131,7 +134,7 @@ class MonthIndexTest
     void gettingDaysDoesNotAddThemToJson()
     {
         final LocalDate date = LocalDate.of(2020, 5, 4);
-        final MonthData jsonMonth = jsonMonth(YearMonth.from(date), null);
+        final MonthData jsonMonth = jsonMonthWithoutOvertime(YearMonth.from(date));
         final MonthIndex monthIndex = create(TestingConfig.builder().build(), jsonMonth);
 
         final DayRecord day = monthIndex.getDay(date);
@@ -146,7 +149,7 @@ class MonthIndexTest
     {
         final LocalDate date = LocalDate.of(2020, 5, 4);
         final MonthIndex monthIndex = create(TestingConfig.builder().withCurrentHoursPerDay(null).build(),
-                jsonMonth(YearMonth.from(date), null));
+                jsonMonthWithoutOvertime(YearMonth.from(date)));
 
         final DayRecord day = monthIndex.getDay(date);
 
@@ -159,11 +162,98 @@ class MonthIndexTest
         final LocalDate date = LocalDate.of(2020, 5, 4);
         final MonthIndex monthIndex = create(
                 TestingConfig.builder().withCurrentHoursPerDay(Duration.ofHours(5)).build(),
-                jsonMonth(YearMonth.from(date), null));
+                jsonMonthWithoutOvertime(YearMonth.from(date)));
 
         final DayRecord day = monthIndex.getDay(date);
 
         assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
+    }
+
+    @Test
+    void getYearMonth()
+    {
+        final LocalDate date = LocalDate.of(2020, 5, 4);
+        final MonthIndex monthIndex = create(jsonMonthWithoutOvertime(YearMonth.from(date)));
+
+        assertThat(monthIndex.getYearMonth()).isEqualTo(YearMonth.of(2020, 5));
+    }
+
+    @Test
+    void putStoresDay()
+    {
+        final LocalDate date = LocalDate.of(2020, 5, 4);
+        final MonthIndex monthIndex = create(jsonMonthWithoutOvertime(YearMonth.from(date)));
+
+        assertThat(monthIndex.getDay(date).isDummyDay()).isTrue();
+
+        final DayRecord newRecord = mock(DayRecord.class);
+        when(newRecord.getDate()).thenReturn(date);
+        monthIndex.put(newRecord);
+
+        assertThat(monthIndex.getDay(date)).isSameAs(newRecord);
+    }
+
+    @Test
+    void getEmptyMonthRecord()
+    {
+        final MonthIndex monthIndex = create(jsonMonth(YearMonth.of(2020, Month.APRIL), Duration.ofHours(2)));
+        final MonthData data = monthIndex.getMonthRecord();
+        assertThat(data.getYear()).isEqualTo(2020);
+        assertThat(data.getMonth()).isEqualTo(Month.APRIL);
+        assertThat(data.getOvertimePreviousMonth()).isEqualTo(Duration.ofHours(2));
+        assertThat(data.getDays()).isEmpty();
+    }
+
+    @Test
+    void getDayReturnsRealDay()
+    {
+        final MonthIndex monthIndex = create(
+                jsonMonthWithoutOvertime(YearMonth.of(2019, Month.MAY), day(Duration.ofHours(1), 2)));
+
+        final DayRecord day = monthIndex.getDay(LocalDate.of(2019, Month.MAY, 2));
+        assertThat(day.getEnd()).isEqualTo(LocalTime.of(17, 45));
+    }
+
+    @Test
+    void getDayReturnsDummyDay()
+    {
+        final MonthIndex monthIndex = create(
+                jsonMonthWithoutOvertime(YearMonth.of(2019, Month.MAY), day(Duration.ofHours(1), 2)));
+
+        final DayRecord day = monthIndex.getDay(LocalDate.of(2019, Month.MAY, 3));
+        assertThat(day.getEnd()).isNull();
+    }
+
+    @Test
+    void getMonthRecordWithDays()
+    {
+        final MonthIndex monthIndex = create(
+                jsonMonthWithoutOvertime(YearMonth.of(2019, Month.MAY), day(Duration.ofHours(1), 2)));
+
+        final MonthData data = monthIndex.getMonthRecord();
+
+        assertThat(data.getDays()).hasSize(1);
+        assertThat(data.getDays().get(0).getEnd()).isEqualTo(LocalTime.of(17, 45));
+    }
+
+    @Test
+    void getVacationDayCountNoVacation()
+    {
+        final MonthIndex monthIndex = create(
+                jsonMonthWithoutOvertime(YearMonth.of(2019, Month.MAY), day(Duration.ofHours(1), 2)));
+
+        assertThat(monthIndex.getVacationDayCount()).isZero();
+    }
+
+    @Test
+    void getVacationDayCountVacation()
+    {
+        final DayData day = day(Duration.ofHours(1), 2);
+        day.setType(DayType.VACATION);
+        final MonthIndex monthIndex = create(
+                jsonMonthWithoutOvertime(YearMonth.of(2019, Month.MAY), day));
+
+        assertThat(monthIndex.getVacationDayCount()).isOne();
     }
 
     private Duration calculateTotalOvertime(DayData... days)
@@ -179,6 +269,11 @@ class MonthIndexTest
     private MonthData jsonMonth(Duration overtimePreviousMonth, DayData... days)
     {
         return jsonMonth(YearMonth.of(2019, Month.MAY), overtimePreviousMonth, days);
+    }
+
+    private MonthData jsonMonthWithoutOvertime(YearMonth yearMonth, DayData... days)
+    {
+        return jsonMonth(yearMonth, null, days);
     }
 
     private MonthData jsonMonth(YearMonth yearMonth, Duration overtimePreviousMonth, DayData... days)

@@ -12,8 +12,13 @@ import java.time.YearMonth;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.DayData;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;
+import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -23,6 +28,7 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.control.Labeled;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
@@ -136,6 +142,165 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
                 () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+    }
+
+    @Test
+    void selectedDayClearedWhenUserSelectsDifferentMonth()
+    {
+        app().genericDayTable().assertRowSelected(2);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        app().genericDayTable().assertRowSelected(1);
+
+        app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+        TestUtil.sleepShort();
+
+        app().genericDayTable().assertNoRowSelected();
+    }
+
+    @Test
+    void selectedDayUpdatedWhenMonthChanges()
+    {
+        app().genericDayTable().assertRowSelected(2);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        app().genericDayTable().assertRowSelected(4);
+    }
+
+    @Test
+    void selectedDayUpdatedWhenUserSwitchesBackToCurrentMonth()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.assertRowSelected(2);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        dayTable.assertRowSelected(4);
+
+        app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+
+        dayTable.assertNoRowSelected();
+
+        app().setSelectedMonth(YearMonth.of(2008, Month.JANUARY));
+        dayTable.assertRowSelected(4);
+    }
+
+    @Test
+    void selectedDayNotUpdatedWhenTimeChanges()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.assertRowSelected(2);
+
+        dayTable.clickRow(5);
+        dayTable.assertRowSelected(5);
+
+        time().tickMinute();
+        TestUtil.sleepShort();
+
+        dayTable.assertRowSelected(5);
+    }
+
+    @Test
+    void selectedDayUpdatedWhenDayChanges()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+
+        dayTable.assertRowSelected(2);
+
+        dayTable.clickRow(5);
+        dayTable.assertRowSelected(5);
+
+        time().tickDay();
+        TestUtil.sleepShort();
+
+        dayTable.assertRowSelected(3);
+    }
+
+    @Test
+    void weekendsAreHighlightedAsWeekend()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+        assertAll(
+                () -> dayTable.assertRowHasPseudoClass(0, "weekend"),
+                () -> dayTable.assertRowHasPseudoClass(1, "weekend"),
+                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "weekend"));
+    }
+
+    @Test
+    void weekendsAreHighlightedAsNotWorking()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+        assertAll(
+                () -> dayTable.assertRowHasPseudoClass(0, "not-working"),
+                () -> dayTable.assertRowHasPseudoClass(1, "not-working"),
+                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "not-working"));
+    }
+
+    @Test
+    void normalDaysAreNotHighlighted()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+        assertAll(
+                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "weekend"),
+                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "not-working"));
+    }
+
+    @Test
+    void holidaysAreHighlightedAsNotWorking()
+    {
+        final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
+        dayTable.assertRowDoesNotHavePseudoClass(2, "not-working");
+
+        app().dayTable().selectDayType(2, DayType.HOLIDAY);
+        dayTable.assertRowHasPseudoClass(2, "not-working");
+    }
+
+    @Test
+    void higlightedWeekends()
+    {
+        final DayTable dayTable = app().dayTable();
+
+        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
+        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
+                25, 26, 27, 30);
+    }
+
+    @Test
+    @Disabled("Test is instable")
+    void higlightedWeekendsUpdatedWhenMonthChanges()
+    {
+        final DayTable dayTable = app().dayTable();
+
+        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
+        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
+                25, 26, 27, 30);
+
+        time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
+        TestUtil.sleepShort();
+
+        dayTable.assertRowsHighlightedAsWeekend(4, 5, 11, 12, 18, 19, 25, 26);
+        dayTable.assertRowsNotHighlightedAsWeekend(0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 20, 21, 22,
+                23, 24, 27, 28, 29, 30);
+
+        app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
+        TestUtil.sleepShort();
+
+        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
+        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
+                25, 26, 27, 30);
+    }
+
+    @Test
+    void typingF5UpdatesData()
+    {
+        robot.type(KeyCode.F5);
     }
 
     @Override
