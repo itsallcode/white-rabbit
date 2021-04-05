@@ -123,6 +123,7 @@ public class DayRecordTable
         }
     }
 
+    @SuppressWarnings("java:S110") // Deep inheritance tree required by JavaFx
     public TableView<DayRecordPropertyAdapter> initTable()
     {
         if (table != null)

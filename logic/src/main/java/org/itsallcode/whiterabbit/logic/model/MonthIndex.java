@@ -141,10 +141,4 @@ public class MonthIndex
                 .map(DayData::getDate)
                 .collect(toList());
     }
-
-    @Override
-    public String toString()
-    {
-        return "MonthIndex [month=" + getYearMonth() + "]";
-    }
 }

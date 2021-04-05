@@ -28,6 +28,7 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 
 import javafx.scene.control.Labeled;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
@@ -294,6 +295,12 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
         dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
                 25, 26, 27, 30);
+    }
+
+    @Test
+    void typingF5UpdatesData()
+    {
+        robot.type(KeyCode.F5);
     }
 
     @Override
