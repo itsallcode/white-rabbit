@@ -30,6 +30,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.util.converter.DefaultStringConverter;
@@ -44,9 +45,9 @@ public class DayRecordTable
     private final EditListener<DayRecord> editListener;
     private final FormatterService formatterService;
     private final SimpleObjectProperty<DayRecord> selectedDay;
-    private TableView<DayRecordPropertyAdapter> table;
-
     private final AutocompleteService autocompleteService;
+
+    private TableView<DayRecordPropertyAdapter> table;
 
     public DayRecordTable(SimpleObjectProperty<DayRecord> selectedDay,
             ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
@@ -57,11 +58,47 @@ public class DayRecordTable
         this.selectedDay = selectedDay;
         this.autocompleteService = autocompleteService;
         fillTableWith31EmptyRows();
-        currentMonth.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
+        currentMonth.addListener((observable, oldValue, newValue) -> currentMonthChanged(newValue));
+    }
+
+    private void fillTableWith31EmptyRows()
+    {
+        while (dayRecords.size() < 31)
+        {
+            dayRecords.add(new DayRecordPropertyAdapter(editListener));
+        }
+    }
+
+    private void currentMonthChanged(MonthIndex month)
+    {
+        final List<DayRecord> sortedDays = month.getSortedDays().collect(toList());
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            LOG.debug("Current month changed to {}. Updating {} days.", month.getYearMonth(), sortedDays.size());
+            table.getSelectionModel().clearSelection();
+            int index = 0;
+            for (final DayRecordPropertyAdapter row : dayRecords)
+            {
+                if (sortedDays.size() <= index)
+                {
+                    row.clear();
+                }
+                else
+                {
+                    row.update(sortedDays.get(index));
+                }
+                index++;
+            }
+            table.requestLayout();
+            table.layout();
+        });
     }
 
     public TableView<DayRecordPropertyAdapter> initTable()
     {
+        if (table != null)
+        {
+            throw new IllegalStateException("Table already initialized");
+        }
         table = new TableView<>(dayRecords);
         table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
         table.setEditable(true);
@@ -70,9 +107,25 @@ public class DayRecordTable
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
-                    LOG.debug("Table row selected: {}", newValue.getRecord());
-                    selectedDay.set(newValue.getRecord());
+                    if (newValue != null)
+                    {
+                        LOG.debug("Table row selected: {}", newValue.getRecord());
+                        selectedDay.set(newValue.getRecord());
+                    }
                 });
+
+        table.setRowFactory(param -> new TableRow<DayRecordPropertyAdapter>()
+        {
+            @Override
+            protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
+            {
+                super.updateItem(item, empty);
+                if (item != null)
+                {
+                    item.setTableRow(this);
+                }
+            }
+        });
         return table;
     }
 
@@ -132,33 +185,5 @@ public class DayRecordTable
 
         return List.of(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
-    }
-
-    private void updateTableValues(MonthIndex newValue)
-    {
-        JavaFxUtil.runOnFxApplicationThread(() -> {
-            final List<DayRecord> sortedDays = newValue.getSortedDays().collect(toList());
-            int index = 0;
-            for (final DayRecordPropertyAdapter row : dayRecords)
-            {
-                if (sortedDays.size() <= index)
-                {
-                    row.clear();
-                }
-                else
-                {
-                    row.update(sortedDays.get(index));
-                }
-                index++;
-            }
-        });
-    }
-
-    private void fillTableWith31EmptyRows()
-    {
-        while (dayRecords.size() < 31)
-        {
-            dayRecords.add(new DayRecordPropertyAdapter(editListener));
-        }
     }
 }
