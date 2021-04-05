@@ -262,6 +262,16 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    void higlightedWeekends()
+    {
+        final DayTable dayTable = app().dayTable();
+
+        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
+        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
+                25, 26, 27, 30);
+    }
+
+    @Test
     @Disabled("Test is instable")
     void higlightedWeekendsUpdatedWhenMonthChanges()
     {
