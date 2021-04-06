@@ -78,7 +78,7 @@ public class DayRecordTable
     {
         final List<DayRecord> sortedDays = month.getSortedDays().collect(toList());
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            LOG.debug("Current month changed from {} to {}. Updating {} days.",
+            LOG.trace("Current month changed from {} to {}. Updating {} days.",
                     previousMonth != null ? previousMonth.getYearMonth() : null, month.getYearMonth(),
                     sortedDays.size());
 

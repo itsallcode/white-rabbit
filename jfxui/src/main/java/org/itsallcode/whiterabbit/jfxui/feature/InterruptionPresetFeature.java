@@ -66,7 +66,7 @@ public class InterruptionPresetFeature
     {
         final String verb = interruption.isNegative() ? "Subtract" : "Add";
         final MenuItem menuItem = new MenuItem(
-                verb + " interruption of " + appService.formatter().format(interruption));
+                verb + " interruption of " + appService.formatter().format(interruption.abs()));
         menuItem.setId(verb.toLowerCase() + "-interruption-preset-" + interruption.toString());
         menuItem.setOnAction(event -> addInterruptionForToday(interruption));
         return menuItem;
