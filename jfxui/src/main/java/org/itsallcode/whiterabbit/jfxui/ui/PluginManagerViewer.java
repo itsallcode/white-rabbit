@@ -93,7 +93,7 @@ public class PluginManagerViewer
         return newStage;
     }
 
-    private static class PluginTableEntry
+    public static class PluginTableEntry
     {
         private final AppPlugin plugin;
 
