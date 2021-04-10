@@ -12,7 +12,7 @@ public interface AppPlugin
 
     Collection<AppPluginFeature> getFeatures();
 
-    PluginOrigin getOrigin();
+    AppPluginOrigin getOrigin();
 
     public enum AppPluginFeature
     {
@@ -36,7 +36,7 @@ public interface AppPlugin
         }
     }
 
-    public interface PluginOrigin
+    public interface AppPluginOrigin
     {
         String getDescription();
 

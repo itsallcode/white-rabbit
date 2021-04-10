@@ -16,18 +16,18 @@ class PluginWrapper implements AppPlugin
 {
     private static final Logger LOG = LogManager.getLogger(PluginWrapper.class);
 
-    private final PluginOrigin origin;
+    private final AppPluginOrigin origin;
     private final Plugin plugin;
     private final Config config;
 
-    private PluginWrapper(Config config, PluginOrigin origin, Plugin plugin)
+    private PluginWrapper(Config config, AppPluginOrigin origin, Plugin plugin)
     {
         this.config = config;
         this.origin = origin;
         this.plugin = plugin;
     }
 
-    public static PluginWrapper create(Config config, PluginOrigin origin, Plugin plugin)
+    public static PluginWrapper create(Config config, AppPluginOrigin origin, Plugin plugin)
     {
         return new PluginWrapper(config, origin, plugin);
     }
@@ -52,7 +52,7 @@ class PluginWrapper implements AppPlugin
     }
 
     @Override
-    public PluginOrigin getOrigin()
+    public AppPluginOrigin getOrigin()
     {
         return origin;
     }

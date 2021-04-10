@@ -5,31 +5,30 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 
-import org.itsallcode.whiterabbit.logic.service.plugin.AppPlugin.PluginOrigin;
+import org.itsallcode.whiterabbit.logic.service.plugin.AppPlugin.AppPluginOrigin;
 
-public abstract class AbstractPluginOrigin implements PluginOrigin
+public abstract class PluginOrigin implements AppPluginOrigin
 {
-
     private ClassLoader classLoader;
 
-    public AbstractPluginOrigin(ClassLoader classLoader)
+    public PluginOrigin(ClassLoader classLoader)
     {
         this.classLoader = classLoader;
     }
 
-    public static AbstractPluginOrigin forCurrentClassPath()
+    public static PluginOrigin forCurrentClassPath()
     {
         return new ClassPathPluginOrigin(getBaseClassLoader());
     }
 
-    public static AbstractPluginOrigin forJar(Path jar)
+    public static PluginOrigin forJar(Path jar)
     {
         return new JarPluginOrigin(jar, createClassLoader(jar));
     }
 
     private static ClassLoader getBaseClassLoader()
     {
-        return AbstractPluginOrigin.class.getClassLoader();
+        return PluginOrigin.class.getClassLoader();
     }
 
     private static ClassLoader createClassLoader(Path jar)

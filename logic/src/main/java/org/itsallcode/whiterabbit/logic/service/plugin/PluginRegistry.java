@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.service.plugin.origin.AbstractPluginOrigin;
+import org.itsallcode.whiterabbit.logic.service.plugin.origin.PluginOrigin;
 
 class PluginRegistry
 {
@@ -68,15 +68,15 @@ class PluginRegistry
 
     private Stream<PluginWrapper> pluginsFromClasspath()
     {
-        return loadPlugins(AbstractPluginOrigin.forCurrentClassPath());
+        return loadPlugins(PluginOrigin.forCurrentClassPath());
     }
 
     private Stream<PluginWrapper> loadPlugins(Path jar)
     {
-        return loadPlugins(AbstractPluginOrigin.forJar(jar));
+        return loadPlugins(PluginOrigin.forJar(jar));
     }
 
-    private Stream<PluginWrapper> loadPlugins(AbstractPluginOrigin origin)
+    private Stream<PluginWrapper> loadPlugins(PluginOrigin origin)
     {
         final ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, origin.getClassLoader());
         return serviceLoader.stream()
@@ -103,7 +103,7 @@ class PluginRegistry
         }
     }
 
-    private Optional<PluginWrapper> loadPlugin(Provider<Plugin> provider, AbstractPluginOrigin origin)
+    private Optional<PluginWrapper> loadPlugin(Provider<Plugin> provider, PluginOrigin origin)
     {
         LOG.info("Loading plugin {} using {}", provider.type(), origin);
         try
