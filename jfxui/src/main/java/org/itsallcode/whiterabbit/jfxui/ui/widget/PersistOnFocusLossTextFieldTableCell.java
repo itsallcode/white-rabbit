@@ -99,6 +99,7 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
         newTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ESCAPE))
             {
+                keyEvent.consume();
                 newTextField.focusedProperty().removeListener(focusListener);
             }
         });

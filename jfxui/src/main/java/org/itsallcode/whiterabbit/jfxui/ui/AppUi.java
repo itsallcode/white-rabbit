@@ -123,6 +123,7 @@ public class AppUi
             scene.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.F5)
                 {
+                    keyEvent.consume();
                     appService.updateNow();
                 }
             });
@@ -136,6 +137,7 @@ public class AppUi
             primaryStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
                 if (event.getCode() == KeyCode.ESCAPE)
                 {
+                    event.consume();
                     primaryStage.hide();
                 }
             });
