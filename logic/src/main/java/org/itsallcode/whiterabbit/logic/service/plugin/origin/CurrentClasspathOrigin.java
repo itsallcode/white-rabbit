@@ -2,11 +2,12 @@ package org.itsallcode.whiterabbit.logic.service.plugin.origin;
 
 class ClassPathPluginOrigin extends PluginOrigin
 {
-    public ClassPathPluginOrigin(ClassLoader classLoader)
+    ClassPathPluginOrigin(ClassLoader classLoader)
     {
         super(classLoader);
     }
 
+    @Override
     public String getDescription()
     {
         return "included";

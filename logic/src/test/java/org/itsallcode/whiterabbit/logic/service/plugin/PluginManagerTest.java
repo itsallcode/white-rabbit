@@ -8,6 +8,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -139,6 +142,14 @@ class PluginManagerTest
                 .hasMessage(
                         "Found multiple plugins supporting " + MonthDataStorage.class.getName()
                                 + ": [plugin1, plugin2]. Please add only one storage plugin to the classpath.");
+    }
+
+    @Test
+    void getAllPlugins()
+    {
+        final Collection<PluginWrapper> plugins = new ArrayList<>();
+        when(pluginRegistryMock.getAllPlugins()).thenReturn(plugins);
+        assertThat(pluginManager.getAllPlugins()).isSameAs(plugins);
     }
 
     @Test

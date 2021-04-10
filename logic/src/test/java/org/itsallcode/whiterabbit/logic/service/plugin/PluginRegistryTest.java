@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.service.plugin.AppPlugin.AppPluginFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class PluginRegistryTest
 {
+    private static final int EXPECTED_PLUGIN_COUNT = 2;
+
     @Mock
     private Config configMock;
     private PluginRegistry pluginRegistry;
@@ -37,7 +40,7 @@ class PluginRegistryTest
     {
         when(configMock.getPluginDir()).thenReturn(tempDir);
         pluginRegistry.load();
-        assertThat(pluginRegistry.getAllPlugins()).hasSize(1);
+        assertThat(pluginRegistry.getAllPlugins()).hasSize(EXPECTED_PLUGIN_COUNT);
     }
 
     @Test
@@ -45,7 +48,7 @@ class PluginRegistryTest
     {
         when(configMock.getPluginDir()).thenReturn(Paths.get("no-such-directory"));
         pluginRegistry.load();
-        assertThat(pluginRegistry.getAllPlugins()).hasSize(1);
+        assertThat(pluginRegistry.getAllPlugins()).hasSize(EXPECTED_PLUGIN_COUNT);
     }
 
     @Test
@@ -54,7 +57,7 @@ class PluginRegistryTest
         when(configMock.getPluginDir()).thenReturn(tempDir);
         Files.writeString(tempDir.resolve("invalid-plugin.jar"), "");
         pluginRegistry.load();
-        assertThat(pluginRegistry.getAllPlugins()).hasSize(1);
+        assertThat(pluginRegistry.getAllPlugins()).hasSize(EXPECTED_PLUGIN_COUNT);
     }
 
     @Test
@@ -68,20 +71,7 @@ class PluginRegistryTest
     {
         pluginRegistry.load();
         final Collection<PluginWrapper> plugins = pluginRegistry.getAllPlugins();
-        assertThat(plugins).hasSize(1);
-        final PluginWrapper plugin = plugins.iterator().next();
-        verifyTestingPlugin(plugin);
-    }
-
-    private void verifyTestingPlugin(final PluginWrapper plugin)
-    {
-        assertThat(plugin.getId()).isEqualTo("testingPlugin");
-        assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
-        assertThat(plugin.getFeatures()).isEmpty();
-        final TestingPlugin pluginInstance = plugin.getFeature(TestingPlugin.class);
-        assertThat(pluginInstance).isInstanceOf(TestingPlugin.class);
-        assertThat(pluginInstance.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
-        assertThat(pluginInstance.isClosed()).isFalse();
+        assertThat(plugins).hasSize(EXPECTED_PLUGIN_COUNT);
     }
 
     @Test
@@ -98,14 +88,31 @@ class PluginRegistryTest
         pluginRegistry.load();
         assertThatThrownBy(() -> pluginRegistry.getPlugin("unknown"))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Plugin 'unknown' not found. Available plugins: [" + TestingPlugin.PLUGIN_ID + "]");
+                .hasMessage("Plugin 'unknown' not found. Available plugins: [" + TestingReportPlugin.PLUGIN_ID + ", "
+                        + TestingPlugin.PLUGIN_ID + "]");
     }
 
     @Test
     void getPlugin_returnsPluginWhenAvailable()
     {
         pluginRegistry.load();
-        verifyTestingPlugin(pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID));
+        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
+        assertThat(plugin.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
+        assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
+        assertThat(plugin.getFeatures()).isEmpty();
+        final TestingPlugin pluginInstance = plugin.getFeature(TestingPlugin.class);
+        assertThat(pluginInstance).isInstanceOf(TestingPlugin.class);
+        assertThat(pluginInstance.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
+        assertThat(pluginInstance.isClosed()).isFalse();
+    }
+
+    @Test
+    void getPlugin_withFeature()
+    {
+        pluginRegistry.load();
+        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingReportPlugin.PLUGIN_ID);
+        assertThat(plugin.getId()).isEqualTo(TestingReportPlugin.PLUGIN_ID);
+        assertThat(plugin.getFeatures()).hasSize(1).containsExactly(AppPluginFeature.PROJECT_REPORT);
     }
 
     @Test

@@ -6,12 +6,13 @@ class JarPluginOrigin extends PluginOrigin
 {
     private final Path jar;
 
-    public JarPluginOrigin(Path jar, ClassLoader classLoader)
+    JarPluginOrigin(Path jar, ClassLoader classLoader)
     {
         super(classLoader);
         this.jar = jar;
     }
 
+    @Override
     public String getDescription()
     {
         return jar.toString();
