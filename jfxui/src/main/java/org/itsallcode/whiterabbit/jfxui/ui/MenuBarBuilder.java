@@ -22,7 +22,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.Modality;
-import javafx.stage.Window;
+import javafx.stage.Stage;
 
 class MenuBarBuilder
 {
@@ -30,9 +30,9 @@ class MenuBarBuilder
     private final UiActions actions;
     private final AppService appService;
     private final BooleanProperty stoppedWorkingForToday;
-    private final Window primaryStage;
+    private final Stage primaryStage;
 
-    MenuBarBuilder(UiActions actions, Window primaryStage, AppService appService,
+    MenuBarBuilder(UiActions actions, Stage primaryStage, AppService appService,
             BooleanProperty stoppedWorkingForToday)
     {
         this.actions = actions;
@@ -48,6 +48,7 @@ class MenuBarBuilder
         final Menu menuFile = menu("_File", "menu_file");
         final Menu menuCalculations = menu("_Working hours", "menu_working_hours");
         final Menu menuReports = menu("_Reports", "menu_reports");
+        final Menu menuPlugins = menu("_Plugins", "menu_plugins");
         final Menu menuHelp = menu("_Help", "menu_help");
         menuFile.getItems().addAll(
                 menuItem("Edit config file", "menuitem_edit_config", actions::editConfigFile),
@@ -67,8 +68,10 @@ class MenuBarBuilder
         menuReports.getItems()
                 .addAll(menuItem("_Project report", "menuitem_project_report", actions::showProjectReport),
                         menuItem("_Vacation report", "menuitem_vacation_report", actions::showVacationReport));
+        menuPlugins.getItems()
+                .addAll(menuItem("_Plugin manager", "menuitem_pluginmanager", actions::showPluginManager));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", this::showAboutDialog));
-        menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuHelp);
+        menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuPlugins, menuHelp);
         return menuBar;
     }
 

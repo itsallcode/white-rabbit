@@ -6,9 +6,6 @@ import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -26,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.service.plugin.origin.AbstractPluginOrigin;
 
 class PluginRegistry
 {
@@ -70,26 +68,19 @@ class PluginRegistry
 
     private Stream<PluginWrapper> pluginsFromClasspath()
     {
-        return loadPlugins(getClass().getClassLoader());
+        return loadPlugins(AbstractPluginOrigin.forCurrentClassPath());
     }
 
     private Stream<PluginWrapper> loadPlugins(Path jar)
     {
-        return loadPlugins(createClassLoader(jar));
+        return loadPlugins(AbstractPluginOrigin.forJar(jar));
     }
 
-    private Stream<PluginWrapper> loadPlugins(final ClassLoader classLoader)
+    private Stream<PluginWrapper> loadPlugins(AbstractPluginOrigin origin)
     {
-        final ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
+        final ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, origin.getClassLoader());
         return serviceLoader.stream()
-                .flatMap(provider -> loadPlugin(provider, classLoader).stream());
-    }
-
-    private ClassLoader createClassLoader(Path jar)
-    {
-        final String name = "PluginClassLoader-" + jar.getFileName();
-        final URL[] urls = new URL[] { toUrl(jar) };
-        return new URLClassLoader(name, urls, getClass().getClassLoader());
+                .flatMap(provider -> loadPlugin(provider, origin).stream());
     }
 
     private List<Path> getPluginJars()
@@ -112,31 +103,19 @@ class PluginRegistry
         }
     }
 
-    private URL toUrl(Path path)
+    private Optional<PluginWrapper> loadPlugin(Provider<Plugin> provider, AbstractPluginOrigin origin)
     {
-        try
-        {
-            return path.toUri().toURL();
-        }
-        catch (final MalformedURLException e)
-        {
-            throw new IllegalStateException("Error converting path " + path + " to url", e);
-        }
-    }
-
-    private Optional<PluginWrapper> loadPlugin(Provider<Plugin> provider, ClassLoader pluginClassLoader)
-    {
-        LOG.info("Loading plugin {} using {}", provider.type(), pluginClassLoader);
+        LOG.info("Loading plugin {} using {}", provider.type(), origin);
         try
         {
             final Plugin pluginInstance = provider.get();
-            final PluginWrapper pluginWrapper = PluginWrapper.create(config, pluginClassLoader, pluginInstance);
+            final PluginWrapper pluginWrapper = PluginWrapper.create(config, origin, pluginInstance);
             pluginWrapper.init();
             return Optional.of(pluginWrapper);
         }
         catch (final RuntimeException e)
         {
-            LOG.warn("Error loading plugin {} using {}", provider.type(), pluginClassLoader, e);
+            LOG.warn("Error loading plugin {} using {}", provider.type(), origin, e);
             return Optional.empty();
         }
     }
