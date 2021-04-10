@@ -74,19 +74,27 @@ task installSignedPlugins(type: Copy, dependsOn: signPluginJars) {
 }
 
 task prepareStaticContentPlugins(dependsOn: signPluginJars, type: Copy) {
+    def versionSuffix = project.version.toString().endsWith('-SNAPSHOT') ? '-dev' : ''
     from(signPluginJars.outputs.files)
     into "$buildDir/content/plugins"
+    rename { String fileName -> fileName.replace('.jar', "${versionSuffix}.jar") }
 }
 
-task prepareStaticContentMain(dependsOn: [signMainJar, prepareStaticContentPlugins], type: Copy) {
+task prepareStaticContentMainJar(dependsOn: signMainJar, type: Copy) {
+    def versionSuffix = project.version.toString().endsWith('-SNAPSHOT') ? '-dev' : ''
+    from(signMainJar.outputs.files.singleFile)
+    into "$buildDir/content"
+    rename { String fileName -> fileName.replace('.jar', "${versionSuffix}.jar") }
+}
+
+task prepareStaticContentWebContent(type: Copy) {
     from("$projectDir/content") {
         include "*"
     }
-    from(signMainJar.outputs.files.singleFile)
     into "$buildDir/content"
 }
 
-task prepareStaticContent(dependsOn: [prepareStaticContentMain, prepareStaticContentPlugins]) {
+task prepareStaticContent(dependsOn: [prepareStaticContentMainJar, prepareStaticContentPlugins, prepareStaticContentWebContent]) {
 }
 
 task invalidateCloudFrontCache(type: Exec) {

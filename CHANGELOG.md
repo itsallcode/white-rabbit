@@ -10,7 +10,8 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / 
 
 ### Added
 
-* [#120](https://github.com/itsallcode/white-rabbit/pull/120/files): Highlight weekends and non-working days.
+* [#121](https://github.com/itsallcode/white-rabbit/pull/121): Allow using plugins via webstart.
+* [#120](https://github.com/itsallcode/white-rabbit/pull/120): Highlight weekends and non-working days.
 * Show the date of the selected day in the 'Activities' pane title.
 * Save and restore the expanded state of the 'Activities' pane.
 
