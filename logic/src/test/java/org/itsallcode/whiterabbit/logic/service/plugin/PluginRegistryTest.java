@@ -75,6 +75,9 @@ class PluginRegistryTest
 
     private void verifyTestingPlugin(final PluginWrapper plugin)
     {
+        assertThat(plugin.getId()).isEqualTo("testingPlugin");
+        assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
+        assertThat(plugin.getFeatures()).isEmpty();
         final TestingPlugin pluginInstance = plugin.getFeature(TestingPlugin.class);
         assertThat(pluginInstance).isInstanceOf(TestingPlugin.class);
         assertThat(pluginInstance.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
