@@ -63,17 +63,25 @@ public class ApplicationHelper
 
     public AutomaticInterruptionDialog assertAutomaticInterruption()
     {
-        final Window dialogWindow = robot.window("Interruption detected");
-        Assertions.assertThat(dialogWindow).isShowing();
-        return new AutomaticInterruptionDialog(robot, dialogWindow);
+        final Window window = robot.window("Interruption detected");
+        Assertions.assertThat(window).isShowing();
+        return new AutomaticInterruptionDialog(robot, window);
     }
 
     public AboutDialogWindow openAboutDialog()
     {
         robot.clickOn("#menu_help").clickOn("#menuitem_about");
-        final Window dialogWindow = robot.window("About White Rabbit");
-        Assertions.assertThat(dialogWindow).isShowing();
-        return new AboutDialogWindow(robot, dialogWindow);
+        final Window window = robot.window("About White Rabbit");
+        Assertions.assertThat(window).isShowing();
+        return new AboutDialogWindow(robot, window);
+    }
+
+    public PluginManagerWindow openPluginManager()
+    {
+        robot.clickOn("#menu_plugins").clickOn("#menuitem_pluginmanager");
+        final Window window = robot.window("Plugin Manager");
+        Assertions.assertThat(window).isShowing();
+        return new PluginManagerWindow(robot, window);
     }
 
     public void addPresetInterruption(Duration preset)
@@ -88,9 +96,9 @@ public class ApplicationHelper
     public AddInterruptionDialog addInterruption()
     {
         robot.clickOn("#add-interruption-button");
-        final Window dialogWindow = robot.window("Add interruption for today");
-        Assertions.assertThat(dialogWindow).isShowing();
-        return new AddInterruptionDialog(robot, dialogWindow);
+        final Window window = robot.window("Add interruption for today");
+        Assertions.assertThat(window).isShowing();
+        return new AddInterruptionDialog(robot, window);
     }
 
     public YearMonth getSelectedMonth()

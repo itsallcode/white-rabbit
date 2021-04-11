@@ -68,6 +68,7 @@ public class ReportWindow
         newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == KeyCode.ESCAPE)
             {
+                event.consume();
                 closeReportWindow();
             }
         });

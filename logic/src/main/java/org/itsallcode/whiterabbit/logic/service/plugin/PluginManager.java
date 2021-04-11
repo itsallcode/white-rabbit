@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,12 @@ public class PluginManager
                 .filter(plugin -> plugin.supports(featureType))
                 .map(PluginWrapper::getId)
                 .collect(toList());
+    }
+
+    @SuppressWarnings("java:S1452") // Use generic wildcard as return type.
+    public Collection<? extends AppPlugin> getAllPlugins()
+    {
+        return pluginRegistry.getAllPlugins();
     }
 
     public ProjectReportExporter getProjectReportExporter(String id)

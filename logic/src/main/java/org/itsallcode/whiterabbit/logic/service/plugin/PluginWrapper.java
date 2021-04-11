@@ -1,6 +1,9 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
-import java.net.URLClassLoader;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,24 +12,24 @@ import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
-class PluginWrapper
+class PluginWrapper implements AppPlugin
 {
     private static final Logger LOG = LogManager.getLogger(PluginWrapper.class);
 
-    private final ClassLoader classLoader;
+    private final AppPluginOrigin origin;
     private final Plugin plugin;
     private final Config config;
 
-    private PluginWrapper(Config config, ClassLoader pluginClassLoader, Plugin plugin)
+    private PluginWrapper(Config config, AppPluginOrigin origin, Plugin plugin)
     {
         this.config = config;
-        this.classLoader = pluginClassLoader;
+        this.origin = origin;
         this.plugin = plugin;
     }
 
-    public static PluginWrapper create(Config config, ClassLoader pluginClassLoader, Plugin plugin)
+    public static PluginWrapper create(Config config, AppPluginOrigin origin, Plugin plugin)
     {
-        return new PluginWrapper(config, pluginClassLoader, plugin);
+        return new PluginWrapper(config, origin, plugin);
     }
 
     void init()
@@ -34,12 +37,27 @@ class PluginWrapper
         plugin.init(new PluginConfigImpl());
     }
 
-    String getId()
+    @Override
+    public String getId()
     {
         return plugin.getId();
     }
 
-    boolean supports(Class<? extends PluginFeature> featureType)
+    @Override
+    public Collection<AppPluginFeature> getFeatures()
+    {
+        return Stream.of(AppPluginFeature.values())
+                .filter(feature -> supports(feature.getFeatureClass()))
+                .collect(toList());
+    }
+
+    @Override
+    public AppPluginOrigin getOrigin()
+    {
+        return origin;
+    }
+
+    public boolean supports(Class<? extends PluginFeature> featureType)
     {
         try
         {
@@ -59,7 +77,7 @@ class PluginWrapper
 
     boolean isLoadedFromExternalJar()
     {
-        return URLClassLoader.class.isInstance(classLoader);
+        return origin.isExternal();
     }
 
     void close()
@@ -70,7 +88,7 @@ class PluginWrapper
     @Override
     public String toString()
     {
-        return "PluginWrapper [classLoader=" + classLoader + ", plugin=" + plugin + "]";
+        return "PluginWrapper [origin=" + origin + ", plugin=" + plugin + "]";
     }
 
     private class PluginConfigImpl implements PluginConfiguration

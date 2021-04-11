@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
+import org.itsallcode.whiterabbit.jfxui.ui.PluginManagerViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -116,6 +117,11 @@ public final class UiActions
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
         new ProjectReportViewer(getPrimaryStage(), state.uiState, appService, this, report).show();
+    }
+
+    public void showPluginManager()
+    {
+        new PluginManagerViewer(getPrimaryStage(), state.uiState, appService.pluginManager()).show();
     }
 
     public void showErrorDialog(String message)
