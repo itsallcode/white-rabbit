@@ -44,6 +44,7 @@ public class PluginManager
                 .collect(toList());
     }
 
+    @SuppressWarnings("java:S1452") // Use generic wildcard as return type.
     public Collection<? extends AppPlugin> getAllPlugins()
     {
         return pluginRegistry.getAllPlugins();

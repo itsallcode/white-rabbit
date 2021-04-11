@@ -11,7 +11,7 @@ public abstract class PluginOrigin implements AppPluginOrigin
 {
     private ClassLoader classLoader;
 
-    public PluginOrigin(ClassLoader classLoader)
+    protected PluginOrigin(ClassLoader classLoader)
     {
         this.classLoader = classLoader;
     }
