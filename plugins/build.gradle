@@ -1,20 +1,20 @@
 
 subprojects {
     apply plugin: "com.github.johnrengelman.shadow"
+
+    def log4jApi = "org.apache.logging.log4j:log4j-api:$log4jVersion"
     dependencies {
-        compileOnly project(':api')
-        compileOnly "org.apache.logging.log4j:log4j-api:$log4jVersion"
+        implementation project(':api')
+        implementation log4jApi
     }
 
     shadowJar {
         archiveBaseName.set("${project.name}-plugin")
         archiveClassifier.set(null)
         archiveVersion.set("")
-    }
-    
-    eclipse {
-        classpath {
-            plusConfigurations += [ configurations.compileOnly ]
+        dependencies {
+            exclude(dependency(log4jApi))
+            exclude(project(':api'))
         }
     }
 }
