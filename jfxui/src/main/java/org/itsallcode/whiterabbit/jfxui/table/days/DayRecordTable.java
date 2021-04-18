@@ -148,6 +148,19 @@ public class DayRecordTable
         table.setRowFactory(param -> new TableRow<DayRecordPropertyAdapter>()
         {
             @Override
+            public void updateIndex(int newIndex)
+            {
+                if (newIndex != getIndex() && newIndex >= 0 && dayRecords.size() < newIndex)
+                {
+                    final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
+                    LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
+                            dayRecord.date.get());
+                    dayRecord.setTableRow(this);
+                }
+                super.updateIndex(newIndex);
+            };
+
+            @Override
             protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
             {
                 super.updateItem(item, empty);

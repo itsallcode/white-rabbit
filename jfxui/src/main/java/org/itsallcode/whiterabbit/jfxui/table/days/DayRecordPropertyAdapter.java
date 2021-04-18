@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.RecordPropertyAdapter;
@@ -16,6 +18,8 @@ import javafx.scene.control.TableRow;
 
 public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
 {
+    private static final Logger LOG = LogManager.getLogger(DayRecordPropertyAdapter.class);
+
     private static final PseudoClass WEEKEND_PSEUDO_CLASS = PseudoClass.getPseudoClass("weekend");
     private static final PseudoClass NOT_WORKING_PSEUDO_CLASS = PseudoClass.getPseudoClass("not-working");
 
@@ -52,6 +56,7 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
                 end.set(null);
                 interruption.set(Duration.ZERO);
             }
+            LOG.trace("Day type of {} changed from {} to {}", date.get(), oldValue, newValue);
             updateRowPseudoClasses();
         });
     }
@@ -61,7 +66,6 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
         runUpdate(() -> {
             setRecord(record);
             updateFields();
-            updateRowPseudoClasses();
         });
     }
 
@@ -82,6 +86,12 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
     public void setTableRow(TableRow<DayRecordPropertyAdapter> newTableRow)
     {
         this.tableRow = newTableRow;
+        if (date.get() != null && tableRow.getIndex() + 1 != date.get().getDayOfMonth())
+        {
+            LOG.warn("Trying to set invalid row #{} for date {}.", tableRow.getIndex(), date.get());
+            return;
+        }
+        LOG.trace("Setting table row #{} for day {}", newTableRow.getIndex(), date.get());
         updateRowPseudoClasses();
     }
 
@@ -91,11 +101,19 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
         {
             return;
         }
+        if (date.get() != null && tableRow.getIndex() + 1 != date.get().getDayOfMonth())
+        {
+            LOG.trace("Invalid row #{} for date {}. Skip updating pseudo classes.", tableRow.getIndex(), date.get());
+            return;
+        }
         final boolean weekend = dayType.get() == DayType.WEEKEND;
         final boolean notWorking = dayType.get() != null && !dayType.get().isWorkDay();
         tableRow.pseudoClassStateChanged(WEEKEND_PSEUDO_CLASS, weekend);
         tableRow.pseudoClassStateChanged(NOT_WORKING_PSEUDO_CLASS, notWorking);
-        tableRow.requestLayout();
-        tableRow.layout();
+        if (LOG.isTraceEnabled())
+        {
+            LOG.trace("Update pseudo classes for row #{} {} of type {}: {} / {}", tableRow.getIndex(), date.get(),
+                    dayType.get(), weekend ? "weekend" : "-", notWorking ? "notworking" : "-");
+        }
     }
 }
