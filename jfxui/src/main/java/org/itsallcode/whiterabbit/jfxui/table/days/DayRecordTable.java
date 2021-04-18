@@ -131,7 +131,7 @@ public class DayRecordTable
             throw new IllegalStateException("Table already initialized");
         }
         table = new TableView<>(dayRecords);
-        table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
+        table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/days/style.css");
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("day-table");
