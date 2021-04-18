@@ -158,7 +158,7 @@ public class DayRecordTable
                     dayRecord.setTableRow(this);
                 }
                 super.updateIndex(newIndex);
-            };
+            }
 
             @Override
             protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
