@@ -19,6 +19,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 public class UiWidget
@@ -120,11 +121,19 @@ public class UiWidget
     private static Label createLabelWithTooltip(String label)
     {
         final Label columnHeaderLabel = new Label(label);
-        final Tooltip tooltip = new Tooltip(label);
-        tooltip.getStyleClass().add("mytooltip");
-        columnHeaderLabel.setTooltip(tooltip);
+        columnHeaderLabel.setTooltip(createTooltip(label));
         columnHeaderLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         return columnHeaderLabel;
+    }
+
+    private static Tooltip createTooltip(String label)
+    {
+        final Tooltip tooltip = new Tooltip(label);
+        tooltip.getStyleClass().add("mytooltip");
+        tooltip.setShowDelay(Duration.millis(200));
+        tooltip.setShowDuration(Duration.seconds(10));
+        tooltip.setHideDelay(Duration.millis(200));
+        return tooltip;
     }
 
     private static <S, T> Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> treeTableCellFactory(
