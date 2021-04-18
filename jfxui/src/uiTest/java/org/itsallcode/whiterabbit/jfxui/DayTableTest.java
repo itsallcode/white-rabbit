@@ -154,6 +154,18 @@ class DayTableTest extends JavaFxAppUiTestBase
         assertDurationParsed("01:2", Duration.ofHours(1).plusMinutes(2));
     }
 
+    @Test
+    void timeWithoutColonSupported()
+    {
+        assertTimeParsed("0812", LocalTime.of(8, 12));
+    }
+
+    @Test
+    void timeWithOnlyHourSupported()
+    {
+        assertTimeParsed("08", LocalTime.of(8, 0));
+    }
+
     private void assertTimeParsed(String enteredText, LocalTime expectedTime)
     {
         final int row = time().getCurrentDayRowIndex() + 1;
