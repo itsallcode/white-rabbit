@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.ui.UiResources;
+import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -75,7 +75,7 @@ public class ProgressDialog
         {
             final Stage newStage = new Stage();
             newStage.setTitle(windowTitle);
-            newStage.setScene(new Scene(root));
+            newStage.setScene(UiWidget.scene(root));
             newStage.initModality(Modality.NONE);
             newStage.initOwner(primaryStage);
             newStage.getIcons().add(UiResources.APP_ICON);

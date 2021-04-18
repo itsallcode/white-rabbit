@@ -119,8 +119,7 @@ public class AppUi
             }, appService.formatter(), appService.projects(), appService.autocomplete());
             final BorderPane rootPane = new BorderPane(createMainPane());
             rootPane.setTop(createTopContainer());
-            final Scene scene = new Scene(rootPane, 780, 800);
-            scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/ui/rootSceneStyle.css");
+            final Scene scene = UiWidget.scene(rootPane, 780, 800);
             scene.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.F5)
                 {

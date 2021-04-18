@@ -6,6 +6,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -24,6 +26,18 @@ public class UiWidget
     private UiWidget()
     {
         // Not innstantiable
+    }
+
+    public static Scene scene(Parent root)
+    {
+        return scene(root, -1, -1);
+    }
+
+    public static Scene scene(Parent root, double width, double height)
+    {
+        final Scene scene = new Scene(root, width, height);
+        scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/ui/rootSceneStyle.css");
+        return scene;
     }
 
     public static Button button(String id, String label, EventHandler<ActionEvent> action)
