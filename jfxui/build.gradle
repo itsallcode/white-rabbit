@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    javaFxVersion = '15.0.1'
+    javaFxVersion = '16'
     monocleVersion = '12.0.1+2'
 }
 
