@@ -1,0 +1,9 @@
+.tooltip {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(255,255,225, 1);
+    -fx-padding: 3px 5px 3px 5px;
+    -fx-font: normal 9pt "Sergoe UI";
+    -fx-line-spacing: -1px;
+    -fx-background-radius: 3px;
+    -fx-border-color: black;
+}

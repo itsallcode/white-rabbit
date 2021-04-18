@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -68,13 +69,14 @@ public class UiWidget
             Callback<CellDataFeatures<T, S>, ObservableValue<S>> cellValueFactory,
             boolean editable)
     {
-        final TableColumn<T, S> column = new TableColumn<>(label);
+        final TableColumn<T, S> column = new TableColumn<>();
         column.setSortable(false);
         column.setId(id);
         column.setCellFactory(cellFactory);
         column.setCellValueFactory(cellValueFactory);
         column.setEditable(editable);
         column.setResizable(true);
+        column.setGraphic(createLabelWithTooltip(label));
         return column;
     }
 
@@ -90,14 +92,25 @@ public class UiWidget
             Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellValueFactory,
             Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> cellFactory)
     {
-        final TreeTableColumn<S, T> column = new TreeTableColumn<>(label);
+        final TreeTableColumn<S, T> column = new TreeTableColumn<>();
         column.setId(id);
         column.setCellValueFactory(cellValueFactory);
         column.setCellFactory(cellFactory);
         column.setEditable(false);
         column.setResizable(true);
         column.setSortable(false);
+        column.setGraphic(createLabelWithTooltip(label));
         return column;
+    }
+
+    private static Label createLabelWithTooltip(String label)
+    {
+        final Label columnHeaderLabel = new Label(label);
+        final Tooltip tooltip = new Tooltip(label);
+        tooltip.getStyleClass().add("mytooltip");
+        columnHeaderLabel.setTooltip(tooltip);
+        columnHeaderLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        return columnHeaderLabel;
     }
 
     private static <S, T> Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> treeTableCellFactory(
