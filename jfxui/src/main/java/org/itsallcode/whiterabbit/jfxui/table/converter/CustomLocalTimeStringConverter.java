@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.jfxui.table.converter;
 import java.time.LocalTime;
 import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +12,7 @@ import javafx.util.converter.LocalTimeStringConverter;
 
 public class CustomLocalTimeStringConverter extends StringConverter<LocalTime>
 {
-    private static final Pattern SIMPLE_DATE_PATTERN = Pattern.compile("(?<hours>\\d{1,2})(?<minutes>\\d{2})");
+    private static final Pattern SIMPLE_DATE_PATTERN = Pattern.compile("(?<hours>\\d{1,2})(?:(?<minutes>\\d{2}))?");
     private final LocalTimeStringConverter delegate;
 
     public CustomLocalTimeStringConverter(Locale locale)
@@ -32,7 +33,7 @@ public class CustomLocalTimeStringConverter extends StringConverter<LocalTime>
         if (matcher.matches())
         {
             final int hours = Integer.parseInt(matcher.group("hours"));
-            final int minutes = Integer.parseInt(matcher.group("minutes"));
+            final int minutes = Optional.ofNullable(matcher.group("minutes")).map(Integer::parseInt).orElse(0);
             return LocalTime.of(hours, minutes);
         }
         return delegate.fromString(string);

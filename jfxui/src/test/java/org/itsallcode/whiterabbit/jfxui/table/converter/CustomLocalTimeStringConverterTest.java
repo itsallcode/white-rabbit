@@ -28,11 +28,16 @@ class CustomLocalTimeStringConverterTest
         assertThat(converter.toString(LocalTime.of(13, 37))).isEqualTo("13:37");
     }
 
-    @ParameterizedTest(name = "Parsing '{0}' returns {1}")
+    @ParameterizedTest(name = "Parsing ''{0}'' returns {1}")
     @CsvSource(value =
     {
             "'', NULL",
             "0:00, 00:00",
+            "1, 01:00",
+            "9, 09:00",
+            "09, 09:00",
+            "12, 12:00",
+            "13, 13:00",
             "0:01, 00:01",
             "1:00, 01:00",
             "1:23, 01:23",
@@ -40,6 +45,7 @@ class CustomLocalTimeStringConverterTest
             "01:23, 01:23",
             "123, 01:23",
             "0123, 01:23",
+            "0000, 00:00",
             "23:59, 23:59",
             "2359, 23:59",
     }, nullValues = "NULL")
@@ -51,9 +57,9 @@ class CustomLocalTimeStringConverterTest
     @ParameterizedTest(name = "Parsing '{0}' returns {1}")
     @CsvSource(value =
     {
-            "0",
-            "1",
-            "12" })
+            "a",
+            "00000",
+            "12345" })
     void fromStringFailsParsing(String input)
     {
         assertThatThrownBy(() -> converter.fromString(input)).isInstanceOf(DateTimeParseException.class)
