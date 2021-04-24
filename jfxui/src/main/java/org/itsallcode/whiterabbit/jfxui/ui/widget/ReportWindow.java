@@ -11,7 +11,6 @@ import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -63,7 +62,7 @@ public class ReportWindow
     {
         final Stage newStage = new Stage();
         newStage.setTitle(windowTitle);
-        newStage.setScene(new Scene(root, 500, 800));
+        newStage.setScene(UiWidget.scene(root, 500, 800));
         newStage.initModality(Modality.NONE);
         newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == KeyCode.ESCAPE)

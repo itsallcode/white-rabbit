@@ -6,7 +6,10 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -16,6 +19,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 public class UiWidget
@@ -23,6 +27,18 @@ public class UiWidget
     private UiWidget()
     {
         // Not innstantiable
+    }
+
+    public static Scene scene(Parent root)
+    {
+        return scene(root, -1, -1);
+    }
+
+    public static Scene scene(Parent root, double width, double height)
+    {
+        final Scene scene = new Scene(root, width, height);
+        scene.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/ui/rootSceneStyle.css");
+        return scene;
     }
 
     public static Button button(String id, String label, EventHandler<ActionEvent> action)
@@ -68,13 +84,14 @@ public class UiWidget
             Callback<CellDataFeatures<T, S>, ObservableValue<S>> cellValueFactory,
             boolean editable)
     {
-        final TableColumn<T, S> column = new TableColumn<>(label);
+        final TableColumn<T, S> column = new TableColumn<>();
         column.setSortable(false);
         column.setId(id);
         column.setCellFactory(cellFactory);
         column.setCellValueFactory(cellValueFactory);
         column.setEditable(editable);
         column.setResizable(true);
+        column.setGraphic(createLabelWithTooltip(label));
         return column;
     }
 
@@ -90,14 +107,33 @@ public class UiWidget
             Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> cellValueFactory,
             Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> cellFactory)
     {
-        final TreeTableColumn<S, T> column = new TreeTableColumn<>(label);
+        final TreeTableColumn<S, T> column = new TreeTableColumn<>();
         column.setId(id);
         column.setCellValueFactory(cellValueFactory);
         column.setCellFactory(cellFactory);
         column.setEditable(false);
         column.setResizable(true);
         column.setSortable(false);
+        column.setGraphic(createLabelWithTooltip(label));
         return column;
+    }
+
+    private static Label createLabelWithTooltip(String label)
+    {
+        final Label columnHeaderLabel = new Label(label);
+        columnHeaderLabel.setTooltip(createTooltip(label));
+        columnHeaderLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        return columnHeaderLabel;
+    }
+
+    private static Tooltip createTooltip(String label)
+    {
+        final Tooltip tooltip = new Tooltip(label);
+        tooltip.getStyleClass().add("mytooltip");
+        tooltip.setShowDelay(Duration.millis(200));
+        tooltip.setShowDuration(Duration.seconds(10));
+        tooltip.setHideDelay(Duration.millis(200));
+        return tooltip;
     }
 
     private static <S, T> Callback<TreeTableColumn<S, T>, TreeTableCell<S, T>> treeTableCellFactory(
