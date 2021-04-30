@@ -5,6 +5,7 @@ import java.util.Map;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
@@ -46,6 +47,10 @@ public class PMSmartExporter implements ProjectReportExporter
                 if (progressMonitor.isCanceled())
                 {
                     return;
+                }
+                if (day.getType() != DayType.WORK)
+                {
+                    continue;
                 }
                 progressMonitor.worked(1);
                 progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
