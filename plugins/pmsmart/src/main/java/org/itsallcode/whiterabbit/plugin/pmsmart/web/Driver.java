@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -17,23 +18,12 @@ public class Driver implements Closeable
     private static final Logger LOG = LogManager.getLogger(Driver.class);
 
     private final WebDriver webDriver;
+    private final String baseUrl;
 
-    public Driver(WebDriver driver)
+    public Driver(WebDriver driver, String baseUrl)
     {
         this.webDriver = driver;
-    }
-
-    public void get(String url)
-    {
-        LOG.debug("Getting URL '{}'", url);
-        try
-        {
-            webDriver.get(url);
-        }
-        catch (final WebDriverException e)
-        {
-            throw new IllegalStateException("Error getting URL '" + url + "': " + e.getMessage(), e);
-        }
+        this.baseUrl = baseUrl;
     }
 
     public String getTitle()
@@ -74,6 +64,27 @@ public class Driver implements Closeable
         {
             Thread.currentThread().interrupt();
             throw new IllegalStateException();
+        }
+    }
+
+    public WeekViewPage getWeekViewPage()
+    {
+        get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
+        final WeekViewPage weekViewPage = new WeekViewPage(this);
+        weekViewPage.assertOnPage();
+        return weekViewPage;
+    }
+
+    private void get(String url)
+    {
+        LOG.debug("Getting URL '{}'", url);
+        try
+        {
+            webDriver.get(url);
+        }
+        catch (final WebDriverException e)
+        {
+            throw new IllegalStateException("Error getting URL '" + url + "': " + e.getMessage(), e);
         }
     }
 }

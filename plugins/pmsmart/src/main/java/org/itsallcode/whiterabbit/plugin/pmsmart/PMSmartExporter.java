@@ -1,7 +1,12 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
@@ -16,6 +21,8 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 
 public class PMSmartExporter implements ProjectReportExporter
 {
+    private static final Logger LOG = LogManager.getLogger(PMSmartExporter.class);
+
     private final PluginConfiguration config;
     private final WebDriverFactory webDriverFactory;
 
@@ -28,29 +35,30 @@ public class PMSmartExporter implements ProjectReportExporter
     @Override
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
+        final List<ProjectReportDay> daysToExport = report.getDays().stream()
+                .filter(day -> day.getType() == DayType.WORK)
+                .filter(day -> !day.getProjects().isEmpty())
+                .collect(toList());
+        LOG.info("Exporting {} days to pmsmart...", daysToExport.size());
         progressMonitor.setTaskName("Initializing...");
         final String baseUrl = config.getMandatoryValue("baseurl");
-        try (final Driver driver = webDriverFactory.createWebDriver())
+        try (final Driver driver = webDriverFactory.createWebDriver(baseUrl))
         {
             if (progressMonitor.isCanceled())
             {
                 return;
             }
-            driver.get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
-            final WeekViewPage weekViewPage = new WeekViewPage(driver);
-            weekViewPage.assertOnPage();
+
+            final WeekViewPage weekViewPage = driver.getWeekViewPage();
+
             final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
-            progressMonitor.beginTask("Initializing...", report.getDays().size());
-            for (final ProjectReportDay day : report.getDays())
+            progressMonitor.beginTask("Initializing...", daysToExport.size());
+            for (final ProjectReportDay day : daysToExport)
             {
                 if (progressMonitor.isCanceled())
                 {
                     return;
-                }
-                if (day.getType() != DayType.WORK)
-                {
-                    continue;
                 }
                 progressMonitor.worked(1);
                 progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
