@@ -44,14 +44,30 @@ public class PMSmartExporter implements ProjectReportExporter
         final String baseUrl = config.getMandatoryValue("baseurl");
         try (final Driver driver = webDriverFactory.createWebDriver(baseUrl))
         {
+            final WeekViewPage weekViewPage = driver.getWeekViewPage();
+            new ExportHelper(progressMonitor, weekViewPage).export(daysToExport);
+        }
+    }
+
+    private static class ExportHelper
+    {
+        private final ProgressMonitor progressMonitor;
+        private final WeekViewPage weekViewPage;
+        private final Map<String, ProjectRow> projects;
+
+        private ExportHelper(ProgressMonitor progressMonitor, WeekViewPage weekViewPage)
+        {
+            this.progressMonitor = progressMonitor;
+            this.weekViewPage = weekViewPage;
+            this.projects = weekViewPage.getProjectTable().getProjects();
+        }
+
+        public void export(List<ProjectReportDay> daysToExport)
+        {
             if (progressMonitor.isCanceled())
             {
                 return;
             }
-
-            final WeekViewPage weekViewPage = driver.getWeekViewPage();
-
-            final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
             progressMonitor.beginTask("Initializing...", daysToExport.size());
             for (final ProjectReportDay day : daysToExport)
@@ -62,28 +78,39 @@ public class PMSmartExporter implements ProjectReportExporter
                 }
                 progressMonitor.worked(1);
                 progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
-                if (!weekViewPage.isDaySelected(day.getDate()))
-                {
-                    weekViewPage.saveWeek();
-                    weekViewPage.selectWeek(day.getDate());
-                }
+                selectDay(day);
                 for (final ProjectReportActivity project : day.getProjects())
                 {
                     if (progressMonitor.isCanceled())
                     {
                         return;
                     }
-                    final String costCarrier = project.getProject().getCostCarrier();
-                    final ProjectRow projectRow = projects.get(costCarrier);
-                    if (projectRow == null)
-                    {
-                        throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
-                    }
-                    projectRow.enterDuration(day.getDate(), project.getWorkingTime());
-                    projectRow.enterComment(day.getDate(), project.getComment());
+                    exportProject(day, project);
                 }
             }
             weekViewPage.saveWeek();
+        }
+
+        private void selectDay(final ProjectReportDay day)
+        {
+            if (weekViewPage.isDaySelected(day.getDate()))
+            {
+                return;
+            }
+            weekViewPage.saveWeek();
+            weekViewPage.selectWeek(day.getDate());
+        }
+
+        private void exportProject(final ProjectReportDay day, final ProjectReportActivity project)
+        {
+            final String costCarrier = project.getProject().getCostCarrier();
+            final ProjectRow projectRow = projects.get(costCarrier);
+            if (projectRow == null)
+            {
+                throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
+            }
+            projectRow.enterDuration(day.getDate(), project.getWorkingTime());
+            projectRow.enterComment(day.getDate(), project.getComment());
         }
     }
 }
