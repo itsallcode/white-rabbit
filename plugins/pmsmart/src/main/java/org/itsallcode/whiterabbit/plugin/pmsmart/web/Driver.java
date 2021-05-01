@@ -43,8 +43,7 @@ public class Driver implements Closeable
 
     public void waitUntil(Duration timeout, ExpectedCondition<?> condition)
     {
-        final WebDriverWait wait = new WebDriverWait(webDriver, timeout);
-        wait.until(condition);
+        new WebDriverWait(webDriver, timeout).until(condition);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class Driver implements Closeable
     public WeekViewPage getWeekViewPage()
     {
         get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
-        final WeekViewPage weekViewPage = new WeekViewPage(this);
+        final var weekViewPage = new WeekViewPage(this);
         weekViewPage.assertOnPage();
         return weekViewPage;
     }

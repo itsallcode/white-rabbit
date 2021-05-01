@@ -14,7 +14,6 @@ import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
-import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.ProjectRow;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
@@ -42,9 +41,9 @@ public class PMSmartExporter implements ProjectReportExporter
         LOG.info("Exporting {} days to pmsmart...", daysToExport.size());
         progressMonitor.setTaskName("Initializing...");
         final String baseUrl = config.getMandatoryValue("baseurl");
-        try (final Driver driver = webDriverFactory.createWebDriver(baseUrl))
+        try (final var driver = webDriverFactory.createWebDriver(baseUrl))
         {
-            final WeekViewPage weekViewPage = driver.getWeekViewPage();
+            final var weekViewPage = driver.getWeekViewPage();
             new ExportHelper(progressMonitor, weekViewPage).export(daysToExport);
         }
     }
@@ -104,7 +103,7 @@ public class PMSmartExporter implements ProjectReportExporter
         private void exportProject(final ProjectReportDay day, final ProjectReportActivity project)
         {
             final String costCarrier = project.getProject().getCostCarrier();
-            final ProjectRow projectRow = projects.get(costCarrier);
+            final var projectRow = projects.get(costCarrier);
             if (projectRow == null)
             {
                 throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");

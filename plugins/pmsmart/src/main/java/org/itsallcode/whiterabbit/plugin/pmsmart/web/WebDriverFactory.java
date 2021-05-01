@@ -13,10 +13,10 @@ public class WebDriverFactory
     public Driver createWebDriver(String baseUrl)
     {
         WebDriverManager.edgedriver().setup();
-        final ClassLoader classLoader = getClass().getClassLoader();
+        final var classLoader = getClass().getClassLoader();
         LOG.debug("Using context class loader {} for selenium http client", classLoader);
         Thread.currentThread().setContextClassLoader(classLoader);
-        final EdgeDriver driver = new EdgeDriver();
+        final var driver = new EdgeDriver();
         return new Driver(driver, baseUrl);
     }
 }
