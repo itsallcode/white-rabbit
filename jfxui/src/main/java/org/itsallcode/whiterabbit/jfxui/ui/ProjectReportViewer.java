@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
@@ -72,8 +71,7 @@ public class ProjectReportViewer
 
     private void exportReport(String pluginId)
     {
-        final ProjectReportExporter projectReportExporter = appService.pluginManager()
-                .getProjectReportExporter(pluginId);
+        final var projectReportExporter = appService.pluginManager().getProjectReportExporter(pluginId);
         final DialogProgressMonitor progressMonitor = ProgressDialog.show(primaryStage, "Exporting project report...");
         appService.scheduler().schedule(Duration.ZERO, () -> {
             projectReportExporter.export(report, progressMonitor);

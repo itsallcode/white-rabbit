@@ -1,20 +1,27 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
-import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.ProjectRow;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 
 public class PMSmartExporter implements ProjectReportExporter
 {
+    private static final Logger LOG = LogManager.getLogger(PMSmartExporter.class);
+
     private final PluginConfiguration config;
     private final WebDriverFactory webDriverFactory;
 
@@ -27,21 +34,42 @@ public class PMSmartExporter implements ProjectReportExporter
     @Override
     public void export(ProjectReport report, ProgressMonitor progressMonitor)
     {
+        final List<ProjectReportDay> daysToExport = report.getDays().stream()
+                .filter(day -> day.getType() == DayType.WORK)
+                .filter(day -> !day.getProjects().isEmpty())
+                .collect(toList());
+        LOG.info("Exporting {} days to pmsmart...", daysToExport.size());
         progressMonitor.setTaskName("Initializing...");
         final String baseUrl = config.getMandatoryValue("baseurl");
-        try (final Driver driver = webDriverFactory.createWebDriver())
+        try (final var driver = webDriverFactory.createWebDriver(baseUrl))
+        {
+            final var weekViewPage = driver.getWeekViewPage();
+            new ExportHelper(progressMonitor, weekViewPage).export(daysToExport);
+        }
+    }
+
+    private static class ExportHelper
+    {
+        private final ProgressMonitor progressMonitor;
+        private final WeekViewPage weekViewPage;
+        private final Map<String, ProjectRow> projects;
+
+        private ExportHelper(ProgressMonitor progressMonitor, WeekViewPage weekViewPage)
+        {
+            this.progressMonitor = progressMonitor;
+            this.weekViewPage = weekViewPage;
+            this.projects = weekViewPage.getProjectTable().getProjects();
+        }
+
+        public void export(List<ProjectReportDay> daysToExport)
         {
             if (progressMonitor.isCanceled())
             {
                 return;
             }
-            driver.get(baseUrl + "/Pages/TimeTracking/TimeBookingWeek.aspx");
-            final WeekViewPage weekViewPage = new WeekViewPage(driver);
-            weekViewPage.assertOnPage();
-            final Map<String, ProjectRow> projects = weekViewPage.getProjectTable().getProjects();
 
-            progressMonitor.beginTask("Initializing...", report.getDays().size());
-            for (final ProjectReportDay day : report.getDays())
+            progressMonitor.beginTask("Initializing...", daysToExport.size());
+            for (final ProjectReportDay day : daysToExport)
             {
                 if (progressMonitor.isCanceled())
                 {
@@ -49,28 +77,39 @@ public class PMSmartExporter implements ProjectReportExporter
                 }
                 progressMonitor.worked(1);
                 progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
-                if (!weekViewPage.isDaySelected(day.getDate()))
-                {
-                    weekViewPage.saveWeek();
-                    weekViewPage.selectWeek(day.getDate());
-                }
+                selectDay(day);
                 for (final ProjectReportActivity project : day.getProjects())
                 {
                     if (progressMonitor.isCanceled())
                     {
                         return;
                     }
-                    final String costCarrier = project.getProject().getCostCarrier();
-                    final ProjectRow projectRow = projects.get(costCarrier);
-                    if (projectRow == null)
-                    {
-                        throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
-                    }
-                    projectRow.enterDuration(day.getDate(), project.getWorkingTime());
-                    projectRow.enterComment(day.getDate(), project.getComment());
+                    exportProject(day, project);
                 }
             }
             weekViewPage.saveWeek();
+        }
+
+        private void selectDay(final ProjectReportDay day)
+        {
+            if (weekViewPage.isDaySelected(day.getDate()))
+            {
+                return;
+            }
+            weekViewPage.saveWeek();
+            weekViewPage.selectWeek(day.getDate());
+        }
+
+        private void exportProject(final ProjectReportDay day, final ProjectReportActivity project)
+        {
+            final String costCarrier = project.getProject().getCostCarrier();
+            final var projectRow = projects.get(costCarrier);
+            if (projectRow == null)
+            {
+                throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
+            }
+            projectRow.enterDuration(day.getDate(), project.getWorkingTime());
+            projectRow.enterComment(day.getDate(), project.getComment());
         }
     }
 }
