@@ -10,6 +10,8 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / 
 
 ### Added
 
+* [#110](https://github.com/itsallcode/white-rabbit/issues/110): Display current date incl. day of week and number of calendar week (ISO).
+  * Important: to show the correct calendar week, enter a locale with the country in `~/.whiterabbit.properties`, e.g. `locale = de-DE` or `en-GB`.
 * [#113](https://github.com/itsallcode/white-rabbit/issues/113): Show tooltips for table column headers with full label.
 * [#108](https://github.com/itsallcode/white-rabbit/issues/108): Support more conventions to enter time, e.g. 1200 for 12:00 or 1 for 01:00.
 * [#121](https://github.com/itsallcode/white-rabbit/pull/121): Allow using plugins via webstart.

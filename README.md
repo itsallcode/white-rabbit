@@ -80,7 +80,8 @@ Restart WhiteRabbit after changing the configuration file.
 
 #### <a name="optional_config"></a>Optional configuration settings
 
-* `locale`: format of date and time values, e.g. `de` or `en`. Default: system locale.
+* `locale`: format of date and time values as an [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag), e.g. `de`, `de-DE` or `en-GB`. Default: system locale.
+  * Note: enter a locale with country code (e.g. `de-DE`) to get correct formatting of date and time, e.g. the calendar week.
 * `current_working_time_per_day`: custom working time per day differing from the default of 8 hours. Format: see [Duration.parse()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)), e.g. `PT5H` for 5 hours or `PT5H30M` for 5 hours and 30 minutes. This setting will only affect the future.
 
 #### <a name="project_config"></a>Project configuration
