@@ -19,6 +19,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / 
 
 ### Fixed
 
+* [#127](https://github.com/itsallcode/white-rabbit/issues/127): Autocomplete must show most frequently text on top.
 * [#133](https://github.com/itsallcode/white-rabbit/pull/133): Fix pmsmart export: skip non-working days.
 * Opening the logs, data or plugin directory now creates the directory if it does not yet exist.
 

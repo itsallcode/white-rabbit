@@ -52,7 +52,6 @@ public class AutocompleteService
                 .map(DayRecord::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .distinct()
                 .collect(toList());
     }
 
@@ -62,7 +61,6 @@ public class AutocompleteService
                 .map(Activity::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .distinct()
                 .collect(toList());
     }
 
