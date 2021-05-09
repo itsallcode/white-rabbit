@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Locale;
 
 public class FormatterService
@@ -19,8 +18,9 @@ public class FormatterService
     {
         this.locale = locale;
         this.timeZoneId = timeZoneId;
-        this.dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)
-                .withLocale(locale).withZone(timeZoneId);
+        this.dateTimeFormatter = DateTimeFormatter.ofPattern("EE, dd.MM.yyyy 'CW'ww, HH:mm:ss")
+            .withZone(timeZoneId)
+            .withLocale(locale);
     }
 
     public String format(Duration duration)
