@@ -1,13 +1,10 @@
-import cdk = require("@aws-cdk/core");
-import { Bucket, BucketPolicy, BlockPublicAccess } from "@aws-cdk/aws-s3";
-import { RemovalPolicy, CfnOutput, Construct } from "@aws-cdk/core";
-import { Effect, PolicyStatement, CanonicalUserPrincipal } from "@aws-cdk/aws-iam";
-import { CfnRecordSetGroup } from "@aws-cdk/aws-route53";
-import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import {
-  CloudFrontWebDistribution, ViewerCertificate, PriceClass,
-  SecurityPolicyProtocol, SSLMethod, ViewerProtocolPolicy, OriginAccessIdentity, HttpVersion
-} from "@aws-cdk/aws-cloudfront";
+import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
+import { Certificate } from 'aws-cdk-lib/lib/aws-certificatemanager';
+import { CloudFrontWebDistribution, HttpVersion, OriginAccessIdentity, PriceClass, SecurityPolicyProtocol, SSLMethod, ViewerCertificate, ViewerProtocolPolicy } from 'aws-cdk-lib/lib/aws-cloudfront';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/lib/aws-iam';
+import { CfnRecordSetGroup } from 'aws-cdk-lib/lib/aws-route53';
+import { BlockPublicAccess, Bucket, BucketPolicy } from 'aws-cdk-lib/lib/aws-s3';
+import { Construct } from 'constructs';
 
 interface StaticContentProps {
   domain: string;
@@ -18,7 +15,7 @@ interface StaticContentProps {
 const CLOUDFRONT_HOSTED_ZONE_ID = "Z2FDTNDATAQYW2";
 
 export class StaticContentConstruct extends Construct {
-  constructor(scope: cdk.Construct, id: string, props: StaticContentProps) {
+  constructor(scope: Construct, id: string, props: StaticContentProps) {
     super(scope, id);
 
     const staticContentBucket = new Bucket(this, "Bucket", {

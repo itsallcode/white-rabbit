@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import "source-map-support/register";
-import cdk = require("@aws-cdk/core");
 import { InfrastructureStack, InfrastructureStackProps } from "./lib/infrastructure-stack";
 import { CONFIG } from "./config";
 import { InfrastructureConfig } from "./lib/config-interface";
+import { App } from "aws-cdk-lib";
 
 const config: InfrastructureConfig = CONFIG;
 
@@ -16,5 +16,5 @@ const props: InfrastructureStackProps = {
     sslCertificateArn: config.sslCertificateArn
 };
 
-const app = new cdk.App();
+const app = new App();
 const stack = new InfrastructureStack(app, config.stackName, props);
