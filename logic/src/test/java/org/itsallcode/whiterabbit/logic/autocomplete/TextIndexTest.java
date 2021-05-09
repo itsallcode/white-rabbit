@@ -45,6 +45,8 @@ class TextIndexTest
                     Arguments.of(List.of("TX", "tx", "Ta"), "T", List.of("TX", "tx", "Ta")),
                     Arguments.of(List.of("match", "nomatch"), "ma", List.of("match")),
                     Arguments.of(List.of("match1", "match2"), "ma", List.of("match1", "match2")),
+                    Arguments.of(List.of("m1", "m1", "m2"), "m", List.of("m1", "m2")),
+                    Arguments.of(List.of("m1", "m2", "m2"), "m", List.of("m2", "m1")),
                     Arguments.of(List.of("first second"), "fi", List.of("first second")),
                     Arguments.of(List.of("first second"), "sec", List.of()));
         }
