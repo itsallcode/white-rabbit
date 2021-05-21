@@ -30,10 +30,11 @@ TableView#day-table {
 }
 
 .table-row-cell:not-working {
-	-fx-background-color: lightyellow;
+	-fx-background-color: -fx-table-cell-border-color, lightyellow;
 }
+
 .table-row-cell:weekend {
-	-fx-background-color: gainsboro;
+	-fx-background-color: -fx-table-cell-border-color, #f8eeee;
 }
 
 .table-row-cell:not-working:selected {
