@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +20,7 @@ import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.DayOfWeekWithoutDotFormatter;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.application.Platform;
@@ -85,7 +85,7 @@ public class AppUi
         private final JavaFxApp app;
         private final AppState state;
         private final UiActions actions;
-        private final DateTimeFormatter shortDateFormatter;
+        private final DayOfWeekWithoutDotFormatter shortDateFormatter;
 
         private DayRecordTable dayRecordTable;
         private ActivitiesTable activitiesTable;
@@ -98,7 +98,7 @@ public class AppUi
             this.state = appState;
             this.appService = appService;
             this.primaryStage = primaryStage;
-            this.shortDateFormatter = appService.formatter().getShortDateFormatter();
+            this.shortDateFormatter = appService.formatter().getCustomShortDateFormatter();
         }
 
         public AppUi build()
