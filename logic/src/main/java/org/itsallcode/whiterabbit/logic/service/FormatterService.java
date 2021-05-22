@@ -41,7 +41,6 @@ public class FormatterService
     public String formatDateAndTime(Instant instant)
     {
         final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
-        // return dayOfWeekWithoutDot(dateTime.format(dateTimeFormatter));
         return dateTimeFormatter.format(dateTime);
     }
 
