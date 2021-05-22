@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DayOfWeekWithoutDotFormatter
 {
-    DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
 
     public DayOfWeekWithoutDotFormatter(DateTimeFormatter formatter)
     {
@@ -23,7 +23,7 @@ public class DayOfWeekWithoutDotFormatter
         return dayOfWeekWithoutDot(dateTimeFormatter.format(date));
     }
 
-    public String dayOfWeekWithoutDot(String str)
+    String dayOfWeekWithoutDot(String str)
     {
         if (str == null || str.length() < 3)
         {

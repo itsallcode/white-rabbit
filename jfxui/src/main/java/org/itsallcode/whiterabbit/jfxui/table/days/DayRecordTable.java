@@ -186,7 +186,7 @@ public class DayRecordTable
     {
         final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = UiWidget.readOnlyColumn("date", "Date",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(
-                        new MyLocalDateStringConverter(formatterService.getCustomShortDateFormatter())),
+                        new CustomLocalDateStringConverter(formatterService.getCustomShortDateFormatter())),
                 data -> data.getValue().date);
         final StringConverter<Duration> durationConverter = new DurationStringConverter(formatterService);
         final StringConverter<LocalTime> localTimeConverter = new CustomLocalTimeStringConverter(

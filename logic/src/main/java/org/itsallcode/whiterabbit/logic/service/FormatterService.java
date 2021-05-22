@@ -54,8 +54,4 @@ public class FormatterService
         return new DayOfWeekWithoutDotFormatter(DateTimeFormatter.ofPattern("E dd.MM.", locale));
     }
 
-    public DateTimeFormatter getShortDateFormatter()
-    {
-        return DateTimeFormatter.ofPattern("E dd.MM.", locale);
-    }
 }
