@@ -11,7 +11,7 @@ import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class DayOfWeekWithoutDotFormatterTest
+class DayOfWeekWithoutDotFormatterTest
 {
     private DayOfWeekWithoutDotFormatter formatter;
 
@@ -22,7 +22,7 @@ public class DayOfWeekWithoutDotFormatterTest
     }
 
     @Test
-    public void formatLocalDateTime()
+    void formatLocalDateTime()
     {
         formatter = new DayOfWeekWithoutDotFormatter(
                 DateTimeFormatter.ofPattern("EE dd.MM.yyyy 'CW'ww, HH:mm:ss", Locale.GERMAN));
@@ -30,7 +30,7 @@ public class DayOfWeekWithoutDotFormatterTest
     }
 
     @Test
-    public void formatLocalDate()
+    void formatLocalDate()
     {
         formatter = new DayOfWeekWithoutDotFormatter(
                 DateTimeFormatter.ofPattern("E dd.MM.", Locale.GERMAN));
@@ -38,25 +38,25 @@ public class DayOfWeekWithoutDotFormatterTest
     }
 
     @Test
-    public void nullString()
+    void nullString()
     {
         assertNull(formatter.dayOfWeekWithoutDot(null));
     }
 
     @Test
-    public void shortString()
+    void shortString()
     {
         assertThat(formatter.dayOfWeekWithoutDot("ab")).isEqualTo("ab");
     }
 
     @Test
-    public void withoutDot()
+    void withoutDot()
     {
         assertThat(formatter.dayOfWeekWithoutDot("abc")).isEqualTo("abc");
     }
 
     @Test
-    public void withDot()
+    void withDot()
     {
         assertThat(formatter.dayOfWeekWithoutDot("ab.cde")).isEqualTo("abcde");
     }

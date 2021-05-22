@@ -11,7 +11,7 @@ import org.itsallcode.whiterabbit.logic.service.DayOfWeekWithoutDotFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CustomLocalDateStringConverterTest
+class CustomLocalDateStringConverterTest
 {
     private CustomLocalDateStringConverter converter;
 
