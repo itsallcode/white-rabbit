@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
 
+* enlarged width/height of scrollbars to make them easier to click on
+
 ### Added
 
 * [#110](https://github.com/itsallcode/white-rabbit/issues/110) / [PR #145](https://github.com/itsallcode/white-rabbit/pull/145): Display current date incl. day of week and number of calendar week (ISO).
