@@ -10,6 +10,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / 
 
 * [#149](https://github.com/itsallcode/white-rabbit/pull/149): Enlarged width/height of scrollbars to make them easier to click on.
 * [#152](https://github.com/itsallcode/white-rabbit/issues/152): Display short day of week without dot or comma.
+* [#111](https://github.com/itsallcode/white-rabbit/pull/111): Display week ends in other color.
 
 ### Added
 
