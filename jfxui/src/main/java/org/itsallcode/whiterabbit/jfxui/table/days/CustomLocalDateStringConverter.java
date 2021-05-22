@@ -6,11 +6,11 @@ import org.itsallcode.whiterabbit.logic.service.DayOfWeekWithoutDotFormatter;
 
 import javafx.util.converter.LocalDateStringConverter;
 
-public class MyLocalDateStringConverter extends LocalDateStringConverter
+public class CustomLocalDateStringConverter extends LocalDateStringConverter
 {
     DayOfWeekWithoutDotFormatter dateTimeFormatter;
 
-    public MyLocalDateStringConverter(DayOfWeekWithoutDotFormatter dateTimeFormatter)
+    public CustomLocalDateStringConverter(DayOfWeekWithoutDotFormatter dateTimeFormatter)
     {
         this.dateTimeFormatter = dateTimeFormatter;
     }
