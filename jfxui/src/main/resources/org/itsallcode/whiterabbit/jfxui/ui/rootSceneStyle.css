@@ -7,3 +7,11 @@
     -fx-background-radius: 3px;
     -fx-border-color: black;
 }
+
+.scroll-bar:vertical {
+    -fx-pref-width: 20;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 20;
+}

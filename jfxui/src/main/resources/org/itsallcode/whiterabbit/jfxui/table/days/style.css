@@ -43,11 +43,3 @@ TableView#day-table {
 .table-row-cell:weekend:selected {
 	-fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-selection-bar;
 }
-
-.scroll-bar:vertical {
-    -fx-pref-width: 20;
-}
-
-.scroll-bar:horizontal {
-    -fx-pref-height: 20;
-}
