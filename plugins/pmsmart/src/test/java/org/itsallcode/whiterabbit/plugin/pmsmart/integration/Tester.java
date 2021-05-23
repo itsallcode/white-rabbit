@@ -59,7 +59,7 @@ public class Tester
     private static ProjectReport createFullProjectReport()
     {
         final Config config = new ConfigMock(Paths.get(PROJECT_FILE));
-        final JsonFileStorage dataStorage = new JsonFileStorageMock(Paths.get(TIME_RECORDING_FILE));
+        final JsonFileStorage dataStorage = JsonFileStorageMock.create(Paths.get(TIME_RECORDING_FILE));
         final ProjectService projectService = new ProjectService(config);
         final Storage storage = CachingStorage.create(dataStorage, new ContractTermsService(config),
                 projectService);
