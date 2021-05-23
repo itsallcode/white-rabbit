@@ -14,3 +14,6 @@
 /webstart-infrastructure/config.ts
 /webstart-infrastructure/**/*.js
 /webstart-infrastructure/**/*.d.ts
+/build-fast.bat
+/build-fast-and-run.bat
+/launch.bat

@@ -12,15 +12,16 @@ public class FormatterService
 {
     private final Locale locale;
     private final ZoneId timeZoneId;
-    private final DateTimeFormatter dateTimeFormatter;
+    private final DayOfWeekWithoutDotFormatter dateTimeFormatter;
 
     public FormatterService(Locale locale, ZoneId timeZoneId)
     {
         this.locale = locale;
         this.timeZoneId = timeZoneId;
-        this.dateTimeFormatter = DateTimeFormatter.ofPattern("EE, dd.MM.yyyy 'CW'ww, HH:mm:ss")
-            .withZone(timeZoneId)
-            .withLocale(locale);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE dd.MM.yyyy 'CW'ww, HH:mm:ss")
+                .withZone(timeZoneId)
+                .withLocale(locale);
+        this.dateTimeFormatter = new DayOfWeekWithoutDotFormatter(formatter);
     }
 
     public String format(Duration duration)
@@ -40,7 +41,7 @@ public class FormatterService
     public String formatDateAndTime(Instant instant)
     {
         final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, timeZoneId);
-        return dateTime.format(dateTimeFormatter);
+        return dateTimeFormatter.format(dateTime);
     }
 
     public Locale getLocale()
@@ -48,8 +49,9 @@ public class FormatterService
         return locale;
     }
 
-    public DateTimeFormatter getShortDateFormatter()
+    public DayOfWeekWithoutDotFormatter getCustomShortDateFormatter()
     {
-        return DateTimeFormatter.ofPattern("E dd.MM.", locale);
+        return new DayOfWeekWithoutDotFormatter(DateTimeFormatter.ofPattern("E dd.MM.", locale));
     }
+
 }

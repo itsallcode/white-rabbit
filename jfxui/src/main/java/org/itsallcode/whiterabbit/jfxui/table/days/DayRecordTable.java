@@ -37,7 +37,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.LocalDateStringConverter;
 
 public class DayRecordTable
 {
@@ -187,7 +186,7 @@ public class DayRecordTable
     {
         final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = UiWidget.readOnlyColumn("date", "Date",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(
-                        new LocalDateStringConverter(formatterService.getShortDateFormatter(), null)),
+                        new CustomLocalDateStringConverter(formatterService.getCustomShortDateFormatter())),
                 data -> data.getValue().date);
         final StringConverter<Duration> durationConverter = new DurationStringConverter(formatterService);
         final StringConverter<LocalTime> localTimeConverter = new CustomLocalTimeStringConverter(
