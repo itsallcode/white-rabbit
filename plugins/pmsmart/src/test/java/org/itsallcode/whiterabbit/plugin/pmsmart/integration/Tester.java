@@ -33,9 +33,27 @@ import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonbFactory;
 import org.itsallcode.whiterabbit.plugin.pmsmart.PMSmartExporter;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverFactory;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.DateSelector;
 
 /**
- * Intended for manual tests
+ * Intended for manual tests.
+ * 
+ * <p>
+ * Additionally in class {@link DateSelector} you could insert
+ * </p>
+ * 
+ * <pre>
+ * private static final Logger LOG = LogManager.getLogger(DateSelector.class);
+ * </pre>
+ * 
+ * and in method {@link DateSelector#select()} you could insert
+ * 
+ * <pre>
+ * if (day.isEqual(LocalDate.of(1970, 12, 31)))
+ * {
+ *     LOG.debug("Selecting critical date");
+ * }
+ * </pre>
  */
 public class Tester
 {

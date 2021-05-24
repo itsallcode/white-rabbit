@@ -6,18 +6,12 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Element;
 import org.openqa.selenium.By;
 
 public class DateSelector
 {
-    private static final Logger LOG = LogManager.getLogger(DateSelector.class);
-
-    // use this for debugging
-    private static final LocalDate CRITICAL_DATE = LocalDate.of(1970, 12, 31);
 
     private final Driver driver;
     private final Element selector;
@@ -30,10 +24,6 @@ public class DateSelector
 
     public void select(LocalDate day)
     {
-        if (day.isEqual(CRITICAL_DATE))
-        {
-            LOG.debug("Selecting critical date");
-        }
         selectMonth(YearMonth.from(day));
         selector.findElement(By.xpath("//td[" //
                 + "not(contains(@class, 'dxeCalendarOtherMonth_PlasticBlue'))"
