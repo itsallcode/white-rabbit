@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -42,7 +41,6 @@ import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperti
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback.InterruptionDetectedDecision;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.plugin.PluginManager;
-import org.itsallcode.whiterabbit.logic.service.project.ProjectFileProvider;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.SchedulingService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
@@ -112,7 +110,7 @@ class AppServiceTest
         appService = createAppService(appServiceCallback, workingTimeService);
         appService.setUpdateListener(updateListenerMock);
         modelFactory = new JsonModelFactory();
-        contractTerms = new ContractTermsService(TestingConfig.builder().build().getHoursPerDayProvider());
+        contractTerms = new ContractTermsService(TestingConfig.builder().build().getCurrentHoursPerDay());
     }
 
     private AppService createAppService(final DelegatingAppServiceCallback appServiceCallback,
@@ -128,14 +126,6 @@ class AppServiceTest
     void create()
     {
         when(configMock.getLocale()).thenReturn(Locale.ENGLISH);
-        when(configMock.getProjectFileProvider()).thenReturn(new ProjectFileProvider()
-        {
-            @Override
-            public Path getProjectFile()
-            {
-                return null;
-            }
-        });
         assertThat(AppService.create(configMock)).isNotNull();
     }
 

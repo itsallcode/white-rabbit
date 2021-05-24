@@ -13,7 +13,6 @@ import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.service.contract.HoursPerDayProvider;
 
 class ConfigFile implements Config
 {
@@ -69,16 +68,9 @@ class ConfigFile implements Config
     }
 
     @Override
-    public HoursPerDayProvider getHoursPerDayProvider()
+    public Optional<Duration> getCurrentHoursPerDay()
     {
-        return new HoursPerDayProvider()
-        {
-            @Override
-            public Optional<Duration> getHoursPerDay()
-            {
-                return getOptionalValue("current_working_time_per_day").map(Duration::parse);
-            }
-        };
+        return getOptionalValue("current_working_time_per_day").map(Duration::parse);
     }
 
     @Override

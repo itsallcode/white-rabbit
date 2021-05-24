@@ -30,16 +30,15 @@ public class ProjectService
     private final Map<String, ProjectImpl> projectsById;
     private final Map<String, ProjectImpl> projectsByLabel;
 
-    public ProjectService(ProjectFileProvider projectFileProvider)
+    public ProjectService(Path projectConfigFile)
     {
-        this(JsonbBuilder.create(), projectFileProvider);
+        this(JsonbBuilder.create(), projectConfigFile);
     }
 
-    ProjectService(Jsonb jsonb, ProjectFileProvider projectFileProvider)
+    ProjectService(Jsonb jsonb, Path projectConfigFile)
     {
         this.jsonb = jsonb;
 
-        final Path projectConfigFile = projectFileProvider.getProjectFile();
         if (projectConfigFile != null && Files.exists(projectConfigFile))
         {
             final List<ProjectImpl> allProjects = loadAvailableProjects(projectConfigFile);

@@ -30,6 +30,6 @@ class ProjectServiceTest
 
     private ProjectService create(Path dataDir)
     {
-        return new ProjectService(TestingConfig.builder().withDataDir(dataDir).build().getProjectFileProvider());
+        return new ProjectService(TestingConfig.builder().withDataDir(dataDir).build().getProjectFile());
     }
 }

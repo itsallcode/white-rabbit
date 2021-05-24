@@ -4,9 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Locale;
+import java.util.Optional;
 
-import org.itsallcode.whiterabbit.logic.service.contract.HoursPerDayProvider;
 import org.junit.jupiter.api.Test;
 
 class ConfigTest
@@ -16,7 +17,7 @@ class ConfigTest
     @Test
     void getProjectFile()
     {
-        assertThat(config.getProjectFileProvider().getProjectFile()).isEqualTo(Paths.get("data/projects.json"));
+        assertThat(config.getProjectFile()).isEqualTo(Paths.get("data/projects.json"));
     }
 
     @Test
@@ -47,9 +48,9 @@ class ConfigTest
         }
 
         @Override
-        public HoursPerDayProvider getHoursPerDayProvider()
+        public Optional<Duration> getCurrentHoursPerDay()
         {
-            return null;
+            return Optional.ofNullable(null);
         }
 
         @Override

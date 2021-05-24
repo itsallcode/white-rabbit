@@ -22,8 +22,6 @@ import org.itsallcode.whiterabbit.logic.report.project.ProjectReportImpl;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportImpl.DayImpl;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportImpl.ProjectActivityImpl;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
-import org.itsallcode.whiterabbit.logic.service.contract.HoursPerDayProvider;
-import org.itsallcode.whiterabbit.logic.service.project.ProjectFileProvider;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
@@ -85,36 +83,13 @@ public class Tester
     private static ProjectReport createFullProjectReport()
     {
         final JsonFileStorage dataStorage = new JsonFileStorageMock(Paths.get(TIME_RECORDING_FILE));
-        final ProjectService projectService = new ProjectService(createProjectFileProvider(PROJECT_FILE));
-        final ContractTermsService contractTerms = new ContractTermsService(createHoursPerDayProvider(HOURS_PER_DAY));
+        final ProjectService projectService = new ProjectService(Paths.get(PROJECT_FILE));
+        final ContractTermsService contractTerms = new ContractTermsService(
+                Optional.of(Duration.ofHours(HOURS_PER_DAY)));
 
         final Storage storage = CachingStorage.create(dataStorage, contractTerms, projectService);
         final ProjectReportGenerator generator = new ProjectReportGenerator(storage);
         return generator.generateReport(null);
-    }
-
-    private static HoursPerDayProvider createHoursPerDayProvider(Long hoursPerDay)
-    {
-        return new HoursPerDayProvider()
-        {
-            @Override
-            public Optional<Duration> getHoursPerDay()
-            {
-                return Optional.of(Duration.ofHours(hoursPerDay));
-            }
-        };
-    }
-
-    private static ProjectFileProvider createProjectFileProvider(String projectFile)
-    {
-        return new ProjectFileProvider()
-        {
-            @Override
-            public Path getProjectFile()
-            {
-                return Paths.get(projectFile);
-            }
-        };
     }
 
     private static final class TestingPluginConfiguration implements PluginConfiguration

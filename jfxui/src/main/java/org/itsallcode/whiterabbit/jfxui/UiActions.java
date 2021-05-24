@@ -56,7 +56,7 @@ public final class UiActions
 
     public void editProjectFile()
     {
-        openFileWithDefaultProgram(config.getProjectFileProvider().getProjectFile());
+        openFileWithDefaultProgram(config.getProjectFile());
     }
 
     public void openDataDir()

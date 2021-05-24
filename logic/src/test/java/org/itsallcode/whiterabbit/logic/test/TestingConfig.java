@@ -6,7 +6,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.service.contract.HoursPerDayProvider;
 
 public class TestingConfig implements Config
 {
@@ -34,16 +33,9 @@ public class TestingConfig implements Config
     }
 
     @Override
-    public HoursPerDayProvider getHoursPerDayProvider()
+    public Optional<Duration> getCurrentHoursPerDay()
     {
-        return new HoursPerDayProvider()
-        {
-            @Override
-            public Optional<Duration> getHoursPerDay()
-            {
-                return Optional.ofNullable(currentHoursPerDay);
-            }
-        };
+        return Optional.ofNullable(currentHoursPerDay);
     }
 
     @Override

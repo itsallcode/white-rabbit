@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service.contract;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -11,16 +12,16 @@ public class ContractTermsService
     private static final Duration CONTRACTED_HOURS_PER_DAY = Duration.ofHours(8);
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
 
-    private final HoursPerDayProvider hoursPerDayProvider;
+    private final Optional<Duration> hoursPerDay;
 
     public ContractTermsService(Config config)
     {
-        this(config.getHoursPerDayProvider());
+        this(config.getCurrentHoursPerDay());
     }
 
-    public ContractTermsService(HoursPerDayProvider hoursPerDayProvider)
+    public ContractTermsService(Optional<Duration> hoursPerDay)
     {
-        this.hoursPerDayProvider = hoursPerDayProvider;
+        this.hoursPerDay = hoursPerDay;
     }
 
     public Duration getMandatoryBreak(DayRecord day)
@@ -44,7 +45,7 @@ public class ContractTermsService
 
     public Duration getCurrentWorkingTimePerDay()
     {
-        return hoursPerDayProvider.getHoursPerDay().orElse(getContractedWorkingTimePerDay());
+        return hoursPerDay.orElse(getContractedWorkingTimePerDay());
     }
 
     public Duration getMandatoryWorkingTime(DayRecord day)
