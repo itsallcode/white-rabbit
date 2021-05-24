@@ -58,8 +58,8 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.DateSelector;
 public class Tester
 {
     private static final String PMSMART_URL = "http://pmsmart";
-    private static final String PROJECT_FILE = "c:/HOME/Tmp/White-Rabbit-Test-Data/projects.json";
-    private static final String TIME_RECORDING_FILE = "c:/HOME/Tmp/White-Rabbit-Test-Data/time-record.json";
+    private static final String PROJECT_FILE = "/path/to/projects.json";
+    private static final String TIME_RECORDING_FILE = "/path/to/time-recordings/year/year-month.json";
     private static final long HOURS_PER_DAY = 8L;
 
     public static void main(String[] args)
