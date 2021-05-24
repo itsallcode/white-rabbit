@@ -31,6 +31,5 @@
         <Logger level="INFO" name="org.openqa.selenium" />
         <Logger level="INFO" name="org.itsallcode" />
         <Logger level="DEBUG" name="org.itsallcode.whiterabbit.plugin.pmsmart.integration" />
-        <Logger level="DEBUG" name="org.itsallcode.whiterabbit.plugin.pmsmart.web.page.DateSelector" />
     </Loggers>
 </Configuration>

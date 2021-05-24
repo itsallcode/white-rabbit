@@ -7,15 +7,20 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public class ContractTermsService
 {
+    public static final Duration BASIC_BREAK = Duration.ofMinutes(45);
     private static final Duration CONTRACTED_HOURS_PER_DAY = Duration.ofHours(8);
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
-    public static final Duration BASIC_BREAK = Duration.ofMinutes(45);
 
-    private final Config config;
+    private final HoursPerDayProvider hoursPerDayProvider;
 
     public ContractTermsService(Config config)
     {
-        this.config = config;
+        this(config.getHoursPerDayProvider());
+    }
+
+    public ContractTermsService(HoursPerDayProvider hoursPerDayProvider)
+    {
+        this.hoursPerDayProvider = hoursPerDayProvider;
     }
 
     public Duration getMandatoryBreak(DayRecord day)
@@ -39,7 +44,7 @@ public class ContractTermsService
 
     public Duration getCurrentWorkingTimePerDay()
     {
-        return config.getCurrentHoursPerDay().orElse(getContractedWorkingTimePerDay());
+        return hoursPerDayProvider.getHoursPerDay().orElse(getContractedWorkingTimePerDay());
     }
 
     public Duration getMandatoryWorkingTime(DayRecord day)

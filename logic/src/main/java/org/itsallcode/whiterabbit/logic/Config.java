@@ -5,6 +5,9 @@ import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.itsallcode.whiterabbit.logic.service.contract.HoursPerDayProvider;
+import org.itsallcode.whiterabbit.logic.service.project.ProjectFileProvider;
+
 public interface Config
 {
     static final String PROJECTS_JSON = "projects.json";
@@ -13,15 +16,28 @@ public interface Config
 
     Locale getLocale();
 
-    Optional<Duration> getCurrentHoursPerDay();
-
     boolean allowMultipleInstances();
 
     Path getConfigFile();
 
-    default Path getProjectFile()
+    HoursPerDayProvider getHoursPerDayProvider();
+
+    // convenience
+    default Optional<Duration> getCurrentHoursPerDay()
     {
-        return getDataDir().resolve(PROJECTS_JSON);
+        return getHoursPerDayProvider().getHoursPerDay();
+    }
+
+    default ProjectFileProvider getProjectFileProvider()
+    {
+        return new ProjectFileProvider()
+        {
+            @Override
+            public Path getProjectFile()
+            {
+                return getDataDir().resolve(PROJECTS_JSON);
+            }
+        };
     }
 
     Path getUserDir();

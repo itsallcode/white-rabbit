@@ -20,7 +20,6 @@ import javax.json.bind.JsonbBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.Config;
 
 public class ProjectService
 {
@@ -31,16 +30,16 @@ public class ProjectService
     private final Map<String, ProjectImpl> projectsById;
     private final Map<String, ProjectImpl> projectsByLabel;
 
-    public ProjectService(Config config)
+    public ProjectService(ProjectFileProvider projectFileProvider)
     {
-        this(JsonbBuilder.create(), config);
+        this(JsonbBuilder.create(), projectFileProvider);
     }
 
-    ProjectService(Jsonb jsonb, Config config)
+    ProjectService(Jsonb jsonb, ProjectFileProvider projectFileProvider)
     {
         this.jsonb = jsonb;
 
-        final Path projectConfigFile = config.getProjectFile();
+        final Path projectConfigFile = projectFileProvider.getProjectFile();
         if (projectConfigFile != null && Files.exists(projectConfigFile))
         {
             final List<ProjectImpl> allProjects = loadAvailableProjects(projectConfigFile);

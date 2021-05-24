@@ -12,7 +12,6 @@ import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;
-import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
@@ -543,7 +542,6 @@ class DayRecordTest
 
     private ContractTermsService contractTerms()
     {
-        final Config config = TestingConfig.builder().build();
-        return new ContractTermsService(config);
+        return new ContractTermsService(TestingConfig.builder().build());
     }
 }
