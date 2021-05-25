@@ -50,7 +50,7 @@ class ConfigTest
         @Override
         public Optional<Duration> getCurrentHoursPerDay()
         {
-            return null;
+            return Optional.empty();
         }
 
         @Override

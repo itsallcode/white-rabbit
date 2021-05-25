@@ -30,7 +30,9 @@ public class JsonFileStorage implements MonthDataStorage
     private final DateToFileMapper dateToFileMapper;
     private final ModelFactory modelFactory;
 
-    JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper, ModelFactory modelFactory)
+    // Made protected in order to allow tests in other packages to mock this
+    // class.
+    protected JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper, ModelFactory modelFactory)
     {
         this.jsonb = jsonb;
         this.dateToFileMapper = dateToFileMapper;
@@ -62,7 +64,9 @@ public class JsonFileStorage implements MonthDataStorage
         return Optional.empty();
     }
 
-    private JsonMonth loadFromFile(Path file)
+    // Made protected in order to allow tests in other packages to mock this
+    // class.
+    protected JsonMonth loadFromFile(Path file)
     {
         LOG.trace("Reading file {}", file);
         try (InputStream stream = Files.newInputStream(file))

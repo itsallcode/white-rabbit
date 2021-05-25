@@ -94,7 +94,7 @@ public class AppService implements Closeable
     public static AppService create(final Config config, Clock clock, ScheduledExecutorService scheduledExecutor)
     {
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
-        final ProjectService projectService = new ProjectService(config);
+        final ProjectService projectService = new ProjectService(config.getProjectFile());
         final PluginManager pluginManager = PluginManager.create(config);
 
         final MonthDataStorage dataStorage = createMonthDataStorage(config, pluginManager);

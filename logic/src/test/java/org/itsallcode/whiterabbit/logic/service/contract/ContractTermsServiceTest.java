@@ -33,7 +33,7 @@ class ContractTermsServiceTest
 
     private ContractTermsService create(Builder builder)
     {
-        return new ContractTermsService(builder.build());
+        return new ContractTermsService(builder.build().getCurrentHoursPerDay());
     }
 
 }

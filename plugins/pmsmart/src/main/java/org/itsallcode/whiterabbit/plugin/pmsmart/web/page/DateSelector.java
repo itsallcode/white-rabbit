@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 
 public class DateSelector
 {
+
     private final Driver driver;
     private final Element selector;
 
@@ -24,8 +25,10 @@ public class DateSelector
     public void select(LocalDate day)
     {
         selectMonth(YearMonth.from(day));
-        selector.findElement(By.xpath("//td[not(contains(@class, 'dxeCalendarOtherMonth_PlasticBlue')) and text()='"
-                + day.getDayOfMonth() + "']")).click();
+        selector.findElement(By.xpath("//td[" //
+                + "not(contains(@class, 'dxeCalendarOtherMonth_PlasticBlue'))"
+                + " and not(contains(@class, 'dxeCalendarWeekNumber_PlasticBlue'))"
+                + " and text()='" + day.getDayOfMonth() + "']")).click();
         driver.sleep(Duration.ofSeconds(1));
     }
 

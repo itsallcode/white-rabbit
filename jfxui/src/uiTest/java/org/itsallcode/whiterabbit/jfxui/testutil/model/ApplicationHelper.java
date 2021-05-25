@@ -19,12 +19,10 @@ import javafx.stage.Window;
 public class ApplicationHelper
 {
     private final FxRobot robot;
-    private final Window window;
 
     private ApplicationHelper(FxRobot robot, Window window)
     {
         this.robot = robot;
-        this.window = window;
     }
 
     public static ApplicationHelper create(FxRobot robot)

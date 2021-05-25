@@ -100,4 +100,5 @@ public class TestingConfig implements Config
             return new TestingConfig(this);
         }
     }
+
 }

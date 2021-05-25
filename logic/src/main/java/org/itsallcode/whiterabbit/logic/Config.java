@@ -13,11 +13,11 @@ public interface Config
 
     Locale getLocale();
 
-    Optional<Duration> getCurrentHoursPerDay();
-
     boolean allowMultipleInstances();
 
     Path getConfigFile();
+
+    Optional<Duration> getCurrentHoursPerDay();
 
     default Path getProjectFile()
     {
