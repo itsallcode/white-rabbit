@@ -1,7 +1,12 @@
-package org.itsallcode.whiterabbit.logic.holidays;
+package org.itsallcode.whiterabbit.logic.holidays.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.itsallcode.whiterabbit.logic.holidays.EasterBasedHoliday;
+import org.itsallcode.whiterabbit.logic.holidays.FixedDateHoliday;
+import org.itsallcode.whiterabbit.logic.holidays.FloatingHoliday;
+import org.itsallcode.whiterabbit.logic.holidays.Holiday;
 
 public class HolidayParser
 {

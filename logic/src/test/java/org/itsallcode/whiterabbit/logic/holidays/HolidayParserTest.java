@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.DayOfWeek;
 
+import org.itsallcode.whiterabbit.logic.holidays.parser.HolidayParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,9 +81,6 @@ public class HolidayParserTest
                 .isEqualTo(new FixedDateHoliday("1. Mai", 5, 1));
         assertThat(holidayParser.parse("fixed 10 3 Tag der Deutschen Einheit"))
                 .isEqualTo(new FixedDateHoliday("Tag der Deutschen Einheit", 10, 3));
-
-        assertThat(holidayParser.parse("float -4 SUN 12 24 1. Advent"))
-                .isEqualTo(new FloatingHoliday("1. Advent", -4, DayOfWeek.SUNDAY, 12, 24));
 
         assertThat(holidayParser.parse("float -4 SUN 12 24 1. Advent"))
                 .isEqualTo(new FloatingHoliday("1. Advent", -4, DayOfWeek.SUNDAY, 12, 24));

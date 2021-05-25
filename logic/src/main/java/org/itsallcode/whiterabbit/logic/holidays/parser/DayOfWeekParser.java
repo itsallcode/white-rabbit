@@ -1,4 +1,4 @@
-package org.itsallcode.whiterabbit.logic.holidays;
+package org.itsallcode.whiterabbit.logic.holidays.parser;
 
 import java.time.DayOfWeek;
 import java.util.Hashtable;

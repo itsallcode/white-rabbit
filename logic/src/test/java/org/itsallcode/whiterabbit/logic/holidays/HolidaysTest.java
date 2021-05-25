@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 
+import org.itsallcode.whiterabbit.logic.holidays.parser.DayOfWeekParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -32,7 +33,11 @@ public class HolidaysTest
         assertThat(v.of(year)).isEqualTo(expected);
     }
 
-    // source: http://www.maa.clell.de/StarDate/feiertage.html
+    /**
+     * sources:
+     * <li>[1] http://www.maa.clell.de/StarDate/feiertage.html
+     * <li>[2] https://de.wikipedia.org/wiki/Osterdatum
+     */
     @ParameterizedTest(name = "Parsing ''{0}'' returns {1}")
     @CsvSource(value = {
             "1901, 1901-04-07",
