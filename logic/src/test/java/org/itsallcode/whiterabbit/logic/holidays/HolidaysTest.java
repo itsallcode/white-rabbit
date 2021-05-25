@@ -2,9 +2,7 @@ package org.itsallcode.whiterabbit.logic.holidays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,19 +10,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 public class HolidaysTest
 {
-    private static Hashtable<String, DayOfWeek> dayOfWeek;
+    DayOfWeekParser dayOfWeekParser;
 
     @BeforeAll
-    static void setup()
+    void setup()
     {
-        dayOfWeek = new Hashtable<>();
-        dayOfWeek.put("MON", DayOfWeek.MONDAY);
-        dayOfWeek.put("TUE", DayOfWeek.TUESDAY);
-        dayOfWeek.put("WED", DayOfWeek.WEDNESDAY);
-        dayOfWeek.put("THU", DayOfWeek.THURSDAY);
-        dayOfWeek.put("FRI", DayOfWeek.FRIDAY);
-        dayOfWeek.put("SAT", DayOfWeek.SATURDAY);
-        dayOfWeek.put("SUN", DayOfWeek.SUNDAY);
+        dayOfWeekParser = new DayOfWeekParser();
     }
 
     @ParameterizedTest(name = "{3} {4} on or after {0}-{1}-{2} returns {5}")
@@ -37,7 +28,7 @@ public class HolidaysTest
     void variableHoliday(int offset, String dayName, int year, int month, int day, LocalDate expected)
     {
         final String name = String.format("%d %s on or after %s-%02d-(%d)", offset, dayName, year, month, day);
-        final FloatingHoliday v = new FloatingHoliday(name, offset, dayOfWeek.get(dayName), month, day);
+        final FloatingHoliday v = new FloatingHoliday(name, offset, dayOfWeekParser.getDayOfWeek(dayName), month, day);
         assertThat(v.of(year)).isEqualTo(expected);
     }
 
