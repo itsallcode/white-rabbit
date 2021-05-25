@@ -25,6 +25,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
@@ -110,7 +111,7 @@ class AppServiceTest
         appService = createAppService(appServiceCallback, workingTimeService);
         appService.setUpdateListener(updateListenerMock);
         modelFactory = new JsonModelFactory();
-        contractTerms = new ContractTermsService(TestingConfig.builder().build().getCurrentHoursPerDay());
+        contractTerms = new ContractTermsService(Optional.of(Duration.ofHours(8L)));
     }
 
     private AppService createAppService(final DelegatingAppServiceCallback appServiceCallback,

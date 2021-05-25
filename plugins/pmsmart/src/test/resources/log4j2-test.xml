@@ -10,7 +10,6 @@
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="File" />
         </Root>
         <Logger level="INFO" name="javafx.scene" />
         <Logger level="INFO" name="org.apache.hc.client5.http" />
