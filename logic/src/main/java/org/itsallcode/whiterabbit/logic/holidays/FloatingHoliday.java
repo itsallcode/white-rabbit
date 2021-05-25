@@ -66,4 +66,62 @@ public class FloatingHoliday extends Holiday
         return LocalDate.of(year, month, day);
     }
 
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + day;
+        result = prime * result + ((dayOfWeek == null) ? 0 : dayOfWeek.hashCode());
+        result = prime * result + month;
+        result = prime * result + offset;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        if (!super.equals(obj))
+        {
+            return false;
+        }
+        final FloatingHoliday other = (FloatingHoliday) obj;
+        // negative days are rated as equal
+        if ((day > 1 || other.day > 0) && day != other.day)
+        {
+            return false;
+        }
+        if (dayOfWeek != other.dayOfWeek)
+        {
+            return false;
+        }
+        if (month != other.month)
+        {
+            return false;
+        }
+        if (offset != other.offset)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s(%s: %d %s %02d-%02d)", this.getClass().getSimpleName(), getName(), offset, dayOfWeek,
+                month, day);
+    }
 }

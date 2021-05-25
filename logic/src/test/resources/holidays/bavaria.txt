@@ -1,24 +1,46 @@
+# fixed: holiday is every year on the same month and day of month.
+# arguments: month, day, name of holiday
+#
+# float: holiday is floating.
+# arguments: nth, day of week, month, day of month, name of holiday.
+#
+# Day of week is a case-insensitive string, first letters are sufficient,
+# e.g. MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY.
+#
+# Meaning holiday is on the nth day of week after given month and day of
+# month. If nth is negative then holiday is before. if day of month is
+# negative, then last day of month is used.
+#
+# easter: holiday is after or before easter sunday.
+# arguments: positive or negative number of days, name of holiday.
+#
 
-fixed 1 1 "Neujahr"
-fixed 1 6 "Heilige Drei Könige"
-fixed 5 1 "1. Mai"
-fixed 10 3 "Tag der Deutschen Einheit"
+# rejected format proposal in json
+# {
+#   "Neujahr": { "fixed": [ 1, 1 ] },
+#   "1. Advent": { "float": [ -4, "SUN", 12, 24 ] }
+# }
 
-float 12 24 -4 SUN "1. Advent" 
-float 12 24 -3 SUN "2. Advent" 
-float 12 24 -2 SUN "3. Advent" 
-float 12 24 -1 SUN "4. Advent" 
-fixed 12 25 "1. Weihnachtstag"
-fixed 12 26 "2. Weihnachtstag"
+fixed 1 1 Neujahr
+fixed 1 6 Heilige Drei Könige
+fixed 5 1 1. Mai
+fixed 10 3 Tag der Deutschen Einheit
 
-easter -48 "Rosenmontag"
-easter  -2 "Karfreitag"
-easter   0 "Ostersonntag"
-easter  +1 "Ostermontag"
-easter +39 "Christi Himmelfahrt"
-easter +49 "Pfingstsonntag"
-easter +50 "Pfingstmontag"
-easter +60 "Fronleichnam"
-fixed 8 15 "Mariae Himmelfahrt"
-fixed 11 1 "Allerheiligen"
-float 1 SUN 11 20 "Totensonntag" 
+float -4 SUN 12 24 1. Advent
+float -3 SUN 12 24 2. Advent
+float -2 SUN 12 24 3. Advent
+float -1 SUN 12 24 4. Advent
+fixed 12 25 1. Weihnachtstag
+fixed 12 26 2. Weihnachtstag
+
+easter -48 Rosenmontag
+easter  -2 Karfreitag
+easter   0 Ostersonntag
+easter  +1 Ostermontag
+easter +39 Christi Himmelfahrt
+easter +49 Pfingstsonntag
+easter +50 Pfingstmontag
+easter +60 Fronleichnam
+fixed 8 15 Mariae Himmelfahrt
+fixed 11 1 Allerheiligen
+float 1 SUN 11 20 Totensonntag
