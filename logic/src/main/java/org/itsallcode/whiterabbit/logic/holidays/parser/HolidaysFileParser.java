@@ -4,16 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.itsallcode.whiterabbit.logic.holidays.Holiday;
+import org.itsallcode.whiterabbit.logic.holidays.Holidays;
 
 public class HolidaysFileParser
 {
-    public static List<Holiday> parse(InputStream stream) throws IOException
+    public static Holidays parse(InputStream stream) throws IOException
     {
-        final List<Holiday> holidays = new ArrayList<>();
+        final Holidays holidays = new Holidays();
         final HolidayParser holidayParser = new HolidayParser();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         String line;

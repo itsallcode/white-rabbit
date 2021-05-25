@@ -18,6 +18,11 @@ public abstract class Holiday
         return name;
     }
 
+    public HolidayInstance getInstance(int year)
+    {
+        return new HolidayInstance(year, this);
+    }
+
     @Override
     public int hashCode()
     {
