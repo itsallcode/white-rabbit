@@ -18,7 +18,7 @@ import java.util.Set;
  * <li>a date defined relatively to Easter Sunday with a positive or negative
  * offset of days
  */
-public class Holidays
+public class HolidayService
 {
     List<Holiday> definitions = new ArrayList<>();
 

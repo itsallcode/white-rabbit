@@ -13,7 +13,7 @@ import java.util.Set;
 import org.itsallcode.whiterabbit.logic.holidays.parser.HolidaysFileParser;
 import org.junit.jupiter.api.Test;
 
-public class HolidaysTest
+public class HolidayServiceTest
 {
 
     @Test
@@ -64,10 +64,10 @@ public class HolidaysTest
         assertThat(parser.getErrors().get(0).lineNumber).isEqualTo(3);
     }
 
-    private Holidays readBavarianHolidays() throws IOException
+    private HolidayService readBavarianHolidays() throws IOException
     {
         final HolidaysFileParser parser = new HolidaysFileParser("bavaria.txt");
-        return parser.parse(HolidaysTest.class.getResourceAsStream("bavaria.txt"));
+        return parser.parse(HolidayServiceTest.class.getResourceAsStream("bavaria.txt"));
     }
 
     private Holiday[] createExpected()

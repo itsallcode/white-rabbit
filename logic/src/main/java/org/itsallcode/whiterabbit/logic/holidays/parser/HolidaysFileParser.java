@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.holidays.Holiday;
-import org.itsallcode.whiterabbit.logic.holidays.Holidays;
+import org.itsallcode.whiterabbit.logic.holidays.HolidayService;
 
 public class HolidaysFileParser
 {
@@ -28,7 +28,7 @@ public class HolidaysFileParser
 
     private static final Logger LOG = LogManager.getLogger(HolidaysFileParser.class);
 
-    final Holidays holidays = new Holidays();
+    final HolidayService holidays = new HolidayService();
     final HolidayParser holidayParser = new HolidayParser();
     private final List<Error> errors = new ArrayList<>();
     private final String identifier;
@@ -44,7 +44,7 @@ public class HolidaysFileParser
         this.identifier = inputSourceIdentifier;
     }
 
-    public Holidays parse(InputStream stream) throws IOException
+    public HolidayService parse(InputStream stream) throws IOException
     {
 
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -66,7 +66,9 @@ public class HolidaysFileParser
             }
             else
             {
-                LOG.error("File " + identifier + ":" + n + ": Couldn't parse '" + line + "'.");
+                LOG.error("File {}:{}: Couldn't parse '{}'.", identifier, n, line);
+                // LOG.error("File " + identifier + ":" + n + ": Couldn't parse
+                // '" + line + "'.");
                 errors.add(new Error(n, line));
             }
         }
