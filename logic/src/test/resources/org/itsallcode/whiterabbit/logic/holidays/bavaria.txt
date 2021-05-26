@@ -15,12 +15,6 @@
 # arguments: positive or negative number of days, name of holiday.
 #
 
-# rejected format proposal in json
-# {
-#   "Neujahr": { "fixed": [ 1, 1 ] },
-#   "1. Advent": { "float": [ -4, "SUN", 12, 24 ] }
-# }
-
 fixed 1 1 Neujahr
 fixed 1 6 Heilige Drei Könige
 fixed 5 1 1. Mai
@@ -44,6 +38,3 @@ easter +60 Fronleichnam
 fixed 8 15 Mariae Himmelfahrt
 fixed 11 1 Allerheiligen
 float 1 SUN 11 20 Totensonntag
-
-illegal line
-
