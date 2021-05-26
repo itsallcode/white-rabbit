@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.holidays.Holiday;
-import org.itsallcode.whiterabbit.logic.holidays.HolidayService;
 
 public class HolidaysFileParser
 {
@@ -28,7 +27,6 @@ public class HolidaysFileParser
 
     private static final Logger LOG = LogManager.getLogger(HolidaysFileParser.class);
 
-    final HolidayService holidays = new HolidayService();
     final HolidayParser holidayParser = new HolidayParser();
     private final List<Error> errors = new ArrayList<>();
     private final String identifier;
@@ -44,10 +42,11 @@ public class HolidaysFileParser
         this.identifier = inputSourceIdentifier;
     }
 
-    public HolidayService parse(InputStream stream) throws IOException
+    public List<Holiday> parse(InputStream stream) throws IOException
     {
-
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        final List<Holiday> result = new ArrayList<>();
+
         int n = 0;
         String line;
         while ((line = reader.readLine()) != null)
@@ -62,7 +61,7 @@ public class HolidaysFileParser
             final Holiday holiday = holidayParser.parse(line);
             if (holiday != null)
             {
-                holidays.add(holiday);
+                result.add(holiday);
             }
             else
             {
@@ -72,7 +71,7 @@ public class HolidaysFileParser
                 errors.add(new Error(n, line));
             }
         }
-        return holidays;
+        return result;
     }
 
     public List<Error> getErrors()

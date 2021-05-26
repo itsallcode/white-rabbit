@@ -1,62 +1,22 @@
 package org.itsallcode.whiterabbit.logic.holidays;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.DayOfWeek;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.itsallcode.whiterabbit.logic.holidays.parser.HolidaysFileParser;
 import org.junit.jupiter.api.Test;
 
 public class HolidayServiceTest
 {
-
     @Test
-    void testInstances() throws IOException
-    {
-        final int year = 2021;
-        final int month = 4;
-
-        final Holiday[] expected = new Holiday[] {
-                new EasterBasedHoliday("Karfreitag", -2),
-                new EasterBasedHoliday("Ostersonntag", 0),
-                new EasterBasedHoliday("Ostermontag", +1)
-        };
-        final HolidayInstance[] expectedInstances = Arrays.asList(expected)
-                .stream()
-                .map(h -> h.getInstance(year))
-                .collect(toList())
-                .toArray(new HolidayInstance[0]);
-
-        assertThat(readBavarianHolidays().getInstances(year, month)).containsExactly(expectedInstances);
-    }
-
-    @Test
-    void testDayNumbers() throws IOException
-    {
-        final int year = 2021;
-        final int month = 5;
-
-        final Set<Integer> expected = new HashSet<>();
-        expected.addAll(Arrays.asList(new Integer[] { 1, 13, 23, 24 }));
-
-        assertThat(readBavarianHolidays().getDayNumbers(year, month)).isEqualTo(expected);
-    }
-
-    @Test
-    void testBavaria() throws IOException
-    {
-        final Holiday[] expected = createExpected();
-        assertThat(readBavarianHolidays().getDefinitions()).containsExactlyInAnyOrder(expected);
-    }
-
-    @Test
-    void testIllegalLine() throws IOException
+    void illegalLine() throws IOException
     {
         final HolidaysFileParser parser = new HolidaysFileParser("illegal_input");
         parser.parse(new ByteArrayInputStream("#\n\nillegal line".getBytes()));
@@ -64,13 +24,73 @@ public class HolidayServiceTest
         assertThat(parser.getErrors().get(0).lineNumber).isEqualTo(3);
     }
 
+    @Test
+    void allBarbarianHolidays() throws IOException
+    {
+        final Holiday[] expected = expectedBavarianHolidays();
+        assertThat(readBavarianHolidays().getDefinitions()).containsExactlyInAnyOrder(expected);
+    }
+
+    @Test
+    void bavarianHolidays_2021_04() throws IOException
+    {
+        final int year = 2021;
+        final int month = 4;
+
+        final Hashtable<Integer, String> expected = new Hashtable<>();
+        expected.put(2, "Karfreitag");
+        expected.put(4, "Ostersonntag");
+        expected.put(5, "Ostermontag");
+
+        assertHolidays(year, month, expected);
+    }
+
+    @Test
+    void bavarianHolidays_2021_05() throws IOException
+    {
+        final int year = 2021;
+        final int month = 5;
+
+        final Hashtable<Integer, String> expected = new Hashtable<>();
+        expected.put(1, "1. Mai");
+        expected.put(13, "Christi Himmelfahrt");
+        expected.put(23, "Pfingstsonntag");
+        expected.put(24, "Pfingstmontag");
+
+        assertHolidays(year, month, expected);
+    }
+
+    private void assertHolidays(final int year, final int month, final Hashtable<Integer, String> expected)
+            throws IOException
+    {
+        final HolidayService service = readBavarianHolidays();
+        final int n = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+        for (int i = 1; i <= n; i++)
+        {
+            final String expectedName = expected.get(i);
+            final LocalDate date = LocalDate.of(year, month, i);
+            if (expectedName == null)
+            {
+                assertThat(service.getHolidays(date)).isEmpty();
+            }
+            else
+            {
+                final List<Holiday> list = service.getHolidays(date);
+                assertThat(list.size()).isEqualTo(1);
+                final Holiday actual = list.get(0);
+                assertThat(actual.getName()).isEqualTo(expectedName);
+            }
+        }
+    }
+
     private HolidayService readBavarianHolidays() throws IOException
     {
         final HolidaysFileParser parser = new HolidaysFileParser("bavaria.txt");
-        return parser.parse(HolidayServiceTest.class.getResourceAsStream("bavaria.txt"));
+        final List<Holiday> list = parser.parse(HolidayServiceTest.class.getResourceAsStream("bavaria.txt"));
+        return new HolidayService(list);
     }
 
-    private Holiday[] createExpected()
+    private Holiday[] expectedBavarianHolidays()
     {
         return new Holiday[] {
                 new FixedDateHoliday("Neujahr", 1, 1),
@@ -97,5 +117,4 @@ public class HolidayServiceTest
                 new FixedDateHoliday("Allerheiligen", 11, 1),
                 new FloatingHoliday("Totensonntag", 1, DayOfWeek.SUNDAY, 11, 20) };
     }
-
 }

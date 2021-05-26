@@ -20,15 +20,10 @@ public abstract class Holiday
         return name;
     }
 
-    public HolidayInstance getInstance(int year)
-    {
-        return new HolidayInstance(year, this);
-    }
-
     /**
      * Ensure date can be valid, at least in a leap year
      */
-    void ensureValidDate(int month, int day)
+    protected void ensureValidDate(int month, int day)
     {
         LocalDate.of(PIVOT_YEAR, month, day);
     }

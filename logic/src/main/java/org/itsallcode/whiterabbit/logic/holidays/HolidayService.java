@@ -1,15 +1,16 @@
 package org.itsallcode.whiterabbit.logic.holidays;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Manages a list of holidays typically defined in a configuration file. Each
- * holiday is meant to repeat every year and may have
+ * Hosts a personal set of holidays typically defined in a configuration file.
+ * Each holiday is meant to repeat every year and may have
  * 
  * <li>a fixed date identical for every year
  * <li>a floating date defined by a specific date in each year and an offset
@@ -20,34 +21,54 @@ import java.util.Set;
  */
 public class HolidayService
 {
-    List<Holiday> definitions = new ArrayList<>();
+    final List<Holiday> definitions = new ArrayList<>();
+    // caches
+    Set<Integer> years = new HashSet<>();
+    Hashtable<LocalDate, List<Holiday>> holidayInstances = new Hashtable<>();
 
-    public boolean add(Holiday holiday)
+    public HolidayService(final List<Holiday> list)
     {
-        return definitions.add(holiday);
+        definitions.addAll(list);
     }
 
     /**
-     * Applies the list of holidays to given month in given year and returns the
-     * set of days of given month that are holidays.
+     * @return List of holidays occurring on the given date. If there is no
+     *         holiday on given date, then list is empty.
      */
-    public Set<Integer> getDayNumbers(int year, int month)
+    public List<Holiday> getHolidays(LocalDate date)
     {
-        return getInstances(year, month).stream()
-                .map(HolidayInstance::getDayOfMonth)
-                .collect(toSet());
+        cacheHolidays(date.getYear());
+
+        final List<Holiday> instances = holidayInstances.get(date);
+        if (instances == null)
+        {
+            return Collections.<Holiday> emptyList();
+        }
+        return instances;
     }
 
-    public List<HolidayInstance> getInstances(int year, int month)
+    private void cacheHolidays(final int year)
     {
-        return definitions.stream()
-                .map(h -> h.getInstance(year))
-                .filter(h -> h.isIn(month))
-                .sorted(HolidayInstance::compareTo)
-                .collect(toList());
+        if (years.contains(year))
+        {
+            return;
+        }
+
+        for (final Holiday holiday : definitions)
+        {
+            final LocalDate date = holiday.of(year);
+            List<Holiday> entry = holidayInstances.get(date);
+            if (entry == null)
+            {
+                entry = new ArrayList<>();
+                holidayInstances.put(date, entry);
+            }
+            entry.add(holiday);
+        }
+        years.add(year);
     }
 
-    public List<Holiday> getDefinitions()
+    List<Holiday> getDefinitions()
     {
         return definitions;
     }
