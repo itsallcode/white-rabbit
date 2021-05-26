@@ -12,6 +12,7 @@ public class FixedDateHoliday extends Holiday
         super(name);
         this.month = month;
         this.day = day;
+        ensureValidDate(month, day);
     }
 
     @Override

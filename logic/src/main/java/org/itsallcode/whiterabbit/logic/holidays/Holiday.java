@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 public abstract class Holiday
 {
+    private static final int PIVOT_YEAR = 2000;
+
     public abstract LocalDate of(int year);
 
     private final String name;
@@ -21,6 +23,14 @@ public abstract class Holiday
     public HolidayInstance getInstance(int year)
     {
         return new HolidayInstance(year, this);
+    }
+
+    /**
+     * Ensure date can be valid, at least in a leap year
+     */
+    void ensureValidDate(int month, int day)
+    {
+        LocalDate.of(PIVOT_YEAR, month, day);
     }
 
     @Override

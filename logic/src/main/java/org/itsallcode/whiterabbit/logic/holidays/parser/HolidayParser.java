@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.holidays.parser;
 
+import java.time.DayOfWeek;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,11 +21,11 @@ public class HolidayParser
     private static final String NAME_GROUP = "name";
 
     // tokens for regular expressions
-    private static final Token MONTH = new Token(MONTH_GROUP, "1|2|3|4|5|6|7|8|9|10|11|12");
+    private static final Token MONTH = new Token(MONTH_GROUP, "0?1|0?2|0?3|0?4|0?5|0?6|0?7|0?8|0?9|10|11|12");
     private static final Token DAY = new Token(DAY_GROUP,
-            "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31");
+            "0?1|0?2|0?3|0?4|0?5|0?6|0?7|0?8|0?9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31");
     private static final Token DAY_OR_DEFAULT = new Token(DAY_GROUP, "-1|0|" + DAY.pattern);
-    private static final Token OFFSET = new Token(OFFSET_GROUP, "[+-]?\\d+");
+    private static final Token OFFSET = new Token(OFFSET_GROUP, "[+-]?\\d\\d?");
     private static final Token DAY_OF_WEEK = new Token(DAY_OF_WEEK_GROUP, "[a-z]+");
     private static final Token HOLIDAY_NAME = new Token(NAME_GROUP, ".*");
 
@@ -54,43 +55,82 @@ public class HolidayParser
         return Pattern.compile(sb.toString(), Pattern.CASE_INSENSITIVE);
     }
 
-    // fields
-    private final DayOfWeekParser dayOfWeekParser = new DayOfWeekParser();
-
     public Holiday parse(String line)
     {
         final String trimmed = line.trim();
-        Matcher matcher;
+        final HolidayMatcher[] matchers = new HolidayMatcher[] {
+                new FixedDateMatcher(), new FloatingDateMatcher(), new EasterBasedMatcher() };
 
-        matcher = FIXED_HOLIDAY.matcher(trimmed);
-        if (matcher.matches())
+        for (final HolidayMatcher m : matchers)
+        {
+            final Holiday holiday = m.createHoliday(trimmed);
+            if (holiday != null)
+            {
+                return holiday;
+            }
+        }
+
+        return null;
+    }
+
+    private static class FixedDateMatcher extends HolidayMatcher
+    {
+        public FixedDateMatcher()
+        {
+            super(FIXED_HOLIDAY);
+        }
+
+        @Override
+        Holiday createHoliday(Matcher matcher)
         {
             return new FixedDateHoliday(
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(MONTH_GROUP)),
                     Integer.parseInt(matcher.group(DAY_GROUP)));
         }
+    }
 
-        matcher = FLOATING_HOLIDAY.matcher(trimmed);
-        if (matcher.matches())
+    private static class FloatingDateMatcher extends HolidayMatcher
+    {
+        private final DayOfWeekParser dayOfWeekParser = new DayOfWeekParser();
+
+        public FloatingDateMatcher()
         {
+            super(FLOATING_HOLIDAY);
+        }
+
+        @Override
+        Holiday createHoliday(Matcher matcher)
+        {
+            final DayOfWeek dayOfWeek = dayOfWeekParser.getDayOfWeek(matcher.group(DAY_OF_WEEK_GROUP));
+            if (dayOfWeek == null)
+            {
+                return null;
+            }
+
             return new FloatingHoliday(
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)),
-                    dayOfWeekParser.getDayOfWeek(matcher.group(DAY_OF_WEEK_GROUP)),
+                    dayOfWeek,
                     Integer.parseInt(matcher.group(MONTH_GROUP)),
                     Integer.parseInt(matcher.group(DAY_GROUP)));
         }
+    }
 
-        matcher = EASTER_BASED_HOLIDAY.matcher(trimmed);
-        if (matcher.matches())
+    private static class EasterBasedMatcher extends HolidayMatcher
+    {
+        public EasterBasedMatcher()
+        {
+            super(EASTER_BASED_HOLIDAY);
+        }
+
+        @Override
+        Holiday createHoliday(Matcher matcher)
         {
             return new EasterBasedHoliday(
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)));
         }
-
-        return null;
     }
 
     private static class Token

@@ -5,6 +5,16 @@ import java.util.Hashtable;
 
 public class DayOfWeekParser
 {
+    public static class AmbigueDayOfWeekAbbreviationException extends RuntimeException
+    {
+        private static final long serialVersionUID = 1L;
+
+        public AmbigueDayOfWeekAbbreviationException(String message)
+        {
+            super(message);
+        }
+    }
+
     Hashtable<String, DayOfWeek> cache = new Hashtable<>();
 
     public DayOfWeek getDayOfWeek(final String prefix)
@@ -20,15 +30,25 @@ public class DayOfWeekParser
             upper = prefix.toUpperCase();
         }
 
+        DayOfWeek result = null;
         for (final DayOfWeek day : DayOfWeek.values())
         {
             if (day.toString().toUpperCase().startsWith(upper))
             {
-                cache.put(prefix, day);
-                return day;
+                if (result != null)
+                {
+                    throw new AmbigueDayOfWeekAbbreviationException(prefix);
+                }
+                result = day;
             }
         }
-        return null;
+
+        if (result != null)
+        {
+            cache.put(prefix, result);
+        }
+
+        return result;
     }
 
 }

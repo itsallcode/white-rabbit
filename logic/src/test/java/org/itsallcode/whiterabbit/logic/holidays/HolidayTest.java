@@ -1,16 +1,28 @@
 package org.itsallcode.whiterabbit.logic.holidays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 import org.itsallcode.whiterabbit.logic.holidays.parser.DayOfWeekParser;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 public class HolidayTest
 {
     DayOfWeekParser dayOfWeekParser = new DayOfWeekParser();
+
+    @Test
+    void invalidDate()
+    {
+        assertThrows(java.time.DateTimeException.class,
+                () -> new FloatingHoliday("Famous Februar, 30th", 1, DayOfWeek.MONDAY, 2, 30));
+        assertThrows(java.time.DateTimeException.class,
+                () -> new FixedDateHoliday("Famous Februar, 30th", 2, 30));
+    }
 
     @ParameterizedTest(name = "{3} {4} on or after {0}-{1}-{2} returns {5}")
     @CsvSource(value = {

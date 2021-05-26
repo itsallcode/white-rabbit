@@ -41,6 +41,10 @@ public class FloatingHoliday extends Holiday
         this.day = (offset >= 0 && day < 1) ? 1 : day;
         this.offset = offset;
         this.dayOfWeek = dayOfWeek;
+        if (this.day > 0)
+        {
+            ensureValidDate(month, this.day);
+        }
     }
 
     @Override

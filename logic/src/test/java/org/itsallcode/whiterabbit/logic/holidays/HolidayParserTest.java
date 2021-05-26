@@ -1,9 +1,12 @@
 package org.itsallcode.whiterabbit.logic.holidays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.DayOfWeek;
 
+import org.itsallcode.whiterabbit.logic.holidays.parser.DayOfWeekParser;
 import org.itsallcode.whiterabbit.logic.holidays.parser.HolidayParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,45 @@ public class HolidayParserTest
     }
 
     @Test
+    void invalidPivotDate()
+    {
+        assertNull(holidayParser.parse("float -4 SU 13 1 Famous Februar, 30th"));
+        assertNull(holidayParser.parse("float -4 SU 01 32 Famous Februar, 30th"));
+    }
+
+    @Test
+    void illegalType()
+    {
+        assertNull(holidayParser.parse("illegaType -4 SU 12 24 1. Advent"));
+    }
+
+    @Test
+    void ambigueDayOfWeekAbbreviation()
+    {
+        assertThrows(DayOfWeekParser.AmbigueDayOfWeekAbbreviationException.class,
+                () -> holidayParser.parse("float 1 S 1 1 Ambigue January S-day"));
+        assertThrows(DayOfWeekParser.AmbigueDayOfWeekAbbreviationException.class,
+                () -> holidayParser.parse("float 1 T 1 1 Ambigue January T-day"));
+    }
+
+    @Test
+    void nonAmbigueDayOfWeekAbbreviation()
+    {
+        assertThat(holidayParser.parse("float 1 M 1 1 Non-ambigue M-day"))
+                .isEqualTo(new FloatingHoliday("Non-ambigue M-day", 1, DayOfWeek.MONDAY, 1, 1));
+        assertThat(holidayParser.parse("float 1 W 1 1 Non-ambigue W-day"))
+                .isEqualTo(new FloatingHoliday("Non-ambigue W-day", 1, DayOfWeek.WEDNESDAY, 1, 1));
+        assertThat(holidayParser.parse("float 1 W 1 1 Non-ambigue F-day"))
+                .isEqualTo(new FloatingHoliday("Non-ambigue F-day", 1, DayOfWeek.WEDNESDAY, 1, 1));
+    }
+
+    @Test
+    void offsetTooLarge()
+    {
+        assertNull(holidayParser.parse("float -213 SU 12 24 1. Advent"));
+    }
+
+    @Test
     void notEqualFixed()
     {
         // day
@@ -68,6 +110,15 @@ public class HolidayParserTest
         // offset
         assertThat(holidayParser.parse("float -4 SUN 12 24 1. Advent"))
                 .isNotEqualTo(new FloatingHoliday("1. Advent", -2, DayOfWeek.SUNDAY, 12, 24));
+    }
+
+    @Test
+    void leadingZeros()
+    {
+        assertThat(holidayParser.parse("fixed 01 01 Neujahr"))
+                .isEqualTo(new FixedDateHoliday("Neujahr", 1, 1));
+        assertThat(holidayParser.parse("float +01 MON 01 01 Fictional New Year's Monday"))
+                .isEqualTo(new FloatingHoliday("Fictional New Year's Monday", 1, DayOfWeek.MONDAY, 1, 1));
     }
 
     @Test

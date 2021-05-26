@@ -3,8 +3,8 @@ package org.itsallcode.whiterabbit.logic.holidays;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,10 +55,19 @@ public class HolidaysTest
         assertThat(readBavarianHolidays().getDefinitions()).containsExactlyInAnyOrder(expected);
     }
 
+    @Test
+    void testIllegalLine() throws IOException
+    {
+        final HolidaysFileParser parser = new HolidaysFileParser("illegal_input");
+        parser.parse(new ByteArrayInputStream("#\n\nillegal line".getBytes()));
+        assertThat(parser.getErrors().size()).isEqualTo(1);
+        assertThat(parser.getErrors().get(0).lineNumber).isEqualTo(3);
+    }
+
     private Holidays readBavarianHolidays() throws IOException
     {
-        final InputStream stream = HolidaysTest.class.getResourceAsStream("bavaria.txt");
-        return HolidaysFileParser.parse(stream);
+        final HolidaysFileParser parser = new HolidaysFileParser("bavaria.txt");
+        return parser.parse(HolidaysTest.class.getResourceAsStream("bavaria.txt"));
     }
 
     private Holiday[] createExpected()
