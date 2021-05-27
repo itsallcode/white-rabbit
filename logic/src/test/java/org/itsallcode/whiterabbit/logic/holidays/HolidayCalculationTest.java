@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 
+import org.itsallcode.whiterabbit.logic.holidays.FloatingHoliday.Direction;
 import org.itsallcode.whiterabbit.logic.holidays.parser.DayOfWeekParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,23 +20,39 @@ public class HolidayCalculationTest
     void invalidDate()
     {
         assertThrows(java.time.DateTimeException.class,
-                () -> new FloatingHoliday("holiday", "Famous Februar, 30th", 1, DayOfWeek.MONDAY, 2, 30));
+                () -> new FloatingHoliday("holiday", "Famous Februar, 30th",
+                        1, DayOfWeek.MONDAY, Direction.BEFORE, 2, 30));
         assertThrows(java.time.DateTimeException.class,
                 () -> new FixedDateHoliday("holiday", "Famous Februar, 30th", 2, 30));
     }
 
-    @ParameterizedTest(name = "{3} {4} on or after {0}-{1}-{2} returns {5}")
+    @ParameterizedTest(name = "{0} {1} {2} {3}-{4}-{5} returns {6}")
     @CsvSource(value = {
-            " 1, SAT, 2021, 05,  1, 2021-05-01",
-            " 6, SAT, 2021, 05,  1, 2021-06-05",
-            "-1, MON, 2021, 05, -1, 2021-05-31",
-            "-6, MON, 2021, 05, -1, 2021-04-26"
+            "1, SAT, after,  2021, 05,        1, 2021-05-01",
+            "6, SAT, after,  2021, 05,        1, 2021-06-05",
+            "1, MON, before, 2021, 05, last-day, 2021-05-31",
+            "6, MON, before, 2021, 05, last-day, 2021-04-26"
     })
-    void variableHoliday(int offset, String dayName, int year, int month, int day, LocalDate expected)
+    void floatingHoliday(int offset, String dayOfWeek, String direction, int year, int month, String dayString,
+            LocalDate expected)
     {
-        final String name = String.format("%d %s on or after %s-%02d-(%d)", offset, dayName, year, month, day);
-        final FloatingHoliday v = new FloatingHoliday("holiday", name, offset, dayOfWeekParser.getDayOfWeek(dayName), month, day);
-        assertThat(v.of(year)).isEqualTo(expected);
+        final String name = String.format("%d %s %s %s-%02d-%s",
+                offset, dayOfWeek, direction, year, month, dayString);
+        int day;
+        if (dayString.equals("last-day"))
+        {
+            day = FloatingHoliday.LAST_DAY_OF_THE_MONTH;
+        }
+        else
+        {
+            day = Integer.parseInt(dayString);
+        }
+        final FloatingHoliday holiday = new FloatingHoliday(
+                "holiday", name, offset,
+                dayOfWeekParser.getDayOfWeek(dayOfWeek),
+                Direction.parse(direction),
+                month, day);
+        assertThat(holiday.of(year)).isEqualTo(expected);
     }
 
     /**

@@ -11,6 +11,12 @@ public abstract class Holiday
     private final String category;
     private final String name;
 
+    /**
+     * @param category
+     *            Arbitrary category that may be evaluated by the application
+     *            processing the holiday.
+     * @param name
+     */
     public Holiday(String category, String name)
     {
         this.category = category;

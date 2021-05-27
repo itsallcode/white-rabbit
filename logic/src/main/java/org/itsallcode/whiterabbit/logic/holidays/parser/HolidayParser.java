@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.itsallcode.whiterabbit.logic.holidays.EasterBasedHoliday;
 import org.itsallcode.whiterabbit.logic.holidays.FixedDateHoliday;
 import org.itsallcode.whiterabbit.logic.holidays.FloatingHoliday;
+import org.itsallcode.whiterabbit.logic.holidays.FloatingHoliday.Direction;
 import org.itsallcode.whiterabbit.logic.holidays.Holiday;
 
 public class HolidayParser
@@ -18,6 +19,7 @@ public class HolidayParser
     private static final String MONTH_GROUP = "month";
     private static final String DAY_GROUP = "day";
     private static final String OFFSET_GROUP = "offset";
+    private static final String DIRECTION_GROUP = "direction";
     private static final String DAY_OF_WEEK_GROUP = "dayOfWeek";
     private static final String NAME_GROUP = "name";
 
@@ -25,8 +27,11 @@ public class HolidayParser
     private static final Token MONTH = new Token(MONTH_GROUP, "0?1|0?2|0?3|0?4|0?5|0?6|0?7|0?8|0?9|10|11|12");
     private static final Token DAY = new Token(DAY_GROUP,
             "0?1|0?2|0?3|0?4|0?5|0?6|0?7|0?8|0?9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31");
-    private static final Token DAY_OR_DEFAULT = new Token(DAY_GROUP, "-1|0|" + DAY.pattern);
+    public static final String LAST_DAY = "last-day";
+    private static final Token DAY_OR_DEFAULT = new Token(DAY_GROUP, DAY.pattern + "|" + LAST_DAY);
     private static final Token OFFSET = new Token(OFFSET_GROUP, "[+-]?\\d\\d?");
+    private static final Token POSITIVE_OFFSET = new Token(OFFSET_GROUP, "\\d\\d?");
+    private static final Token DIRECTION = new Token(DIRECTION_GROUP, "before|after");
     private static final Token DAY_OF_WEEK = new Token(DAY_OF_WEEK_GROUP, "[a-z]+");
     private static final Token HOLIDAY_NAME = new Token(NAME_GROUP, ".*");
 
@@ -38,7 +43,8 @@ public class HolidayParser
     // patterns
     private static final String SPACE_REGEXP = "\\s+";
     private static final Pattern FIXED_HOLIDAY = buildRegexp(HOLIDAY, FIXED, MONTH, DAY, HOLIDAY_NAME);
-    private static final Pattern FLOATING_HOLIDAY = buildRegexp(HOLIDAY, FLOAT, OFFSET, DAY_OF_WEEK, MONTH,
+    private static final Pattern FLOATING_HOLIDAY = buildRegexp(HOLIDAY, FLOAT, POSITIVE_OFFSET, DAY_OF_WEEK,
+            DIRECTION, MONTH,
             DAY_OR_DEFAULT, HOLIDAY_NAME);
     private static final Pattern EASTER_BASED_HOLIDAY = buildRegexp(HOLIDAY, EASTER, OFFSET, HOLIDAY_NAME);
 
@@ -116,7 +122,9 @@ public class HolidayParser
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)),
                     dayOfWeek,
-                    Integer.parseInt(matcher.group(MONTH_GROUP)), Integer.parseInt(matcher.group(DAY_GROUP)));
+                    Direction.parse(matcher.group(DIRECTION_GROUP)),
+                    Integer.parseInt(matcher.group(MONTH_GROUP)),
+                    Integer.parseInt(matcher.group(DAY_GROUP)));
         }
     }
 

@@ -10,6 +10,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.itsallcode.whiterabbit.logic.holidays.FloatingHoliday.Direction;
 import org.itsallcode.whiterabbit.logic.holidays.parser.HolidaysFileParser;
 import org.junit.jupiter.api.Test;
 
@@ -98,10 +99,10 @@ public class HolidayServiceTest
                 new FixedDateHoliday("holiday", "1. Mai", 5, 1),
                 new FixedDateHoliday("holiday", "Tag der Deutschen Einheit", 10, 3),
 
-                new FloatingHoliday("holiday", "1. Advent", -4, DayOfWeek.SUNDAY, 12, 24),
-                new FloatingHoliday("holiday", "2. Advent", -3, DayOfWeek.SUNDAY, 12, 24),
-                new FloatingHoliday("holiday", "3. Advent", -2, DayOfWeek.SUNDAY, 12, 24),
-                new FloatingHoliday("holiday", "4. Advent", -1, DayOfWeek.SUNDAY, 12, 24),
+                new FloatingHoliday("holiday", "1. Advent", 4, DayOfWeek.SUNDAY, Direction.BEFORE, 12, 24),
+                new FloatingHoliday("holiday", "2. Advent", 3, DayOfWeek.SUNDAY, Direction.BEFORE, 12, 24),
+                new FloatingHoliday("holiday", "3. Advent", 2, DayOfWeek.SUNDAY, Direction.BEFORE, 12, 24),
+                new FloatingHoliday("holiday", "4. Advent", 1, DayOfWeek.SUNDAY, Direction.BEFORE, 12, 24),
                 new FixedDateHoliday("holiday", "1. Weihnachtstag", 12, 25),
                 new FixedDateHoliday("holiday", "2. Weihnachtstag", 12, 26),
 
@@ -115,6 +116,6 @@ public class HolidayServiceTest
                 new EasterBasedHoliday("holiday", "Fronleichnam", +60),
                 new FixedDateHoliday("holiday", "Mariae Himmelfahrt", 8, 15),
                 new FixedDateHoliday("holiday", "Allerheiligen", 11, 1),
-                new FloatingHoliday("holiday", "Totensonntag", 1, DayOfWeek.SUNDAY, 11, 20) };
+                new FloatingHoliday("holiday", "Totensonntag", 1, DayOfWeek.SUNDAY, Direction.AFTER, 11, 20) };
     }
 }
