@@ -15,6 +15,12 @@
 # arguments: positive or negative number of days, name of holiday.
 #
 
+
+# improved syntax for floating holidays: 
+# float 4 SUN before 12 24
+# float 4 SUN before 12 last-day
+
+
 holiday fixed 1 1 Neujahr
 holiday fixed 1 6 Heilige Drei Könige
 holiday fixed 5 1 1. Mai

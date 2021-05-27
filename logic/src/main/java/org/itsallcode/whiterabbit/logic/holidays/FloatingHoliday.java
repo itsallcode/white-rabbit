@@ -17,13 +17,15 @@ public class FloatingHoliday extends Holiday
     }
 
     /**
-     * Holiday called name on the offset dayOfWeek after/before month day.
+     * Holiday called &lt;name&gt; on the &lt;offset&gt; &lt;dayOfWeek&gt;
+     * after/before &lt;month&gt; &lt;day>.
      * 
      * <p>
      * Examples
      * 
      * @param category
-     *            TODO
+     *            Arbitrary category that may be evaluated by the application
+     *            processng the holiday.
      * @param name
      * @param offset
      *            If offset > 0, use the offset dayOfWeek after month day. If
