@@ -15,26 +15,26 @@
 # arguments: positive or negative number of days, name of holiday.
 #
 
-fixed 1 1 Neujahr
-fixed 1 6 Heilige Drei Könige
-fixed 5 1 1. Mai
-fixed 10 3 Tag der Deutschen Einheit
+holiday fixed 1 1 Neujahr
+holiday fixed 1 6 Heilige Drei Könige
+holiday fixed 5 1 1. Mai
+holiday fixed 10 3 Tag der Deutschen Einheit
 
-float -4 SUN 12 24 1. Advent
-float -3 SUN 12 24 2. Advent
-float -2 SUN 12 24 3. Advent
-float -1 SUN 12 24 4. Advent
-fixed 12 25 1. Weihnachtstag
-fixed 12 26 2. Weihnachtstag
+holiday float -4 SUN 12 24 1. Advent
+holiday float -3 SUN 12 24 2. Advent
+holiday float -2 SUN 12 24 3. Advent
+holiday float -1 SUN 12 24 4. Advent
+holiday fixed 12 25 1. Weihnachtstag
+holiday fixed 12 26 2. Weihnachtstag
 
-easter -48 Rosenmontag
-easter  -2 Karfreitag
-easter   0 Ostersonntag
-easter  +1 Ostermontag
-easter +39 Christi Himmelfahrt
-easter +49 Pfingstsonntag
-easter +50 Pfingstmontag
-easter +60 Fronleichnam
-fixed 8 15 Mariae Himmelfahrt
-fixed 11 1 Allerheiligen
-float 1 SUN 11 20 Totensonntag
+holiday easter -48 Rosenmontag
+holiday easter  -2 Karfreitag
+holiday easter   0 Ostersonntag
+holiday easter  +1 Ostermontag
+holiday easter +39 Christi Himmelfahrt
+holiday easter +49 Pfingstsonntag
+holiday easter +50 Pfingstmontag
+holiday easter +60 Fronleichnam
+holiday fixed 8 15 Mariae Himmelfahrt
+holiday fixed 11 1 Allerheiligen
+holiday float 1 SUN 11 20 Totensonntag

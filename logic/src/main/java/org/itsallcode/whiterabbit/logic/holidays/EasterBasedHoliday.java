@@ -6,9 +6,9 @@ public class EasterBasedHoliday extends Holiday
 {
     private final int offsetInDays;
 
-    public EasterBasedHoliday(String name, int offsetInDays)
+    public EasterBasedHoliday(String category, String name, int offsetInDays)
     {
-        super(name);
+        super(category, name);
         this.offsetInDays = offsetInDays;
     }
 

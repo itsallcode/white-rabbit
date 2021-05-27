@@ -13,7 +13,7 @@ public class FloatingHoliday extends Holiday
 
     public FloatingHoliday(String name, int offset, DayOfWeek dayOfWeek, int month)
     {
-        this(name, offset, dayOfWeek, month, -1);
+        this("holiday", name, offset, dayOfWeek, month, -1);
     }
 
     /**
@@ -21,7 +21,7 @@ public class FloatingHoliday extends Holiday
      * 
      * <p>
      * Examples
-     * 
+     * @param category TODO
      * @param name
      * @param offset
      *            If offset > 0, use the offset dayOfWeek after month day. If
@@ -34,9 +34,9 @@ public class FloatingHoliday extends Holiday
      *            default. If offset > 0 then default = 1 other wise default =
      *            month's last day.
      */
-    public FloatingHoliday(String name, int offset, DayOfWeek dayOfWeek, int month, int day)
+    public FloatingHoliday(String category, String name, int offset, DayOfWeek dayOfWeek, int month, int day)
     {
-        super(name);
+        super(category, name);
         this.month = month;
         this.day = (offset >= 0 && day < 1) ? 1 : day;
         this.offset = offset;

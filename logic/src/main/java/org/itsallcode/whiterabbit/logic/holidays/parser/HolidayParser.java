@@ -13,6 +13,7 @@ public class HolidayParser
 {
     // names of groups in regular expressions in order to easily extract matched
     // parts
+    private static final String CATEGORY_GROUP = "category";
     private static final String TYPE_GROUP = "type";
     private static final String MONTH_GROUP = "month";
     private static final String DAY_GROUP = "day";
@@ -29,16 +30,17 @@ public class HolidayParser
     private static final Token DAY_OF_WEEK = new Token(DAY_OF_WEEK_GROUP, "[a-z]+");
     private static final Token HOLIDAY_NAME = new Token(NAME_GROUP, ".*");
 
+    private static final Token HOLIDAY = new Token(CATEGORY_GROUP, "holiday");
     private static final Token FIXED = new Token(TYPE_GROUP, "fixed");
     private static final Token FLOAT = new Token(TYPE_GROUP, "float");
     private static final Token EASTER = new Token(TYPE_GROUP, "easter");
 
     // patterns
     private static final String SPACE_REGEXP = "\\s+";
-    private static final Pattern FIXED_HOLIDAY = buildRegexp(FIXED, MONTH, DAY, HOLIDAY_NAME);
-    private static final Pattern FLOATING_HOLIDAY = buildRegexp(FLOAT, OFFSET, DAY_OF_WEEK, MONTH, DAY_OR_DEFAULT,
-            HOLIDAY_NAME);
-    private static final Pattern EASTER_BASED_HOLIDAY = buildRegexp(EASTER, OFFSET, HOLIDAY_NAME);
+    private static final Pattern FIXED_HOLIDAY = buildRegexp(HOLIDAY, FIXED, MONTH, DAY, HOLIDAY_NAME);
+    private static final Pattern FLOATING_HOLIDAY = buildRegexp(HOLIDAY, FLOAT, OFFSET, DAY_OF_WEEK, MONTH,
+            DAY_OR_DEFAULT, HOLIDAY_NAME);
+    private static final Pattern EASTER_BASED_HOLIDAY = buildRegexp(HOLIDAY, EASTER, OFFSET, HOLIDAY_NAME);
 
     static Pattern buildRegexp(final Token... tokens)
     {
@@ -84,6 +86,7 @@ public class HolidayParser
         Holiday createHoliday(Matcher matcher)
         {
             return new FixedDateHoliday(
+                    "holiday",
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(MONTH_GROUP)),
                     Integer.parseInt(matcher.group(DAY_GROUP)));
@@ -109,11 +112,11 @@ public class HolidayParser
             }
 
             return new FloatingHoliday(
+                    "holiday",
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)),
                     dayOfWeek,
-                    Integer.parseInt(matcher.group(MONTH_GROUP)),
-                    Integer.parseInt(matcher.group(DAY_GROUP)));
+                    Integer.parseInt(matcher.group(MONTH_GROUP)), Integer.parseInt(matcher.group(DAY_GROUP)));
         }
     }
 
@@ -128,6 +131,7 @@ public class HolidayParser
         Holiday createHoliday(Matcher matcher)
         {
             return new EasterBasedHoliday(
+                    "holiday",
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)));
         }

@@ -7,9 +7,9 @@ public class FixedDateHoliday extends Holiday
     private final int month;
     private final int day;
 
-    public FixedDateHoliday(String name, int month, int day)
+    public FixedDateHoliday(String category, String name, int month, int day)
     {
-        super(name);
+        super(category, name);
         this.month = month;
         this.day = day;
         ensureValidDate(month, day);

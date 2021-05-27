@@ -31,10 +31,10 @@ directory.
 The configuration file is organized in lines. Each line can contain one of 5
 types of content:
 
-1. empty
-2. comment
-3. fixed date holiday definition
-4. floating holiday definition
+1. Empty
+2. Comment
+3. Fixed date holiday definition
+4. Floating holiday definition
 5. Easter-based holiday definition
 
 All other lines are rated as illegal and ignored by the plugin, logging an
@@ -51,10 +51,11 @@ mark character "`#`".
 
 #### Holiday definitions
 
-All holiday definitions start with a *tag* identifying the type of the holiday
-definition, followed by arguments depending on the type. The last argument is
-always a string containing the name of the holiday. All other strings except
-the name of the holiday are case-insensitive.
+All holiday definitions start with the category "holiday", followed by a *tag*
+identifying the flavor of the holiday definition, followed by arguments
+depending on the type. The last argument is always a string containing the
+name of the holiday. All other strings except the name of the holiday are
+case-insensitive.
 
 In all definitions including the number of a month, January is 1,
 December is 12. Day of month is an integer from 1 to 31.
@@ -65,24 +66,24 @@ holiday definition:
   "fixed", "float", "easter"
 - if the holiday definition contains illegal numbers, such as month 0 or 13,
   day 32, or day 30 for February
-- if the day of week does not match any of the english names
-  Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
-- if the day of week is abbreviated ambiguously
+- if the day of week does not match the abbreviation of any of the english
+  names Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+- if the day of week is abbreviated ambiguously, e.g. "T" or "S"
 
 #### Fixed date holiday definition
 
-A fixed date holiday definition starts with the tag "fixed", followed by the
-number of the month and day of month.
+A fixed date holiday definition has the tag "fixed", followed by the number of
+the month and day of month.
 
-Syntax: `fixed <month> <day> <name>`
+Syntax: `holiday fixed <month> <day> <name>`
 
-Sample: `fixed 1 1 New Year`
+Sample: `holiday fixed 1 1 New Year`
 
 #### Floating holiday definition
 
-A floating holiday definition starts with the tag "float", followed by the
-offset, the day of week, the number of the month and day of month.  Month and
-day of month specify a *pivot date*.
+A floating holiday definition has the tag "float", followed by the offset, the
+day of week, the number of the month and day of month.  Month and day of month
+specify a *pivot date*.
 
 If the offset is negative then the holiday is on or before the pivot date. If
 the offset is positive then the holiday is on or after the pivot date.
@@ -95,22 +96,22 @@ If the day of month is less than 1 then plugin (name) uses a default value.
 For positive offsets the default is the first day of the month, for negative
 offsets the default is the last day of the month.
 
-Syntax: `float <offset> <day of week> <month> <day> <name>`
+Syntax: `holiday float <offset> <day of week> <month> <day> <name>`
 
 Samples:
-- `float 1 W 1 1 First Wednesday on or after New Year`
-- `float -2 MON 12 -1 Second Monday before New Year's eve, December the 31st`
-- `float -4 SUNDAY 12 24 First Advent`
+- `holiday float 1 W 1 1 First Wednesday on or after New Year`
+- `holiday float -2 MON 12 -1 Second Monday before New Year's eve, December the 31st`
+- `holiday float -4 SUNDAY 12 24 First Advent`
 
 #### Easter-based holiday definition
 
-An Easter-based holiday definition starts with the tag "easter", followed by
-the offset. The offset is the number of days from Easter Sunday. If offset is
+An Easter-based holiday definition has the tag "easter", followed by the
+offset. The offset is the number of days from Easter Sunday. If offset is
 negative then the holiday is before Easter Sunday, otherwise after.
 
-Syntax: `easter <offset> <name>`
+Syntax: `holiday easter <offset> <name>`
 
 Samples:
-- `easter   0 Easter Sunday`
-- `easter  -2 Good Friday`
-- `easter +49 Pentecost Sunday`
+- `holiday easter   0 Easter Sunday`
+- `holiday easter  -2 Good Friday`
+- `holiday easter +49 Pentecost Sunday`

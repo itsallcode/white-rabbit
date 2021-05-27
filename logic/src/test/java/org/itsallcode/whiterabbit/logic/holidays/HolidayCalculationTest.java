@@ -19,9 +19,9 @@ public class HolidayCalculationTest
     void invalidDate()
     {
         assertThrows(java.time.DateTimeException.class,
-                () -> new FloatingHoliday("Famous Februar, 30th", 1, DayOfWeek.MONDAY, 2, 30));
+                () -> new FloatingHoliday("holiday", "Famous Februar, 30th", 1, DayOfWeek.MONDAY, 2, 30));
         assertThrows(java.time.DateTimeException.class,
-                () -> new FixedDateHoliday("Famous Februar, 30th", 2, 30));
+                () -> new FixedDateHoliday("holiday", "Famous Februar, 30th", 2, 30));
     }
 
     @ParameterizedTest(name = "{3} {4} on or after {0}-{1}-{2} returns {5}")
@@ -34,7 +34,7 @@ public class HolidayCalculationTest
     void variableHoliday(int offset, String dayName, int year, int month, int day, LocalDate expected)
     {
         final String name = String.format("%d %s on or after %s-%02d-(%d)", offset, dayName, year, month, day);
-        final FloatingHoliday v = new FloatingHoliday(name, offset, dayOfWeekParser.getDayOfWeek(dayName), month, day);
+        final FloatingHoliday v = new FloatingHoliday("holiday", name, offset, dayOfWeekParser.getDayOfWeek(dayName), month, day);
         assertThat(v.of(year)).isEqualTo(expected);
     }
 

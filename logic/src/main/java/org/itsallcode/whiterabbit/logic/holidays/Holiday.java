@@ -8,11 +8,18 @@ public abstract class Holiday
 
     public abstract LocalDate of(int year);
 
+    private final String category;
     private final String name;
 
-    public Holiday(String name)
+    public Holiday(String category, String name)
     {
+        this.category = category;
         this.name = name;
+    }
+
+    public String getCategory()
+    {
+        return category;
     }
 
     public String getName()
