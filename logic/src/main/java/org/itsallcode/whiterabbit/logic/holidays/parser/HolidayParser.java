@@ -30,7 +30,7 @@ public class HolidayParser
     private static final Token DAY_OF_WEEK = new Token(DAY_OF_WEEK_GROUP, "[a-z]+");
     private static final Token HOLIDAY_NAME = new Token(NAME_GROUP, ".*");
 
-    private static final Token HOLIDAY = new Token(CATEGORY_GROUP, "holiday");
+    private static final Token HOLIDAY = new Token(CATEGORY_GROUP, "\\S+");
     private static final Token FIXED = new Token(TYPE_GROUP, "fixed");
     private static final Token FLOAT = new Token(TYPE_GROUP, "float");
     private static final Token EASTER = new Token(TYPE_GROUP, "easter");
