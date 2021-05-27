@@ -51,11 +51,15 @@ mark character "`#`".
 
 #### Holiday definitions
 
-All holiday definitions start with the category "holiday", followed by a *tag*
-identifying the flavor of the holiday definition, followed by arguments
-depending on the type. The last argument is always a string containing the
-name of the holiday. All other strings except the name of the holiday are
-case-insensitive.
+All holiday definitions start with a category.  The category is an arbitrary
+string of non-whitespace characters. The application evaluating your holidays
+might support different categories of holidays, e.g. birthdays, anyversaries,
+etc.  As a default we propose to use category "holiday".
+
+The category is followed by a *tag* identifying the flavor of the holiday
+definition, followed by arguments depending on the type. The last argument is
+always a string containing the name of the holiday. All other strings except
+the name of the holiday are case-insensitive.
 
 In all definitions including the number of a month, January is 1,
 December is 12. Day of month is an integer from 1 to 31.

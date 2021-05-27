@@ -86,7 +86,7 @@ public class HolidayParser
         Holiday createHoliday(Matcher matcher)
         {
             return new FixedDateHoliday(
-                    "holiday",
+                    matcher.group(CATEGORY_GROUP),
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(MONTH_GROUP)),
                     Integer.parseInt(matcher.group(DAY_GROUP)));
@@ -112,7 +112,7 @@ public class HolidayParser
             }
 
             return new FloatingHoliday(
-                    "holiday",
+                    matcher.group(CATEGORY_GROUP),
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)),
                     dayOfWeek,
@@ -131,7 +131,7 @@ public class HolidayParser
         Holiday createHoliday(Matcher matcher)
         {
             return new EasterBasedHoliday(
-                    "holiday",
+                    matcher.group(CATEGORY_GROUP),
                     matcher.group(NAME_GROUP),
                     Integer.parseInt(matcher.group(OFFSET_GROUP)));
         }

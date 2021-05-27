@@ -21,7 +21,9 @@ public class FloatingHoliday extends Holiday
      * 
      * <p>
      * Examples
-     * @param category TODO
+     * 
+     * @param category
+     *            TODO
      * @param name
      * @param offset
      *            If offset > 0, use the offset dayOfWeek after month day. If
@@ -68,6 +70,13 @@ public class FloatingHoliday extends Holiday
         }
 
         return LocalDate.of(year, month, day);
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s(%s %s: %d %s %02d-%02d)",
+                this.getClass().getSimpleName(), getCategory(), getName(), offset, dayOfWeek, month, day);
     }
 
     @Override
@@ -122,10 +131,4 @@ public class FloatingHoliday extends Holiday
         return true;
     }
 
-    @Override
-    public String toString()
-    {
-        return String.format("%s(%s: %d %s %02d-%02d)", this.getClass().getSimpleName(), getName(), offset, dayOfWeek,
-                month, day);
-    }
 }

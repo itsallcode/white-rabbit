@@ -22,6 +22,15 @@ public class HolidayParserTest
     }
 
     @Test
+    void category()
+    {
+        assertThat(holidayParser.parse("birthday fixed 7 31 My Birthday"))
+                .isEqualTo(new FixedDateHoliday("birthday", "My Birthday", 7, 31));
+        assertThat(holidayParser.parse("birthday fixed 7 31 My Birthday"))
+                .isNotEqualTo(new FixedDateHoliday("holiday", "My Birthday", 7, 31));
+    }
+
+    @Test
     void dayOfWeek()
     {
         // two letters

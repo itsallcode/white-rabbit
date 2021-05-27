@@ -19,6 +19,15 @@ public class EasterBasedHoliday extends Holiday
     }
 
     @Override
+    public String toString()
+    {
+        return String.format("%s(%s %s: %d day%s %s easter)",
+                this.getClass().getSimpleName(), getCategory(), getName(),
+                Math.abs(offsetInDays), (Math.abs(offsetInDays) == 1 ? "" : "s"),
+                (offsetInDays < 0 ? "before" : "after"));
+    }
+
+    @Override
     public int hashCode()
     {
         final int prime = 31;
@@ -52,13 +61,5 @@ public class EasterBasedHoliday extends Holiday
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString()
-    {
-        return String.format("%s(%s: %d day%s %s easter)", this.getClass().getSimpleName(), getName(),
-                Math.abs(offsetInDays), (Math.abs(offsetInDays) == 1 ? "" : "s"),
-                (offsetInDays < 0 ? "before" : "after"));
     }
 }

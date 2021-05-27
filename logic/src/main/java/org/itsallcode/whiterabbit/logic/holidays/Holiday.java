@@ -40,6 +40,7 @@ public abstract class Holiday
     {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
@@ -60,6 +61,17 @@ public abstract class Holiday
             return false;
         }
         final Holiday other = (Holiday) obj;
+        if (category == null)
+        {
+            if (other.category != null)
+            {
+                return false;
+            }
+        }
+        else if (!category.equals(other.category))
+        {
+            return false;
+        }
         if (name == null)
         {
             if (other.name != null)
