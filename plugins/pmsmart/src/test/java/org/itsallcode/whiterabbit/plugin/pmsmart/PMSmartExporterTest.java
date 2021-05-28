@@ -83,6 +83,17 @@ class PMSmartExporterTest
     }
 
     @Test
+    void exportActivityWithCommentsSetToTrue()
+    {
+        when(configMock.getMandatoryValue("transfer.comments")).thenReturn("true");
+
+        final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
+        runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
+        verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
+        verify(projectRowMock).enterComment(date, "project1");
+    }
+
+    @Test
     void exportOnlyWorkingDays()
     {
         final LocalDate workingDate = LocalDate.of(2021, Month.MAY, 3);
