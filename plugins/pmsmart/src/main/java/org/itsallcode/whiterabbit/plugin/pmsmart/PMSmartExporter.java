@@ -66,7 +66,7 @@ public class PMSmartExporter implements ProjectReportExporter
 
         public ExportHelper withTransferComments(String arg)
         {
-            this.transferComments = (arg == null || arg.toLowerCase().equals("true"));
+            this.transferComments = (arg == null || arg.equalsIgnoreCase("true"));
             return this;
         }
 
