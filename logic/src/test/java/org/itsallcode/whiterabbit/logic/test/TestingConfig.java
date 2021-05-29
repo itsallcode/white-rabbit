@@ -101,4 +101,10 @@ public class TestingConfig implements Config
         }
     }
 
+    @Override
+    public boolean getOptionalValue(String key, boolean defaultValue)
+    {
+        return defaultValue;
+    }
+
 }

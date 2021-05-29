@@ -93,6 +93,13 @@ class ConfigFile implements Config
     }
 
     @Override
+    public boolean getOptionalValue(String param, boolean defaultValue)
+    {
+        final String value = this.properties.getProperty(param);
+        return (value == null ? defaultValue : Boolean.parseBoolean(value));
+    }
+
+    @Override
     public Path getUserDir()
     {
         return dirProvider.getUserDir().resolve(".whiterabbit");

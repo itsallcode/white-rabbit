@@ -93,10 +93,21 @@ class PluginWrapper implements AppPlugin
 
     private class PluginConfigImpl implements PluginConfiguration
     {
+        private String prefixed(String key)
+        {
+            return plugin.getId() + "." + key;
+        }
+
         @Override
         public String getMandatoryValue(String key)
         {
-            return config.getMandatoryValue(plugin.getId() + "." + key);
+            return config.getMandatoryValue(prefixed(key));
+        }
+
+        @Override
+        public boolean getOptionalValue(String key, boolean defaultValue)
+        {
+            return config.getOptionalValue(prefixed(key), defaultValue);
         }
     }
 }

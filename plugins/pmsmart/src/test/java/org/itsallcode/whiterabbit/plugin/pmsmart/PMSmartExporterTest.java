@@ -1,6 +1,8 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import static java.util.Arrays.asList;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,6 +67,7 @@ class PMSmartExporterTest
     @Test
     void exportActivity()
     {
+        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(true);
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterComment(date, "project1");
@@ -74,7 +77,7 @@ class PMSmartExporterTest
     @Test
     void exportActivityWithoutComments()
     {
-        when(configMock.getMandatoryValue("transfer.comments")).thenReturn("false");
+        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(false);
 
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
@@ -85,7 +88,7 @@ class PMSmartExporterTest
     @Test
     void exportActivityWithCommentsSetToTrue()
     {
-        when(configMock.getMandatoryValue("transfer.comments")).thenReturn("true");
+        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(true);
 
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));

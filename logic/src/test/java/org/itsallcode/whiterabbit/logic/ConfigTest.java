@@ -76,5 +76,11 @@ class ConfigTest
         {
             return Paths.get("userDir");
         }
+
+        @Override
+        public boolean getOptionalValue(String key, boolean defaultValue)
+        {
+            return defaultValue;
+        }
     }
 }
