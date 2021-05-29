@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
@@ -103,5 +104,20 @@ class ConfigFileTest
     {
         when(propertiesMock.getProperty("locale")).thenReturn("zh");
         assertThat(configFile.getLocale()).isEqualTo(Locale.forLanguageTag("zh"));
+    }
+
+    @Test
+    void mandatoryValue()
+    {
+        assertThrows(IllegalStateException.class, () -> {
+            configFile.getMandatoryValue("missing.mandatory.property");
+        });
+    }
+
+    @Test
+    void optionalValue()
+    {
+        assertThat(configFile.getOptionalValue("missing.optional.property", true)).isTrue();
+        assertThat(configFile.getOptionalValue("missing.optional.property", false)).isFalse();
     }
 }

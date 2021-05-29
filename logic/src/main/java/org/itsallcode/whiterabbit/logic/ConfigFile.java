@@ -95,8 +95,8 @@ class ConfigFile implements Config
     @Override
     public boolean getOptionalValue(String param, boolean defaultValue)
     {
-        final String value = this.properties.getProperty(param);
-        return (value == null ? defaultValue : Boolean.parseBoolean(value));
+        final Optional<String> optional = getOptionalValue(param);
+        return optional.isPresent() ? Boolean.parseBoolean(optional.get()) : defaultValue;
     }
 
     @Override
