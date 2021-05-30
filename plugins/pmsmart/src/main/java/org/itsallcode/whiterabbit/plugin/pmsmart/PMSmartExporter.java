@@ -45,7 +45,8 @@ public class PMSmartExporter implements ProjectReportExporter
         {
             final var weekViewPage = driver.getWeekViewPage();
             new ExportHelper(progressMonitor, weekViewPage)
-                    .withTransferComments(config.getOptionalValue("transfer.comments", true))
+                    .withTransferComments(
+                            Boolean.parseBoolean(config.getOptionalValue("transfer.comments").orElse("true")))
                     .export(daysToExport);
         }
     }

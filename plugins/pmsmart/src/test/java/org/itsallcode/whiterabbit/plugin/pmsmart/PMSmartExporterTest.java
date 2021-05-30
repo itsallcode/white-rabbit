@@ -1,8 +1,6 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import static java.util.Arrays.asList;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +10,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.Map;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
@@ -67,7 +66,6 @@ class PMSmartExporterTest
     @Test
     void exportActivity()
     {
-        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(true);
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterComment(date, "project1");
@@ -77,7 +75,7 @@ class PMSmartExporterTest
     @Test
     void exportActivityWithoutComments()
     {
-        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(false);
+        when(configMock.getOptionalValue("transfer.comments")).thenReturn(Optional.of("false"));
 
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
@@ -88,8 +86,6 @@ class PMSmartExporterTest
     @Test
     void exportActivityWithCommentsSetToTrue()
     {
-        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(true);
-
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));

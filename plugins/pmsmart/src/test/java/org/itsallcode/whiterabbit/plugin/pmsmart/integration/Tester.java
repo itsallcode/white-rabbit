@@ -99,6 +99,12 @@ public class Tester
         {
             return PMSMART_URL;
         }
+
+        @Override
+        public Optional<String> getOptionalValue(String propertyName)
+        {
+            return Optional.empty();
+        }
     }
 
     private static final class NullProgressMonitor implements ProgressMonitor

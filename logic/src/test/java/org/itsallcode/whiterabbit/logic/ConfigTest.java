@@ -78,9 +78,9 @@ class ConfigTest
         }
 
         @Override
-        public boolean getOptionalValue(String key, boolean defaultValue)
+        public Optional<String> getOptionalValue(String key)
         {
-            return defaultValue;
+            return Optional.empty();
         }
     }
 }
