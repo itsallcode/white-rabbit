@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -105,9 +106,9 @@ class PluginWrapper implements AppPlugin
         }
 
         @Override
-        public boolean getOptionalValue(String key, boolean defaultValue)
+        public Optional<String> getOptionalValue(String key)
         {
-            return config.getOptionalValue(prefixed(key), defaultValue);
+            return config.getOptionalValue(prefixed(key));
         }
     }
 }

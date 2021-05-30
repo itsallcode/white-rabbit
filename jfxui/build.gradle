@@ -57,6 +57,7 @@ project(':plugins').afterEvaluate {
         classpath = shadowJar.outputs.files + pluginJars
         main = project.mainClass
         workingDir = rootProject.projectDir
+		systemProperties = ['user.home': System.getenv()['HOME']]
     }
 }
 

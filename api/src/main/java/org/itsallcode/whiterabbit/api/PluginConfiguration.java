@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.api;
 
+import java.util.Optional;
+
 /**
  * The configuration of a {@link Plugin} that allows retrieving configuration
  * values from the WhiteRabbit properties file
@@ -29,8 +31,5 @@ public interface PluginConfiguration
      *            alternative return value in case the property is not available
      * @return the value of the property.
      */
-    default boolean getOptionalValue(String propertyName, boolean defaultValue)
-    {
-        return defaultValue;
-    }
+    Optional<String> getOptionalValue(String propertyName);
 }

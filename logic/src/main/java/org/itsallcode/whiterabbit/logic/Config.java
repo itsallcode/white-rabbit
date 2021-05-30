@@ -43,5 +43,5 @@ public interface Config
 
     String getMandatoryValue(String key);
 
-    boolean getOptionalValue(String key, boolean defaultValue);
+    Optional<String> getOptionalValue(String key);
 }
