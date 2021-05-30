@@ -50,6 +50,8 @@ class PMSmartExporterTest
     private ProjectTable projectTableMock;
     @Mock
     private ProjectRow projectRowMock;
+    @Mock
+    private ProjectRow otherProjectRowMock;
 
     PMSmartExporter exporter;
 
@@ -61,23 +63,25 @@ class PMSmartExporterTest
         when(webDriverFactoryMock.createWebDriver(BASE_URL)).thenReturn(driverMock);
         when(driverMock.getWeekViewPage()).thenReturn(weekViewPageMock);
         when(weekViewPageMock.getProjectTable()).thenReturn(projectTableMock);
-        when(projectTableMock.getProjects()).thenReturn(Map.of(COST_CARRIER, projectRowMock));
+        when(projectTableMock.getProjects())
+                .thenReturn(Map.of(COST_CARRIER, projectRowMock, "other cost carrier", otherProjectRowMock));
     }
 
     @Test
     void exportActivity()
     {
-        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(true);
+        when(configMock.getOptionalValue(eq(PMSmartExporter.TRANSFER_COMMENTS), anyBoolean())).thenReturn(true);
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterComment(date, "project1");
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
+        verify(otherProjectRowMock, never()).enterDuration(date, Duration.ZERO);
     }
 
     @Test
-    void exportActivityWithoutComments()
+    void withoutComments()
     {
-        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(false);
+        when(configMock.getOptionalValue(eq(PMSmartExporter.TRANSFER_COMMENTS), anyBoolean())).thenReturn(false);
 
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
@@ -86,13 +90,14 @@ class PMSmartExporterTest
     }
 
     @Test
-    void exportActivityWithCommentsSetToTrue()
+    void clearOtherProjects()
     {
-        when(configMock.getOptionalValue(eq("transfer.comments"), anyBoolean())).thenReturn(true);
-
+        when(configMock.getOptionalValue(eq(PMSmartExporter.TRANSFER_COMMENTS), anyBoolean())).thenReturn(true);
+        when(configMock.getOptionalValue(eq(PMSmartExporter.CLEAR_OTHER_PROJECTS), anyBoolean())).thenReturn(true);
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
+        verify(otherProjectRowMock).enterDuration(date, Duration.ZERO);
         verify(projectRowMock).enterComment(date, "project1");
     }
 
