@@ -23,12 +23,10 @@ public interface PluginConfiguration
 
     /**
      * Get property {@code pluginId.propertyName} from the config file. If the
-     * property is not available then return defaultValue.
+     * property is not available then return am empty Optional.
      * 
      * @param propertyName
      *            the property name to get.
-     * @param defaultValue
-     *            alternative return value in case the property is not available
      * @return the value of the property.
      */
     Optional<String> getOptionalValue(String propertyName);
