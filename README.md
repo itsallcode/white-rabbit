@@ -4,10 +4,12 @@ A time recording tool
 [![Build](https://github.com/itsallcode/white-rabbit/workflows/Build/badge.svg)](https://github.com/itsallcode/white-rabbit/actions?query=workflow%3ABuild)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
+[![Maven Central](https://img.shields.io/maven-central/v/org.itsallcode.whiterabbit/whiterabbit-plugin-api.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.itsallcode.whiterabbit%22%20a%3A%22whiterabbit-plugin-api%22)
 
 * [Features](README.md#features)
 * [Usage](README.md#usage)
 * [Changelog](CHANGELOG.md)
+* [Development](README.md#development)
 
 ![Screenshot of WhiteRabbit](screenshot.png)
 
@@ -158,7 +160,7 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
     1. Select menu Reports > Project report
     1. Click the "Export to pmsmart" button
 
-### Development
+### <a name="development"></a>Development
 
 #### Clone and configure
 
@@ -219,19 +221,14 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
 2. Run the following command:
 
     ```bash
-    ./gradlew clean build publish webstart:publishWebstart --info -PreleaseVersion=<version>
+    ./gradlew clean build publish closeAndReleaseRepository webstart:publishWebstart --info -PreleaseVersion=<version>
     ```
 
     The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net). Snapshots will be available at [https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
 
-4. Release the artifacts at Maven Central:
-    1. Login at [oss.sonatype.org](https://oss.sonatype.org).
-    2. Go to the [staging repositories](https://oss.sonatype.org/#stagingRepositories).
-    3. Select repository named `orgitsallcode-*` and click the "Close" button.
-    4. When closing was successfull, click the "Release" button.
-    5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
 3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
 4. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
+5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
 
 #### Managing WebStart configuration in a private branch
 

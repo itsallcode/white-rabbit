@@ -4,14 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.0] - unreleased
+## [1.7.0] - unreleased
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/9?closed=1)
+
+## [1.6.0] - 2021-05-30
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
-
-* [#149](https://github.com/itsallcode/white-rabbit/pull/149): Enlarged width/height of scrollbars to make them easier to click on.
-* [#152](https://github.com/itsallcode/white-rabbit/issues/152): Display short day of week without dot or comma.
-* [#111](https://github.com/itsallcode/white-rabbit/pull/111): Display week ends in other color.
-* [#151](https://github.com/itsallcode/white-rabbit/pull/151): Fixed failure in PM Smart export if current month view showed a day number and the same number being used as the number of a calendar week.
 
 ### Added
 
@@ -26,9 +25,16 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / 
 
 ### Fixed
 
+* [#151](https://github.com/itsallcode/white-rabbit/pull/151): Fixed failure in PM Smart export if current month view showed a day number and the same number being used as the number of a calendar week.
 * [#127](https://github.com/itsallcode/white-rabbit/issues/127): Autocomplete must show most frequently text on top.
 * [#133](https://github.com/itsallcode/white-rabbit/pull/133): Fix pmsmart export: skip non-working days.
 * Opening the logs, data or plugin directory now creates the directory if it does not yet exist.
+
+### Changed
+
+* [#149](https://github.com/itsallcode/white-rabbit/pull/149): Enlarged width/height of scrollbars to make them easier to click on.
+* [#152](https://github.com/itsallcode/white-rabbit/issues/152): Display short day of week without dot or comma.
+* [#111](https://github.com/itsallcode/white-rabbit/pull/111): Display week ends in other color.
 
 ## [1.5.0] - 2021-02-20
 
