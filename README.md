@@ -5,8 +5,8 @@ A time recording tool
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
 
-* [Features](#features)
-* [Usage](#usage)
+* [Features](README.md#features)
+* [Usage](README.md#usage)
 * [Changelog](CHANGELOG.md)
 
 ![Screenshot of WhiteRabbit](screenshot.png)
@@ -34,7 +34,7 @@ A time recording tool
   * Interruptions detected when computer sleeps for more than 2 minutes
 * Generates reports for your vacation and monthly working time
 * Detects when a second instance is started to avoid data corruption
-* Export project working times to pm-smart. See [below](#pmsmart) for details.
+* Export project working times to pm-smart. See [below](README.md#pmsmart) for details.
 
 ### Java FX user interface
 
@@ -118,7 +118,7 @@ To use activity tracking, create file `projects.json` in your data directory wit
 #### <a name="plugins"></a>Using Plugins
 
 1. Download one of the available plugins:
-    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart. See [details](#pmsmart).
+    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart. See [details](README.md#pmsmart).
     * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Test plugin without real functionality.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
@@ -133,7 +133,7 @@ done
 
 #### Logging
 
-WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).
+WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](README.md#configuration).
 
 #### <a name="pmsmart"></a>Using pm-smart
 
@@ -143,8 +143,8 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
 ##### Setup and usage
 
-1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
-1. Make sure to install the latest version of the pmsmart plugin, see [above](#plugins) for details.
+1. Create a project configuration as described [above](README.md#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
+1. Make sure to install the latest version of the pmsmart plugin, see [above](README.md#plugins) for details.
 1. Add the base URL of your pm-smart server to the configuration file:
 
     ```properties
@@ -213,7 +213,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     signing.secretKeyRingFile=<path to secret keyring file>
     ```
 
-#### Build and deploy
+#### <a name="build_and_deploy"></a>Build and deploy
 
 1. Make sure the [Changelog](CHANGELOG.md) is updated
 2. Run the following command:
