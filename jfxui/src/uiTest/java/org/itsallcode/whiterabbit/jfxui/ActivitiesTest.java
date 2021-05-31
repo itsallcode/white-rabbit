@@ -121,6 +121,24 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    void typingDeleteKeyRemovesSelectedActivity()
+    {
+        time().tickMinute();
+        selectCurrentDay();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.table().clickRow(0);
+
+        robot.type(KeyCode.DELETE);
+
+        activities.table().assertRowCount(0);
+    }
+
+    @Test
     void addRemainderActivityWithValues()
     {
         time().tickMinute();

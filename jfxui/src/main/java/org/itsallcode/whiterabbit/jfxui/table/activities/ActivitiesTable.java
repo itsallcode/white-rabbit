@@ -14,10 +14,9 @@ import org.itsallcode.whiterabbit.jfxui.table.converter.ProjectStringConverter;
 import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.AutoCompleteTextField;
 import org.itsallcode.whiterabbit.jfxui.ui.widget.PersistOnFocusLossTextFieldTableCell;
-import org.itsallcode.whiterabbit.logic.autocomplete.AutocompleteService;
 import org.itsallcode.whiterabbit.logic.model.Activity;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.service.FormatterService;
+import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
@@ -32,6 +31,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
+import javafx.scene.input.KeyCode;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -43,19 +43,14 @@ public class ActivitiesTable
     private final SimpleObjectProperty<Activity> selectedActivity;
 
     private final EditListener<DayRecord> editListener;
-    private final FormatterService formatterService;
-    private final ProjectService projectService;
-    private final AutocompleteService autocompleteService;
+    private final AppService appService;
 
     public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, SimpleObjectProperty<Activity> selectedActivity,
-            EditListener<DayRecord> editListener, FormatterService formatterService, ProjectService projectService,
-            AutocompleteService autocompleteService)
+            EditListener<DayRecord> editListener, AppService appService)
     {
         this.selectedActivity = selectedActivity;
         this.editListener = editListener;
-        this.formatterService = formatterService;
-        this.projectService = projectService;
-        this.autocompleteService = autocompleteService;
+        this.appService = appService;
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
@@ -113,6 +108,17 @@ public class ActivitiesTable
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> selectedActivity
                         .set(newValue != null ? newValue.getRecord() : null));
+        table.setOnKeyPressed(keyEvent -> {
+            if (!keyEvent.getCode().equals(KeyCode.DELETE))
+            {
+                return;
+            }
+            if (selectedActivity.get() == null)
+            {
+                return;
+            }
+            appService.activities().removeActivity(selectedActivity.get());
+        });
         return table;
     }
 
@@ -125,19 +131,20 @@ public class ActivitiesTable
                     Bindings.bindBidirectional(activity.remainder, prop);
                     return prop;
                 });
-
+        final ProjectService projectService = appService.projects();
         final TableColumn<ActivityPropertyAdapter, ProjectImpl> projectCol = UiWidget.column("project", "Project",
                 param -> new ChoiceBoxTableCell<>(new ProjectStringConverter(projectService),
                         projectService.getAvailableProjects().toArray(new ProjectImpl[0])),
                 data -> data.getValue().projectId);
         final TableColumn<ActivityPropertyAdapter, Duration> durationCol = UiWidget.column("duration", "Duration",
-                param -> new PersistOnFocusLossTextFieldTableCell<>(new DurationStringConverter(formatterService)),
+                param -> new PersistOnFocusLossTextFieldTableCell<>(
+                        new DurationStringConverter(appService.formatter())),
                 data -> data.getValue().duration);
         final TableColumn<ActivityPropertyAdapter, Boolean> remainderCol = UiWidget.column("remainder", "Remainder",
                 cellFactory, data -> data.getValue().remainder);
         final TableColumn<ActivityPropertyAdapter, String> commentCol = UiWidget.column("comment", "Comment",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter(),
-                        () -> new AutoCompleteTextField(autocompleteService.activityCommentAutocompleter())),
+                        () -> new AutoCompleteTextField(appService.autocomplete().activityCommentAutocompleter())),
                 data -> data.getValue().comment);
 
         return asList(projectCol, durationCol, remainderCol, commentCol);
