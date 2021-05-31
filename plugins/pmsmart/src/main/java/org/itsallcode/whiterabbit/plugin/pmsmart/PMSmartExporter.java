@@ -53,9 +53,9 @@ public class PMSmartExporter implements ProjectReportExporter
             final var weekViewPage = driver.getWeekViewPage();
             new ExportHelper(progressMonitor, weekViewPage)
                     .withTransferComments(
-                            Boolean.parseBoolean(config.getOptionalValue(TRANSFER_COMMENTS).orElse("true")))
+                            config.getOptionalValue(TRANSFER_COMMENTS).map(Boolean::parseBoolean).orElse(true))
                     .withClearOtherProjects(
-                            Boolean.parseBoolean(config.getOptionalValue(CLEAR_OTHER_PROJECTS).orElse("false")))
+                            config.getOptionalValue(CLEAR_OTHER_PROJECTS).map(Boolean::parseBoolean).orElse(false))
                     .export(daysToExport);
         }
     }

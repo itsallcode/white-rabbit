@@ -108,7 +108,7 @@ class ConfigFileTest
     }
 
     @Test
-    void mandatoryValue()
+    void mandatoryValueFailsForMissingValue()
     {
         assertThrows(IllegalStateException.class, () -> {
             configFile.getMandatoryValue("missing.mandatory.property");
@@ -116,8 +116,8 @@ class ConfigFileTest
     }
 
     @Test
-    void optionalValue()
+    void optionalValueReturnsEmptyOptionalForMissingValue()
     {
-        assertThat(configFile.getOptionalValue("missing.optional.property")).isEqualTo(Optional.empty());
+        assertThat(configFile.getOptionalValue("missing.optional.property")).isEmpty();
     }
 }

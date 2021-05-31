@@ -23,7 +23,7 @@ public interface PluginConfiguration
 
     /**
      * Get property {@code pluginId.propertyName} from the config file. If the
-     * property is not available then return am empty Optional.
+     * property is not available then return empty Optional.
      * 
      * @param propertyName
      *            the property name to get.
