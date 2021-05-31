@@ -170,6 +170,14 @@ For each activity in WhiteRabbit you can enter a comment. By default pmsmart plu
     pmsmart.transfer.comments = false
     ```
 
+Optionally you can configure pmsmart plugin to clear durations for all other projects, not mentioned as activity in WhiteRabbit.
+
+For each day pmsmart plugin by default transfers the durations of all activities entered into WhiteRabbit. If pm-smart contains durations for other projects then these are not overwritten. This will especially happen if user transfers his or her time-recording for a particular month multiple times and changes the selection of activities in between. In order to ensure consistent data in pm-smart you can add an optional property to WhiteRabbit configuration file.
+
+    ```properties
+    pmsmart.clear_other_projects = true
+    ```
+
 ### <a name="development"></a>Development
 
 #### Clone and configure
