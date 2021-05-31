@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/9?closed=1)
 
+### Added
+
+* [#131](https://github.com/itsallcode/white-rabbit/issues/131) / [PR #165](https://github.com/itsallcode/white-rabbit/pull/165): Allow deleting activities by typing the Delete key.
+
 ## [1.6.0] - 2021-05-30
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
