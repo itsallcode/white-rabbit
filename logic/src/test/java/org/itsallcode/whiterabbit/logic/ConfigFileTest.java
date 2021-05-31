@@ -118,6 +118,6 @@ class ConfigFileTest
     @Test
     void optionalValueReturnsEmptyOptionalForMissingValue()
     {
-        assertThat(configFile.getOptionalValue("missing.optional.property")).isEqualTo(Optional.empty());
+        assertThat(configFile.getOptionalValue("missing.optional.property")).isEmpty();
     }
 }
