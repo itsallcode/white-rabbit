@@ -160,6 +160,16 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
     1. Select menu Reports > Project report
     1. Click the "Export to pmsmart" button
 
+#### Optional configuration settings
+
+Optionally you can configure pmsmart plugin to skip transfer of a comment for each activity. 
+
+For each activity in WhiteRabbit you can enter a comment. By default pmsmart plugin transfers these comment to pm-smart. As the web ui is quite slow, transfer of comments can take a while. If you want to speed-up pm-smart export by skipping transfer of comments you can add an optional property to WhiteRabbit configuration file.
+
+    ```properties
+    pmsmart.transfer.comments = false
+    ```
+
 ### <a name="development"></a>Development
 
 #### Clone and configure
