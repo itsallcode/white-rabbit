@@ -13,6 +13,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 * [#111](https://github.com/itsallcode/white-rabbit/issues/111): Display week ends in other color.
 * [#151](https://github.com/itsallcode/white-rabbit/issues/151): Fixed failure in PM Smart export if current month view showed a day number and the same number being used as the number of a calendar week.
 * [#158](https://github.com/itsallcode/white-rabbit/issues/158): PMSmart plugin: Support optional configuration  `pmsmart.transfer.comments` to skip transfer of comments.
+
 ## [1.6.0] - 2021-05-30
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
