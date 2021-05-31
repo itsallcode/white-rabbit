@@ -108,6 +108,7 @@ class DayTableTest extends JavaFxAppUiTestBase
         dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
 
         dayTable.selectDayType(currentDayRowIndex, DayType.SICK);
+        TestUtil.sleepShort();
 
         dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
     }
