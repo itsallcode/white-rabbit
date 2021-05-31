@@ -111,7 +111,7 @@ public class ActivitiesTable
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("activities-table");
-        table.setPlaceholder(new Label("No activities for selected day"));
+        table.setPlaceholder(new Label("No activities for selected day. Click the + button to add an activity."));
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> selectedActivity
                         .set(newValue != null ? newValue.getRecord() : null));
