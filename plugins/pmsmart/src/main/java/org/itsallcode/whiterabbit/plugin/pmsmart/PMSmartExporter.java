@@ -123,7 +123,7 @@ public class PMSmartExporter implements ProjectReportExporter
         private void clearOtherProjects(final ProjectReportDay day)
         {
             final Iterator<Entry<String, ProjectRow>> it = projects.entrySet().iterator();
-            final Set<String> set = day.getProjects().stream()
+            final Set<String> allCostCarriers = day.getProjects().stream()
                     .map(project -> project.getProject().getCostCarrier())
                     .collect(toSet());
             while (it.hasNext() && !progressMonitor.isCanceled())
