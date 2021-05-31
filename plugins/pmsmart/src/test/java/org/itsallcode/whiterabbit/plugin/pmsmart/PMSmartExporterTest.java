@@ -80,7 +80,7 @@ class PMSmartExporterTest
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
-        verify(projectRowMock, never()).enterComment(null, "never");
+        verify(projectRowMock, never()).enterComment(any(), any());
     }
 
     @Test
