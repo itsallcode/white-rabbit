@@ -129,7 +129,7 @@ public class PMSmartExporter implements ProjectReportExporter
             while (it.hasNext() && !progressMonitor.isCanceled())
             {
                 final Entry<String, ProjectRow> entry = it.next();
-                if (!set.contains(entry.getKey()))
+                if (!allCostCarriers.contains(entry.getKey()))
                 {
                     entry.getValue().enterDuration(day.getDate(), Duration.ZERO);
                 }
