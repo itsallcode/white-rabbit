@@ -42,4 +42,6 @@ public interface Config
     }
 
     String getMandatoryValue(String key);
+
+    Optional<String> getOptionalValue(String key);
 }

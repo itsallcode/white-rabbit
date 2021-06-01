@@ -86,6 +86,12 @@ class ConfigFile implements Config
     }
 
     @Override
+    public Path getUserDir()
+    {
+        return dirProvider.getUserDir().resolve(".whiterabbit");
+    }
+
+    @Override
     public String getMandatoryValue(String param)
     {
         return getOptionalValue(param).orElseThrow(
@@ -93,12 +99,7 @@ class ConfigFile implements Config
     }
 
     @Override
-    public Path getUserDir()
-    {
-        return dirProvider.getUserDir().resolve(".whiterabbit");
-    }
-
-    private Optional<String> getOptionalValue(String param)
+    public Optional<String> getOptionalValue(String param)
     {
         return Optional.ofNullable(this.properties.getProperty(param));
     }

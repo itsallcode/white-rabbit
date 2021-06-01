@@ -44,7 +44,10 @@ public class PMSmartExporter implements ProjectReportExporter
         try (final var driver = webDriverFactory.createWebDriver(baseUrl))
         {
             final var weekViewPage = driver.getWeekViewPage();
-            new ExportHelper(progressMonitor, weekViewPage).export(daysToExport);
+            new ExportHelper(progressMonitor, weekViewPage)
+                    .withTransferComments(
+                            config.getOptionalValue("transfer.comments").map(Boolean::parseBoolean).orElse(true))
+                    .export(daysToExport);
         }
     }
 
@@ -53,12 +56,19 @@ public class PMSmartExporter implements ProjectReportExporter
         private final ProgressMonitor progressMonitor;
         private final WeekViewPage weekViewPage;
         private final Map<String, ProjectRow> projects;
+        private boolean transferComments = true;
 
         private ExportHelper(ProgressMonitor progressMonitor, WeekViewPage weekViewPage)
         {
             this.progressMonitor = progressMonitor;
             this.weekViewPage = weekViewPage;
             this.projects = weekViewPage.getProjectTable().getProjects();
+        }
+
+        public ExportHelper withTransferComments(boolean transferComments)
+        {
+            this.transferComments = transferComments;
+            return this;
         }
 
         public void export(List<ProjectReportDay> daysToExport)
@@ -109,7 +119,10 @@ public class PMSmartExporter implements ProjectReportExporter
                 throw new IllegalStateException("Project '" + costCarrier + "' not found as favorite");
             }
             projectRow.enterDuration(day.getDate(), project.getWorkingTime());
-            projectRow.enterComment(day.getDate(), project.getComment());
+            if (transferComments)
+            {
+                projectRow.enterComment(day.getDate(), project.getComment());
+            }
         }
     }
 }

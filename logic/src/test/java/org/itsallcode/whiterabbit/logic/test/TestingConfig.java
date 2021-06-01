@@ -101,4 +101,10 @@ public class TestingConfig implements Config
         }
     }
 
+    @Override
+    public Optional<String> getOptionalValue(String key)
+    {
+        return Optional.empty();
+    }
+
 }
