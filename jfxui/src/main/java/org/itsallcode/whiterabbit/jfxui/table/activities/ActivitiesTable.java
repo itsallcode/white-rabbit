@@ -27,6 +27,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -110,6 +111,7 @@ public class ActivitiesTable
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("activities-table");
+        table.setPlaceholder(new Label("No activities for selected day. Click the + button to add an activity."));
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> selectedActivity
                         .set(newValue != null ? newValue.getRecord() : null));
