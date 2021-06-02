@@ -11,6 +11,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 ### Added
 
 * [#131](https://github.com/itsallcode/white-rabbit/issues/131) / [PR #165](https://github.com/itsallcode/white-rabbit/pull/165): Allow deleting activities by typing the Delete key.
+* [#158](https://github.com/itsallcode/white-rabbit/issues/158): PMSmart plugin: Support optional configuration  `pmsmart.transfer.comments` to skip transfer of comments.
 * [#164](https://github.com/itsallcode/white-rabbit/pull/164): Improve label of empty activities table.
 
 ## [1.6.0] - 2021-05-30

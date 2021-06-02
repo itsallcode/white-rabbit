@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -93,10 +94,21 @@ class PluginWrapper implements AppPlugin
 
     private class PluginConfigImpl implements PluginConfiguration
     {
+        private String prefixed(String key)
+        {
+            return plugin.getId() + "." + key;
+        }
+
         @Override
         public String getMandatoryValue(String key)
         {
-            return config.getMandatoryValue(plugin.getId() + "." + key);
+            return config.getMandatoryValue(prefixed(key));
+        }
+
+        @Override
+        public Optional<String> getOptionalValue(String key)
+        {
+            return config.getOptionalValue(prefixed(key));
         }
     }
 }
