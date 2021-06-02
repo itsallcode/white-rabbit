@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.api;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 /**
@@ -30,4 +31,6 @@ public interface PluginConfiguration
      * @return the value of the property.
      */
     Optional<String> getOptionalValue(String propertyName);
+
+    Path getUserDir();
 }

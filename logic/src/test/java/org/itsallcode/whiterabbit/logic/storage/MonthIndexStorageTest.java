@@ -19,6 +19,7 @@ import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
+import org.itsallcode.whiterabbit.logic.service.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
@@ -42,13 +43,15 @@ class MonthIndexStorageTest
     MonthDataStorage fileStorageMock;
     @Mock
     MonthIndex monthIndexMock;
+    @Mock
+    HolidayService holidayService;
 
     private MonthIndexStorage storage;
 
     @BeforeEach
     void setUp()
     {
-        storage = new MonthIndexStorage(contractTermsMock, projectServiceMock, fileStorageMock);
+        storage = new MonthIndexStorage(contractTermsMock, projectServiceMock, fileStorageMock, holidayService);
         lenient().when(fileStorageMock.getModelFactory()).thenReturn(new JsonModelFactory());
     }
 

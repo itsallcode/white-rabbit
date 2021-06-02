@@ -16,6 +16,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.features.HolidayProvider;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -98,8 +99,12 @@ public class AppService implements Closeable
         final PluginManager pluginManager = PluginManager.create(config);
 
         final MonthDataStorage dataStorage = createMonthDataStorage(config, pluginManager);
+        // todo add holiday configuration file path from config
+        List<HolidayProvider> holidayProvider = pluginManager.getAllFeatures(HolidayProvider.class);
+        final HolidayService holidayService = new HolidayService(holidayProvider);
         final CachingStorage storage = CachingStorage.create(dataStorage, new ContractTermsService(config),
-                projectService);
+                projectService, holidayService);
+
         final ClockService clockService = new ClockService(clock);
         final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService);
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
