@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.holidays.calculator.logic.Holiday;
 import org.itsallcode.holidays.calculator.logic.HolidayService;
 import org.itsallcode.holidays.calculator.logic.parser.HolidaysFileParser;
-import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.DayData;
@@ -24,32 +23,31 @@ class CalculatedHolidays implements Holidays
     private static final Logger LOG = LogManager.getLogger(CalculatedHolidays.class);
     private static final String HOLIDAYS_CONFIGURATION_FILE = "holidays.cfg";
 
-    private final PluginConfiguration config;
     private final HolidayService service;
 
-    public CalculatedHolidays(PluginConfiguration config)
+    public CalculatedHolidays(Path dataDir)
     {
-        this.config = config;
-        service = new HolidayService(readHolidays());
+        service = new HolidayService(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
     }
 
-    CalculatedHolidays(PluginConfiguration config, String inputSourceIdentifier, InputStream stream)
+    CalculatedHolidays(Path dataDir, String inputSourceIdentifier, InputStream stream)
     {
-        this.config = config;
         service = new HolidayService(readHolidays(null, inputSourceIdentifier, stream));
     }
 
-    private List<Holiday> readHolidays()
+    private List<Holiday> readHolidays(Path configurationFile)
     {
-        final Path file = config.getDataDir().resolve(HOLIDAYS_CONFIGURATION_FILE);
-        if (!Files.exists(file))
+        if (!Files.exists(configurationFile))
         {
-            LOG.warn("Could not find holiday definitions file {}. Using empty list of holidays.",
-                    file);
+            final String message = "Could not find holiday definitions file " + configurationFile
+                    + ". Using empty list of holidays.";
+            LOG.warn(message);
+            // In this place CalculatedHolidays could notify a callback in order
+            // to display a warning in GUI.
             return new ArrayList<>();
         }
-        LOG.info("Reading holiday definitions from {}", file);
-        return readHolidays(file, null, null);
+        LOG.info("Reading holiday definitions from {}", configurationFile);
+        return readHolidays(configurationFile, null, null);
     }
 
     private List<Holiday> readHolidays(Path configurationFile, String inputSourceIdentifier, InputStream stream)

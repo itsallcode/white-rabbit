@@ -37,7 +37,7 @@ public class HolidayCalculatorPlugin implements Plugin
     {
         if (featureType.isAssignableFrom(CalculatedHolidays.class))
         {
-            return featureType.cast(new CalculatedHolidays(config));
+            return featureType.cast(new CalculatedHolidays(config.getDataDir()));
         }
         throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
     }
