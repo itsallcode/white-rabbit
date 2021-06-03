@@ -12,6 +12,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 
 * [#158](https://github.com/itsallcode/white-rabbit/issues/158): PMSmart plugin: Support optional configuration  `pmsmart.transfer.comments` to skip transfer of comments.
 * [#164](https://github.com/itsallcode/white-rabbit/pull/164): Improve label of empty activities table.
+* [#150](https://github.com/itsallcode/white-rabbit/issues/150): Added holiday-calculator plugin: calculate holidays, see [README.md](README.md#holidays_calculator) for details.
 
 ## [1.6.0] - 2021-05-30
 

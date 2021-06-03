@@ -120,18 +120,18 @@ To use activity tracking, create file `projects.json` in your data directory wit
 #### <a name="plugins"></a>Using Plugins
 
 1. Download one of the available plugins:
-    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart. See [details](README.md#pmsmart).
+    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](README.md#pmsmart).
+    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](README.md#holidays_calculator).
     * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Test plugin without real functionality.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
 ```bash
-for plugin in pmsmart demo
+for plugin in pmsmart demo holidays-calculator
 do
     fileName=$plugin-plugin-signed.jar
     curl https://whiterabbit.chp1.net/plugins/$fileName --output $HOME/.whiterabbit/plugins/$fileName
 done
 ```
-
 
 #### Logging
 
@@ -158,9 +158,9 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
     1. Select the month that you want to export
     1. Select menu Reports > Project report
-    1. Click the "Export to pmsmart" button
+    1. Click button "Export to pmsmart"
 
-#### Optional configuration settings
+##### Optional configuration settings
 
 Optionally you can configure pmsmart plugin to skip transfer of a comment for each activity. 
 
@@ -169,6 +169,18 @@ For each activity in WhiteRabbit you can enter a comment. By default pmsmart plu
     ```properties
     pmsmart.transfer.comments = false
     ```
+
+#### <a name="holidays_calculator"></a>Using holidays calculator
+
+Optionally you can configure holidays-calculator plugin to enable WhiteRabbit to display your personal selection of holidays.
+
+##### Setup and usage
+
+Create a file named `holidays.cfg` in your data directory defined in the [configuration](README.md#configuration) of WhiteRabbit.
+
+For the content of the file you can use one of the predefined holiday definition files available at <https://github.com/itsallcode/holiday-calculator>.
+
+Optionally you can edit the file and add or remove holidays to your own taste, see <https://github.com/itsallcode/holiday-calculator> for detailed description of the syntax.
 
 ### <a name="development"></a>Development
 
