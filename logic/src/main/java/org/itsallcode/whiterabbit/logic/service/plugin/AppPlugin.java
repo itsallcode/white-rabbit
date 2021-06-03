@@ -2,7 +2,7 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import java.util.Collection;
 
-import org.itsallcode.whiterabbit.api.features.HolidayProvider;
+import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
@@ -18,7 +18,7 @@ public interface AppPlugin
     public enum AppPluginFeature
     {
         DATA_STORAGE(MonthDataStorage.class), //
-        HOLIDAYS(HolidayProvider.class), //
+        HOLIDAYS(Holidays.class), //
         PROJECT_REPORT(ProjectReportExporter.class);
 
         private final Class<? extends PluginFeature> featureInterface;

@@ -110,7 +110,7 @@ public class Tester
         }
 
         @Override
-        public Path getUserDir()
+        public Path getDataDir()
         {
             return null;
         }

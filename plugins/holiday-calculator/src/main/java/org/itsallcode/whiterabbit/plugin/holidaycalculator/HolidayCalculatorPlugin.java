@@ -29,15 +29,15 @@ public class HolidayCalculatorPlugin implements Plugin
     @Override
     public boolean supports(Class<? extends PluginFeature> featureType)
     {
-        return featureType.isAssignableFrom(CalculatedHolidaysProvider.class);
+        return featureType.isAssignableFrom(CalculatedHolidays.class);
     }
 
     @Override
     public <T extends PluginFeature> T getFeature(Class<T> featureType)
     {
-        if (featureType.isAssignableFrom(CalculatedHolidaysProvider.class))
+        if (featureType.isAssignableFrom(CalculatedHolidays.class))
         {
-            return featureType.cast(new CalculatedHolidaysProvider(config));
+            return featureType.cast(new CalculatedHolidays(config));
         }
         throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
     }

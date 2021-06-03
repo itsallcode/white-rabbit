@@ -3,10 +3,8 @@ package org.itsallcode.whiterabbit.logic.storage;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
 import org.itsallcode.whiterabbit.api.model.DayData;
-import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
@@ -80,14 +77,7 @@ class MonthIndexStorage implements Storage
         final MonthData month = factory.createMonthData();
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
-
-        final ArrayList<DayData> list = new ArrayList<>();
-        final DayData holiday = factory.createDayData();
-        // need a service to inquire all holidays for given month and year
-        holiday.setDate(LocalDate.of(2021, 6, 2));
-        holiday.setType(DayType.HOLIDAY);
-        holiday.setComment("Fronleichnam");
-        list.add(holiday);
+        final List<DayData> list = holidayService.getHolidays(factory, date);
         month.setDays(list);
         month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
         return createMonthIndex(month);

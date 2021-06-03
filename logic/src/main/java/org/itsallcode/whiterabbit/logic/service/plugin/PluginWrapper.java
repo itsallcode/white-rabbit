@@ -113,9 +113,9 @@ class PluginWrapper implements AppPlugin
         }
 
         @Override
-        public Path getUserDir()
+        public Path getDataDir()
         {
-            return config.getUserDir();
+            return config.getDataDir();
         }
     }
 }

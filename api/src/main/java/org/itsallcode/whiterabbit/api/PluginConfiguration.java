@@ -32,5 +32,5 @@ public interface PluginConfiguration
      */
     Optional<String> getOptionalValue(String propertyName);
 
-    Path getUserDir();
+    Path getDataDir();
 }

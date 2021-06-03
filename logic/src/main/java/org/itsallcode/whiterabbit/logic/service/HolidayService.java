@@ -1,15 +1,17 @@
 package org.itsallcode.whiterabbit.logic.service;
 
+import java.time.YearMonth;
 import java.util.List;
 
-import org.itsallcode.whiterabbit.api.features.HolidayProvider;
+import org.itsallcode.whiterabbit.api.features.Holidays;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.model.DayData;
 
 public class HolidayService
 {
-    private final HolidayProvider holidayProvider;
+    private final Holidays holidayProvider;
 
-    // return all holidays of given year and month
-    public HolidayService(List<HolidayProvider> providers)
+    public HolidayService(List<Holidays> providers)
     {
         // how to select provider?
         if (providers.isEmpty())
@@ -20,6 +22,11 @@ public class HolidayService
         {
             this.holidayProvider = providers.get(0);
         }
+    }
+
+    public List<DayData> getHolidays(ModelFactory factory, YearMonth month)
+    {
+        return holidayProvider.getHolidays(factory, month);
     }
 
 }
