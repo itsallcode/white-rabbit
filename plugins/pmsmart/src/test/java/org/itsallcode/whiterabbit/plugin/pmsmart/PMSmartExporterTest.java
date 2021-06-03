@@ -50,6 +50,8 @@ class PMSmartExporterTest
     private ProjectTable projectTableMock;
     @Mock
     private ProjectRow projectRowMock;
+    @Mock
+    private ProjectRow otherProjectRowMock;
 
     PMSmartExporter exporter;
 
@@ -61,7 +63,8 @@ class PMSmartExporterTest
         when(webDriverFactoryMock.createWebDriver(BASE_URL)).thenReturn(driverMock);
         when(driverMock.getWeekViewPage()).thenReturn(weekViewPageMock);
         when(weekViewPageMock.getProjectTable()).thenReturn(projectTableMock);
-        when(projectTableMock.getProjects()).thenReturn(Map.of(COST_CARRIER, projectRowMock));
+        when(projectTableMock.getProjects())
+                .thenReturn(Map.of(COST_CARRIER, projectRowMock, "other cost carrier", otherProjectRowMock));
     }
 
     @Test
@@ -71,13 +74,13 @@ class PMSmartExporterTest
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterComment(date, "project1");
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
+        verify(otherProjectRowMock, never()).enterDuration(date, Duration.ZERO);
     }
 
     @Test
-    void exportActivityWithoutComments()
+    void withoutComments()
     {
-        when(configMock.getOptionalValue("transfer.comments")).thenReturn(Optional.of("false"));
-
+        when(configMock.getOptionalValue(PMSmartExporter.TRANSFER_COMMENTS)).thenReturn(Optional.of("false"));
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
@@ -85,11 +88,14 @@ class PMSmartExporterTest
     }
 
     @Test
-    void exportActivityWithCommentsSetToTrue()
+    void clearOtherProjects()
     {
+        when(configMock.getOptionalValue(PMSmartExporter.TRANSFER_COMMENTS)).thenReturn(Optional.of("true"));
+        when(configMock.getOptionalValue(PMSmartExporter.CLEAR_OTHER_PROJECTS)).thenReturn(Optional.of("true"));
         final LocalDate date = LocalDate.of(2021, Month.MAY, 3);
         runExport(day(date, DayType.WORK, activity(COST_CARRIER, Duration.ofHours(1), "project1")));
         verify(projectRowMock).enterDuration(date, Duration.ofHours(1));
+        verify(otherProjectRowMock).enterDuration(date, Duration.ZERO);
         verify(projectRowMock).enterComment(date, "project1");
     }
 

@@ -1,9 +1,14 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
+import java.time.Duration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +25,8 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 
 public class PMSmartExporter implements ProjectReportExporter
 {
+    public static final String TRANSFER_COMMENTS = "transfer.comments";
+    public static final String CLEAR_OTHER_PROJECTS = "clear_other_projects";
     private static final Logger LOG = LogManager.getLogger(PMSmartExporter.class);
 
     private final PluginConfiguration config;
@@ -46,7 +53,9 @@ public class PMSmartExporter implements ProjectReportExporter
             final var weekViewPage = driver.getWeekViewPage();
             new ExportHelper(progressMonitor, weekViewPage)
                     .withTransferComments(
-                            config.getOptionalValue("transfer.comments").map(Boolean::parseBoolean).orElse(true))
+                            config.getOptionalValue(TRANSFER_COMMENTS).map(Boolean::parseBoolean).orElse(true))
+                    .withClearOtherProjects(
+                            config.getOptionalValue(CLEAR_OTHER_PROJECTS).map(Boolean::parseBoolean).orElse(false))
                     .export(daysToExport);
         }
     }
@@ -57,6 +66,7 @@ public class PMSmartExporter implements ProjectReportExporter
         private final WeekViewPage weekViewPage;
         private final Map<String, ProjectRow> projects;
         private boolean transferComments = true;
+        private boolean clearOtherProjects = false;
 
         private ExportHelper(ProgressMonitor progressMonitor, WeekViewPage weekViewPage)
         {
@@ -68,6 +78,12 @@ public class PMSmartExporter implements ProjectReportExporter
         public ExportHelper withTransferComments(boolean transferComments)
         {
             this.transferComments = transferComments;
+            return this;
+        }
+
+        public ExportHelper withClearOtherProjects(boolean clearOtherProjects)
+        {
+            this.clearOtherProjects = clearOtherProjects;
             return this;
         }
 
@@ -88,6 +104,10 @@ public class PMSmartExporter implements ProjectReportExporter
                 progressMonitor.worked(1);
                 progressMonitor.setTaskName("Exporting day " + day.getDate() + "...");
                 selectDay(day);
+                if (clearOtherProjects)
+                {
+                    clearOtherProjects(day);
+                }
                 for (final ProjectReportActivity project : day.getProjects())
                 {
                     if (progressMonitor.isCanceled())
@@ -98,6 +118,22 @@ public class PMSmartExporter implements ProjectReportExporter
                 }
             }
             weekViewPage.saveWeek();
+        }
+
+        private void clearOtherProjects(final ProjectReportDay day)
+        {
+            final Iterator<Entry<String, ProjectRow>> it = projects.entrySet().iterator();
+            final Set<String> allCostCarriers = day.getProjects().stream()
+                    .map(project -> project.getProject().getCostCarrier())
+                    .collect(toSet());
+            while (it.hasNext() && !progressMonitor.isCanceled())
+            {
+                final Entry<String, ProjectRow> entry = it.next();
+                if (!allCostCarriers.contains(entry.getKey()))
+                {
+                    entry.getValue().enterDuration(day.getDate(), Duration.ZERO);
+                }
+            }
         }
 
         private void selectDay(final ProjectReportDay day)
