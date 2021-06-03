@@ -10,7 +10,7 @@ plugins {
 ext {
     junitVersion = '5.7.2'
     log4jVersion = '2.14.1'
-    mockitoVersion = '3.9.0'
+    mockitoVersion = '3.10.0'
     yassonVersion = '1.0.8'
     jsonBindApiVersion = '1.0'
 }
