@@ -4,7 +4,6 @@ import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CSVExporterPlugin implements Plugin
@@ -47,8 +46,8 @@ public class CSVExporterPlugin implements Plugin
             final String separator = config.getOptionalValue("separator").orElse(",");
             final boolean filterForWeekDays =
                     config.getOptionalValue("filter_for_weekdays")
-                            .orElse("false").toLowerCase().equals("true");
-            final OutStreamProvider outStreamProvider = new DirectoryStreamProvider(outPath);
+                            .orElse("false").equalsIgnoreCase("true");
+            final OutStreamProvider outStreamProvider = new DirectoryStreamProvider(Paths.get(outPath));
             return featureType.cast(new CSVProjectReportExporter(filterForWeekDays, separator, outStreamProvider));
         }
         throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
