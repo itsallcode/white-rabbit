@@ -48,14 +48,14 @@ class CSVExporterTest
     void exportCSVFilterForWorkdays()
     {
         runExport(true, createDays());
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
+        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
     }
 
     @Test
     void exportCSVNoFilter()
     {
         runExport(false, createDays());
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n2021-06-05,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
+        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n2021-06-05,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
     }
 
     @Test
@@ -67,7 +67,7 @@ class CSVExporterTest
                         activity(Duration.ofHours(1)),
                         activity(Duration.ofHours(3),"other_project", null),
                         activity(Duration.ofHours(3), null, null)));
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,07:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n,other_project,03:00,,\n,,03:00,,\n");
+        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,07:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n,other_project,03:00,,\n,,03:00,,\n");
     }
 
     @Test
@@ -75,7 +75,7 @@ class CSVExporterTest
     {
         final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
         runExport(false, Collections.singletonList(null));
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n");
+        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n");
     }
 
     @Test
@@ -83,7 +83,7 @@ class CSVExporterTest
     {
         final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
         runExport(false, day(dateOne, DayType.WORK));
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,00:00,day comment\n");
+        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,00:00,day comment\n");
     }
 
     private void runExport(boolean filterForWeekDays, ProjectReportDay day) {
