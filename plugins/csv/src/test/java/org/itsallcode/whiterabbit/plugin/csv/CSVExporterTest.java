@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.List;
 
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
@@ -47,14 +48,46 @@ class CSVExporterTest
     void exportCSVFilterForWorkdays()
     {
         runExport(true, createDays());
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,Time,Comment\n2021-06-04,,,day comment\n,Project9FromOuterSpace,01:00,abc\n");
+        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
     }
 
     @Test
     void exportCSVNoFilter()
     {
         runExport(false, createDays());
-        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,Time,Comment\n2021-06-04,,,day comment\n,Project9FromOuterSpace,01:00,abc\n2021-06-05,,,day comment\n,Project9FromOuterSpace,01:00,abc\n");
+        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n2021-06-05,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
+    }
+
+    @Test
+    void exportMultipleProjectsPerDay()
+    {
+        final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
+        runExport(false,
+                day(dateOne, DayType.WORK,
+                        activity(Duration.ofHours(1)),
+                        activity(Duration.ofHours(3),"other_project", null),
+                        activity(Duration.ofHours(3), null, null)));
+        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,07:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n,other_project,03:00,,\n,,03:00,,\n");
+    }
+
+    @Test
+    void exportNullDay()
+    {
+        final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
+        runExport(false, Collections.singletonList(null));
+        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n");
+    }
+
+    @Test
+    void exportEmptyDay()
+    {
+        final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
+        runExport(false, day(dateOne, DayType.WORK));
+        assertThat(tmpOutStream.toString()).isEqualTo("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,00:00,day comment\n");
+    }
+
+    private void runExport(boolean filterForWeekDays, ProjectReportDay day) {
+        runExport(filterForWeekDays, Collections.singletonList(day));
     }
 
     private void runExport(boolean filterForWeekDays, List<ProjectReportDay> days)
@@ -82,11 +115,21 @@ class CSVExporterTest
         return new ProjectReportImpl.DayImpl(date, type, "day comment", asList(projects));
     }
 
+    private ProjectReportDay day(LocalDate date, DayType type)
+    {
+        return new ProjectReportImpl.DayImpl(date, type, "day comment", null);
+    }
+
     private ProjectReportActivity activity(Duration workingTime)
     {
         String PROJECT_ID = "Project9FromOuterSpace";
         String COMMENT = "abc";
+        return activity(workingTime, PROJECT_ID, COMMENT);
+    }
+
+    private ProjectReportActivity activity(Duration workingTime, String projectId, String comment)
+    {
         return new ProjectReportImpl.ProjectActivityImpl(
-                new ProjectImpl(null, PROJECT_ID, null), workingTime, COMMENT);
+                new ProjectImpl(null, projectId, null), workingTime, comment);
     }
 }

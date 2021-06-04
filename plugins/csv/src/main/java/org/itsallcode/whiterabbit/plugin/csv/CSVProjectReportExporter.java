@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -16,8 +17,7 @@ import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 
-class CSVProjectReportExporter implements ProjectReportExporter
-{
+class CSVProjectReportExporter implements ProjectReportExporter {
     private final boolean filterForWeekDays;
     private final OutStreamProvider outStreamProvider;
     private final String separator;
@@ -29,32 +29,40 @@ class CSVProjectReportExporter implements ProjectReportExporter
     }
 
     @Override
-    public void export(ProjectReport report, ProgressMonitor progressMonitor)
-    {
+    public void export(ProjectReport report, ProgressMonitor progressMonitor) {
         progressMonitor.setTaskName("Exporting...");
-        if (progressMonitor.isCanceled())
-        {
+        if (progressMonitor.isCanceled()) {
             return;
         }
-        final List<ProjectReportDay> filteredDays = filterForWeekDays ?
-                report.getDays().stream().filter(day -> day.getType() == DayType.WORK).collect(Collectors.toList()) :
-                report.getDays();
+        final List<ProjectReportDay> filteredDays =
+                report.getDays().stream()
+                        .filter(Objects::nonNull)
+                        .filter(day -> !filterForWeekDays || day.getType() == DayType.WORK)
+                        .collect(Collectors.toList());
 
         try (final PrintStream os = new PrintStream(outStreamProvider.getStream(report.getMonth().toString()))) {
-            os.println(MessageFormat.format("Date{0}Project{0}Time{0}Comment", separator));
+            os.println(MessageFormat.format("Date{0}Project{0}TimePerProject{0}TimePerDay{0}Comment", separator));
 
-            for (final ProjectReportDay day : filteredDays)
-            {
+            for (final ProjectReportDay day : filteredDays) {
                 final String dayComment = formatEmptyString(day.getComment());
-                os.println(MessageFormat.format("{0}{1}{1}{1}{2}", day.getDate(), separator, dayComment));
+                final Duration dayDuration =
+                        day.getProjects() == null ? Duration.ZERO :
+                                day.getProjects().stream().reduce(Duration.ZERO,
+                                        (subtotal, element) -> element == null ?
+                                                subtotal : element.getWorkingTime().plus(subtotal), Duration::plus);
+                final String dayDurationStr = formatDuration(dayDuration);
 
-                for (final ProjectReportActivity project : day.getProjects())
-                {
-                    final String duration = formatDuration(project.getWorkingTime());
-                    final String projectLabel = formatEmptyString(project.getProject().getLabel());
-                    final String activityComment = formatEmptyString(project.getComment());
-                    os.println(MessageFormat.format("{0}{1}{0}{2}{0}{3}",
-                            separator, projectLabel, duration, activityComment));
+                os.println(MessageFormat.format("{0}{1}{1}{1}{2}{1}{3}",
+                        day.getDate(), separator, dayDurationStr, dayComment));
+
+                if (day.getProjects() != null) {
+                    for (final ProjectReportActivity project : day.getProjects()) {
+                        final String duration = formatDuration(project.getWorkingTime());
+                        final String projectLabel = formatEmptyString(project.getProject().getLabel());
+                        final String activityComment = formatEmptyString(project.getComment());
+                        os.println(MessageFormat.format("{0}{1}{0}{2}{0}{0}{3}",
+                                separator, projectLabel, duration, activityComment));
+                    }
                 }
             }
         } catch (IOException ex) {
