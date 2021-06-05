@@ -4,8 +4,6 @@ import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 
-import java.nio.file.Paths;
-
 public class CSVExporterPlugin implements Plugin
 {
 

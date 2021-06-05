@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CSVConfigTest {
+class CSVConfigTest {
     @Mock
     PluginConfiguration pluginConfiguration;
 
@@ -27,7 +27,7 @@ public class CSVConfigTest {
 
         final CSVConfig csvConfig = new CSVConfig(pluginConfiguration);
         assertThat(csvConfig.getOutPath()).isEqualByComparingTo(testPath);
-        assertThat(csvConfig.getFilterForWeekDays()).isEqualTo(true);
+        assertThat(csvConfig.getFilterForWeekDays()).isTrue();
         assertThat(csvConfig.getSeparator()).isEqualTo("\t");
     }
 }

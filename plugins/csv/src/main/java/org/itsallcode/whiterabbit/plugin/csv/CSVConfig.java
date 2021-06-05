@@ -6,9 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CSVConfig {
-    private boolean filterForWeekDays;
-    private Path outPath;
-    private String separator;
+    private final boolean filterForWeekDays;
+    private final Path outPath;
+    private final String separator;
 
     public boolean getFilterForWeekDays() {
         return filterForWeekDays;
