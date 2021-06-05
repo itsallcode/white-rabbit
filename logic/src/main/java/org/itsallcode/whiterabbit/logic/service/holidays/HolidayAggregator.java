@@ -17,7 +17,7 @@ import org.itsallcode.whiterabbit.api.model.DayType;
 class HolidayAggregator
 {
     // used to separate names of of multiple holidays occurring on the same day
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = ", ";
     private final HashMap<LocalDate, List<HolidayInstance>> holidays = new HashMap<>();
 
     public void collect(Holidays holidayProvider, YearMonth month)
@@ -43,7 +43,16 @@ class HolidayAggregator
         {
             return;
         }
-        holidays.put(date, instances);
+
+        final List<HolidayInstance> entry = holidays.get(date);
+        if (entry != null)
+        {
+            entry.addAll(instances);
+        }
+        else
+        {
+            holidays.put(date, instances);
+        }
     }
 
     private DayData toDayData(ModelFactory factory, LocalDate date, List<HolidayInstance> instances)

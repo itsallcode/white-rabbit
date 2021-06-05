@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.model.DayData;
+import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
@@ -86,10 +89,21 @@ class MonthIndexStorageTest
     {
         when(fileStorageMock.load(YEAR_MONTH)).thenReturn(Optional.empty());
 
+        final LocalDate sampleDay = YEAR_MONTH.atDay(3);
+
+        final DayData dayData = fileStorageMock.getModelFactory().createDayData();
+        dayData.setType(DayType.HOLIDAY);
+        dayData.setDate(sampleDay);
+        final List<DayData> holidays = new ArrayList<DayData>();
+        holidays.add(dayData);
+
+        when(holidayService.getHolidays(fileStorageMock.getModelFactory(), YEAR_MONTH)).thenReturn(holidays);
+
         final MonthIndex newMonth = storage.loadOrCreate(YEAR_MONTH);
 
         assertThat(newMonth.getYearMonth()).isEqualTo(YEAR_MONTH);
         assertThat(newMonth.getSortedDays()).hasSize(30);
+        assertThat(newMonth.getDay(sampleDay).getType()).isEqualTo(DayType.HOLIDAY);
         assertThat(newMonth.getTotalOvertime()).isZero();
         assertThat(newMonth.getVacationDayCount()).isZero();
     }

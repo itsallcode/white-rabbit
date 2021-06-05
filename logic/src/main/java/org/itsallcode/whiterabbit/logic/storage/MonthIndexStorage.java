@@ -77,8 +77,8 @@ class MonthIndexStorage implements Storage
         final MonthData month = factory.createMonthData();
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
-        final List<DayData> list = holidayService.getHolidays(factory, date);
-        month.setDays(list);
+        final List<DayData> days = holidayService.getHolidays(factory, date);
+        month.setDays(days);
         month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
         return createMonthIndex(month);
     }
