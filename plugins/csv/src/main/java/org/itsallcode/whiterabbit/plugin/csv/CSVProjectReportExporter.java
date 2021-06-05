@@ -18,14 +18,12 @@ import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.api.model.ProjectReportDay;
 
 class CSVProjectReportExporter implements ProjectReportExporter {
-    private final boolean filterForWeekDays;
     private final OutStreamProvider outStreamProvider;
-    private final String separator;
+    private final CSVConfig csvConfig;
 
-    CSVProjectReportExporter(boolean filterForWeekDays, String separator, OutStreamProvider outStreamProvider) {
-        this.filterForWeekDays = filterForWeekDays;
+    CSVProjectReportExporter(CSVConfig csvConfig, OutStreamProvider outStreamProvider) {
+        this.csvConfig = csvConfig;
         this.outStreamProvider = outStreamProvider;
-        this.separator = separator;
     }
 
     @Override
@@ -34,10 +32,12 @@ class CSVProjectReportExporter implements ProjectReportExporter {
         if (progressMonitor.isCanceled()) {
             return;
         }
+        final String separator = csvConfig.getSeparator();
+
         final List<ProjectReportDay> filteredDays =
                 report.getDays().stream()
                         .filter(Objects::nonNull)
-                        .filter(day -> !filterForWeekDays || day.getType() == DayType.WORK)
+                        .filter(day -> !csvConfig.getFilterForWeekDays() || day.getType() == DayType.WORK)
                         .collect(Collectors.toList());
 
         try (final PrintStream os = new PrintStream(outStreamProvider.getStream(report.getMonth().toString()))) {
@@ -45,29 +45,31 @@ class CSVProjectReportExporter implements ProjectReportExporter {
 
             for (final ProjectReportDay day : filteredDays) {
                 final String dayComment = formatEmptyString(day.getComment());
-                final Duration dayDuration =
-                        day.getProjects() == null ? Duration.ZERO :
-                                day.getProjects().stream().reduce(Duration.ZERO,
-                                        (subtotal, element) -> element == null ?
-                                                subtotal : element.getWorkingTime().plus(subtotal), Duration::plus);
-                final String dayDurationStr = formatDuration(dayDuration);
+                final Duration dayWorkingTime = day.getProjects() == null ? Duration.ZERO : getDayWorkingTime(day);
+                final String dayDurationStr = formatDuration(dayWorkingTime);
 
                 os.println(MessageFormat.format("{0}{1}{1}{1}{2}{1}{3}",
                         day.getDate(), separator, dayDurationStr, dayComment));
 
                 if (day.getProjects() != null) {
                     for (final ProjectReportActivity project : day.getProjects()) {
-                        final String duration = formatDuration(project.getWorkingTime());
+                        final String projectWorkingTime = formatDuration(project.getWorkingTime());
                         final String projectLabel = formatEmptyString(project.getProject().getLabel());
                         final String activityComment = formatEmptyString(project.getComment());
                         os.println(MessageFormat.format("{0}{1}{0}{2}{0}{0}{3}",
-                                separator, projectLabel, duration, activityComment));
+                                separator, projectLabel, projectWorkingTime, activityComment));
                     }
                 }
             }
         } catch (IOException ex) {
             throw new UncheckedIOException("Error exporting report to CSV:" + ex, ex);
         }
+    }
+
+    private Duration getDayWorkingTime(ProjectReportDay day) {
+        return day.getProjects().stream().reduce(Duration.ZERO,
+                (subtotal, element) -> element == null ?
+                        subtotal : element.getWorkingTime().plus(subtotal), Duration::plus);
     }
 
     private String formatEmptyString(String value) {

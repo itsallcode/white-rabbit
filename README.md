@@ -122,6 +122,7 @@ To use activity tracking, create file `projects.json` in your data directory wit
 1. Download one of the available plugins:
     * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart. See [details](README.md#pmsmart).
     * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Test plugin without real functionality.
+    * [demo](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): CSV  plugin which can export monthly reports to CSV.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
 ```bash
@@ -176,6 +177,57 @@ For each day pm-smart plugin by default transfers the durations of all activitie
 
     ```properties
     pmsmart.clear_other_projects = true
+    ```
+
+### <a name="development"></a>Development
+
+#### Clone and configure
+
+```bash
+mkdir time-recording-data
+git clone https://github.com/itsallcode/white-rabbit.git
+cd white-rabbit
+# Configure
+echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
+```
+
+
+#### <a name="csvexport"></a>Using csv export
+
+##### What can it do / limitations.
+
+CSVExport plugin supports the export of the current monthly report to 
+a pre-configured path. The file names are hard coded, and have the format
+of YYYY-MM_working_time.csv.
+Please note that all days must have a valid project assigned for 
+the correct export.
+
+
+##### Setup and usage
+
+1. Create a project configuration as described [above](README.md#project_config).
+1. Make sure to install the latest version of the csv plugin, see [above](README.md#plugins) for details.
+1. Start the export in WhiteRabbit:
+
+    1. Select the month that you want to export
+    1. Select menu Reports > Project report
+    1. Click the "Export to csv" button
+
+#### Optional configuration settings
+
+Currently, you can configure the destination path, separator and flag in white rabbit's configuration file:
+
+    ```properties
+    csv.destination = ~/working_time_reports
+    csv.separator = \t
+    csv.filter_for_weekdays = True
+    ```
+The default values are:
+
+    ```Default Values
+    csv.destination = $HOME
+    csv.separator = ","
+    csv.filter_for_weekdays = False
     ```
 
 ### <a name="development"></a>Development

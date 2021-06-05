@@ -40,15 +40,9 @@ public class CSVExporterPlugin implements Plugin
     {
         if (featureType.isAssignableFrom(CSVProjectReportExporter.class))
         {
-            final String defaultPath = System.getProperty("user.home");
-
-            final String outPath = config.getOptionalValue("destination").orElse(defaultPath);
-            final String separator = config.getOptionalValue("separator").orElse(",");
-            final boolean filterForWeekDays =
-                    config.getOptionalValue("filter_for_weekdays")
-                            .orElse("false").equalsIgnoreCase("true");
-            final OutStreamProvider outStreamProvider = new DirectoryStreamProvider(Paths.get(outPath));
-            return featureType.cast(new CSVProjectReportExporter(filterForWeekDays, separator, outStreamProvider));
+            CSVConfig csvConfig = new CSVConfig(config);
+            final OutStreamProvider outStreamProvider = new DirectoryStreamProvider(csvConfig.getOutPath());
+            return featureType.cast(new CSVProjectReportExporter(csvConfig, outStreamProvider));
         }
         throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
     }

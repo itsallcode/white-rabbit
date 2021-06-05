@@ -13,7 +13,9 @@ import java.time.Month;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
@@ -93,7 +95,7 @@ class CSVExporterTest
     private void runExport(boolean filterForWeekDays, List<ProjectReportDay> days)
     {
         CSVProjectReportExporter projectReportExporter =
-                new CSVProjectReportExporter(filterForWeekDays, ",", outStreamProvider);
+                new CSVProjectReportExporter(createTestConfig(filterForWeekDays), outStreamProvider);
         projectReportExporter.export(projectReport(days), progressMonitorMock);
     }
 
@@ -131,5 +133,22 @@ class CSVExporterTest
     {
         return new ProjectReportImpl.ProjectActivityImpl(
                 new ProjectImpl(null, projectId, null), workingTime, comment);
+    }
+
+    CSVConfig createTestConfig(boolean filterForWeekDays) {
+        return new CSVConfig(new PluginConfiguration() {
+            @Override
+            public String getMandatoryValue(String propertyName) {
+                return null;
+            }
+
+            @Override
+            public Optional<String> getOptionalValue(String propertyName) {
+                if("filter_for_weekdays".equalsIgnoreCase(propertyName)) {
+                    return Optional.of(filterForWeekDays ? "True" : "False");
+                }
+                return Optional.empty();
+            }
+        });
     }
 }
