@@ -1,11 +1,13 @@
 package org.itsallcode.whiterabbit.plugin.holidaycalculator;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.YearMonth;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,24 +17,22 @@ import org.itsallcode.holidays.calculator.logic.Holiday;
 import org.itsallcode.holidays.calculator.logic.HolidayService;
 import org.itsallcode.holidays.calculator.logic.parser.HolidaysFileParser;
 import org.itsallcode.whiterabbit.api.features.Holidays;
-import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
-import org.itsallcode.whiterabbit.api.model.DayData;
 
-class CalculatedHolidays implements Holidays
+class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holidays
 {
     private static final Logger LOG = LogManager.getLogger(CalculatedHolidays.class);
     private static final String HOLIDAYS_CONFIGURATION_FILE = "holidays.cfg";
 
-    private final HolidayService service;
+    private final HolidayService holidaySet;
 
     public CalculatedHolidays(Path dataDir)
     {
-        service = new HolidayService(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
+        holidaySet = new HolidayService(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
     }
 
     CalculatedHolidays(Path dataDir, String inputSourceIdentifier, InputStream stream)
     {
-        service = new HolidayService(readHolidays(null, inputSourceIdentifier, stream));
+        holidaySet = new HolidayService(readHolidays(null, inputSourceIdentifier, stream));
     }
 
     private List<Holiday> readHolidays(Path configurationFile)
@@ -61,7 +61,10 @@ class CalculatedHolidays implements Holidays
 
         try (InputStream stream2 = (stream == null ? Files.newInputStream(configurationFile) : stream))
         {
-            return new HolidaysFileParser(inputSourceIdentifier).parse(stream2);
+            final HolidaysFileParser parser = new HolidaysFileParser(inputSourceIdentifier);
+            // Maybe evaluate parser.getError() and feed potential result back
+            // to GUI callback?
+            return parser.parse(stream2);
         }
         catch (final IOException e)
         {
@@ -71,9 +74,11 @@ class CalculatedHolidays implements Holidays
     }
 
     @Override
-    public List<DayData> getHolidays(ModelFactory factory, YearMonth month)
+    public List<Holidays.HolidayInstance> getHolidays(LocalDate date)
     {
-        return new HolidayAggregator(factory, service).getHolidays(month);
+        return holidaySet.getHolidays(date).stream()
+                .map(h -> new HolidayInstanceImpl(h.getCategory(), h.getName(), date))
+                .collect(toList());
     }
 
 }

@@ -16,8 +16,8 @@ import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
-import org.itsallcode.whiterabbit.logic.service.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.holidays.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 class MonthIndexStorage implements Storage

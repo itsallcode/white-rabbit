@@ -1,12 +1,18 @@
 package org.itsallcode.whiterabbit.api.features;
 
-import java.time.YearMonth;
+import java.time.LocalDate;
 import java.util.List;
-
-import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
-import org.itsallcode.whiterabbit.api.model.DayData;
 
 public interface Holidays extends PluginFeature
 {
-    List<DayData> getHolidays(ModelFactory factory, YearMonth month);
+    interface HolidayInstance
+    {
+        String getCategory();
+
+        String getName();
+
+        LocalDate getDate();
+    }
+
+    List<HolidayInstance> getHolidays(LocalDate date);
 }

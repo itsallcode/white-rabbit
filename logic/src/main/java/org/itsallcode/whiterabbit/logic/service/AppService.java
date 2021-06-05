@@ -28,6 +28,7 @@ import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.holidays.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.plugin.PluginManager;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;

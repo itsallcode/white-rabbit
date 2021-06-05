@@ -49,7 +49,7 @@ A time recording tool
 ### Notes
 
 * Won't work on weekends. To force working on a weekend, manually change the day type to `WORK`.
-* Public holidays are not detected automatically. Set the day type to `HOLIDAY` manually.
+* Public holidays can be calculated using plugin [holidays-calculator](README.md#holidays_calculator) or user can are set the day type to `HOLIDAY` manually.
 * If you manually change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months`.
 * Assumptions:
     * Working time of 8h Monday to Friday
@@ -170,7 +170,7 @@ For each activity in WhiteRabbit you can enter a comment. By default pmsmart plu
     pmsmart.transfer.comments = false
     ```
 
-#### <a name="holidays_calculator"></a>Using holidays calculator
+#### <a name="holidays_calculator"></a>Using holidays-calculator
 
 Optionally you can configure holidays-calculator plugin to enable WhiteRabbit to display your personal selection of holidays.
 
@@ -181,6 +181,8 @@ Create a file named `holidays.cfg` in your data directory defined in the [config
 For the content of the file you can use one of the predefined holiday definition files available at <https://github.com/itsallcode/holiday-calculator>.
 
 Optionally you can edit the file and add or remove holidays to your own taste, see <https://github.com/itsallcode/holiday-calculator> for detailed description of the syntax.
+
+Note: WhiteRabbit adds holidays provided by plugins only to new months without any time recordings. As soon as the user adds a time-recording for a particular month, WhiteRabbit saves the time recordings for this month including any holidays whether provided by plugins or entered manually. After this point in time for the given month WhiteRabbit uses only on the saved file and will not ask any plugin to update the holidays.
 
 ### <a name="development"></a>Development
 
