@@ -116,7 +116,7 @@ public class AppUi
             activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
                 appService.store(record);
                 activitiesTable.refresh();
-            }, appService.formatter(), appService.projects(), appService.autocomplete());
+            }, appService);
             final BorderPane rootPane = new BorderPane(createMainPane());
             rootPane.setTop(createTopContainer());
             final Scene scene = UiWidget.scene(rootPane, 780, 800);

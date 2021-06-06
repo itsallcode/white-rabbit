@@ -11,6 +11,7 @@ include 'plugins'
 include 'plugins:demo'
 include 'plugins:pmsmart'
 include 'plugins:holiday-calculator'
+include 'plugins:csv'
 
 dependencyResolutionManagement {
     repositories {
