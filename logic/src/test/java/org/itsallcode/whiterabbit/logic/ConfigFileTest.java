@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Properties;
 
 import org.junit.jupiter.api.BeforeEach;
