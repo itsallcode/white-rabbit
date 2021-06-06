@@ -19,8 +19,7 @@ class CalculatedHolidaysTest
     @Test
     void success() throws URISyntaxException
     {
-        final Path path = Paths.get(this.getClass().getResource("").toURI());
-
+        final Path path = Paths.get(this.getClass().getResource("holidays.cfg").toURI()).getParent();
         final CalculatedHolidays holidays = new CalculatedHolidays(path);
 
         assertThat(holidays.getHolidays(DATE).size()).isEqualTo(1);
