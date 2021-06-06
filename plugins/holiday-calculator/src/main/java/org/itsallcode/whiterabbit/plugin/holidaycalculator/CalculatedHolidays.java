@@ -30,13 +30,12 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
         holidaySet = new HolidaySet(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
     }
 
-    private List<Holiday> readHolidays(Path configurationFile)
+    protected List<Holiday> readHolidays(Path configurationFile)
     {
         if (!Files.exists(configurationFile))
         {
-            final String message = "Could not find holiday definitions file " + configurationFile
-                    + ". Using empty list of holidays.";
-            LOG.warn(message);
+            LOG.warn("Could not find holiday definitions file " + configurationFile
+                    + ". Using empty list of holidays.");
             // In this place CalculatedHolidays could notify a callback in order
             // to display a warning in GUI.
             return new ArrayList<>();
