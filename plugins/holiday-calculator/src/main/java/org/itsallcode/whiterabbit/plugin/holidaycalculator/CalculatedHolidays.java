@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.holidays.calculator.logic.Holiday;
-import org.itsallcode.holidays.calculator.logic.HolidayService;
+import org.itsallcode.holidays.calculator.logic.HolidaySet;
 import org.itsallcode.holidays.calculator.logic.parser.HolidaysFileParser;
 import org.itsallcode.whiterabbit.api.features.Holidays;
 
@@ -23,16 +23,16 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
     private static final Logger LOG = LogManager.getLogger(CalculatedHolidays.class);
     public static final String HOLIDAYS_CONFIGURATION_FILE = "holidays.cfg";
 
-    private final HolidayService holidaySet;
+    private final HolidaySet holidaySet;
 
     public CalculatedHolidays(Path dataDir)
     {
-        holidaySet = new HolidayService(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
+        holidaySet = new HolidaySet(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
     }
 
     CalculatedHolidays(Path dataDir, String inputSourceIdentifier, InputStream stream)
     {
-        holidaySet = new HolidayService(readHolidays(null, inputSourceIdentifier, stream));
+        holidaySet = new HolidaySet(readHolidays(null, inputSourceIdentifier, stream));
     }
 
     private List<Holiday> readHolidays(Path configurationFile)
@@ -76,7 +76,7 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
     @Override
     public List<Holidays.HolidayInstance> getHolidays(LocalDate date)
     {
-        return holidaySet.getHolidays(date).stream()
+        return holidaySet.instances(date).stream()
                 .map(h -> new HolidayInstanceImpl(h.getCategory(), h.getName(), date))
                 .collect(toList());
     }
