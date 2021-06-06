@@ -14,6 +14,8 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 * [#164](https://github.com/itsallcode/white-rabbit/pull/164): Improve label of empty activities table.
 * [#150](https://github.com/itsallcode/white-rabbit/issues/150): Added holiday-calculator plugin: calculate holidays, see [README.md](README.md#holidays_calculator) for details.
 
+* [#115](https://github.com/itsallcode/white-rabbit/issues/115): Added holiday-calculator plugin: calculate holidays, see [README.md](README.md#holidays_calculator) for details.
+
 ## [1.6.0] - 2021-05-30
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
