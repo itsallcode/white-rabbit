@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,7 +52,7 @@ class HolidayAggregator
         }
         else
         {
-            holidays.put(date, instances);
+            holidays.put(date, new ArrayList<>(instances));
         }
     }
 

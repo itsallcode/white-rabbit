@@ -1,16 +1,15 @@
 package org.itsallcode.whiterabbit.logic.service.holidays;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,11 +52,11 @@ public class HolidayAggregatorTest
         when(h3.getName()).thenReturn("h3");
         when(h4.getName()).thenReturn("h4");
 
-        when(holidayProvider1.getHolidays(D1)).thenReturn(createHolidays(h1, h2));
+        when(holidayProvider1.getHolidays(D1)).thenReturn(Arrays.asList(h1, h2));
         when(holidayProvider1.getHolidays(not(eq(D1)))).thenReturn(Collections.emptyList());
-        when(holidayProvider2.getHolidays(D1)).thenReturn(createHolidays(h3));
-        when(holidayProvider2.getHolidays(D2)).thenReturn(createHolidays(h4));
-        when(holidayProvider2.getHolidays(and(not(eq(D1)), not(eq(D2))))).thenReturn(Collections.emptyList());
+        when(holidayProvider2.getHolidays(D1)).thenReturn(Arrays.asList(h3));
+        when(holidayProvider2.getHolidays(D2)).thenReturn(Arrays.asList(h4));
+        when(holidayProvider2.getHolidays(not(or(eq(D1), eq(D2))))).thenReturn(Collections.emptyList());
 
         final HolidayAggregator aggregator = new HolidayAggregator();
         aggregator.collect(holidayProvider1, YEAR_MONTH);
@@ -68,10 +67,4 @@ public class HolidayAggregatorTest
         assertThat(days.get(1).getComment()).isEqualTo("h1, h2, h3");
     }
 
-    private List<HolidayInstance> createHolidays(HolidayInstance... instances)
-    {
-        final List<HolidayInstance> result = new ArrayList<>();
-        result.addAll(asList(instances));
-        return result;
-    }
 }

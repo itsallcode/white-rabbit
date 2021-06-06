@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -30,6 +31,11 @@ class PluginManagerTest
     private PluginWrapper plugin1;
     @Mock
     private PluginWrapper plugin2;
+
+    @Mock
+    Holidays holidays1;
+    @Mock
+    Holidays holidays2;
 
     private PluginManager pluginManager;
 
@@ -69,6 +75,17 @@ class PluginManagerTest
         simulatePlugins(plugin1);
         when(plugin1.supports(ProjectReportExporter.class)).thenReturn(true);
         assertThat(pluginManager.getProjectReportExporterPlugins()).containsExactly("plugin1");
+    }
+
+    @Test
+    void getAllFeatures()
+    {
+        when(plugin1.getFeature(Holidays.class)).thenReturn(holidays1);
+        when(plugin2.getFeature(Holidays.class)).thenReturn(holidays2);
+        when(plugin1.supports(Holidays.class)).thenReturn(true);
+        when(plugin2.supports(Holidays.class)).thenReturn(true);
+        simulatePlugins(plugin1, plugin2);
+        assertThat(pluginManager.getAllFeatures(Holidays.class)).containsExactly(holidays1, holidays2);
     }
 
     private void simulatePlugins(PluginWrapper... plugins)

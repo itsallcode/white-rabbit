@@ -21,7 +21,7 @@ import org.itsallcode.whiterabbit.api.features.Holidays;
 class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holidays
 {
     private static final Logger LOG = LogManager.getLogger(CalculatedHolidays.class);
-    private static final String HOLIDAYS_CONFIGURATION_FILE = "holidays.cfg";
+    public static final String HOLIDAYS_CONFIGURATION_FILE = "holidays.cfg";
 
     private final HolidayService holidaySet;
 
