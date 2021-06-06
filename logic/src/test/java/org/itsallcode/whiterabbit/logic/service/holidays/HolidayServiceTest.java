@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class HolidayServiceTest
+class HolidayServiceTest
 {
     static final YearMonth DATE = YearMonth.of(2021, 05);
 

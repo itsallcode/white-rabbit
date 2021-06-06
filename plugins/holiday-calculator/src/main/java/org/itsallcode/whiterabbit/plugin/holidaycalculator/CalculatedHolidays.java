@@ -30,11 +30,6 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
         holidaySet = new HolidaySet(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
     }
 
-    CalculatedHolidays(Path dataDir, String inputSourceIdentifier, InputStream stream)
-    {
-        holidaySet = new HolidaySet(readHolidays(null, inputSourceIdentifier, stream));
-    }
-
     private List<Holiday> readHolidays(Path configurationFile)
     {
         if (!Files.exists(configurationFile))
@@ -47,24 +42,16 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
             return new ArrayList<>();
         }
         LOG.info("Reading holiday definitions from {}", configurationFile);
-        return readHolidays(configurationFile, null, null);
-    }
 
-    private List<Holiday> readHolidays(Path configurationFile, String inputSourceIdentifier, InputStream stream)
-    {
-        String message = "";
-        if (configurationFile != null)
-        {
-            inputSourceIdentifier = configurationFile.toString();
-        }
-        message = "Error reading holiday definitions from " + message + inputSourceIdentifier;
+        final String filename = configurationFile.toString();
+        final String message = "Error reading holiday definitions from " + filename;
 
-        try (InputStream stream2 = (stream == null ? Files.newInputStream(configurationFile) : stream))
+        try (InputStream stream = Files.newInputStream(configurationFile))
         {
-            final HolidaysFileParser parser = new HolidaysFileParser(inputSourceIdentifier);
+            final HolidaysFileParser parser = new HolidaysFileParser(filename);
             // Maybe evaluate parser.getError() and feed potential result back
             // to GUI callback?
-            return parser.parse(stream2);
+            return parser.parse(stream);
         }
         catch (final IOException e)
         {

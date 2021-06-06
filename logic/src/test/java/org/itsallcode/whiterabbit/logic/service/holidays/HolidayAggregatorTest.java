@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class HolidayAggregatorTest
+class HolidayAggregatorTest
 {
     private static final YearMonth YEAR_MONTH = YearMonth.of(2021, Month.MAY);
 
