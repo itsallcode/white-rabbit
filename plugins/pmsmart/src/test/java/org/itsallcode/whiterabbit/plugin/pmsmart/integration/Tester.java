@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ import org.itsallcode.whiterabbit.logic.report.project.ProjectReportImpl;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportImpl.DayImpl;
 import org.itsallcode.whiterabbit.logic.report.project.ProjectReportImpl.ProjectActivityImpl;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.holidays.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
@@ -86,8 +88,9 @@ public class Tester
         final ProjectService projectService = new ProjectService(Paths.get(PROJECT_FILE));
         final ContractTermsService contractTerms = new ContractTermsService(
                 Optional.of(Duration.ofHours(HOURS_PER_DAY)));
+        final HolidayService holidayService = new HolidayService(new ArrayList<>());
 
-        final Storage storage = CachingStorage.create(dataStorage, contractTerms, projectService);
+        final Storage storage = CachingStorage.create(dataStorage, contractTerms, projectService, holidayService);
         final ProjectReportGenerator generator = new ProjectReportGenerator(storage);
         return generator.generateReport(null);
     }
@@ -104,6 +107,12 @@ public class Tester
         public Optional<String> getOptionalValue(String propertyName)
         {
             return Optional.empty();
+        }
+
+        @Override
+        public Path getDataDir()
+        {
+            return null;
         }
     }
 

@@ -17,7 +17,7 @@ def getOptionalProperty(String name) {
     if(project.hasProperty(name)) {
         return project.property(name)
     }
-    logger.info("Project property '${name}' not available. Please it to ~/.gradle/gradle.properties")
+    logger.info("Project property '${name}' not available. Please add it to ~/.gradle/gradle.properties")
     return null
 }
 

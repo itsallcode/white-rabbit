@@ -1,12 +1,12 @@
 package org.itsallcode.whiterabbit.plugin.csv;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
@@ -41,7 +41,8 @@ class CSVExporterTest
     ByteArrayOutputStream tmpOutStream;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws IOException
+    {
         tmpOutStream = new ByteArrayOutputStream();
         when(outStreamProvider.getStream(Mockito.anyString())).thenReturn(tmpOutStream);
     }
@@ -50,14 +51,22 @@ class CSVExporterTest
     void exportCSVFilterForWorkdays()
     {
         runExport(true, createDays());
-        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
+        assertThat(tmpOutStream).hasToString(lines(
+                "Date,Project,TimePerProject,TimePerDay,Comment",
+                "2021-06-04,,,01:00,day comment",
+                ",Project9FromOuterSpace,01:00,,abc"));
     }
 
     @Test
     void exportCSVNoFilter()
     {
         runExport(false, createDays());
-        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n2021-06-05,,,01:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n");
+        assertThat(tmpOutStream).hasToString(lines(
+                "Date,Project,TimePerProject,TimePerDay,Comment",
+                "2021-06-04,,,01:00,day comment",
+                ",Project9FromOuterSpace,01:00,,abc",
+                "2021-06-05,,,01:00,day comment",
+                ",Project9FromOuterSpace,01:00,,abc"));
     }
 
     @Test
@@ -67,17 +76,27 @@ class CSVExporterTest
         runExport(false,
                 day(dateOne, DayType.WORK,
                         activity(Duration.ofHours(1)),
-                        activity(Duration.ofHours(3),"other_project", null),
+                        activity(Duration.ofHours(3), "other_project", null),
                         activity(Duration.ofHours(3), null, null)));
-        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,07:00,day comment\n,Project9FromOuterSpace,01:00,,abc\n,other_project,03:00,,\n,,03:00,,\n");
+        assertThat(tmpOutStream).hasToString(lines(
+                "Date,Project,TimePerProject,TimePerDay,Comment",
+                "2021-06-04,,,07:00,day comment",
+                ",Project9FromOuterSpace,01:00,,abc",
+                ",other_project,03:00,,",
+                ",,03:00,,"));
+    }
+
+    private static String lines(String... elements)
+    {
+        final String nl = System.lineSeparator();
+        return String.join(nl, elements) + nl;
     }
 
     @Test
     void exportNullDay()
     {
-        final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
         runExport(false, Collections.singletonList(null));
-        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n");
+        assertThat(tmpOutStream).hasToString(lines("Date,Project,TimePerProject,TimePerDay,Comment"));
     }
 
     @Test
@@ -85,21 +104,26 @@ class CSVExporterTest
     {
         final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
         runExport(false, day(dateOne, DayType.WORK));
-        assertThat(tmpOutStream).hasToString("Date,Project,TimePerProject,TimePerDay,Comment\n2021-06-04,,,00:00,day comment\n");
+        assertThat(tmpOutStream)
+                .hasToString(lines(
+                        "Date,Project,TimePerProject,TimePerDay,Comment",
+                        "2021-06-04,,,00:00,day comment"));
     }
 
-    private void runExport(boolean filterForWeekDays, ProjectReportDay day) {
+    private void runExport(boolean filterForWeekDays, ProjectReportDay day)
+    {
         runExport(filterForWeekDays, Collections.singletonList(day));
     }
 
     private void runExport(boolean filterForWeekDays, List<ProjectReportDay> days)
     {
-        CSVProjectReportExporter projectReportExporter =
-                new CSVProjectReportExporter(createTestConfig(filterForWeekDays), outStreamProvider);
+        final CSVProjectReportExporter projectReportExporter = new CSVProjectReportExporter(
+                createTestConfig(filterForWeekDays), outStreamProvider);
         projectReportExporter.export(projectReport(days), progressMonitorMock);
     }
 
-    List<ProjectReportDay> createDays() {
+    List<ProjectReportDay> createDays()
+    {
         final LocalDate dateOne = LocalDate.of(2021, Month.JUNE, 4);
         final LocalDate dateTwo = LocalDate.of(2021, Month.JUNE, 5);
         return List.of(
@@ -124,8 +148,8 @@ class CSVExporterTest
 
     private ProjectReportActivity activity(Duration workingTime)
     {
-        String PROJECT_ID = "Project9FromOuterSpace";
-        String COMMENT = "abc";
+        final String PROJECT_ID = "Project9FromOuterSpace";
+        final String COMMENT = "abc";
         return activity(workingTime, PROJECT_ID, COMMENT);
     }
 
@@ -135,19 +159,30 @@ class CSVExporterTest
                 new ProjectImpl(null, projectId, null), workingTime, comment);
     }
 
-    CSVConfig createTestConfig(boolean filterForWeekDays) {
-        return new CSVConfig(new PluginConfiguration() {
+    CSVConfig createTestConfig(boolean filterForWeekDays)
+    {
+        return new CSVConfig(new PluginConfiguration()
+        {
             @Override
-            public String getMandatoryValue(String propertyName) {
+            public String getMandatoryValue(String propertyName)
+            {
                 return null;
             }
 
             @Override
-            public Optional<String> getOptionalValue(String propertyName) {
-                if("filter_for_weekdays".equalsIgnoreCase(propertyName)) {
+            public Optional<String> getOptionalValue(String propertyName)
+            {
+                if ("filter_for_weekdays".equalsIgnoreCase(propertyName))
+                {
                     return Optional.of(filterForWeekDays ? "True" : "False");
                 }
                 return Optional.empty();
+            }
+
+            @Override
+            public Path getDataDir()
+            {
+                return null;
             }
         });
     }

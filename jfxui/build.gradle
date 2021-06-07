@@ -50,13 +50,19 @@ build.dependsOn shadowJar
 
 project(':plugins').afterEvaluate {
     List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
-
+    
+    def userHome = System.properties['user.home']
+    if(project.hasProperty('user.home')) {
+    	userHome = project.property('user.home')
+    }
+    
     task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
         group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
         main = project.mainClass
         workingDir = rootProject.projectDir
+        systemProperties = ['user.home': userHome]
     }
 }
 

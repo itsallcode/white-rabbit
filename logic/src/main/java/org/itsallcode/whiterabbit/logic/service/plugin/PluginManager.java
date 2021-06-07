@@ -31,6 +31,13 @@ public class PluginManager
         return new PluginManager(pluginRegistry);
     }
 
+    public <T extends PluginFeature> List<T> getAllFeatures(Class<T> featureType)
+    {
+        return findPluginsSupporting(featureType).stream()
+                .map(pluginId -> getFeature(pluginId, featureType))
+                .collect(toList());
+    }
+
     public List<String> getProjectReportExporterPlugins()
     {
         return findPluginsSupporting(ProjectReportExporter.class);

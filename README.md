@@ -49,7 +49,7 @@ A time recording tool
 ### Notes
 
 * Won't work on weekends. To force working on a weekend, manually change the day type to `WORK`.
-* Public holidays are not detected automatically. Set the day type to `HOLIDAY` manually.
+* Public holidays can be calculated using plugin [holidays-calculator](README.md#holidays_calculator) or user can are set the day type to `HOLIDAY` manually.
 * If you manually change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months`.
 * Assumptions:
     * Working time of 8h Monday to Friday
@@ -120,19 +120,19 @@ To use activity tracking, create file `projects.json` in your data directory wit
 #### <a name="plugins"></a>Using Plugins
 
 1. Download one of the available plugins:
-    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart. See [details](README.md#pmsmart).
-    * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Test plugin without real functionality.
-    * [demo](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): CSV  plugin which can export monthly reports to CSV.
+    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](README.md#pmsmart).
+    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](README.md#holidays_calculator).
+    * [csv](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): Export monthly reports to CSV, see [details](README.md#csvexport).
+    * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Sample plugin without specific functionality.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
 ```bash
-for plugin in pmsmart demo
+for plugin in pmsmart holidays-calculator csv demo
 do
     fileName=$plugin-plugin-signed.jar
     curl https://whiterabbit.chp1.net/plugins/$fileName --output $HOME/.whiterabbit/plugins/$fileName
 done
 ```
-
 
 #### Logging
 
@@ -159,25 +159,41 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
     1. Select the month that you want to export
     1. Select menu Reports > Project report
-    1. Click the "Export to pmsmart" button
+    1. Click button "Export to pmsmart"
 
-#### Optional configuration settings
+##### Optional configuration settings
 
-Optionally you can configure pmsmart plugin to skip transfer of a comment for each activity. 
+Optionally you can configure pmsmart plugin to skip transfer of a comment for each activity.
 
-For each activity in WhiteRabbit you can enter a comment. By default pmsmart plugin transfers these comment to pm-smart. As the web ui is quite slow, transfer of comments can take a while. If you want to speed-up pm-smart export by skipping transfer of comments you can add an optional property to WhiteRabbit configuration file.
+For each activity in WhiteRabbit you can enter a comment. By default pmsmart plugin transfers these comment to pm-smart. As the web ui is quite slow, transfer of comments can take a while. If you want to speed-up pm-smart export by skipping transfer of comments you can add an optional property to WhiteRabbit configuration file:
 
     ```properties
     pmsmart.transfer.comments = false
     ```
 
-Optionally you can configure pmsmart plugin to clear durations for all other projects, not mentioned as activity in WhiteRabbit.
+Optionally you can configure pmsmart plugin to clear durations for all other projects, not matching any activity recorded in WhiteRabbit.
 
-For each day pm-smart plugin by default transfers the durations of all activities entered into WhiteRabbit. If pm-smart contains durations for other projects then these are not overwritten. This will especially happen if users transfer their time-recording for a particular month multiple times and changes the selection of activities in between. In order to ensure consistent data in pm-smart you can add an optional property to WhiteRabbit configuration file:
+For each day pm-smart plugin by default transfers the durations of all activities entered into WhiteRabbit. If pm-smart contains durations for other projects then pm-smart plugin does not overwrite these. This will especially happen if users export their time recordings for a particular month multiple times and change the selection of activities in between. In order to ensure consistent data in pm-smart you can add an optional property to WhiteRabbit configuration file:
 
     ```properties
     pmsmart.clear_other_projects = true
     ```
+
+#### <a name="holidays_calculator"></a>Using holidays-calculator
+
+Optionally you can configure holidays-calculator plugin to enable WhiteRabbit to display your personal selection of holidays.
+
+##### Setup and usage
+
+Create a file named `holidays.cfg` in your data directory defined in the [configuration file](README.md#configuration) of WhiteRabbit.
+
+You can use one of the predefined holiday definition files available at
+<https://github.com/itsallcode/holiday-calculator> or you can edit the file
+and add or remove holidays to your own taste, see
+<https://github.com/itsallcode/holiday-calculator> for detailed description of
+the syntax.
+
+Note: WhiteRabbit adds holidays provided by plugins only to new months without any time recordings. As soon as the user adds a time recording for a particular month, WhiteRabbit saves the time recordings for this month including any holidays whether provided by plugins or entered manually. After this point in time for the given month WhiteRabbit uses only on the saved file and will not ask any plugin to update the holidays.
 
 ### <a name="development"></a>Development
 
@@ -191,17 +207,15 @@ cd white-rabbit
 echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 ```
 
-
 #### <a name="csvexport"></a>Using csv export
 
 ##### What can it do / limitations.
 
-CSVExport plugin supports the export of the current monthly report to 
+CSVExport plugin supports the export of the current monthly report to
 a pre-configured path. The file names are hard coded, and have the format
 of YYYY-MM_working_time.csv.
-Please note that all days must have a valid project assigned for 
+Please note that all days must have a valid project assigned for
 the correct export.
-
 
 ##### Setup and usage
 

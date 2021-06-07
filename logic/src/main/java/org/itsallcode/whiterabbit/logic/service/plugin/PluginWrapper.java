@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import static java.util.stream.Collectors.toList;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -109,6 +110,12 @@ class PluginWrapper implements AppPlugin
         public Optional<String> getOptionalValue(String key)
         {
             return config.getOptionalValue(prefixed(key));
+        }
+
+        @Override
+        public Path getDataDir()
+        {
+            return config.getDataDir();
         }
     }
 }

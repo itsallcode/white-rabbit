@@ -5,17 +5,19 @@ import static java.util.stream.Collectors.toList;
 import java.time.Duration;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
+import org.itsallcode.whiterabbit.api.features.MonthDataStorage.ModelFactory;
+import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.holidays.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
 class MonthIndexStorage implements Storage
@@ -25,13 +27,15 @@ class MonthIndexStorage implements Storage
     private final ContractTermsService contractTerms;
     private final ProjectService projectService;
     private final MonthDataStorage fileStorage;
+    private final HolidayService holidayService;
 
     MonthIndexStorage(ContractTermsService contractTerms, ProjectService projectService,
-            MonthDataStorage fileStorage)
+            MonthDataStorage fileStorage, HolidayService holidayService)
     {
         this.contractTerms = contractTerms;
         this.projectService = projectService;
         this.fileStorage = fileStorage;
+        this.holidayService = holidayService;
     }
 
     @Override
@@ -69,10 +73,12 @@ class MonthIndexStorage implements Storage
 
     private MonthIndex createNewMonth(YearMonth date)
     {
-        final MonthData month = fileStorage.getModelFactory().createMonthData();
+        final ModelFactory factory = fileStorage.getModelFactory();
+        final MonthData month = factory.createMonthData();
         month.setYear(date.getYear());
         month.setMonth(date.getMonth());
-        month.setDays(new ArrayList<>());
+        final List<DayData> days = holidayService.getHolidays(factory, date);
+        month.setDays(days);
         month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
         return createMonthIndex(month);
     }
