@@ -8,7 +8,7 @@ public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
     private final Class<S> featureType;
     protected PluginConfiguration config;
 
-    public AbstractPlugin(String id, Class<S> featureType)
+    protected AbstractPlugin(String id, Class<S> featureType)
     {
         super();
         this.featureType = featureType;
@@ -39,7 +39,7 @@ public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
         return featureType.isAssignableFrom(featureType);
     }
 
-    abstract protected S createInstance();
+    protected abstract S createInstance();
 
     @Override
     public <T extends PluginFeature> T getFeature(Class<T> featureType)
