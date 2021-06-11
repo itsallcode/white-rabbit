@@ -10,7 +10,6 @@ public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
 
     protected AbstractPlugin(String id, Class<S> featureType)
     {
-        super();
         this.featureType = featureType;
         this.id = id;
     }
