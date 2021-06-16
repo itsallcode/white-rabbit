@@ -60,7 +60,7 @@ project(':plugins').afterEvaluate {
         group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
-        main = project.mainClass
+        mainClass = project.mainClass
         workingDir = rootProject.projectDir
         systemProperties = ['user.home': userHome]
     }
@@ -68,7 +68,7 @@ project(':plugins').afterEvaluate {
 
 task runJfxui(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
-    main = project.mainClass
+    mainClass = project.mainClass
     workingDir = rootProject.projectDir
 }
 
