@@ -17,6 +17,10 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 * [#115](https://github.com/itsallcode/white-rabbit/issues/115): Added holiday-calculator plugin: calculate holidays, see [README.md](README.md#holidays_calculator) for details.
 * [#175](https://github.com/itsallcode/white-rabbit/pull/175): CSV Exporter Plugin: Initial version.
 
+### Changed
+
+* [#187](https://github.com/itsallcode/white-rabbit/pull/187): Upgrade dependencies, test with Java 16.
+
 ## [1.6.0] - 2021-05-30
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.6.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/8?closed=1)
