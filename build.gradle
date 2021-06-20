@@ -87,3 +87,10 @@ nexusStaging {
     username = getOptionalProperty("ossrhUsername")
     password = getOptionalProperty("ossrhPassword")
 }
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "itsallcode"
+    }
+}
