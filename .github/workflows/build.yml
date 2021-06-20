@@ -34,6 +34,7 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/*.gradle*') }}
         restore-keys: ${{ runner.os }}-gradle-
     - name: Cache SonarQube packages
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.SONAR_TOKEN != null }}
       uses: actions/cache@v2
       with:
         path: ~/.sonar/cache
