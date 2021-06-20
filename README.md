@@ -281,11 +281,17 @@ java -jar jfxui/build/libs/jfxui.jar
 ./gradlew check -PuiTestsHeadless=false
 ```
 
+#### Check that dependencies are up-to-date
+
+```bash
+./gradlew dependencyUpdates
+```
+
 #### Deployment
 
 This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plugin api to Maven Central.
 
-#### Initial setup
+##### Initial setup
 
 1. Setup of [keystore and AWS configuration](webstart/README.md).
 2. Add the following to your `~/.gradle/gradle.properties`:
@@ -299,7 +305,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     signing.secretKeyRingFile=<path to secret keyring file>
     ```
 
-#### <a name="build_and_deploy"></a>Build and deploy
+##### <a name="build_and_deploy"></a>Build and deploy
 
 1. Make sure the [Changelog](CHANGELOG.md) is updated
 2. Run the following command:
