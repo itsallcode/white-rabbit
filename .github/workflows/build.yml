@@ -13,6 +13,8 @@ jobs:
     strategy:
       matrix:
         java: [11, 16]
+    env:
+      DEFAULT_JAVA: 11
 
     steps:
     - uses: actions/checkout@v2
@@ -42,7 +44,7 @@ jobs:
       run: |
         ./gradlew build --warning-mode=summary
     - name: Sonar analysis
-      if: ${{ env.SONAR_TOKEN != null }}
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.SONAR_TOKEN != null }}
       run: |
         ./gradlew sonarqube -Dsonar.host.url=https://sonarcloud.io \
                             -Dsonar.organization=itsallcode \
@@ -59,6 +61,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Archive jfxui binary
       uses: actions/upload-artifact@v2
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
         name: jfxui
         path: jfxui/build/libs/white-rabbit-fx-*.jar
