@@ -21,7 +21,7 @@ dependencies {
 
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
-    runtimeOnly "org.fusesource.jansi:jansi:2.3.2"
+    runtimeOnly "org.fusesource.jansi:jansi:2.3.3"
 
     testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
     testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"

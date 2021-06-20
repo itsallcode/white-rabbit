@@ -1,6 +1,6 @@
 
 dependencies {
-    def seleniumVersion = "4.0.0-beta-2"
+    def seleniumVersion = "4.0.0-beta-4"
 
     implementation "org.seleniumhq.selenium:selenium-edge-driver:$seleniumVersion"
     implementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
