@@ -149,7 +149,7 @@ public class DayRecordTable
             @Override
             public void updateIndex(int newIndex)
             {
-                if (newIndex != getIndex() && newIndex >= 0 && dayRecords.size() < newIndex)
+                if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
                 {
                     final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
                     LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
