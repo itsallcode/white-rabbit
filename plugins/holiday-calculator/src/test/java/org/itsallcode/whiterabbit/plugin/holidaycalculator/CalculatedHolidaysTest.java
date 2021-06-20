@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.itsallcode.holidays.calculator.logic.Holiday;
+import org.itsallcode.holidays.calculator.logic.variants.Holiday;
 import org.itsallcode.whiterabbit.api.features.Holidays.HolidayInstance;
 import org.junit.jupiter.api.Test;
 

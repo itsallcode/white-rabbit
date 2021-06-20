@@ -13,9 +13,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.holidays.calculator.logic.Holiday;
 import org.itsallcode.holidays.calculator.logic.HolidaySet;
 import org.itsallcode.holidays.calculator.logic.parser.HolidaysFileParser;
+import org.itsallcode.holidays.calculator.logic.variants.Holiday;
 import org.itsallcode.whiterabbit.api.features.Holidays;
 
 class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holidays
