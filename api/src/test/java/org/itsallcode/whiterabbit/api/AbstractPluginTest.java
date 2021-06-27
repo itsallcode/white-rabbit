@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,17 +38,15 @@ class AbstractPluginTest
     }
 
     @Test
-    void gettingUnsupportedFeatureThrowsException()
+    void gettingUnsupportedFeatureReturnsEmptyOptional()
     {
-        assertThatThrownBy(() -> plugin.getFeature(UnsupportedFeature.class))
-                .isInstanceOf(IllegalArgumentException.class).hasMessage(
-                        "Feature " + UnsupportedFeature.class.getName() + " not supported by plugin " + PLUGIN_ID);
+        assertThat(plugin.getFeature(UnsupportedFeature.class)).isEmpty();
     }
 
     @Test
     void gettingSupportedFeatureWorks()
     {
-        assertThat(plugin.getFeature(SupportedFeature.class)).isSameAs(supportedFeatureMock);
+        assertThat(plugin.getFeature(SupportedFeature.class)).isPresent().containsSame(supportedFeatureMock);
     }
 
     @Test

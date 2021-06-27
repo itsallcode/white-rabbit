@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/9?closed=1)
 
+### Breaking change
+
+* [#192](https://github.com/itsallcode/white-rabbit/pull/192): Simplify the `Plugin` interface by returning an empty `Optional` instead of null or throwing an exception.
+  * This requires adapting third party plugins and rebuilding plugins installed to `~/.whiterabbit/plugins/`.
+
 ### Fixed
 
 * [#191](https://github.com/itsallcode/white-rabbit/pull/191): Starting WR with all plugins enabled failed with exception `IllegalStateException: Found multiple plugins supporting org.itsallcode.whiterabbit.api.features.MonthDataStorage`.

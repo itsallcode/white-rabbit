@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
+import java.util.Optional;
+
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
@@ -22,13 +24,13 @@ public class PMSmartExportPlugin implements Plugin
     }
 
     @Override
-    public <T extends PluginFeature> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
         if (featureType.isAssignableFrom(PMSmartExporter.class))
         {
-            return featureType.cast(new PMSmartExporter(config, new WebDriverFactory()));
+            return Optional.of(featureType.cast(new PMSmartExporter(config, new WebDriverFactory())));
         }
-        throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
+        return Optional.empty();
     }
 
     @Override

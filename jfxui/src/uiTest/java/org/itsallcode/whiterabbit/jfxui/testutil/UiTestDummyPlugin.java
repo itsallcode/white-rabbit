@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.testutil;
 
 import static org.mockito.Mockito.mock;
 
+import java.util.Optional;
+
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
@@ -29,14 +31,13 @@ public class UiTestDummyPlugin implements Plugin
     }
 
     @Override
-    public <T extends PluginFeature> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
-        return mock(featureType);
+        return Optional.of(mock(featureType));
     }
 
     @Override
     public void close()
     {
-
     }
 }

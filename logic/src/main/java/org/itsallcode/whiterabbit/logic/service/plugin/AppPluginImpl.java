@@ -14,24 +14,24 @@ import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
-class PluginWrapper implements AppPlugin
+class AppPluginImpl implements AppPlugin
 {
-    private static final Logger LOG = LogManager.getLogger(PluginWrapper.class);
+    private static final Logger LOG = LogManager.getLogger(AppPluginImpl.class);
 
     private final AppPluginOrigin origin;
     private final Plugin plugin;
     private final Config config;
 
-    private PluginWrapper(Config config, AppPluginOrigin origin, Plugin plugin)
+    private AppPluginImpl(Config config, AppPluginOrigin origin, Plugin plugin)
     {
         this.config = config;
         this.origin = origin;
         this.plugin = plugin;
     }
 
-    public static PluginWrapper create(Config config, AppPluginOrigin origin, Plugin plugin)
+    public static AppPluginImpl create(Config config, AppPluginOrigin origin, Plugin plugin)
     {
-        return new PluginWrapper(config, origin, plugin);
+        return new AppPluginImpl(config, origin, plugin);
     }
 
     void init()
@@ -72,7 +72,7 @@ class PluginWrapper implements AppPlugin
         }
     }
 
-    <T extends PluginFeature> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
         return plugin.getFeature(featureType);
     }

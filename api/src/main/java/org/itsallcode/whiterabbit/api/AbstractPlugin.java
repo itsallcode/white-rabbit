@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.api;
 
+import java.util.Optional;
+
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 
 public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
@@ -41,15 +43,12 @@ public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
     protected abstract S createInstance();
 
     @Override
-    public <T extends PluginFeature> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
         if (this.supports(featureType))
         {
-            if (this.supports(featureType))
-            {
-                return featureType.cast(createInstance());
-            }
+            return Optional.of(featureType.cast(createInstance()));
         }
-        throw new IllegalArgumentException("Feature " + featureType.getName() + " not supported by plugin " + getId());
+        return Optional.empty();
     }
 }
