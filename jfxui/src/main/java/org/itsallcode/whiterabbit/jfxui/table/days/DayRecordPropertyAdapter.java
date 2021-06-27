@@ -88,7 +88,7 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
         this.tableRow = newTableRow;
         if (date.get() != null && tableRow.getIndex() + 1 != date.get().getDayOfMonth())
         {
-            LOG.warn("Trying to set invalid row #{} for date {}.", tableRow.getIndex(), date.get());
+            LOG.trace("Trying to set invalid row #{} for date {}.", tableRow.getIndex(), date.get());
             return;
         }
         LOG.trace("Setting table row #{} for day {}", newTableRow.getIndex(), date.get());
