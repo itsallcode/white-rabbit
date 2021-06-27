@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
@@ -21,9 +22,13 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressM
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.plugin.PluginWrapper;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
@@ -63,15 +68,23 @@ public class ProjectReportViewer
 
     private Node[] getExportButtons()
     {
-        return appService.pluginManager().getProjectReportExporterPlugins().stream()
-                .map(pluginId -> UiWidget.button(pluginId + "-export-button", "Export to " + pluginId,
-                        e -> exportReport(pluginId)))
+        return appService.pluginManager().findPluginsSupporting(ProjectReportExporter.class).stream()
+                .map(this::createExportButton)
                 .toArray(Node[]::new);
     }
 
-    private void exportReport(String pluginId)
+    private Button createExportButton(PluginWrapper plugin)
     {
-        final var projectReportExporter = appService.pluginManager().getProjectReportExporter(pluginId);
+        final String pluginId = plugin.getId();
+        final EventHandler<ActionEvent> action = e -> exportReport(plugin);
+        return UiWidget.button(pluginId + "-export-button", "Export to " + pluginId, action);
+    }
+
+    private void exportReport(PluginWrapper plugin)
+    {
+        final var projectReportExporter = plugin.getFeature(ProjectReportExporter.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Plugin " + plugin + " does not support " + ProjectReportExporter.class));
         final DialogProgressMonitor progressMonitor = ProgressDialog.show(primaryStage, "Exporting project report...");
         appService.scheduler().schedule(Duration.ZERO, () -> {
             projectReportExporter.export(report, progressMonitor);

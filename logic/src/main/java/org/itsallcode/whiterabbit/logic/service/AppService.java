@@ -122,7 +122,7 @@ public class AppService implements Closeable
 
     private static MonthDataStorage createMonthDataStorage(final Config config, final PluginManager pluginManager)
     {
-        final Optional<MonthDataStorage> dataStorage = pluginManager.getMonthDataStorage();
+        final Optional<MonthDataStorage> dataStorage = pluginManager.getUniqueFeature(MonthDataStorage.class);
         if (dataStorage.isPresent())
         {
             LOG.info("Using storage plugin {}", dataStorage.get().getClass().getName());

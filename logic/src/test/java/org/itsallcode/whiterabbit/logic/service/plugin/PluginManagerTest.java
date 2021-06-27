@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
@@ -58,7 +59,7 @@ class PluginManagerTest
     void getProjectReportExporterPlugins_noPluginAvailable()
     {
         simulatePlugins();
-        assertThat(pluginManager.getProjectReportExporterPlugins()).isEmpty();
+        assertThat(pluginManager.findPluginsSupporting(ProjectReportExporter.class)).isEmpty();
     }
 
     @Test
@@ -66,7 +67,7 @@ class PluginManagerTest
     {
         simulatePlugins(plugin1);
         when(plugin1.supports(ProjectReportExporter.class)).thenReturn(false);
-        assertThat(pluginManager.getProjectReportExporterPlugins()).isEmpty();
+        assertThat(pluginManager.findPluginsSupporting(ProjectReportExporter.class)).isEmpty();
     }
 
     @Test
@@ -74,18 +75,29 @@ class PluginManagerTest
     {
         simulatePlugins(plugin1);
         when(plugin1.supports(ProjectReportExporter.class)).thenReturn(true);
-        assertThat(pluginManager.getProjectReportExporterPlugins()).containsExactly("plugin1");
+        assertThat(pluginManager.findPluginsSupporting(ProjectReportExporter.class)).containsExactly(plugin1);
     }
 
     @Test
     void getAllFeatures()
     {
-        when(plugin1.getFeature(Holidays.class)).thenReturn(holidays1);
-        when(plugin2.getFeature(Holidays.class)).thenReturn(holidays2);
+        when(plugin1.getFeature(Holidays.class)).thenReturn(Optional.of(holidays1));
+        when(plugin2.getFeature(Holidays.class)).thenReturn(Optional.of(holidays2));
         when(plugin1.supports(Holidays.class)).thenReturn(true);
         when(plugin2.supports(Holidays.class)).thenReturn(true);
         simulatePlugins(plugin1, plugin2);
         assertThat(pluginManager.getAllFeatures(Holidays.class)).containsExactly(holidays1, holidays2);
+    }
+
+    @Test
+    void pluginReturnsEmptyOptional()
+    {
+        when(plugin1.getFeature(Holidays.class)).thenReturn(Optional.of(holidays1));
+        when(plugin2.getFeature(Holidays.class)).thenReturn(Optional.empty());
+        when(plugin1.supports(Holidays.class)).thenReturn(true);
+        when(plugin2.supports(Holidays.class)).thenReturn(true);
+        simulatePlugins(plugin1, plugin2);
+        assertThat(pluginManager.getAllFeatures(Holidays.class)).containsExactly(holidays1);
     }
 
     private void simulatePlugins(PluginWrapper... plugins)
@@ -101,9 +113,10 @@ class PluginManagerTest
     void getProjectReportExporter_noPluginAvailable_throwsException()
     {
         simulatePlugins();
-        assertThatThrownBy(() -> pluginManager.getProjectReportExporter("unknown"))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Plugin 'unknown' not found");
+        assertThat(pluginManager.getAllFeatures(ProjectReportExporter.class)).isEmpty();
+        // assertThatThrownBy(() -> pluginManager.get("unknown"))
+        // .isInstanceOf(IllegalStateException.class)
+        // .hasMessage("Plugin 'unknown' not found");
     }
 
     @Test
@@ -111,9 +124,12 @@ class PluginManagerTest
     {
         simulatePlugins(plugin1);
         when(plugin1.supports(ProjectReportExporter.class)).thenReturn(false);
-        assertThatThrownBy(() -> pluginManager.getProjectReportExporter("plugin1"))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Plugin 'plugin1' does not support feature " + ProjectReportExporter.class.getName());
+        assertThat(pluginManager.getAllFeatures(ProjectReportExporter.class)).isEmpty();
+        // assertThatThrownBy(() ->
+        // pluginManager.getProjectReportExporter("plugin1"))
+        // .isInstanceOf(IllegalStateException.class)
+        // .hasMessage("Plugin 'plugin1' does not support feature " +
+        // ProjectReportExporter.class.getName());
     }
 
     @Test
@@ -122,9 +138,9 @@ class PluginManagerTest
         simulatePlugins(plugin1);
         when(plugin1.supports(ProjectReportExporter.class)).thenReturn(true);
         final ProjectReportExporter featureMock = mock(ProjectReportExporter.class);
-        when(plugin1.getFeature(ProjectReportExporter.class)).thenReturn(featureMock);
+        when(plugin1.getFeature(ProjectReportExporter.class)).thenReturn(Optional.of(featureMock));
 
-        assertThat(pluginManager.getProjectReportExporter("plugin1")).isNotNull().isSameAs(featureMock);
+        assertThat(pluginManager.getAllFeatures(ProjectReportExporter.class)).hasSize(1).contains(featureMock);
     }
 
     @Test
@@ -133,9 +149,9 @@ class PluginManagerTest
         simulatePlugins(plugin1);
         when(plugin1.supports(MonthDataStorage.class)).thenReturn(true);
         final MonthDataStorage featureMock = mock(MonthDataStorage.class);
-        when(plugin1.getFeature(MonthDataStorage.class)).thenReturn(featureMock);
+        when(plugin1.getFeature(MonthDataStorage.class)).thenReturn(Optional.of(featureMock));
 
-        assertThat(pluginManager.getMonthDataStorage()).isPresent().containsSame(featureMock);
+        assertThat(pluginManager.getUniqueFeature(MonthDataStorage.class)).isPresent().containsSame(featureMock);
     }
 
     @Test
@@ -144,7 +160,7 @@ class PluginManagerTest
         simulatePlugins(plugin1);
         when(plugin1.supports(MonthDataStorage.class)).thenReturn(false);
 
-        assertThat(pluginManager.getMonthDataStorage()).isEmpty();
+        assertThat(pluginManager.getUniqueFeature(MonthDataStorage.class)).isEmpty();
     }
 
     @Test
@@ -154,7 +170,7 @@ class PluginManagerTest
         when(plugin1.supports(MonthDataStorage.class)).thenReturn(true);
         when(plugin2.supports(MonthDataStorage.class)).thenReturn(true);
 
-        assertThatThrownBy(() -> pluginManager.getMonthDataStorage())
+        assertThatThrownBy(() -> pluginManager.getUniqueFeature(MonthDataStorage.class))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage(
                         "Found multiple plugins supporting " + MonthDataStorage.class.getName()

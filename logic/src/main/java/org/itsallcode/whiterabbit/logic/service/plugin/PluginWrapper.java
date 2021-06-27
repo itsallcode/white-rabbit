@@ -14,7 +14,7 @@ import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
-class PluginWrapper implements AppPlugin
+public class PluginWrapper implements AppPlugin
 {
     private static final Logger LOG = LogManager.getLogger(PluginWrapper.class);
 
@@ -72,7 +72,7 @@ class PluginWrapper implements AppPlugin
         }
     }
 
-    <T extends PluginFeature> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
         return plugin.getFeature(featureType);
     }
