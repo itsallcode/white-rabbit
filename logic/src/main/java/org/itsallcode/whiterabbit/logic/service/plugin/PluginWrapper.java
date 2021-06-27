@@ -14,7 +14,7 @@ import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
-public class PluginWrapper implements AppPlugin
+class PluginWrapper implements AppPlugin
 {
     private static final Logger LOG = LogManager.getLogger(PluginWrapper.class);
 

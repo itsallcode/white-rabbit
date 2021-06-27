@@ -38,7 +38,7 @@ public class PluginManager
                 .collect(toList());
     }
 
-    public List<PluginWrapper> findPluginsSupporting(Class<? extends PluginFeature> featureType)
+    public List<AppPlugin> findPluginsSupporting(Class<? extends PluginFeature> featureType)
     {
         return pluginRegistry.getAllPlugins().stream()
                 .filter(plugin -> plugin.supports(featureType))
@@ -53,7 +53,7 @@ public class PluginManager
 
     public <T extends PluginFeature> Optional<T> getUniqueFeature(Class<T> featureType)
     {
-        final List<PluginWrapper> plugins = findPluginsSupporting(featureType);
+        final List<AppPlugin> plugins = findPluginsSupporting(featureType);
         if (plugins.isEmpty())
         {
             return Optional.empty();

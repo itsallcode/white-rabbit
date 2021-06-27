@@ -22,7 +22,7 @@ import org.itsallcode.whiterabbit.jfxui.ui.widget.ProgressDialog.DialogProgressM
 import org.itsallcode.whiterabbit.jfxui.ui.widget.ReportWindow;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
 import org.itsallcode.whiterabbit.logic.service.AppService;
-import org.itsallcode.whiterabbit.logic.service.plugin.PluginWrapper;
+import org.itsallcode.whiterabbit.logic.service.plugin.AppPlugin;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
 import javafx.event.ActionEvent;
@@ -73,14 +73,14 @@ public class ProjectReportViewer
                 .toArray(Node[]::new);
     }
 
-    private Button createExportButton(PluginWrapper plugin)
+    private Button createExportButton(AppPlugin plugin)
     {
         final String pluginId = plugin.getId();
         final EventHandler<ActionEvent> action = e -> exportReport(plugin);
         return UiWidget.button(pluginId + "-export-button", "Export to " + pluginId, action);
     }
 
-    private void exportReport(PluginWrapper plugin)
+    private void exportReport(AppPlugin plugin)
     {
         final var projectReportExporter = plugin.getFeature(ProjectReportExporter.class)
                 .orElseThrow(() -> new IllegalStateException(

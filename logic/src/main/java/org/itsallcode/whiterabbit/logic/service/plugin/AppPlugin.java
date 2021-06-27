@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
@@ -12,6 +13,8 @@ public interface AppPlugin
     String getId();
 
     Collection<AppPluginFeature> getFeatures();
+
+    <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType);
 
     AppPluginOrigin getOrigin();
 
