@@ -29,9 +29,9 @@ class PluginManagerTest
     private PluginRegistry pluginRegistryMock;
 
     @Mock
-    private PluginWrapper plugin1;
+    private AppPluginImpl plugin1;
     @Mock
-    private PluginWrapper plugin2;
+    private AppPluginImpl plugin2;
 
     @Mock
     Holidays holidays1;
@@ -100,10 +100,10 @@ class PluginManagerTest
         assertThat(pluginManager.getAllFeatures(Holidays.class)).containsExactly(holidays1);
     }
 
-    private void simulatePlugins(PluginWrapper... plugins)
+    private void simulatePlugins(AppPluginImpl... plugins)
     {
         lenient().when(pluginRegistryMock.getAllPlugins()).thenReturn(asList(plugins));
-        for (final PluginWrapper plugin : plugins)
+        for (final AppPluginImpl plugin : plugins)
         {
             lenient().when(pluginRegistryMock.getPlugin(plugin.getId())).thenReturn(plugin);
         }
@@ -180,7 +180,7 @@ class PluginManagerTest
     @Test
     void getAllPlugins()
     {
-        final Collection<PluginWrapper> plugins = new ArrayList<>();
+        final Collection<AppPluginImpl> plugins = new ArrayList<>();
         when(pluginRegistryMock.getAllPlugins()).thenReturn(plugins);
         assertThat(pluginManager.getAllPlugins()).isSameAs(plugins);
     }

@@ -72,7 +72,7 @@ class PluginRegistryTest
     void getAllPlugins_returnsPlugins_WhenLoaded()
     {
         pluginRegistry.load();
-        final Collection<PluginWrapper> plugins = pluginRegistry.getAllPlugins();
+        final Collection<AppPluginImpl> plugins = pluginRegistry.getAllPlugins();
         assertThat(plugins).hasSize(EXPECTED_PLUGIN_COUNT);
     }
 
@@ -98,7 +98,7 @@ class PluginRegistryTest
     void getPlugin_returnsPluginWhenAvailable()
     {
         pluginRegistry.load();
-        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
+        final AppPluginImpl plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
         assertThat(plugin.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
         assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
         assertThat(plugin.getFeatures()).isEmpty();
@@ -114,7 +114,7 @@ class PluginRegistryTest
     void getPlugin_featureNotAvailable()
     {
         pluginRegistry.load();
-        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
+        final AppPluginImpl plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
         assertThat(plugin.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
         assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
         assertThat(plugin.getFeatures()).isEmpty();
@@ -125,7 +125,7 @@ class PluginRegistryTest
     void getPlugin_withFeature()
     {
         pluginRegistry.load();
-        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingReportPlugin.PLUGIN_ID);
+        final AppPluginImpl plugin = pluginRegistry.getPlugin(TestingReportPlugin.PLUGIN_ID);
         assertThat(plugin.getId()).isEqualTo(TestingReportPlugin.PLUGIN_ID);
         assertThat(plugin.getFeatures()).hasSize(1).containsExactly(AppPluginFeature.PROJECT_REPORT);
     }

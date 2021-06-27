@@ -29,7 +29,7 @@ class PluginRegistry
 {
     private static final Logger LOG = LogManager.getLogger(PluginRegistry.class);
 
-    private Map<String, PluginWrapper> plugins = new HashMap<>();
+    private Map<String, AppPluginImpl> plugins = new HashMap<>();
     private final Config config;
 
     PluginRegistry(Config config)
@@ -43,13 +43,13 @@ class PluginRegistry
         plugins = loadPlugins();
     }
 
-    private Map<String, PluginWrapper> loadPlugins()
+    private Map<String, AppPluginImpl> loadPlugins()
     {
         return Stream.concat(pluginsFromClasspath(), pluginsFromJars())
-                .collect(toMap(PluginWrapper::getId, Function.identity(), preferExternalJars()));
+                .collect(toMap(AppPluginImpl::getId, Function.identity(), preferExternalJars()));
     }
 
-    private BinaryOperator<PluginWrapper> preferExternalJars()
+    private BinaryOperator<AppPluginImpl> preferExternalJars()
     {
         return (a, b) -> {
             LOG.warn("Found two plugins with same ID '{}':\n- {}\n- {}", a.getId(), a, b);
@@ -61,22 +61,22 @@ class PluginRegistry
         };
     }
 
-    private Stream<PluginWrapper> pluginsFromJars()
+    private Stream<AppPluginImpl> pluginsFromJars()
     {
         return getPluginJars().stream().flatMap(this::loadPlugins);
     }
 
-    private Stream<PluginWrapper> pluginsFromClasspath()
+    private Stream<AppPluginImpl> pluginsFromClasspath()
     {
         return loadPlugins(PluginOrigin.forCurrentClassPath());
     }
 
-    private Stream<PluginWrapper> loadPlugins(Path jar)
+    private Stream<AppPluginImpl> loadPlugins(Path jar)
     {
         return loadPlugins(PluginOrigin.forJar(jar));
     }
 
-    private Stream<PluginWrapper> loadPlugins(PluginOrigin origin)
+    private Stream<AppPluginImpl> loadPlugins(PluginOrigin origin)
     {
         final ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, origin.getClassLoader());
         return serviceLoader.stream()
@@ -103,13 +103,13 @@ class PluginRegistry
         }
     }
 
-    private Optional<PluginWrapper> loadPlugin(Provider<Plugin> provider, PluginOrigin origin)
+    private Optional<AppPluginImpl> loadPlugin(Provider<Plugin> provider, PluginOrigin origin)
     {
         LOG.info("Loading plugin {} using {}", provider.type(), origin);
         try
         {
             final Plugin pluginInstance = provider.get();
-            final PluginWrapper pluginWrapper = PluginWrapper.create(config, origin, pluginInstance);
+            final AppPluginImpl pluginWrapper = AppPluginImpl.create(config, origin, pluginInstance);
             pluginWrapper.init();
             return Optional.of(pluginWrapper);
         }
@@ -120,14 +120,14 @@ class PluginRegistry
         }
     }
 
-    Collection<PluginWrapper> getAllPlugins()
+    Collection<AppPluginImpl> getAllPlugins()
     {
         return plugins.values();
     }
 
-    PluginWrapper getPlugin(String id)
+    AppPluginImpl getPlugin(String id)
     {
-        final PluginWrapper plugin = plugins.get(id);
+        final AppPluginImpl plugin = plugins.get(id);
         if (plugin == null)
         {
             throw new IllegalStateException("Plugin '" + id + "' not found. Available plugins: " + plugins.keySet());
@@ -142,7 +142,7 @@ class PluginRegistry
             return;
         }
         LOG.debug("Closing {} plugins...", plugins.size());
-        plugins.values().forEach(PluginWrapper::close);
+        plugins.values().forEach(AppPluginImpl::close);
     }
 
     public void close()
