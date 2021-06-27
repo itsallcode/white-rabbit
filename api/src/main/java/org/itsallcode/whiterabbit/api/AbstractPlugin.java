@@ -37,7 +37,7 @@ public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
     @Override
     public boolean supports(Class<? extends PluginFeature> featureType)
     {
-        return featureType.isAssignableFrom(featureType);
+        return this.featureType.isAssignableFrom(featureType);
     }
 
     protected abstract S createInstance();
@@ -45,7 +45,7 @@ public abstract class AbstractPlugin<S extends PluginFeature> implements Plugin
     @Override
     public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
-        if (featureType.isAssignableFrom(this.featureType))
+        if (this.supports(featureType))
         {
             return Optional.of(featureType.cast(createInstance()));
         }
