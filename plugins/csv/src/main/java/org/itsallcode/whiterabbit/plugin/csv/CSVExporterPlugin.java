@@ -3,9 +3,9 @@ package org.itsallcode.whiterabbit.plugin.csv;
 import org.itsallcode.whiterabbit.api.AbstractPlugin;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 
-class CSVExporterPlugin extends AbstractPlugin<ProjectReportExporter>
+public class CSVExporterPlugin extends AbstractPlugin<ProjectReportExporter>
 {
-    CSVExporterPlugin()
+    public CSVExporterPlugin()
     {
         super("csv", ProjectReportExporter.class);
     }
