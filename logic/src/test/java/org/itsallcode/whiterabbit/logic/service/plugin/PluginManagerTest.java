@@ -113,10 +113,8 @@ class PluginManagerTest
     void getProjectReportExporter_noPluginAvailable_throwsException()
     {
         simulatePlugins();
+
         assertThat(pluginManager.getAllFeatures(ProjectReportExporter.class)).isEmpty();
-        // assertThatThrownBy(() -> pluginManager.get("unknown"))
-        // .isInstanceOf(IllegalStateException.class)
-        // .hasMessage("Plugin 'unknown' not found");
     }
 
     @Test
@@ -124,12 +122,8 @@ class PluginManagerTest
     {
         simulatePlugins(plugin1);
         when(plugin1.supports(ProjectReportExporter.class)).thenReturn(false);
+
         assertThat(pluginManager.getAllFeatures(ProjectReportExporter.class)).isEmpty();
-        // assertThatThrownBy(() ->
-        // pluginManager.getProjectReportExporter("plugin1"))
-        // .isInstanceOf(IllegalStateException.class)
-        // .hasMessage("Plugin 'plugin1' does not support feature " +
-        // ProjectReportExporter.class.getName());
     }
 
     @Test
