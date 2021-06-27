@@ -1,12 +1,13 @@
 package org.itsallcode.whiterabbit.plugin.holidaycalculator;
 
 import org.itsallcode.whiterabbit.api.AbstractPlugin;
+import org.itsallcode.whiterabbit.api.features.Holidays;
 
-public class HolidayCalculatorPlugin extends AbstractPlugin<CalculatedHolidays>
+public class HolidayCalculatorPlugin extends AbstractPlugin<Holidays>
 {
     public HolidayCalculatorPlugin()
     {
-        super("holidaycalculator", CalculatedHolidays.class);
+        super("holidaycalculator", Holidays.class);
     }
 
     @Override

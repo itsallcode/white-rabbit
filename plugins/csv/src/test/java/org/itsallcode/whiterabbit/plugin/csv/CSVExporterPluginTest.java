@@ -1,9 +1,6 @@
-package org.itsallcode.whiterabbit.plugin.holidaycalculator;
+package org.itsallcode.whiterabbit.plugin.csv;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.nio.file.Path;
 
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.Holidays;
@@ -11,44 +8,39 @@ import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class HolidayCalculatorPluginTest
+class CSVExporterPluginTest
 {
     @Mock
     private PluginConfiguration configMock;
 
-    @TempDir
-    Path dataDir;
-
-    private HolidayCalculatorPlugin plugin;
+    private CSVExporterPlugin plugin;
 
     @BeforeEach
     void setUp()
     {
-        plugin = new HolidayCalculatorPlugin();
+        plugin = new CSVExporterPlugin();
     }
 
     @Test
-    void pluginSupportsHolidaysFeature()
+    void pluginSupportsProjectReportExporterFeature()
     {
-        assertThat(plugin.supports(Holidays.class)).isTrue();
+        assertThat(plugin.supports(ProjectReportExporter.class)).isTrue();
     }
 
     @Test
-    void pluginDoesNotSupportProjectReportExporterFeature()
+    void pluginDoesNotSupportHolidaysFeature()
     {
-        assertThat(plugin.supports(ProjectReportExporter.class)).isFalse();
+        assertThat(plugin.supports(Holidays.class)).isFalse();
     }
 
     @Test
     void getFeature()
     {
-        when(configMock.getDataDir()).thenReturn(dataDir);
         plugin.init(configMock);
-        assertThat(plugin.getFeature(Holidays.class)).isNotNull();
+        assertThat(plugin.getFeature(ProjectReportExporter.class)).isNotNull();
     }
 }
