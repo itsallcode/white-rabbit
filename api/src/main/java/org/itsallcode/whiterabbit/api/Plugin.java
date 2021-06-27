@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.api;
 
+import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
@@ -14,6 +15,7 @@ import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
  * <ul>
  * <li>{@link ProjectReportExporter}</li>
  * <li>{@link MonthDataStorage}</li>
+ * <li>{@link Holidays}</li>
  * </ul>
  */
 public interface Plugin

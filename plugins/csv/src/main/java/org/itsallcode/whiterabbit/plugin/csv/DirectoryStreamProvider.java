@@ -5,17 +5,25 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class DirectoryStreamProvider implements OutStreamProvider {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+class DirectoryStreamProvider implements OutStreamProvider
+{
+    private static final Logger LOG = LogManager.getLogger(DirectoryStreamProvider.class);
     private final Path outPath;
 
-    DirectoryStreamProvider(Path outPath) {
-        this.outPath= outPath;
+    DirectoryStreamProvider(Path outPath)
+    {
+        this.outPath = outPath;
     }
 
     @Override
-    public OutputStream getStream(String name) throws IOException {
+    public OutputStream getStream(String name) throws IOException
+    {
         final String outFile = String.format("%s_working_time.csv", name);
-        return Files.newOutputStream(outPath.resolve(outFile));
+        final Path path = outPath.resolve(outFile);
+        LOG.info("Writing output to {}", path);
+        return Files.newOutputStream(path);
     }
 }
