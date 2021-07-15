@@ -15,6 +15,8 @@ dependencies {
         implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
     }
 
+    implementation "com.dorkbox:SystemTray:4.1"
+
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
     implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"

@@ -117,7 +117,7 @@ class AppServiceTest
     private AppService createAppService(final DelegatingAppServiceCallback appServiceCallback,
             final WorkingTimeService workingTimeService)
     {
-        return new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
+        return new AppService(configMock, workingTimeService, storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock, singleInstanceService, appServiceCallback, activityService, projectServiceMock,
                 autocompleteServiceMock, appPropertiesServiceMock, vacationReportGeneratorMock,
                 projectReportGeneratorMock, pluginManagerMock);

@@ -1,20 +1,12 @@
 package org.itsallcode.whiterabbit.jfxui.tray;
 
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,10 +27,17 @@ class AwtTrayIcon implements Tray
 
     static @NonNull Tray createAwtTray(TrayCallback callback)
     {
+        return SwingUtil.runOnSwingThread(() -> {
+            return createAwtTrayInternal(callback);
+        });
+    }
+
+    private static @NonNull Tray createAwtTrayInternal(TrayCallback callback)
+    {
         try
         {
             final SystemTray tray = SystemTray.getSystemTray();
-            final Image scaledIcon = loadImage("/icon.png", tray.getTrayIconSize());
+            final Image scaledIcon = TrayUtil.loadImage(tray.getTrayIconSize());
             final TrayIcon trayIcon = new TrayIcon(scaledIcon, "White Rabbit Time Recording",
                     createPopupMenu(callback));
             LOG.info("Adding tray icon {}", trayIcon);
@@ -49,21 +48,6 @@ class AwtTrayIcon implements Tray
         catch (final Exception e)
         {
             throw new IllegalStateException("Error creating system tray: " + e.getMessage(), e);
-        }
-    }
-
-    private static Image loadImage(final String resourceName, Dimension size)
-    {
-        final URL imageUrl = AwtTrayIcon.class.getResource(resourceName);
-        try
-        {
-            final Image image = ImageIO.read(imageUrl);
-            LOG.debug("Scaling icon {} to {}", imageUrl, size);
-            return image.getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
-        }
-        catch (final IOException e)
-        {
-            throw new UncheckedIOException("Error loading image " + resourceName, e);
         }
     }
 
@@ -88,12 +72,6 @@ class AwtTrayIcon implements Tray
     public void setTooltip(String tooltip)
     {
         trayIcon.setToolTip(tooltip);
-    }
-
-    @Override
-    public void displayMessage(String caption, String text, MessageType messageType)
-    {
-        SwingUtilities.invokeLater(() -> trayIcon.displayMessage(caption, text, messageType));
     }
 
     @Override

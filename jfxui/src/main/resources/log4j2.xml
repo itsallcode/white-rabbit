@@ -29,6 +29,9 @@
         <Logger level="INFO" name="org.asynchttpclient.netty" />
         <Logger level="INFO" name="io.netty" />
         <Logger level="INFO" name="org.openqa.selenium" />
+        <Logger level="INFO" name="com.sun.jna.Native" />
+        <Logger level="INFO" name="com.sun.jna.NativeLibrary" />
+        <Logger level="INFO" name="dorkbox.systemTray.SystemTray" />
         <Logger level="DEBUG" name="org.itsallcode" />
     </Loggers>
 </Configuration>
