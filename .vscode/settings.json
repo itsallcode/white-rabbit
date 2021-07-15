@@ -3,7 +3,11 @@
         "**/.classpath": true,
         "**/.project": true,
         "**/.settings": true,
-        "**/.factorypath": true
+        "**/.factorypath": true,
+        "**/build/": true,
+        "**/bin/": true,
+        ".gradle/": true,
+        ".idea/": true,
     },
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
