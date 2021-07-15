@@ -24,6 +24,11 @@ class AwtTrayIcon implements Tray
         this.trayIcon = trayIcon;
     }
 
+    static boolean isAwtTraySupported()
+    {
+        return SystemTray.isSupported();
+    }
+
     static Tray createAwtTray(TrayCallback callback)
     {
         return SwingUtil.runOnSwingThread(() -> createAwtTrayInternal(callback));

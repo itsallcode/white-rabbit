@@ -31,7 +31,7 @@ public class SystemTrayService
             return NativeSystemTray.create(callback);
         }
 
-        if (SystemTray.isSupported())
+        if (AwtTrayIcon.isAwtTraySupported())
         {
             LOG.debug("Using AWT tray");
             return AwtTrayIcon.createAwtTray(callback);
