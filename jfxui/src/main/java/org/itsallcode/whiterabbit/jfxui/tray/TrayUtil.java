@@ -15,6 +15,11 @@ public class TrayUtil
 {
     private static final Logger LOG = LogManager.getLogger(TrayUtil.class);
 
+    private TrayUtil()
+    {
+        // not instantiable
+    }
+
     static Image loadImage(Dimension size)
     {
         return loadImage("/icon.png", size);

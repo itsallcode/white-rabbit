@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jdt.annotation.NonNull;
 
 class AwtTrayIcon implements Tray
 {
@@ -25,14 +24,12 @@ class AwtTrayIcon implements Tray
         this.trayIcon = trayIcon;
     }
 
-    static @NonNull Tray createAwtTray(TrayCallback callback)
+    static Tray createAwtTray(TrayCallback callback)
     {
-        return SwingUtil.runOnSwingThread(() -> {
-            return createAwtTrayInternal(callback);
-        });
+        return SwingUtil.runOnSwingThread(() -> createAwtTrayInternal(callback));
     }
 
-    private static @NonNull Tray createAwtTrayInternal(TrayCallback callback)
+    private static Tray createAwtTrayInternal(TrayCallback callback)
     {
         try
         {
