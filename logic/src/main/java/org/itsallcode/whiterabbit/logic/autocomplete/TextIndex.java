@@ -40,7 +40,7 @@ class TextIndex implements AutocompleteEntrySupplier
         final SortedSet<String> lowerCaseValues = new TreeSet<>(lowerCaseIndex.keySet());
         final Map<String, Long> lowerCaseFrequency = entries.stream().map(String::toLowerCase)
                 .collect(groupingBy(identity(), counting()));
-        LOG.debug("Creating autocompleter for {} entries ({} unique): {}, frequencies: {}", entries.size(),
+        LOG.trace("Creating autocompleter for {} entries ({} unique): {}, frequencies: {}", entries.size(),
                 uniqueEntries.size(),
                 uniqueEntries, lowerCaseFrequency);
         return new TextIndex(lowerCaseIndex, lowerCaseValues, lowerCaseFrequency);
