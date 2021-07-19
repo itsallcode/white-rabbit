@@ -25,6 +25,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 * [#164](https://github.com/itsallcode/white-rabbit/pull/164): Improve label of empty activities table.
 * [#115](https://github.com/itsallcode/white-rabbit/issues/115): Added holiday-calculator plugin: calculate holidays, see [README.md](README.md#holidays_calculator) for details.
 * [#175](https://github.com/itsallcode/white-rabbit/pull/175): CSV Exporter Plugin: Initial version.
+* [#177](https://github.com/itsallcode/white-rabbit/issues/177): Add buttons for selecting the previous/next month. Store new month when holidays where found.
 
 ### Changed
 
