@@ -167,17 +167,17 @@ Optionally you can configure pmsmart plugin to skip transfer of a comment for ea
 
 For each activity in WhiteRabbit you can enter a comment. By default pmsmart plugin transfers these comment to pm-smart. As the web ui is quite slow, transfer of comments can take a while. If you want to speed-up pm-smart export by skipping transfer of comments you can add an optional property to WhiteRabbit configuration file:
 
-    ```properties
-    pmsmart.transfer.comments = false
-    ```
+```properties
+pmsmart.transfer.comments = false
+```
 
 Optionally you can configure pmsmart plugin to clear durations for all other projects, not matching any activity recorded in WhiteRabbit.
 
 For each day pm-smart plugin by default transfers the durations of all activities entered into WhiteRabbit. If pm-smart contains durations for other projects then pm-smart plugin does not overwrite these. This will especially happen if users export their time recordings for a particular month multiple times and change the selection of activities in between. In order to ensure consistent data in pm-smart you can add an optional property to WhiteRabbit configuration file:
 
-    ```properties
-    pmsmart.clear_other_projects = true
-    ```
+```properties
+pmsmart.clear_other_projects = true
+```
 
 #### <a name="holidays_calculator"></a>Using holidays-calculator
 
@@ -187,13 +187,10 @@ Optionally you can configure holidays-calculator plugin to enable WhiteRabbit to
 
 Create a file named `holidays.cfg` in your data directory defined in the [configuration file](README.md#configuration) of WhiteRabbit.
 
-You can use one of the predefined holiday definition files available at
-<https://github.com/itsallcode/holiday-calculator> or you can edit the file
-and add or remove holidays to your own taste, see
-<https://github.com/itsallcode/holiday-calculator> for detailed description of
-the syntax.
+You can use one of the <a href="https://github.com/itsallcode/holiday-calculator/tree/main/holidays">predefined holiday definition files</a> or you can edit the file
+and add or remove holidays to your own taste, see the <a href="https://github.com/itsallcode/holiday-calculator/blob/main/README.md#configuration-file">holiday-calculator documentation</a> for a detailed description of the syntax.
 
-Note: WhiteRabbit adds holidays provided by plugins only to new months without any time recordings. As soon as the user adds a time recording for a particular month, WhiteRabbit saves the time recordings for this month including any holidays whether provided by plugins or entered manually. After this point in time for the given month WhiteRabbit uses only on the saved file and will not ask any plugin to update the holidays.
+**Note:** WhiteRabbit adds holidays provided by plugins only to new months without any time recordings. As soon as the user adds a time recording for a particular month, WhiteRabbit saves the time recordings for this month including any holidays whether provided by plugins or entered manually. After this point in time for the given month WhiteRabbit uses only on the saved file and will not ask any plugin to update the holidays.
 
 ### <a name="development"></a>Development
 
@@ -231,18 +228,19 @@ the correct export.
 
 Currently, you can configure the destination path, separator and flag in white rabbit's configuration file:
 
-    ```properties
-    csv.destination = ~/working_time_reports
-    csv.separator = \t
-    csv.filter_for_weekdays = True
-    ```
+```properties
+csv.destination = ~/working_time_reports
+csv.separator = \t
+csv.filter_for_weekdays = True
+```
+
 The default values are:
 
-    ```Default Values
-    csv.destination = $HOME
-    csv.separator = ","
-    csv.filter_for_weekdays = False
-    ```
+```Default Values
+csv.destination = $HOME
+csv.separator = ","
+csv.filter_for_weekdays = False
+```
 
 ### <a name="development"></a>Development
 
