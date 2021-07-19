@@ -109,6 +109,22 @@ public class ApplicationHelper
         JavaFxUtil.runOnFxApplicationThread(() -> getSelectedMonthComboBox().setValue(month));
     }
 
+    public void gotoNextMonth()
+    {
+        clickButton("#next-month-button");
+    }
+
+    public void gotoPreviousMonth()
+    {
+        clickButton("#previous-month-button");
+    }
+
+    private void clickButton(String query)
+    {
+        final Button button = robot.lookup(query).queryButton();
+        robot.clickOn(button);
+    }
+
     private ComboBox<YearMonth> getSelectedMonthComboBox()
     {
         return robot.lookup("#selected-month-combobox").queryComboBox();

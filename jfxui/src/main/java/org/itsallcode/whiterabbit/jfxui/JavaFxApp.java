@@ -149,7 +149,19 @@ public class JavaFxApp extends Application
     public void loadMonth(final YearMonth month)
     {
         final MonthIndex record = appService.getOrCreateMonth(month);
+        ensureMonthAvailable(month);
         state.currentMonth.setValue(record);
+    }
+
+    private void ensureMonthAvailable(final YearMonth month)
+    {
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            if (!state.availableMonths.isEmpty() && !state.availableMonths.contains(month))
+            {
+                LOG.trace("Adding month {} to combo box", month);
+                state.availableMonths.add(month);
+            }
+        });
     }
 
     @Override
@@ -312,20 +324,17 @@ public class JavaFxApp extends Application
         }
 
         @Override
-        public void recordUpdated(DayRecord record)
+        public void recordUpdated(DayRecord day)
         {
+            final YearMonth month = YearMonth.from(day.getDate());
             JavaFxUtil.runOnFxApplicationThread(() -> {
-                final YearMonth recordMonth = YearMonth.from(record.getDate());
-                if (!state.availableMonths.isEmpty() && !state.availableMonths.contains(recordMonth))
+                ensureMonthAvailable(month);
+                if (state.currentMonth.get().getYearMonth().equals(month))
                 {
-                    state.availableMonths.add(recordMonth);
-                }
-                if (state.currentMonth.get().getYearMonth().equals(recordMonth))
-                {
-                    state.currentMonth.setValue(record.getMonth());
-                    if (daySelected(record))
+                    state.currentMonth.setValue(day.getMonth());
+                    if (daySelected(day))
                     {
-                        ui.updateActivities(record);
+                        ui.updateActivities(day);
                     }
                 }
             });

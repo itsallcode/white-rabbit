@@ -71,16 +71,22 @@ class MonthIndexStorage implements Storage
         return fileStorage.getAvailableDataMonths();
     }
 
-    private MonthIndex createNewMonth(YearMonth date)
+    private MonthIndex createNewMonth(YearMonth month)
     {
         final ModelFactory factory = fileStorage.getModelFactory();
-        final MonthData month = factory.createMonthData();
-        month.setYear(date.getYear());
-        month.setMonth(date.getMonth());
-        final List<DayData> days = holidayService.getHolidays(factory, date);
-        month.setDays(days);
-        month.setOvertimePreviousMonth(loadPreviousMonthOvertime(date));
-        return createMonthIndex(month);
+        final MonthData monthData = factory.createMonthData();
+        monthData.setYear(month.getYear());
+        monthData.setMonth(month.getMonth());
+        final List<DayData> days = holidayService.getHolidays(factory, month);
+        monthData.setDays(days);
+        monthData.setOvertimePreviousMonth(loadPreviousMonthOvertime(month));
+        final MonthIndex monthIndex = createMonthIndex(monthData);
+        if (!days.isEmpty())
+        {
+            LOG.trace("Found {} holidays: store month {}", days.size(), month);
+            storeMonth(monthIndex);
+        }
+        return monthIndex;
     }
 
     private MonthIndex createMonthIndex(final MonthData jsonMonth)
