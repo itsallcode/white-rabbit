@@ -15,6 +15,7 @@ import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
+import org.itsallcode.whiterabbit.jfxui.tray.SystemTrayService;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -161,7 +162,7 @@ public class AppUi
 
         private void createTrayIcon()
         {
-            tray = Tray.create(new TrayCallback()
+            tray = new SystemTrayService(appService.config()).createTray(new TrayCallback()
             {
                 @Override
                 public void showMainWindow()
@@ -181,6 +182,8 @@ public class AppUi
                     actions.exitApp();
                 }
             });
+
+            tray.setTooltip("White Rabbit Time Recording");
 
             if (!tray.isSupported())
             {

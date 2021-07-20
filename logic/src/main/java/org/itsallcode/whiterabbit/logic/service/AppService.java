@@ -45,6 +45,7 @@ public class AppService implements Closeable
 {
     private static final Logger LOG = LogManager.getLogger(AppService.class);
 
+    private final Config config;
     private final WorkingTimeService workingTimeService;
     private final Storage storage;
     private final ClockService clock;
@@ -57,21 +58,19 @@ public class AppService implements Closeable
     private final ActivityService activityService;
     private final ProjectService projectService;
     private final AppPropertiesService appPropertiesService;
-
+    private final AutocompleteService autocompleteService;
+    private final PluginManager pluginManager;
     private RegistrationResult singleInstanceRegistration;
 
-    private final AutocompleteService autocompleteService;
-
-    private final PluginManager pluginManager;
-
     @SuppressWarnings("java:S107") // Large number of parameters is ok here.
-    AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
+    AppService(Config config, WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
             ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
             DelegatingAppServiceCallback appServiceCallback, ActivityService activityService,
             ProjectService projectService, AutocompleteService autocompleteService,
             AppPropertiesService appPropertiesService, VacationReportGenerator vacationReportGenerator,
             ProjectReportGenerator projectReportGenerator, PluginManager pluginManager)
     {
+        this.config = config;
         this.workingTimeService = workingTimeService;
         this.storage = storage;
         this.formatterService = formatterService;
@@ -114,7 +113,7 @@ public class AppService implements Closeable
         final ProjectReportGenerator projectReportGenerator = new ProjectReportGenerator(storage);
         final ActivityService activityService = new ActivityService(storage, autocompleteService, appServiceCallback);
         final FormatterService formatterService = new FormatterService(config.getLocale(), clock.getZone());
-        return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
+        return new AppService(config, workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, activityService, projectService, autocompleteService,
                 new AppPropertiesService(), vacationReportGenerator,
                 projectReportGenerator, pluginManager);
@@ -270,6 +269,11 @@ public class AppService implements Closeable
     public PluginManager pluginManager()
     {
         return pluginManager;
+    }
+
+    public Config config()
+    {
+        return config;
     }
 
     @Override
