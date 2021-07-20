@@ -18,7 +18,6 @@ import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -273,7 +272,6 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
-    @Disabled("Test is instable")
     void higlightedWeekendsUpdatedWhenMonthChanges()
     {
         final DayTable dayTable = app().dayTable();
@@ -295,6 +293,22 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
         dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
                 25, 26, 27, 30);
+    }
+
+    @Test
+    void nextButtonSelectsNextMonth()
+    {
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER));
+        app().gotoNextMonth();
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY));
+    }
+
+    @Test
+    void prevButtonSelectsPrevMonth()
+    {
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER));
+        app().gotoPreviousMonth();
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.NOVEMBER));
     }
 
     @Test

@@ -35,9 +35,9 @@ public class PersistOnFocusLossTextFieldTableCell<S, T> extends TableCell<S, T>
     }
 
     public PersistOnFocusLossTextFieldTableCell(final StringConverter<T> converter,
-            Supplier<TextField> testFieldSupplier)
+            Supplier<TextField> textFieldSupplier)
     {
-        this.textFieldSupplier = testFieldSupplier;
+        this.textFieldSupplier = textFieldSupplier;
         this.converter = Objects.requireNonNull(converter);
     }
 

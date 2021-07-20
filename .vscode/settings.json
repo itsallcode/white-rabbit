@@ -11,5 +11,6 @@
     },
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
-    }
+    },
+    "java.codeGeneration.useBlocks": true,
 }

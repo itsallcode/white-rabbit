@@ -26,6 +26,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 * [#115](https://github.com/itsallcode/white-rabbit/issues/115): Added holiday-calculator plugin: calculate holidays, see [README.md](README.md#holidays_calculator) for details.
 * [#175](https://github.com/itsallcode/white-rabbit/pull/175): CSV Exporter Plugin: Initial version.
 * [#201](https://github.com/itsallcode/white-rabbit/pull/201): Use [SystemTray](https://github.com/dorkbox/SystemTray) instead of AWT tray by default. You can add optional configuration `system.tray = awt` to keep using AWT.
+* [#177](https://github.com/itsallcode/white-rabbit/issues/177) / [PR #202](https://github.com/itsallcode/white-rabbit/pull/202): Add buttons for selecting the previous/next month. Store new month when holidays where found.
 
 ### Changed
 

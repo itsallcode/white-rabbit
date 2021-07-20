@@ -263,13 +263,22 @@ public class AppUi
                     e -> app.startManualInterruption());
             startInterruptionButton.disableProperty().bind(state.interruption.isNotNull());
 
-            return new ToolBar(monthDropDownBox(),
+            return new ToolBar(
+                    UiWidget.button("previous-month-button", "<", "Select previous month", e -> gotoMonth(-1)),
+                    monthDropDownBox(),
+                    UiWidget.button("next-month-button", ">", "Select next month", e -> gotoMonth(+1)),
                     new Separator(),
                     startInterruptionButton,
                     interruptionPreset.createButton(),
                     createStopWorkForTodayButton(),
                     new Separator(),
                     UiWidget.button("update-button", "Update", e -> appService.updateNow()));
+        }
+
+        private void gotoMonth(int step)
+        {
+            final YearMonth selecteMonth = state.currentMonth.get().getYearMonth().plusMonths(step);
+            app.loadMonth(selecteMonth);
         }
 
         private Button createStopWorkForTodayButton()
