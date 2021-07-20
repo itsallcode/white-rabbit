@@ -25,6 +25,9 @@ import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -209,8 +212,7 @@ public class AppUi
                     new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab));
             titledPane.setId("activities-titled-pane");
             titledPane.setCollapsible(true);
-            titledPane.textProperty().bind(Bindings.createStringBinding(this::getActivitiesTitle, state.selectedDay,
-                    state.currentDateProperty.property()));
+            titledPane.textProperty().bind(activitiesPaneTitle());
             final SplitPane mainPane = new SplitPane(daysTable, titledPane);
             HBox.setHgrow(activitiesTab, Priority.ALWAYS);
             mainPane.setId("mainSplitPane");
@@ -232,24 +234,27 @@ public class AppUi
             return pane;
         }
 
-        private String getActivitiesTitle()
+        private StringBinding activitiesPaneTitle()
         {
-            final DayRecord selectedDay = state.selectedDay.get();
-            String title = "Activities";
-            if (selectedDay == null)
-            {
+            final SimpleObjectProperty<DayRecord> selectedDay = state.selectedDay;
+            final Property<LocalDate> currentDateProperty = state.currentDateProperty.property();
+            return Bindings.createStringBinding(() -> {
+                String title = "Activities";
+                if (selectedDay.get() == null)
+                {
+                    return title;
+                }
+                final LocalDate date = selectedDay.get().getDate();
+                if (date.equals(currentDateProperty.getValue()))
+                {
+                    title += " today";
+                }
+                else
+                {
+                    title += " on " + shortDateFormatter.format(date);
+                }
                 return title;
-            }
-            final LocalDate date = selectedDay.getDate();
-            if (date.equals(state.currentDateProperty.property().getValue()))
-            {
-                title += " today";
-            }
-            else
-            {
-                title += " on " + shortDateFormatter.format(date);
-            }
-            return title;
+            }, selectedDay, currentDateProperty);
         }
 
         private ToolBar createToolBar()

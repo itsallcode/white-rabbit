@@ -119,6 +119,7 @@ public class ActivitiesTable
             {
                 return;
             }
+            keyEvent.consume();
             appService.activities().removeActivity(selectedActivity.get());
         });
         return table;
