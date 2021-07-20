@@ -15,6 +15,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 
 ### Fixed
 
+* [#148](https://github.com/itsallcode/white-rabbit/issues/148): Adding activities to days without begin/end time is now possible.
 * [#191](https://github.com/itsallcode/white-rabbit/pull/191): Starting WR with all plugins enabled failed with exception `IllegalStateException: Found multiple plugins supporting org.itsallcode.whiterabbit.api.features.MonthDataStorage`.
 
 ### Added

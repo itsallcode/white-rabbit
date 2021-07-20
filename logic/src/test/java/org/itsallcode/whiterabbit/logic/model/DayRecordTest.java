@@ -428,6 +428,95 @@ class DayRecordTest
         assertThat(day.getCustomWorkingTime()).isPresent().contains(Duration.ofHours(5));
     }
 
+    @Test
+    void emptyDayIsDummy()
+    {
+        assertDummyDay(createDummyDay());
+    }
+
+    @Test
+    void dayWithBeginIsNonDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setBegin(LocalTime.of(8, 0));
+        assertNonDummyDay(day);
+    }
+
+    @Test
+    void dayWithEndIsNonDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setEnd(LocalTime.of(17, 0));
+        assertNonDummyDay(day);
+    }
+
+    @Test
+    void dayWithTypeIsNonDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setType(DayType.WORK);
+        assertNonDummyDay(day);
+    }
+
+    @Test
+    void dayWithNonZeroBreakIsNonDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setInterruption(Duration.ofMinutes(30));
+        assertNonDummyDay(day);
+    }
+
+    @Test
+    void dayWithZeroBreakIsDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setInterruption(Duration.ZERO);
+        assertDummyDay(day);
+    }
+
+    @Test
+    void dayWithEmptyCommentIsDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setComment("");
+        assertDummyDay(day);
+    }
+
+    @Test
+    void dayWithNonEmptyCommentIsDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.setComment("comment");
+        assertNonDummyDay(day);
+    }
+
+    @Test
+    void dayWithEmptyActivitiesListIsDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.activities().add();
+        day.activities().remove(0);
+        assertDummyDay(day);
+    }
+
+    @Test
+    void dayWithActivitiesListIsNonDummy()
+    {
+        final DayRecord day = createDummyDay();
+        day.activities().add();
+        assertNonDummyDay(day);
+    }
+
+    private void assertDummyDay(DayRecord day)
+    {
+        assertThat(day.isDummyDay()).as("dummy").isTrue();
+    }
+
+    private void assertNonDummyDay(DayRecord day)
+    {
+        assertThat(day.isDummyDay()).as("dummy").isFalse();
+    }
+
     private MonthIndex month(LocalDate date, Duration overtimePreviousMonth, DayData... days)
     {
         final MonthData jsonMonth = modelFactory.createMonthData();
@@ -493,6 +582,11 @@ class DayRecordTest
     private DayRecord createDay(LocalDate date)
     {
         return createDay(date, null, null);
+    }
+
+    private DayRecord createDummyDay()
+    {
+        return createDummyDay(LocalDate.of(2021, 7, 20));
     }
 
     private DayRecord createDummyDay(LocalDate date)
