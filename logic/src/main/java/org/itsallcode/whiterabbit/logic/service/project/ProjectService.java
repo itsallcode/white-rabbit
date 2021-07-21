@@ -32,7 +32,7 @@ public class ProjectService
 
     public static ProjectService load(Path projectConfigFile)
     {
-        if (!Files.exists(projectConfigFile))
+        if (projectConfigFile == null || !Files.exists(projectConfigFile))
         {
             LOG.warn("Project config file not found at {}", projectConfigFile);
             return new ProjectService(emptyMap(), emptyMap());
