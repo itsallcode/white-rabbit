@@ -84,7 +84,6 @@ public class AutocompleteService
                 .filter(Objects::nonNull)
                 .collect(toList());
         final Map<String, List<ProjectImpl>> groupedProjects = projects.stream()
-                // .filter(Objects::nonNull)
                 .collect(groupingBy(ProjectImpl::getProjectId));
         final Map<String, Long> frequencyMap = projects.stream()
                 .map(ProjectImpl::getProjectId)
