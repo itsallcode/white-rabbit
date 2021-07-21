@@ -15,12 +15,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 public class ProjectService
 {
     private static final Logger LOG = LogManager.getLogger(ProjectService.class);
