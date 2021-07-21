@@ -1,8 +1,8 @@
 package org.itsallcode.whiterabbit.jfxui.uistate.model;
 
-import javax.json.bind.annotation.JsonbVisibility;
-
 import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
+
+import jakarta.json.bind.annotation.JsonbVisibility;
 
 @JsonbVisibility(FieldAccessStrategy.class)
 @SuppressWarnings("java:S1104") // Encapsulation not necessary for model

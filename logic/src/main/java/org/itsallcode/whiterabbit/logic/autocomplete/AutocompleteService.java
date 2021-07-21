@@ -84,7 +84,6 @@ public class AutocompleteService
                 .filter(Objects::nonNull)
                 .collect(toList());
         final Map<String, List<ProjectImpl>> groupedProjects = projects.stream()
-                .filter(Objects::nonNull)
                 .collect(groupingBy(ProjectImpl::getProjectId));
         final Map<String, Long> frequencyMap = projects.stream()
                 .map(ProjectImpl::getProjectId)
@@ -94,7 +93,7 @@ public class AutocompleteService
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .map(projectId -> groupedProjects.get(projectId).get(0));
-        LOG.debug("Project frequency: {}, most frequently: {}", frequencyMap, mostFrequentlyUsedProject);
+        LOG.trace("Project frequency: {}, most frequently: {}", frequencyMap, mostFrequentlyUsedProject);
         return mostFrequentlyUsedProject;
     }
 }

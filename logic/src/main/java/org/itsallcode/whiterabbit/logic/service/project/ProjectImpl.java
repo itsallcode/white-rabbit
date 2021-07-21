@@ -1,8 +1,8 @@
 package org.itsallcode.whiterabbit.logic.service.project;
 
-import javax.json.bind.annotation.JsonbProperty;
-
 import org.itsallcode.whiterabbit.api.model.Project;
+
+import jakarta.json.bind.annotation.JsonbProperty;
 
 public class ProjectImpl implements Project
 {

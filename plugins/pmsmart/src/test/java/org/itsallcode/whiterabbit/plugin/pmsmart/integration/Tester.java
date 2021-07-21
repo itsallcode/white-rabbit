@@ -85,7 +85,7 @@ public class Tester
     private static ProjectReport createFullProjectReport()
     {
         final JsonFileStorage dataStorage = new JsonFileStorageMock(Paths.get(TIME_RECORDING_FILE));
-        final ProjectService projectService = new ProjectService(Paths.get(PROJECT_FILE));
+        final ProjectService projectService = ProjectService.load(Paths.get(PROJECT_FILE));
         final ContractTermsService contractTerms = new ContractTermsService(
                 Optional.of(Duration.ofHours(HOURS_PER_DAY)));
         final HolidayService holidayService = new HolidayService(new ArrayList<>());
@@ -158,6 +158,5 @@ public class Tester
         {
             return Optional.of(super.loadFromFile(timeRecordingFile));
         }
-
     }
 }

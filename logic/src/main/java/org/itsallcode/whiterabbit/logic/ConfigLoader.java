@@ -8,13 +8,13 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
+
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 
 public class ConfigLoader
 {

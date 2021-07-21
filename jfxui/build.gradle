@@ -17,13 +17,13 @@ dependencies {
 
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
-    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    implementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
 
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
     runtimeOnly "org.fusesource.jansi:jansi:2.3.3"
 
-    testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    testImplementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
     testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
 
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"

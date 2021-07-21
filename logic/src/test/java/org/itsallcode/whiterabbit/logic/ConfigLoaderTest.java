@@ -8,8 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.json.bind.JsonbBuilder;
-
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +16,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.ClearSystemProperty;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import jakarta.json.bind.JsonbBuilder;
 
 @ExtendWith(MockitoExtension.class)
 @ClearSystemProperty(key = "user.home")

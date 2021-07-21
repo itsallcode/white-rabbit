@@ -4,11 +4,11 @@ import java.time.Duration;
 import java.time.Month;
 import java.util.List;
 
-import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbPropertyOrder;
-
 import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.MonthData;
+
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({ "year", "month", "overtimePreviousMonth", "days" })
 public class JsonMonth implements MonthData

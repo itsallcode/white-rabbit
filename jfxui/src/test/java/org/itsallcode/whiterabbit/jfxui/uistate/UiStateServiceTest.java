@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.json.bind.JsonbBuilder;
-
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.uistate.model.StageStateModel;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -19,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import jakarta.json.bind.JsonbBuilder;
 
 @ExtendWith(MockitoExtension.class)
 class UiStateServiceTest
