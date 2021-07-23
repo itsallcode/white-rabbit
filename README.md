@@ -259,8 +259,10 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 ```bash
 # Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
 ./gradlew build installPlugins
+# To skip unit and ui-tests, run
+./gradlew build installPlugins -x test -x uiTest
 # Run
-java -jar jfxui/build/libs/jfxui.jar
+java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 
 # Build and run, loading plugins from $HOME/.whiterabbit/plugins/
 ./gradlew runJfxui
