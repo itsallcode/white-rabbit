@@ -260,7 +260,7 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 # Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
 ./gradlew build installPlugins
 # Run
-java -jar jfxui/build/libs/jfxui.jar
+java -jar jfxui/build/libs/jfxui-<version>[-SNAPSHOT].jar
 
 # Build and run, loading plugins from $HOME/.whiterabbit/plugins/
 ./gradlew runJfxui
