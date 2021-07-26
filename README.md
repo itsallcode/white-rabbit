@@ -6,10 +6,11 @@ A time recording tool
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
 [![Maven Central](https://img.shields.io/maven-central/v/org.itsallcode.whiterabbit/whiterabbit-plugin-api.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.itsallcode.whiterabbit%22%20a%3A%22whiterabbit-plugin-api%22)
 
-* [Features](README.md#features)
-* [Usage](README.md#usage)
+* [Features](#features)
+* [Usage](#usage)
+* [Troubleshooting](#troubleshooting)
 * [Changelog](CHANGELOG.md)
-* [Development](README.md#development)
+* [Development](#development)
 
 ![Screenshot of WhiteRabbit](screenshot.png)
 
@@ -36,7 +37,7 @@ A time recording tool
   * Interruptions detected when computer sleeps for more than 2 minutes
 * Generates reports for your vacation and monthly working time
 * Detects when a second instance is started to avoid data corruption
-* Export project working times to pm-smart. See [below](README.md#pmsmart) for details.
+* Export project working times to pm-smart. See [below](#pmsmart) for details.
 
 ### Java FX user interface
 
@@ -49,7 +50,7 @@ A time recording tool
 ### Notes
 
 * Won't work on weekends. To force working on a weekend, manually change the day type to `WORK`.
-* Public holidays can be calculated using plugin [holidays-calculator](README.md#holidays_calculator) or user can are set the day type to `HOLIDAY` manually.
+* Public holidays can be calculated using plugin [holidays-calculator](#holidays_calculator) or user can are set the day type to `HOLIDAY` manually.
 * If you manually change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months`.
 * Assumptions:
     * Working time of 8h Monday to Friday
@@ -152,9 +153,9 @@ To use activity tracking, create file `projects.json` in your data directory wit
 #### <a name="plugins"></a>Using Plugins
 
 1. Download one of the available plugins:
-    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](README.md#pmsmart).
-    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](README.md#holidays_calculator).
-    * [csv](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): Export monthly reports to CSV, see [details](README.md#csvexport).
+    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](#pmsmart).
+    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](#holidays_calculator).
+    * [csv](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): Export monthly reports to CSV, see [details](#csvexport).
     * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Sample plugin without specific functionality.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
@@ -168,7 +169,7 @@ done
 
 #### Logging
 
-WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](README.md#configuration).
+WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).
 
 #### <a name="pmsmart"></a>Using pm-smart
 
@@ -178,8 +179,8 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
 ##### Setup and usage
 
-1. Create a project configuration as described [above](README.md#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
-1. Make sure to install the latest version of the pmsmart plugin, see [above](README.md#plugins) for details.
+1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
+1. Make sure to install the latest version of the pmsmart plugin, see [above](#plugins) for details.
 1. Add the base URL of your pm-smart server to the configuration file:
 
     ```properties
@@ -217,7 +218,7 @@ Optionally you can configure holidays-calculator plugin to enable WhiteRabbit to
 
 ##### Setup and usage
 
-Create a file named `holidays.cfg` in your data directory defined in the [configuration file](README.md#configuration) of WhiteRabbit.
+Create a file named `holidays.cfg` in your data directory defined in the [configuration file](#configuration) of WhiteRabbit.
 
 You can use one of the <a href="https://github.com/itsallcode/holiday-calculator/tree/main/holidays">predefined holiday definition files</a> or you can edit the file
 and add or remove holidays to your own taste, see the <a href="https://github.com/itsallcode/holiday-calculator/blob/main/README.md#configuration-file">holiday-calculator documentation</a> for a detailed description of the syntax.
@@ -248,8 +249,8 @@ the correct export.
 
 ##### Setup and usage
 
-1. Create a project configuration as described [above](README.md#project_config).
-1. Make sure to install the latest version of the csv plugin, see [above](README.md#plugins) for details.
+1. Create a project configuration as described [above](#project_config).
+1. Make sure to install the latest version of the csv plugin, see [above](#plugins) for details.
 1. Start the export in WhiteRabbit:
 
     1. Select the month that you want to export
@@ -274,7 +275,7 @@ csv.separator = ","
 csv.filter_for_weekdays = False
 ```
 
-### Troubleshooting
+### <a name="troubleshooting"></a>Troubleshooting
 
 #### Launching via WebStart fails
 
@@ -290,6 +291,10 @@ Workaround: delete local plugins
 ```bash
 rm -i $HOME/.whiterabbit/plugins/*.jar
 ```
+
+#### Not all plugins are availble when launching via WebStart
+
+Your `whiterabbit.jnlp` file might be outdated and not contain newer plugins. Please download the latest version from [here](https://whiterabbit.chp1.net/whiterabbit.jnlp).
 
 ## <a name="development"></a>Development
 
@@ -342,7 +347,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
 
 #### Initial setup
 
-1. Setup of [keystore and AWS configuration](webstart/README.md).
+1. Setup [keystore and AWS configuration](webstart/README.md).
 2. Add the following to your `~/.gradle/gradle.properties`:
 
     ```properties
