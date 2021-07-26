@@ -11,7 +11,8 @@
     <resources>
         <j2se version="11" max-heap-size="512M" java-vm-args="-XX:+HeapDumpOnOutOfMemoryError" href="https://adoptopenjdk.net/"/>
         <jar href="whiterabbitfx-signed.jar" main="true" />
-        <jar href="plugins/demo-plugin-signed.jar" main="false" />
+        <jar href="plugins/holiday-calculator-plugin-signed.jar" main="false" />
+        <jar href="plugins/csv-plugin-signed.jar" main="false" />
         <jar href="plugins/pmsmart-plugin-signed.jar" main="false" />
     </resources>
     <update check="background"/>
