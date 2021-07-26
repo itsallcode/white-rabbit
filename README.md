@@ -210,7 +210,7 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 
 CSVExport plugin supports the export of the current monthly report to
 a pre-configured path. The file names are hard coded, and have the format
-of YYYY-MM_working_time.csv.
+of `YYYY-MM_working_time.csv`.
 Please note that all days must have a valid project assigned for
 the correct export.
 
@@ -226,7 +226,7 @@ the correct export.
 
 #### Optional configuration settings
 
-Currently, you can configure the destination path, separator and flag in white rabbit's configuration file:
+Currently, you can configure the destination path, separator and flag in WhiteRabbit's configuration file:
 
 ```properties
 csv.destination = ~/working_time_reports
@@ -236,7 +236,7 @@ csv.filter_for_weekdays = True
 
 The default values are:
 
-```Default Values
+```properties
 csv.destination = $HOME
 csv.separator = ","
 csv.filter_for_weekdays = False
@@ -314,7 +314,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     ./gradlew clean build publish closeAndReleaseRepository webstart:publishWebstart --info -PreleaseVersion=<version>
     ```
 
-    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net). Snapshots will be available at [https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
+    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [whiterabbit.chp1.net](https://whiterabbit.chp1.net). Snapshots will be available at [oss.sonatype.org](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
 
 3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
 4. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
