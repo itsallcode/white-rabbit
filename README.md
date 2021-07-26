@@ -59,8 +59,40 @@ A time recording tool
 
 ### Requirements
 
-* If you want to run WhiteRabbit locally, you need a Java Runtime Environment (JRE) 11 or 16, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
-* If you want to run WhiteRabbit using WebStart, install [OpenWebStart](https://openwebstart.com) and go to [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).
+* Java Runtime Environment (JRE) 11 or 16, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
+
+### Install WhiteRabbit locally
+
+1. Download the [WhiteRabbit executable JAR](https://whiterabbit.chp1.net/whiterabbitfx-signed.jar)
+2. Launch it by
+
+  * double clicking
+  * executing command
+
+  ```bash
+  java -jar whiterabbitfx-signed.jar
+  ```
+
+### Install WhiteRabbit via WebStart
+
+1. Install [OpenWebStart](https://openwebstart.com).
+2. Download the [WhiteRabbit JNLP file](https://whiterabbit.chp1.net/whiterabbit.jnlp).
+3. Start WhiteRabbit by double clicking `whiterabbit.jnlp`. At the first start this will automatically install a new Java Runtime if not available.
+4. For the initial start, you need to confirm that the certificate is correct. Verify the fingerprints:
+  * SHA1 fingerprint: `89:EB:AC:59:CC:8E:34:42:BF:1F:22:47:BC:D2:94:C3:7A:04:BD:6C`
+  * MD5 fingerprint: `A0:55:BC:15:77:DA:A3:97:0B:CD:B1:DF:4C:1A:A6:6A`
+5. Confirm that the jar file is downloaded from `https://whiterabbit.chp1.net/whiterabbitfx-signed.jar`.
+6. WhiteRabbit will start now, using configuration file `$HOME/.whiterabbit.properties`.
+
+You can also start WhiteRabbit from the command line:
+
+```bash
+<OpenWebStartInstllationDir>/javaws https://whiterabbit.chp1.net/whiterabbit.jnlp
+# Default for windows:
+$USERPROFILE/AppData/Local/Programs/OpenWebStart/javaws https://whiterabbit.chp1.net/whiterabbit.jnlp
+```
+
+For details about OpenWebStart see the [OpenWebStart User guide](https://openwebstart.com/docs/OWSGuide.html).
 
 ### <a name="configuration"></a>Configuration
 
@@ -242,9 +274,26 @@ csv.separator = ","
 csv.filter_for_weekdays = False
 ```
 
-### <a name="development"></a>Development
+### Troubleshooting
 
-#### Clone and configure
+#### Launching via WebStart fails
+
+```
+java.util.ServiceConfigurationError: org.itsallcode.whiterabbit.api.Plugin: Provider org.itsallcode.whiterabbit.plugin.csv.CSVExporterPlugin could not be instantiated
+```
+
+Loading local plugins from `$HOME/.whiterabbit/plugins/` is not supported when starting WhiteRabbit via WebStart. This will be fixed in [issue #77](https://github.com/itsallcode/white-rabbit/issues/77).
+
+
+Workaround: delete local plugins
+
+```bash
+rm -i $HOME/.whiterabbit/plugins/*.jar
+```
+
+## <a name="development"></a>Development
+
+### Clone and configure
 
 ```bash
 mkdir time-recording-data
@@ -254,7 +303,7 @@ cd white-rabbit
 echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 ```
 
-#### Build and launch
+### Build and launch
 
 ```bash
 # Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
@@ -272,7 +321,7 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 ./gradlew runJfxuiWithPlugins
 ```
 
-#### Run UI-Tests
+### Run UI-Tests
 
 ```bash
 # Headless (default)
@@ -281,17 +330,17 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 ./gradlew check -PuiTestsHeadless=false
 ```
 
-#### Check that dependencies are up-to-date
+### Check that dependencies are up-to-date
 
 ```bash
 ./gradlew dependencyUpdates
 ```
 
-#### Deployment
+### Deployment
 
 This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plugin api to Maven Central.
 
-##### Initial setup
+#### Initial setup
 
 1. Setup of [keystore and AWS configuration](webstart/README.md).
 2. Add the following to your `~/.gradle/gradle.properties`:
@@ -305,7 +354,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     signing.secretKeyRingFile=<path to secret keyring file>
     ```
 
-##### <a name="build_and_deploy"></a>Build and deploy
+#### <a name="build_and_deploy"></a>Build and deploy
 
 1. Make sure the [Changelog](CHANGELOG.md) is updated
 2. Run the following command:
@@ -320,7 +369,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
 4. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
 5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
 
-#### Managing WebStart configuration in a private branch
+### Managing WebStart configuration in a private branch
 
 This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you push to a private repository only.
 
