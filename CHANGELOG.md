@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.0] - unreleased
 
+### Changed
+
+* [#207](https://github.com/itsallcode/white-rabbit/pull/207): Upgrade dependencies.
+
 ## [1.7.0] - 2021-07-26
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/9?closed=1)
