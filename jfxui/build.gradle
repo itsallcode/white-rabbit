@@ -56,7 +56,7 @@ project(':plugins').afterEvaluate {
     	userHome = project.property('user.home')
     }
     
-    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
+    task runWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
         group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
@@ -64,12 +64,20 @@ project(':plugins').afterEvaluate {
         workingDir = rootProject.projectDir
         systemProperties = ['user.home': userHome]
     }
+
+    task runJfxuiWithPlugins(dependsOn: runWithPlugins, group: 'run') {
+        // deprecated
+    }
 }
 
-task runJfxui(type: JavaExec, dependsOn: shadowJar, group: 'run') {
+task run(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
+}
+
+task runJfxui(dependsOn: run, group: 'run') {
+    // deprecated
 }
 
 sourceSets {
