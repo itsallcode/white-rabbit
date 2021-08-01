@@ -319,11 +319,11 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 
 # Build and run, loading plugins from $HOME/.whiterabbit/plugins/
-./gradlew runJfxui
+./gradlew run
 
 # Build and run including plugins. Useful when developing plugins.
 # Make sure to remove unwanted plugins from $HOME/.whiterabbit/plugins/
-./gradlew runJfxuiWithPlugins
+./gradlew runWithPlugins
 ```
 
 ### Run UI-Tests

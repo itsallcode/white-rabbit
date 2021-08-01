@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    javaFxVersion = '17-ea+11'
+    javaFxVersion = '18-ea+1'
     monocleVersion = '12.0.1+2'
 }
 
@@ -21,7 +21,7 @@ dependencies {
 
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
-    runtimeOnly "org.fusesource.jansi:jansi:2.3.3"
+    runtimeOnly "org.fusesource.jansi:jansi:2.3.4"
 
     testImplementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
     testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
@@ -56,7 +56,7 @@ project(':plugins').afterEvaluate {
     	userHome = project.property('user.home')
     }
     
-    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
+    task runWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
         group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
@@ -64,12 +64,20 @@ project(':plugins').afterEvaluate {
         workingDir = rootProject.projectDir
         systemProperties = ['user.home': userHome]
     }
+
+    task runJfxuiWithPlugins(dependsOn: runWithPlugins, group: 'run') {
+        // deprecated
+    }
 }
 
-task runJfxui(type: JavaExec, dependsOn: shadowJar, group: 'run') {
+task run(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
+}
+
+task runJfxui(dependsOn: run, group: 'run') {
+    // deprecated
 }
 
 sourceSets {
