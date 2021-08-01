@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
+import org.itsallcode.whiterabbit.jfxui.ui.ChangeOvertimeDialog;
 import org.itsallcode.whiterabbit.jfxui.ui.PluginManagerViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
@@ -145,5 +146,18 @@ public final class UiActions
     public void exitApp()
     {
         Platform.exit();
+    }
+
+    public void showChangePreviousMonthHoursDialog() {
+        final MonthIndex monthIndex = state.currentMonth.get();
+        if (monthIndex == null)
+        {
+            LOG.warn("No month selected, can't show ChangeOvertimeDialog");
+            return;
+        }
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            final ChangeOvertimeDialog alert = new ChangeOvertimeDialog(getPrimaryStage(), appService, monthIndex);
+            alert.show();
+        });
     }
 }

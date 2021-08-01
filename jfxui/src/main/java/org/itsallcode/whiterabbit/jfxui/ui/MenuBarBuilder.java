@@ -63,6 +63,7 @@ class MenuBarBuilder
                 menuItem("_Update", "menuitem_update", appService::updateNow),
                 menuItem("Update overtime for _all months", "menuitem_overtime",
                         appService::updatePreviousMonthOvertimeField),
+                menuItem("Change overtime manually", "menutitem-change-overtime", actions::showChangePreviousMonthHoursDialog),
                 separatorItem(),
                 createStopWorkingForTodayMenuItem());
         menuReports.getItems()

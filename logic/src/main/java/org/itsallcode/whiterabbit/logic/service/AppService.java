@@ -189,6 +189,12 @@ public class AppService implements Closeable
         }
     }
 
+    public void updatePreviousMonthOvertimeFieldManually(final MonthIndex monthIndex)
+    {
+        storage.storeMonth(monthIndex);
+        monthIndex.getSortedDays().forEach(appServiceCallback::recordUpdated);
+    }
+
     public ClockService getClock()
     {
         return clock;
