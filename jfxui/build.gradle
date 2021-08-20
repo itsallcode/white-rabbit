@@ -95,7 +95,11 @@ configurations {
 task uiTest(type: Test, group: 'verification') {
     description = 'Runs integration tests.'
 
-    useJUnitPlatform()
+    useJUnitPlatform {
+        if(project.hasProperty('skipFlakyTests') && project.property('skipFlakyTests') == 'true') {
+            excludeTags 'FLAKY'
+        }
+    }
 
     forkEvery 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError'

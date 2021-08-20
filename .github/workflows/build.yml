@@ -48,7 +48,7 @@ jobs:
 
     - name: Build with Gradle
       run: |
-        ./gradlew build --warning-mode=summary
+        ./gradlew build --warning-mode=summary -PskipFlakyTests=true
 
     - name: Sonar analysis
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.SONAR_TOKEN != null }}
