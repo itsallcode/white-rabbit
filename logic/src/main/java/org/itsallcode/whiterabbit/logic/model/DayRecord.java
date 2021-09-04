@@ -82,7 +82,7 @@ public class DayRecord implements RowRecord
 
     public Duration getTotalOvertimeThisMonth()
     {
-        return getPreviousDayOvertime() //
+        return getPreviousDayOvertime()
                 .plus(getOvertime());
     }
 
@@ -182,7 +182,9 @@ public class DayRecord implements RowRecord
                 && day.getEnd() == null
                 && day.getType() == null
                 && day.getComment() == null
-                && day.getInterruption() == null;
+                && day.getInterruption() == null
+                && (day.getActivities() == null
+                        || day.getActivities().isEmpty());
     }
 
     public DayActivities activities()

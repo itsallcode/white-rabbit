@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.0] - unreleased
+## [1.8.0] - unreleased
+
+### Changed
+
+* [#207](https://github.com/itsallcode/white-rabbit/pull/207): Upgrade dependencies.
+
+## [1.7.0] - 2021-07-26
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/9?closed=1)
 
@@ -15,7 +21,8 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 
 ### Fixed
 
-* [#191](https://github.com/itsallcode/white-rabbit/pull/191): Starting WR with all plugins enabled failed with exception `IllegalStateException: Found multiple plugins supporting org.itsallcode.whiterabbit.api.features.MonthDataStorage`.
+* [#148](https://github.com/itsallcode/white-rabbit/issues/148): Adding activities to days without begin/end time is now possible.
+* [#191](https://github.com/itsallcode/white-rabbit/pull/191) / [PR #203](https://github.com/itsallcode/white-rabbit/pull/203): Starting WR with all plugins enabled failed with exception `IllegalStateException: Found multiple plugins supporting org.itsallcode.whiterabbit.api.features.MonthDataStorage`.
 
 ### Added
 
@@ -27,6 +34,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / 
 * [#175](https://github.com/itsallcode/white-rabbit/pull/175): CSV Exporter Plugin: Initial version.
 * [#201](https://github.com/itsallcode/white-rabbit/pull/201): Use [SystemTray](https://github.com/dorkbox/SystemTray) instead of AWT tray by default. You can add optional configuration `system.tray = awt` to keep using AWT.
 * [#177](https://github.com/itsallcode/white-rabbit/issues/177) / [PR #202](https://github.com/itsallcode/white-rabbit/pull/202): Add buttons for selecting the previous/next month. Store new month when holidays where found.
+* [#188](https://github.com/itsallcode/white-rabbit/issues/188) / [PR #204](https://github.com/itsallcode/white-rabbit/pull/204): Validate `projects.json` at startup.
 
 ### Changed
 

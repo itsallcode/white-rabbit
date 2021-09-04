@@ -24,9 +24,6 @@ jobs:
       with:
         fetch-depth: 2
 
-    - run: git checkout HEAD^2
-      if: ${{ github.event_name == 'pull_request' }}
-
     - uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
@@ -35,7 +32,7 @@ jobs:
     - uses: gradle/wrapper-validation-action@v1
 
     - name: Cache Gradle packages and wrapper
-      uses: actions/cache@v2.1.4
+      uses: actions/cache@v2
       with:
         path: |
           ~/.gradle/caches

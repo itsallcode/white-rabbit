@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.json.bind.Jsonb;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.MonthData;
@@ -38,6 +36,7 @@ import org.testfx.assertions.api.Assertions;
 
 import com.sun.javafx.application.ParametersImpl;
 
+import jakarta.json.bind.Jsonb;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 

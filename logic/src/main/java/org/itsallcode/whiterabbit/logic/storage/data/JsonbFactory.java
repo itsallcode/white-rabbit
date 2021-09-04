@@ -2,13 +2,13 @@ package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.util.Map;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-
 import org.eclipse.yasson.YassonConfig;
 import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.api.model.DayData;
+
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
 
 public class JsonbFactory
 {

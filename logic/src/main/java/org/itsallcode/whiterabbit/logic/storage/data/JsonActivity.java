@@ -2,12 +2,12 @@ package org.itsallcode.whiterabbit.logic.storage.data;
 
 import java.time.Duration;
 
-import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbPropertyOrder;
-import javax.json.bind.annotation.JsonbVisibility;
-
 import org.itsallcode.whiterabbit.api.model.ActivityData;
 import org.itsallcode.whiterabbit.logic.model.json.FieldAccessStrategy;
+
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
+import jakarta.json.bind.annotation.JsonbVisibility;
 
 @JsonbPropertyOrder({ "projectId", "duration", "comment" })
 @JsonbVisibility(FieldAccessStrategy.class)

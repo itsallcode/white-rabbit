@@ -15,9 +15,11 @@ import org.itsallcode.whiterabbit.api.model.DayData;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.testutil.JunitTags;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -272,6 +274,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    @Tag(JunitTags.FLAKY)
     void higlightedWeekendsUpdatedWhenMonthChanges()
     {
         final DayTable dayTable = app().dayTable();

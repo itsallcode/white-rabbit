@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    javaFxVersion = '17-ea+11'
+    javaFxVersion = '18-ea+1'
     monocleVersion = '12.0.1+2'
 }
 
@@ -19,13 +19,13 @@ dependencies {
 
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
-    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    implementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
 
     runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
-    runtimeOnly "org.fusesource.jansi:jansi:2.3.3"
+    runtimeOnly "org.fusesource.jansi:jansi:2.3.4"
 
-    testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    testImplementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
     testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
 
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
@@ -58,7 +58,7 @@ project(':plugins').afterEvaluate {
     	userHome = project.property('user.home')
     }
     
-    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
+    task runWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
         group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
@@ -66,12 +66,20 @@ project(':plugins').afterEvaluate {
         workingDir = rootProject.projectDir
         systemProperties = ['user.home': userHome]
     }
+
+    task runJfxuiWithPlugins(dependsOn: runWithPlugins, group: 'run') {
+        // deprecated
+    }
 }
 
-task runJfxui(type: JavaExec, dependsOn: shadowJar, group: 'run') {
+task run(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
+}
+
+task runJfxui(dependsOn: run, group: 'run') {
+    // deprecated
 }
 
 sourceSets {
@@ -89,7 +97,11 @@ configurations {
 task uiTest(type: Test, group: 'verification') {
     description = 'Runs integration tests.'
 
-    useJUnitPlatform()
+    useJUnitPlatform {
+        if(project.hasProperty('skipFlakyTests') && project.property('skipFlakyTests') == 'true') {
+            excludeTags 'FLAKY'
+        }
+    }
 
     forkEvery 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError'

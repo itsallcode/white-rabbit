@@ -6,10 +6,11 @@ A time recording tool
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.itsallcode.whiterabbit%3Awhite-rabbit&metric=coverage)](https://sonarcloud.io/dashboard?id=org.itsallcode.whiterabbit%3Awhite-rabbit)
 [![Maven Central](https://img.shields.io/maven-central/v/org.itsallcode.whiterabbit/whiterabbit-plugin-api.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.itsallcode.whiterabbit%22%20a%3A%22whiterabbit-plugin-api%22)
 
-* [Features](README.md#features)
-* [Usage](README.md#usage)
+* [Features](#features)
+* [Usage](#usage)
+* [Troubleshooting](#troubleshooting)
 * [Changelog](CHANGELOG.md)
-* [Development](README.md#development)
+* [Development](#development)
 
 ![Screenshot of WhiteRabbit](screenshot.png)
 
@@ -36,7 +37,7 @@ A time recording tool
   * Interruptions detected when computer sleeps for more than 2 minutes
 * Generates reports for your vacation and monthly working time
 * Detects when a second instance is started to avoid data corruption
-* Export project working times to pm-smart. See [below](README.md#pmsmart) for details.
+* Export project working times to pm-smart. See [below](#pmsmart) for details.
 
 ### Java FX user interface
 
@@ -49,7 +50,7 @@ A time recording tool
 ### Notes
 
 * Won't work on weekends. To force working on a weekend, manually change the day type to `WORK`.
-* Public holidays can be calculated using plugin [holidays-calculator](README.md#holidays_calculator) or user can are set the day type to `HOLIDAY` manually.
+* Public holidays can be calculated using plugin [holidays-calculator](#holidays_calculator) or user can are set the day type to `HOLIDAY` manually.
 * If you manually change the working time in previous months you might need to adjust the `overtimePreviousMonth` field in the following months by selecting menu item `File -> Update overtime for all months`.
 * Assumptions:
     * Working time of 8h Monday to Friday
@@ -59,8 +60,40 @@ A time recording tool
 
 ### Requirements
 
-* If you want to run WhiteRabbit locally, you need a Java Runtime Environment (JRE) 11 or 16, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
-* If you want to run WhiteRabbit using WebStart, install [OpenWebStart](https://openwebstart.com) and go to [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net).
+* Java Runtime Environment (JRE) 11 or 16, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
+
+### Install WhiteRabbit locally
+
+1. Download the [WhiteRabbit executable JAR](https://whiterabbit.chp1.net/whiterabbitfx-signed.jar)
+2. Launch it by
+
+  * double clicking
+  * executing command
+
+  ```bash
+  java -jar whiterabbitfx-signed.jar
+  ```
+
+### Install WhiteRabbit via WebStart
+
+1. Install [OpenWebStart](https://openwebstart.com).
+2. Download the [WhiteRabbit JNLP file](https://whiterabbit.chp1.net/whiterabbit.jnlp).
+3. Start WhiteRabbit by double clicking `whiterabbit.jnlp`. At the first start this will automatically install a new Java Runtime if not available.
+4. For the initial start, you need to confirm that the certificate is correct. Verify the fingerprints:
+  * SHA1 fingerprint: `89:EB:AC:59:CC:8E:34:42:BF:1F:22:47:BC:D2:94:C3:7A:04:BD:6C`
+  * MD5 fingerprint: `A0:55:BC:15:77:DA:A3:97:0B:CD:B1:DF:4C:1A:A6:6A`
+5. Confirm that the jar file is downloaded from `https://whiterabbit.chp1.net/whiterabbitfx-signed.jar`.
+6. WhiteRabbit will start now, using configuration file `$HOME/.whiterabbit.properties`.
+
+You can also start WhiteRabbit from the command line:
+
+```bash
+<OpenWebStartInstllationDir>/javaws https://whiterabbit.chp1.net/whiterabbit.jnlp
+# Default for windows:
+$USERPROFILE/AppData/Local/Programs/OpenWebStart/javaws https://whiterabbit.chp1.net/whiterabbit.jnlp
+```
+
+For details about OpenWebStart see the [OpenWebStart User guide](https://openwebstart.com/docs/OWSGuide.html).
 
 ### <a name="configuration"></a>Configuration
 
@@ -122,9 +155,9 @@ To use activity tracking, create file `projects.json` in your data directory wit
 #### <a name="plugins"></a>Using Plugins
 
 1. Download one of the available plugins:
-    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](README.md#pmsmart).
-    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](README.md#holidays_calculator).
-    * [csv](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): Export monthly reports to CSV, see [details](README.md#csvexport).
+    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](#pmsmart).
+    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](#holidays_calculator).
+    * [csv](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): Export monthly reports to CSV, see [details](#csvexport).
     * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Sample plugin without specific functionality.
 1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
 
@@ -138,7 +171,7 @@ done
 
 #### Logging
 
-WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](README.md#configuration).
+WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is the data directory defined in the [configuration](#configuration).
 
 #### <a name="pmsmart"></a>Using pm-smart
 
@@ -148,8 +181,8 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
 ##### Setup and usage
 
-1. Create a project configuration as described [above](README.md#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
-1. Make sure to install the latest version of the pmsmart plugin, see [above](README.md#plugins) for details.
+1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
+1. Make sure to install the latest version of the pmsmart plugin, see [above](#plugins) for details.
 1. Add the base URL of your pm-smart server to the configuration file:
 
     ```properties
@@ -187,7 +220,7 @@ Optionally you can configure holidays-calculator plugin to enable WhiteRabbit to
 
 ##### Setup and usage
 
-Create a file named `holidays.cfg` in your data directory defined in the [configuration file](README.md#configuration) of WhiteRabbit.
+Create a file named `holidays.cfg` in your data directory defined in the [configuration file](#configuration) of WhiteRabbit.
 
 You can use one of the <a href="https://github.com/itsallcode/holiday-calculator/tree/main/holidays">predefined holiday definition files</a> or you can edit the file
 and add or remove holidays to your own taste, see the <a href="https://github.com/itsallcode/holiday-calculator/blob/main/README.md#configuration-file">holiday-calculator documentation</a> for a detailed description of the syntax.
@@ -212,14 +245,14 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 
 CSVExport plugin supports the export of the current monthly report to
 a pre-configured path. The file names are hard coded, and have the format
-of YYYY-MM_working_time.csv.
+of `YYYY-MM_working_time.csv`.
 Please note that all days must have a valid project assigned for
 the correct export.
 
 ##### Setup and usage
 
-1. Create a project configuration as described [above](README.md#project_config).
-1. Make sure to install the latest version of the csv plugin, see [above](README.md#plugins) for details.
+1. Create a project configuration as described [above](#project_config).
+1. Make sure to install the latest version of the csv plugin, see [above](#plugins) for details.
 1. Start the export in WhiteRabbit:
 
     1. Select the month that you want to export
@@ -228,7 +261,7 @@ the correct export.
 
 #### Optional configuration settings
 
-Currently, you can configure the destination path, separator and flag in white rabbit's configuration file:
+Currently, you can configure the destination path, separator and flag in WhiteRabbit's configuration file:
 
 ```properties
 csv.destination = ~/working_time_reports
@@ -238,15 +271,36 @@ csv.filter_for_weekdays = True
 
 The default values are:
 
-```Default Values
+```properties
 csv.destination = $HOME
 csv.separator = ","
 csv.filter_for_weekdays = False
 ```
 
-### <a name="development"></a>Development
+### <a name="troubleshooting"></a>Troubleshooting
 
-#### Clone and configure
+#### Launching via WebStart fails
+
+```
+java.util.ServiceConfigurationError: org.itsallcode.whiterabbit.api.Plugin: Provider org.itsallcode.whiterabbit.plugin.csv.CSVExporterPlugin could not be instantiated
+```
+
+Loading local plugins from `$HOME/.whiterabbit/plugins/` is not supported when starting WhiteRabbit via WebStart. This will be fixed in [issue #77](https://github.com/itsallcode/white-rabbit/issues/77).
+
+
+Workaround: delete local plugins
+
+```bash
+rm -i $HOME/.whiterabbit/plugins/*.jar
+```
+
+#### Not all plugins are availble when launching via WebStart
+
+Your `whiterabbit.jnlp` file might be outdated and not contain newer plugins. Please download the latest version from [here](https://whiterabbit.chp1.net/whiterabbit.jnlp).
+
+## <a name="development"></a>Development
+
+### Clone and configure
 
 ```bash
 mkdir time-recording-data
@@ -256,23 +310,25 @@ cd white-rabbit
 echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 ```
 
-#### Build and launch
+### Build and launch
 
 ```bash
 # Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
 ./gradlew build installPlugins
+# To skip unit and ui-tests, run
+./gradlew build installPlugins -x test -x uiTest
 # Run
-java -jar jfxui/build/libs/jfxui.jar
+java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 
 # Build and run, loading plugins from $HOME/.whiterabbit/plugins/
-./gradlew runJfxui
+./gradlew run
 
 # Build and run including plugins. Useful when developing plugins.
 # Make sure to remove unwanted plugins from $HOME/.whiterabbit/plugins/
-./gradlew runJfxuiWithPlugins
+./gradlew runWithPlugins
 ```
 
-#### Run UI-Tests
+### Run UI-Tests
 
 ```bash
 # Headless (default)
@@ -281,19 +337,19 @@ java -jar jfxui/build/libs/jfxui.jar
 ./gradlew check -PuiTestsHeadless=false
 ```
 
-#### Check that dependencies are up-to-date
+### Check that dependencies are up-to-date
 
 ```bash
 ./gradlew dependencyUpdates
 ```
 
-#### Deployment
+### Deployment
 
 This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plugin api to Maven Central.
 
-##### Initial setup
+#### Initial setup
 
-1. Setup of [keystore and AWS configuration](webstart/README.md).
+1. Setup [keystore and AWS configuration](webstart/README.md).
 2. Add the following to your `~/.gradle/gradle.properties`:
 
     ```properties
@@ -305,7 +361,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     signing.secretKeyRingFile=<path to secret keyring file>
     ```
 
-##### <a name="build_and_deploy"></a>Build and deploy
+#### <a name="build_and_deploy"></a>Build and deploy
 
 1. Make sure the [Changelog](CHANGELOG.md) is updated
 2. Run the following command:
@@ -314,13 +370,13 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
     ./gradlew clean build publish closeAndReleaseRepository webstart:publishWebstart --info -PreleaseVersion=<version>
     ```
 
-    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [https://whiterabbit.chp1.net](https://whiterabbit.chp1.net). Snapshots will be available at [https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
+    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar` and the uploaded content will be available at [whiterabbit.chp1.net](https://whiterabbit.chp1.net). Snapshots will be available at [oss.sonatype.org](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
 
 3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
 4. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
 5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
 
-#### Managing WebStart configuration in a private branch
+### Managing WebStart configuration in a private branch
 
 This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you push to a private repository only.
 
