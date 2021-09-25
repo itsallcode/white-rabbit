@@ -60,7 +60,7 @@ A time recording tool
 
 ### Requirements
 
-* Java Runtime Environment (JRE) 11 or 16, e.g. [AdoptOpenJDK](https://adoptopenjdk.net).
+* Java Runtime Environment (JRE) 11 or 17, e.g. [Eclipse Temurin](https://adoptium.net/).
 
 ### Install WhiteRabbit locally
 
