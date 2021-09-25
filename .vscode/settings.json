@@ -15,4 +15,8 @@
     "java.codeGeneration.useBlocks": true,
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "itsallcode",
+        "projectKey": "white-rabbit"
+    }
 }
