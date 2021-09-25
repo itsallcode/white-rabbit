@@ -25,13 +25,13 @@ import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 public class MonthIndex
 {
     private final ModelFactory modelFactory;
-    private final MonthData montRecord;
+    private final MonthData monthRecord;
     private final Map<LocalDate, DayRecord> days;
 
     private MonthIndex(ModelFactory modelFactory, MonthData monthRecord, Map<LocalDate, DayRecord> days)
     {
         this.modelFactory = Objects.requireNonNull(modelFactory, "modelFactory");
-        this.montRecord = monthRecord;
+        this.monthRecord = monthRecord;
         this.days = days;
     }
 
@@ -73,7 +73,7 @@ public class MonthIndex
 
     public YearMonth getYearMonth()
     {
-        return YearMonth.of(montRecord.getYear(), montRecord.getMonth());
+        return YearMonth.of(monthRecord.getYear(), monthRecord.getMonth());
     }
 
     public DayRecord getDay(LocalDate date)
@@ -94,16 +94,16 @@ public class MonthIndex
                 .collect(toList());
 
         final MonthData month = modelFactory.createMonthData();
-        month.setOvertimePreviousMonth(montRecord.getOvertimePreviousMonth());
-        month.setYear(montRecord.getYear());
-        month.setMonth(montRecord.getMonth());
+        month.setOvertimePreviousMonth(monthRecord.getOvertimePreviousMonth());
+        month.setYear(monthRecord.getYear());
+        month.setMonth(monthRecord.getMonth());
         month.setDays(sortedNonDummyJsonDays);
         return month;
     }
 
     public Duration getOvertimePreviousMonth()
     {
-        return montRecord.getOvertimePreviousMonth();
+        return monthRecord.getOvertimePreviousMonth();
     }
 
     public Stream<DayRecord> getSortedDays()
@@ -114,7 +114,7 @@ public class MonthIndex
 
     public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
     {
-        montRecord.setOvertimePreviousMonth(overtimePreviousMonth);
+        monthRecord.setOvertimePreviousMonth(overtimePreviousMonth);
     }
 
     public Duration getTotalOvertime()
@@ -136,7 +136,7 @@ public class MonthIndex
 
     public List<LocalDate> getVacationDays()
     {
-        return montRecord.getDays().stream()
+        return monthRecord.getDays().stream()
                 .filter(day -> day.getType() == DayType.VACATION)
                 .map(DayData::getDate)
                 .collect(toList());
