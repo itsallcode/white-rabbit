@@ -4,7 +4,7 @@ dependencies {
 
     implementation "org.seleniumhq.selenium:selenium-edge-driver:$seleniumVersion"
     implementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-    runtimeOnly "org.seleniumhq.selenium:selenium-devtools-v91:$seleniumVersion"
+    runtimeOnly "org.seleniumhq.selenium:selenium-devtools:$seleniumVersion"
     implementation "io.github.bonigarcia:webdrivermanager:5.0.3"
     
     testImplementation project(':logic')
