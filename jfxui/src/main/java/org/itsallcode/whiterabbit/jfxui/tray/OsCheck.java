@@ -27,9 +27,6 @@ public class OsCheck
         WINDOWS, MACOS, LINUX, OTHER
     }
 
-    // Cached result of OS detection
-    private static OSType detectedOS;
-
     /**
      * Detect the operating system from the {@code os.name} System property and
      * cache the result.
@@ -38,16 +35,12 @@ public class OsCheck
      */
     public static OSType getOperatingSystemType()
     {
-        if (detectedOS == null)
-        {
-            detectedOS = detectOperatingSystemType();
-        }
-        return detectedOS;
+        return detectOperatingSystemType();
     }
 
-    private static OSType detectOperatingSystemType()
+    static OSType detectOperatingSystemType()
     {
-        String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        final String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
         if ((os.indexOf("mac") >= 0) || (os.indexOf("darwin") >= 0))
         {
             return OSType.MACOS;
@@ -56,7 +49,7 @@ public class OsCheck
         {
             return OSType.WINDOWS;
         }
-        else if (os.indexOf("nux") >= 0)
+        else if (os.indexOf("linux") >= 0)
         {
             return OSType.LINUX;
         }
