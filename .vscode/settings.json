@@ -4,7 +4,7 @@
         "**/.project": true,
         "**/.settings": true,
         "**/.factorypath": true,
-        "**/build/": true,
+        "**/build/": false,
         "**/bin/": true,
         ".gradle/": true,
         ".idea/": true,
