@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
+import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
+import org.itsallcode.whiterabbit.jfxui.tray.OsCheck.OSType;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
@@ -72,6 +74,10 @@ class MenuBarBuilder
                 .addAll(menuItem("_Plugin manager", "menuitem_pluginmanager", actions::showPluginManager));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", this::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuPlugins, menuHelp);
+        if (OsCheck.getOperatingSystemType() == OSType.MACOS)
+        {
+            menuBar.useSystemMenuBarProperty().set(true);
+        }
         return menuBar;
     }
 
