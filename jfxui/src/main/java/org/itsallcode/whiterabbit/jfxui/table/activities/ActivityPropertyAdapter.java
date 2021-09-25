@@ -27,7 +27,7 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
 
     private ActivityPropertyAdapter(EditListener<DayRecord> editListener, Activity act)
     {
-        super(record -> editListener.recordUpdated(record.getDay()));
+        super(dayRecord -> editListener.recordUpdated(dayRecord.getDay()));
         setRecord(act);
         projectId = propertyField("projectId", Activity::getProject, Activity::setProject);
         duration = propertyField("duration", Activity::getDuration, Activity::setDuration);

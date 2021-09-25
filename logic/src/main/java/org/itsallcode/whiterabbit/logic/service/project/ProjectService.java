@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service.project;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 
@@ -10,6 +9,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +73,7 @@ public class ProjectService
     private static List<ProjectImpl> loadAvailableProjects(Path projectConfigFile)
     {
         final List<ProjectImpl> projectList = Optional.ofNullable(readProjectConfig(projectConfigFile).getProjects())
-                .orElseGet(() -> emptyList());
+                .orElseGet(Collections::emptyList);
         if (projectList.isEmpty())
         {
             throw new IllegalStateException("No projects found in file '" + projectConfigFile + "'");

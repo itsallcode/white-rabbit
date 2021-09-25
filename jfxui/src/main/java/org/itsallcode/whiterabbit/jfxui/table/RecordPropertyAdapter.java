@@ -41,9 +41,9 @@ public abstract class RecordPropertyAdapter<R extends RowRecord>
         }
     }
 
-    protected void setRecord(R record)
+    protected void setRecord(R rowRecord)
     {
-        recordProperty.set(record);
+        recordProperty.set(rowRecord);
     }
 
     public R getRecord()

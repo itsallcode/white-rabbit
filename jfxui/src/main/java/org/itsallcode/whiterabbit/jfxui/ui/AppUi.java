@@ -76,9 +76,9 @@ public class AppUi
         dayRecordTable.selectRow(date);
     }
 
-    public void updateActivities(DayRecord record)
+    public void updateActivities(DayRecord dayRecord)
     {
-        activitiesTable.updateTableValues(record);
+        activitiesTable.updateTableValues(dayRecord);
     }
 
     public static class Builder
@@ -107,17 +107,17 @@ public class AppUi
         public AppUi build()
         {
             LOG.debug("Creating user interface");
-            dayRecordTable = new DayRecordTable(state.selectedDay, state.currentMonth, record -> {
-                appService.store(record);
-                if (record.getDate().equals(state.getSelectedDay().map(DayRecord::getDate).orElse(null)))
+            dayRecordTable = new DayRecordTable(state.selectedDay, state.currentMonth, dayRecord -> {
+                appService.store(dayRecord);
+                if (dayRecord.getDate().equals(state.getSelectedDay().map(DayRecord::getDate).orElse(null)))
                 {
-                    LOG.debug("Current day {} updated: refresh activities", record.getDate());
+                    LOG.debug("Current day {} updated: refresh activities", dayRecord.getDate());
                     activitiesTable.refresh();
                 }
             }, appService);
 
-            activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
-                appService.store(record);
+            activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, dayRecord -> {
+                appService.store(dayRecord);
                 activitiesTable.refresh();
             }, appService);
             final BorderPane rootPane = new BorderPane(createMainPane());

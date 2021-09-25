@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* [#215](https://github.com/itsallcode/white-rabbit/pull/215): Upgrade dependencies, fix sonar issues.
 * [#207](https://github.com/itsallcode/white-rabbit/pull/207): Upgrade dependencies.
 
 ## [1.7.0] - 2021-07-26

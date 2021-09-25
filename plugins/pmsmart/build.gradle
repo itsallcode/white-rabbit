@@ -1,11 +1,11 @@
 
 dependencies {
-    def seleniumVersion = "4.0.0-beta-4"
+    def seleniumVersion = "4.0.0-rc-1"
 
     implementation "org.seleniumhq.selenium:selenium-edge-driver:$seleniumVersion"
     implementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-    runtimeOnly "org.seleniumhq.selenium:selenium-devtools-v91:$seleniumVersion"
-    implementation "io.github.bonigarcia:webdrivermanager:4.4.3"
+    runtimeOnly "org.seleniumhq.selenium:selenium-devtools:$seleniumVersion"
+    implementation "io.github.bonigarcia:webdrivermanager:5.0.3"
     
     testImplementation project(':logic')
     testImplementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"

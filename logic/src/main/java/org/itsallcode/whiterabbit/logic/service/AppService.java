@@ -204,12 +204,12 @@ public class AppService implements Closeable
         return storage.loadOrCreate(yearMonth);
     }
 
-    public void store(DayRecord record)
+    public void store(DayRecord dayRecord)
     {
-        final MonthIndex monthRecord = storage.loadOrCreate(YearMonth.from(record.getDate()));
-        monthRecord.put(record);
+        final MonthIndex monthRecord = storage.loadOrCreate(YearMonth.from(dayRecord.getDate()));
+        monthRecord.put(dayRecord);
         storage.storeMonth(monthRecord);
-        appServiceCallback.recordUpdated(record);
+        appServiceCallback.recordUpdated(dayRecord);
     }
 
     public Interruption startInterruption()
