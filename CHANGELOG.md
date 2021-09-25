@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.0] - unreleased
 
+### Feature
+
+* [#216](https://github.com/itsallcode/white-rabbit/pull/216): Add support for macOS.
+
 ### Changed
 
 * [#215](https://github.com/itsallcode/white-rabbit/pull/215): Upgrade dependencies, fix sonar issues.
