@@ -80,7 +80,7 @@ public class JsonFileStorage implements MonthDataStorage
     }
 
     @Override
-    public void store(YearMonth yearMonth, MonthData record)
+    public void store(YearMonth yearMonth, MonthData monthRecord)
     {
         final Path file = dateToFileMapper.getPathForDate(yearMonth);
         LOG.trace("Write month {} to file {}", yearMonth, file);
@@ -88,7 +88,7 @@ public class JsonFileStorage implements MonthDataStorage
         try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING))
         {
-            jsonb.toJson(record, stream);
+            jsonb.toJson(monthRecord, stream);
         }
         catch (final IOException e)
         {

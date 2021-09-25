@@ -12,7 +12,7 @@ public interface AppServiceCallback
         ADD_INTERRUPTION, SKIP_INTERRUPTION, STOP_WORKING_FOR_TODAY
     }
 
-    void recordUpdated(DayRecord record);
+    void recordUpdated(DayRecord dayRecord);
 
     InterruptionDetectedDecision automaticInterruptionDetected(LocalTime startOfInterruption, Duration interruption);
 

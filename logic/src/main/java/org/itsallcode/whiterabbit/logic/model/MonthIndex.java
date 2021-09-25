@@ -25,25 +25,25 @@ import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 public class MonthIndex
 {
     private final ModelFactory modelFactory;
-    private final MonthData record;
+    private final MonthData montRecord;
     private final Map<LocalDate, DayRecord> days;
 
-    private MonthIndex(ModelFactory modelFactory, MonthData record, Map<LocalDate, DayRecord> days)
+    private MonthIndex(ModelFactory modelFactory, MonthData monthRecord, Map<LocalDate, DayRecord> days)
     {
         this.modelFactory = Objects.requireNonNull(modelFactory, "modelFactory");
-        this.record = record;
+        this.montRecord = monthRecord;
         this.days = days;
     }
 
     public static MonthIndex create(ContractTermsService contractTerms, ProjectService projectService,
-            ModelFactory modelFactory, MonthData record)
+            ModelFactory modelFactory, MonthData monthRecord)
     {
-        final Map<LocalDate, DayData> jsonDays = record.getDays().stream()
+        final Map<LocalDate, DayData> jsonDays = monthRecord.getDays().stream()
                 .collect(toMap(DayData::getDate, Function.identity()));
         final Map<LocalDate, DayRecord> days = new HashMap<>();
-        final MonthIndex monthIndex = new MonthIndex(modelFactory, record, days);
+        final MonthIndex monthIndex = new MonthIndex(modelFactory, monthRecord, days);
 
-        final YearMonth yearMonth = YearMonth.of(record.getYear(), record.getMonth());
+        final YearMonth yearMonth = YearMonth.of(monthRecord.getYear(), monthRecord.getMonth());
 
         DayRecord previousDay = null;
         for (int day = 1; day <= yearMonth.lengthOfMonth(); day++)
@@ -73,7 +73,7 @@ public class MonthIndex
 
     public YearMonth getYearMonth()
     {
-        return YearMonth.of(record.getYear(), record.getMonth());
+        return YearMonth.of(montRecord.getYear(), montRecord.getMonth());
     }
 
     public DayRecord getDay(LocalDate date)
@@ -94,16 +94,16 @@ public class MonthIndex
                 .collect(toList());
 
         final MonthData month = modelFactory.createMonthData();
-        month.setOvertimePreviousMonth(record.getOvertimePreviousMonth());
-        month.setYear(record.getYear());
-        month.setMonth(record.getMonth());
+        month.setOvertimePreviousMonth(montRecord.getOvertimePreviousMonth());
+        month.setYear(montRecord.getYear());
+        month.setMonth(montRecord.getMonth());
         month.setDays(sortedNonDummyJsonDays);
         return month;
     }
 
     public Duration getOvertimePreviousMonth()
     {
-        return record.getOvertimePreviousMonth();
+        return montRecord.getOvertimePreviousMonth();
     }
 
     public Stream<DayRecord> getSortedDays()
@@ -114,7 +114,7 @@ public class MonthIndex
 
     public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
     {
-        record.setOvertimePreviousMonth(overtimePreviousMonth);
+        montRecord.setOvertimePreviousMonth(overtimePreviousMonth);
     }
 
     public Duration getTotalOvertime()
@@ -136,7 +136,7 @@ public class MonthIndex
 
     public List<LocalDate> getVacationDays()
     {
-        return record.getDays().stream()
+        return montRecord.getDays().stream()
                 .filter(day -> day.getType() == DayType.VACATION)
                 .map(DayData::getDate)
                 .collect(toList());

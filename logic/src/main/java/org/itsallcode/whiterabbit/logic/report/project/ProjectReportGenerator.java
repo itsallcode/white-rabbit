@@ -36,9 +36,9 @@ public class ProjectReportGenerator
                 .collect(toList()));
     }
 
-    private ProjectReportDay generateDayReport(DayRecord record)
+    private ProjectReportDay generateDayReport(DayRecord dayRecord)
     {
-        final List<ProjectReportActivity> projects = record.activities()
+        final List<ProjectReportActivity> projects = dayRecord.activities()
                 .getAll().stream()
                 .filter(activity -> activity.getProject() != null)
                 .collect(groupingBy(this::activityProject))
@@ -46,7 +46,7 @@ public class ProjectReportGenerator
                 .map(this::aggregateProject)
                 .collect(toList());
 
-        return new DayImpl(record.getDate(), record.getType(), record.getComment(), projects);
+        return new DayImpl(dayRecord.getDate(), dayRecord.getType(), dayRecord.getComment(), projects);
     }
 
     private String activityProject(Activity activity)

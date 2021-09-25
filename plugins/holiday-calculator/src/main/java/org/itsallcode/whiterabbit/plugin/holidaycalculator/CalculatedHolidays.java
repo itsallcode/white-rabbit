@@ -34,8 +34,7 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
     {
         if (!Files.exists(configurationFile))
         {
-            LOG.warn("Could not find holiday definitions file " + configurationFile
-                    + ". Using empty list of holidays.");
+            LOG.warn("Could not find holiday definitions file '{}'. Using empty list of holidays.", configurationFile);
             // In this place CalculatedHolidays could notify a callback in order
             // to display a warning in GUI.
             return new ArrayList<>();

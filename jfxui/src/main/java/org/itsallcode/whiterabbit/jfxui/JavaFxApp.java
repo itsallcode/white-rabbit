@@ -148,9 +148,9 @@ public class JavaFxApp extends Application
 
     public void loadMonth(final YearMonth month)
     {
-        final MonthIndex record = appService.getOrCreateMonth(month);
+        final MonthIndex monthIndex = appService.getOrCreateMonth(month);
         ensureMonthAvailable(month);
-        state.currentMonth.setValue(record);
+        state.currentMonth.setValue(monthIndex);
     }
 
     private void ensureMonthAvailable(final YearMonth month)
@@ -340,10 +340,10 @@ public class JavaFxApp extends Application
             });
         }
 
-        private boolean daySelected(DayRecord record)
+        private boolean daySelected(DayRecord dayRecord)
         {
             final Optional<DayRecord> selectedDay = state.getSelectedDay();
-            return selectedDay.isPresent() && selectedDay.get().getDate().equals(record.getDate());
+            return selectedDay.isPresent() && selectedDay.get().getDate().equals(dayRecord.getDate());
         }
 
         @Override

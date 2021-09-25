@@ -61,10 +61,10 @@ public class DayRecordPropertyAdapter extends RecordPropertyAdapter<DayRecord>
         });
     }
 
-    void update(DayRecord record)
+    void update(DayRecord dayRecord)
     {
         runUpdate(() -> {
-            setRecord(record);
+            setRecord(dayRecord);
             updateFields();
         });
     }
