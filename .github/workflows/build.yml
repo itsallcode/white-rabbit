@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [11, 17]
+        java: [17]
     env:
-      DEFAULT_JAVA: 11
+      DEFAULT_JAVA: 17
 
     steps:
 
@@ -25,7 +25,7 @@ jobs:
 
     - uses: actions/setup-java@v2
       with:
-        distribution: 'zulu'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
 
     - uses: gradle/wrapper-validation-action@v1
