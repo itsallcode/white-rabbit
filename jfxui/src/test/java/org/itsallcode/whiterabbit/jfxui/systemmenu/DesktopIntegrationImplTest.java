@@ -1,9 +1,13 @@
 package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.awt.desktop.AboutHandler;
 
 import org.itsallcode.whiterabbit.jfxui.UiActions;
@@ -15,19 +19,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class MacMenuIntegrationTest
+class DesktopIntegrationImplTest
 {
     @Mock
     private Desktop desktopMock;
     @Mock
     private UiActions uiActionsMock;
 
-    private MacMenuIntegration menuIntegration;
+    private DesktopIntegrationImpl menuIntegration;
 
     @BeforeEach
     void setUp()
     {
-        menuIntegration = new MacMenuIntegration(desktopMock);
+        menuIntegration = new DesktopIntegrationImpl(desktopMock);
     }
 
     @Test
@@ -40,6 +44,7 @@ class MacMenuIntegrationTest
     @Test
     void registersAboutHandler()
     {
+        when(desktopMock.isSupported(Action.APP_ABOUT)).thenReturn(true);
         menuIntegration.register();
         menuIntegration.setUiActions(uiActionsMock);
 
@@ -51,6 +56,7 @@ class MacMenuIntegrationTest
     @Test
     void aboutHandlerFailsForMissingUiActions()
     {
+        when(desktopMock.isSupported(Action.APP_ABOUT)).thenReturn(true);
         menuIntegration.register();
 
         final AboutHandler aboutHandler = getAboutHandler();
@@ -58,6 +64,16 @@ class MacMenuIntegrationTest
         assertThatThrownBy(() -> aboutHandler.handleAbout(null))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("UI Actions not registered");
+    }
+
+    @Test
+    void aboutHandlerNotRegisteredWhenNotSupported()
+    {
+        when(desktopMock.isSupported(Action.APP_ABOUT)).thenReturn(false);
+
+        menuIntegration.register();
+
+        verify(desktopMock, never()).setAboutHandler(any());
     }
 
     private AboutHandler getAboutHandler()

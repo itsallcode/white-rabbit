@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.awt.desktop.AboutEvent;
 import java.util.Objects;
 
@@ -8,15 +9,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 
-class MacMenuIntegration implements MenuIntegration
+class DesktopIntegrationImpl implements DesktopIntegration
 {
-    private static final Logger LOG = LogManager.getLogger(MacMenuIntegration.class);
+    private static final Logger LOG = LogManager.getLogger(DesktopIntegrationImpl.class);
 
     private final Desktop desktop;
 
     private UiActions actions;
 
-    MacMenuIntegration(Desktop desktop)
+    DesktopIntegrationImpl(Desktop desktop)
     {
         this.desktop = desktop;
     }
@@ -24,8 +25,11 @@ class MacMenuIntegration implements MenuIntegration
     @Override
     public void register()
     {
-        LOG.debug("Registering menu integration");
-        desktop.setAboutHandler(this::showAboutDialog);
+        LOG.debug("Registering desktop integration");
+        if (desktop.isSupported(Action.APP_ABOUT))
+        {
+            desktop.setAboutHandler(this::showAboutDialog);
+        }
     }
 
     @Override

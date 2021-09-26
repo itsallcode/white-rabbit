@@ -2,9 +2,9 @@ package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 
-public interface MenuIntegration
+public interface DesktopIntegration
 {
-    public static MenuIntegration getInstance()
+    public static DesktopIntegration getInstance()
     {
         return StaticInstanceHolder.getInstance();
     }

@@ -1,20 +1,16 @@
 package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.lenient;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.when;
 
 import java.awt.Desktop;
-import java.awt.HeadlessException;
 
+import org.itsallcode.whiterabbit.jfxui.OsCheck;
 import org.itsallcode.whiterabbit.jfxui.systemmenu.StaticInstanceHolder.InstanceFactory;
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -44,27 +40,20 @@ class StaticInstanceHolderTest
                 .hasSameClassAs(new InstanceFactory(new OsCheck()).createInstance());
     }
 
-    @ParameterizedTest
-    @CsvSource(
+    @Test
+    void instanceFactoryCreatesHeadlessType()
     {
-            "false, false, org.itsallcode.whiterabbit.jfxui.systemmenu.UnsupportedMenuIntegration",
-            "false, true, org.itsallcode.whiterabbit.jfxui.systemmenu.UnsupportedMenuIntegration",
-            "true, false, org.itsallcode.whiterabbit.jfxui.systemmenu.UnsupportedMenuIntegration",
-            "true, true, org.itsallcode.whiterabbit.jfxui.systemmenu.MacMenuIntegration"
-    })
-    void instanceFactoryCreatesCorrectType(boolean systemMenuBarSupported, boolean desktopSupported,
-            Class<? extends MenuIntegration> expectedType)
-    {
-        when(osCheckMock.supportsSystemMenuBar()).thenReturn(systemMenuBarSupported);
-        lenient().when(osCheckMock.isDesktopSupported()).thenReturn(desktopSupported);
+        when(osCheckMock.isDesktopSupported()).thenReturn(false);
 
-        if (!Desktop.isDesktopSupported() && desktopSupported && systemMenuBarSupported)
-        {
-            assertThatThrownBy(instanceFactory::createInstance).isInstanceOf(HeadlessException.class);
-        }
-        else
-        {
-            assertThat(instanceFactory.createInstance()).isInstanceOf(expectedType);
-        }
+        assertThat(instanceFactory.createInstance()).isInstanceOf(HeadlessDesktopIntegration.class);
+    }
+
+    @Test
+    void instanceFactoryCreatesSupportedType()
+    {
+        assumeTrue(Desktop.isDesktopSupported(), "No headless support");
+        when(osCheckMock.isDesktopSupported()).thenReturn(true);
+
+        assertThat(instanceFactory.createInstance()).isInstanceOf(DesktopIntegrationImpl.class);
     }
 }

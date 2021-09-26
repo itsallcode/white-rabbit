@@ -5,7 +5,6 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.beans.binding.Bindings;
@@ -23,13 +22,11 @@ class MenuBarBuilder
     private final UiActions actions;
     private final AppService appService;
     private final BooleanProperty stoppedWorkingForToday;
-    private final OsCheck osCheck;
 
-    MenuBarBuilder(UiActions actions, AppService appService, OsCheck osCheck, BooleanProperty stoppedWorkingForToday)
+    MenuBarBuilder(UiActions actions, AppService appService, BooleanProperty stoppedWorkingForToday)
     {
         this.actions = actions;
         this.appService = appService;
-        this.osCheck = osCheck;
         this.stoppedWorkingForToday = Objects.requireNonNull(stoppedWorkingForToday);
     }
 
@@ -64,10 +61,7 @@ class MenuBarBuilder
                 .addAll(menuItem("_Plugin manager", "menuitem_pluginmanager", actions::showPluginManager));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", actions::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuPlugins, menuHelp);
-        if (osCheck.supportsSystemMenuBar())
-        {
-            menuBar.useSystemMenuBarProperty().set(true);
-        }
+        menuBar.useSystemMenuBarProperty().set(true);
         return menuBar;
     }
 

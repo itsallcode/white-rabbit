@@ -2,7 +2,7 @@ package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 
-public class UnsupportedMenuIntegration implements MenuIntegration
+class HeadlessDesktopIntegration implements DesktopIntegration
 {
     @Override
     public void register()

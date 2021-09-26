@@ -17,8 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
-import org.itsallcode.whiterabbit.jfxui.systemmenu.MenuIntegration;
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
+import org.itsallcode.whiterabbit.jfxui.systemmenu.DesktopIntegration;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
@@ -56,7 +55,6 @@ public class JavaFxApp extends Application
     private final WorkingDirProvider workingDirProvider;
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
-    private final OsCheck osCheck;
 
     private AppState state;
     private UiActions actions;
@@ -64,17 +62,14 @@ public class JavaFxApp extends Application
 
     public JavaFxApp()
     {
-        this(new DefaultWorkingDirProvider(), Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1),
-                new OsCheck());
+        this(new DefaultWorkingDirProvider(), Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1));
     }
 
-    JavaFxApp(WorkingDirProvider workingDirProvider, Clock clock, ScheduledExecutorService executorService,
-            OsCheck osCheck)
+    JavaFxApp(WorkingDirProvider workingDirProvider, Clock clock, ScheduledExecutorService executorService)
     {
         this.workingDirProvider = workingDirProvider;
         this.clock = clock;
         this.scheduledExecutor = executorService;
-        this.osCheck = osCheck;
     }
 
     @Override
@@ -114,7 +109,7 @@ public class JavaFxApp extends Application
                 UiStateService.loadState(config, new DelayedPropertyListener(appService.scheduler())));
         actions = UiActions.create(config, state, appService, getHostServices());
 
-        MenuIntegration.getInstance().setUiActions(actions);
+        DesktopIntegration.getInstance().setUiActions(actions);
     }
 
     private Config loadConfig()
@@ -138,7 +133,7 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, osCheck).build();
+        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state).build();
 
         primaryStage.show();
 

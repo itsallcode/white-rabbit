@@ -3,7 +3,8 @@ package org.itsallcode.whiterabbit.jfxui.tray;
 import java.awt.SystemTray;
 import java.awt.TrayIcon.MessageType;
 
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck.OSType;
+import org.itsallcode.whiterabbit.jfxui.OsCheck;
+import org.itsallcode.whiterabbit.jfxui.OsCheck.OSType;
 
 public interface Tray
 {

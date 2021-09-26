@@ -1,8 +1,8 @@
-package org.itsallcode.whiterabbit.jfxui.tray;
+package org.itsallcode.whiterabbit.jfxui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck.OSType;
+import org.itsallcode.whiterabbit.jfxui.OsCheck.OSType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,7 +52,6 @@ class OsCheckTest
         {
             setSystemProperty(osNameSystemProperty);
             assertThat(osCheck.getOperatingSystemType()).isEqualTo(expectedType);
-            assertThat(osCheck.supportsSystemMenuBar()).isEqualTo(expectedType == OSType.MACOS);
         }
         finally
         {

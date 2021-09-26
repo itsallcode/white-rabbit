@@ -4,17 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-class MenuIntegrationTest
+class DesktopIntegrationTest
 {
     @Test
     void getInstanceReturnsSameInstance()
     {
-        assertThat(MenuIntegration.getInstance()).isSameAs(MenuIntegration.getInstance());
+        assertThat(DesktopIntegration.getInstance()).isSameAs(DesktopIntegration.getInstance());
     }
 
     @Test
     void getInstanceReturnsSameInstanceAsStaticInstanceHolder()
     {
-        assertThat(MenuIntegration.getInstance()).isSameAs(StaticInstanceHolder.getInstance());
+        assertThat(DesktopIntegration.getInstance()).isSameAs(StaticInstanceHolder.getInstance());
     }
 }

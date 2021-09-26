@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class UnsupportedMenuIntegrationTest
+class HeadlessDesktopIntegrationTest
 {
-    private UnsupportedMenuIntegration menuIntegration;
+    private HeadlessDesktopIntegration menuIntegration;
 
     @BeforeEach
     void setUp()
     {
-        menuIntegration = new UnsupportedMenuIntegration();
+        menuIntegration = new HeadlessDesktopIntegration();
     }
 
     @Test

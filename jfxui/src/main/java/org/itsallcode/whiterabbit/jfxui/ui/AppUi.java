@@ -15,7 +15,6 @@ import org.itsallcode.whiterabbit.jfxui.table.activities.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordTable;
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
 import org.itsallcode.whiterabbit.jfxui.tray.Tray;
 import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
@@ -90,21 +89,18 @@ public class AppUi
         private final AppState state;
         private final UiActions actions;
         private final DayOfWeekWithoutDotFormatter shortDateFormatter;
-        private final OsCheck osCheck;
 
         private DayRecordTable dayRecordTable;
         private ActivitiesTable activitiesTable;
         private Tray tray;
 
-        public Builder(JavaFxApp app, UiActions actions, AppService appService, Stage primaryStage, AppState appState,
-                OsCheck osCheck)
+        public Builder(JavaFxApp app, UiActions actions, AppService appService, Stage primaryStage, AppState appState)
         {
             this.app = app;
             this.actions = actions;
             this.state = appState;
             this.appService = appService;
             this.primaryStage = primaryStage;
-            this.osCheck = osCheck;
             this.shortDateFormatter = appService.formatter().getCustomShortDateFormatter();
         }
 
@@ -156,7 +152,7 @@ public class AppUi
 
         private VBox createTopContainer()
         {
-            final MenuBar menuBar = new MenuBarBuilder(actions, appService, osCheck, state.stoppedWorkingForToday)
+            final MenuBar menuBar = new MenuBarBuilder(actions, appService, state.stoppedWorkingForToday)
                     .build();
             final VBox topContainer = new VBox();
             topContainer.getChildren().addAll(menuBar, createToolBar());

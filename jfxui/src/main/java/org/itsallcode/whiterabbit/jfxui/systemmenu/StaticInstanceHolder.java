@@ -2,18 +2,18 @@ package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import java.awt.Desktop;
 
-import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
+import org.itsallcode.whiterabbit.jfxui.OsCheck;
 
 class StaticInstanceHolder
 {
-    private static MenuIntegration instance;
+    private static DesktopIntegration instance;
 
     private StaticInstanceHolder()
     {
         // not instantiable
     }
 
-    static MenuIntegration getInstance()
+    static DesktopIntegration getInstance()
     {
         if (instance == null)
         {
@@ -31,15 +31,15 @@ class StaticInstanceHolder
             this.osCheck = osCheck;
         }
 
-        MenuIntegration createInstance()
+        DesktopIntegration createInstance()
         {
-            if (osCheck.supportsSystemMenuBar() && osCheck.isDesktopSupported())
+            if (osCheck.isDesktopSupported())
             {
-                return new MacMenuIntegration(Desktop.getDesktop());
+                return new DesktopIntegrationImpl(Desktop.getDesktop());
             }
             else
             {
-                return new UnsupportedMenuIntegration();
+                return new HeadlessDesktopIntegration();
             }
         }
     }

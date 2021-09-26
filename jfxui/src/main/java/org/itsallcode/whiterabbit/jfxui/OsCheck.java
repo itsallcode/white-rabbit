@@ -1,4 +1,5 @@
-package org.itsallcode.whiterabbit.jfxui.tray;
+package org.itsallcode.whiterabbit.jfxui;
+
 
 import java.awt.Desktop;
 import java.util.Locale;
@@ -50,11 +51,6 @@ public class OsCheck
             return OSType.LINUX;
         }
         return OSType.OTHER;
-    }
-
-    public boolean supportsSystemMenuBar()
-    {
-        return getOperatingSystemType() == OSType.MACOS;
     }
 
     public boolean isDesktopSupported()
