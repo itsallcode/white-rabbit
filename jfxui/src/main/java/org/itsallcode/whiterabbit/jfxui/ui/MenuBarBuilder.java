@@ -61,7 +61,7 @@ class MenuBarBuilder
                 .addAll(menuItem("_Plugin manager", "menuitem_pluginmanager", actions::showPluginManager));
         menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", actions::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuPlugins, menuHelp);
-        menuBar.useSystemMenuBarProperty().set(true);
+        menuBar.setUseSystemMenuBar(true);
         return menuBar;
     }
 
