@@ -1,8 +1,12 @@
 package org.itsallcode.whiterabbit.jfxui.systemmenu;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
+
+import java.awt.Desktop;
+import java.awt.HeadlessException;
 
 import org.itsallcode.whiterabbit.jfxui.systemmenu.StaticInstanceHolder.InstanceFactory;
 import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
@@ -54,6 +58,13 @@ class StaticInstanceHolderTest
         when(osCheckMock.supportsSystemMenuBar()).thenReturn(systemMenuBarSupported);
         lenient().when(osCheckMock.isDesktopSupported()).thenReturn(desktopSupported);
 
-        assertThat(instanceFactory.createInstance()).isInstanceOf(expectedType);
+        if (!Desktop.isDesktopSupported() && desktopSupported)
+        {
+            assertThatThrownBy(instanceFactory::createInstance).isInstanceOf(HeadlessException.class);
+        }
+        else
+        {
+            assertThat(instanceFactory.createInstance()).isInstanceOf(expectedType);
+        }
     }
 }
