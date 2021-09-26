@@ -152,7 +152,7 @@ public class AppUi
 
         private VBox createTopContainer()
         {
-            final MenuBar menuBar = new MenuBarBuilder(actions, primaryStage, appService, state.stoppedWorkingForToday)
+            final MenuBar menuBar = new MenuBarBuilder(actions, appService, state.stoppedWorkingForToday)
                     .build();
             final VBox topContainer = new VBox();
             topContainer.getChildren().addAll(menuBar, createToolBar());

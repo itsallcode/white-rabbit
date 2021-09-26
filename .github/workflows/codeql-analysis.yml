@@ -26,8 +26,8 @@ jobs:
 
     - uses: actions/setup-java@v2
       with:
-        distribution: 'zulu'
-        java-version: 11
+        distribution: 'temurin'
+        java-version: 17
 
     - uses: gradle/wrapper-validation-action@v1
 

@@ -1,5 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow'
+    id 'org.panteleyev.jpackageplugin'
 }
 
 ext {
@@ -123,3 +124,43 @@ task uiTest(type: Test, group: 'verification') {
 check.dependsOn uiTest
 
 tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jacoco/*.exec")
+
+
+def jPackageDir = "$buildDir/jpackage-jars"
+
+task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
+    from(configurations.runtimeClasspath).into jPackageDir
+    from(tasks.jar.outputs.files).into jPackageDir
+}
+
+
+tasks.jpackage {
+    dependsOn("copyJPackageDependencies")
+
+    input  = jPackageDir
+    destination = "$buildDir/jpackage-dist"
+
+    appName = "WhiteRabbit"
+    vendor = '"It\'s all code"'
+    copyright = '"Copyright (C) 2021 Christoph Pirkl <christoph at users.sourceforge.net>"'
+    licenseFile = "${rootProject.rootDir}/LICENSE"
+    appDescription = '"A time recording tool"'
+    icon = "${projectDir}/src/main/resources/icon.png"
+
+    mainJar = tasks.jar.archiveFileName.get()
+    mainClass = project.mainClass
+
+    verbose = false
+    arguments = []
+    javaOptions = ["-Dfile.encoding=UTF-8"]
+    additionalParameters = ["--about-url", "https://github.com/itsallcode/white-rabbit/blob/develop/README.md"]
+    windows {
+        winConsole = true
+    }
+
+    mac {
+        macPackageIdentifier = "org.itsallcode.white-rabbit"
+        macPackageName = "WhiteRabbit"
+        icon = "${projectDir}/src/main/resources/icon.icns"
+    }
+}

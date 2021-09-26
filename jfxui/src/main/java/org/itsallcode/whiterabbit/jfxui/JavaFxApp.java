@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
+import org.itsallcode.whiterabbit.jfxui.systemmenu.DesktopIntegration;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
@@ -107,6 +108,8 @@ public class JavaFxApp extends Application
         state = AppState.create(appService,
                 UiStateService.loadState(config, new DelayedPropertyListener(appService.scheduler())));
         actions = UiActions.create(config, state, appService, getHostServices());
+
+        DesktopIntegration.getInstance().setUiActions(actions);
     }
 
     private Config loadConfig()
