@@ -58,7 +58,7 @@ class StaticInstanceHolderTest
         when(osCheckMock.supportsSystemMenuBar()).thenReturn(systemMenuBarSupported);
         lenient().when(osCheckMock.isDesktopSupported()).thenReturn(desktopSupported);
 
-        if (!Desktop.isDesktopSupported() && desktopSupported)
+        if (!Desktop.isDesktopSupported() && desktopSupported && systemMenuBarSupported)
         {
             assertThatThrownBy(instanceFactory::createInstance).isInstanceOf(HeadlessException.class);
         }
