@@ -21,7 +21,7 @@ public interface Tray
 
     static boolean isAwtSystemTraySupported()
     {
-        return SystemTray.isSupported() && OsCheck.getOperatingSystemType() != OSType.MACOS;
+        return SystemTray.isSupported() && new OsCheck().getOperatingSystemType() != OSType.MACOS;
     }
 
     void displayMessage(String caption, String text, MessageType messageType);

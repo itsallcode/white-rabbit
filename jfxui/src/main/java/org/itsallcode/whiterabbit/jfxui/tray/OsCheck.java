@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.tray;
 
+import java.awt.Desktop;
 import java.util.Locale;
 
 /**
@@ -14,11 +15,6 @@ import java.util.Locale;
  */
 public class OsCheck
 {
-    private OsCheck()
-    {
-        // not instantiable
-    }
-
     /**
      * Types of Operating Systems
      */
@@ -33,12 +29,12 @@ public class OsCheck
      * 
      * @returns the operating system detected
      */
-    public static OSType getOperatingSystemType()
+    public OSType getOperatingSystemType()
     {
         return detectOperatingSystemType();
     }
 
-    static OSType detectOperatingSystemType()
+    private static OSType detectOperatingSystemType()
     {
         final String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
         if ((os.indexOf("mac") >= 0) || (os.indexOf("darwin") >= 0))
@@ -54,5 +50,15 @@ public class OsCheck
             return OSType.LINUX;
         }
         return OSType.OTHER;
+    }
+
+    public boolean supportsSystemMenuBar()
+    {
+        return getOperatingSystemType() == OSType.MACOS;
+    }
+
+    public boolean isDesktopSupported()
+    {
+        return Desktop.isDesktopSupported();
     }
 }

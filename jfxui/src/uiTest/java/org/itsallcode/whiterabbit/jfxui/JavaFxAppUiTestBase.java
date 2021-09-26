@@ -23,6 +23,7 @@ import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.jfxui.testutil.TableRowExpectedContent;
 import org.itsallcode.whiterabbit.jfxui.testutil.TimeUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ApplicationHelper;
+import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
 import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectConfig;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
@@ -99,7 +100,7 @@ abstract class JavaFxAppUiTestBase
 
         prepareConfiguration(projectConfig, testDirProvider);
 
-        this.javaFxApp = new JavaFxApp(testDirProvider, timeUtil.clock(), timeUtil.executorService());
+        this.javaFxApp = new JavaFxApp(testDirProvider, timeUtil.clock(), timeUtil.executorService(), new OsCheck());
 
         ParametersImpl.registerParameters(javaFxApp, new ParametersImpl(commandLineArgs));
 

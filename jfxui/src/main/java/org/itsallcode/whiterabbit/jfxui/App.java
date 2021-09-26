@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui;
 
 import org.itsallcode.whiterabbit.jfxui.splashscreen.SplashScreenLoader;
+import org.itsallcode.whiterabbit.jfxui.systemmenu.MenuIntegration;
 
 import javafx.application.Application;
 

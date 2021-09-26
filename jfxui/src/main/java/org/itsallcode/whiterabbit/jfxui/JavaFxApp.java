@@ -17,6 +17,8 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
+import org.itsallcode.whiterabbit.jfxui.systemmenu.MenuIntegration;
+import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
@@ -54,6 +56,7 @@ public class JavaFxApp extends Application
     private final WorkingDirProvider workingDirProvider;
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutor;
+    private final OsCheck osCheck;
 
     private AppState state;
     private UiActions actions;
@@ -61,14 +64,17 @@ public class JavaFxApp extends Application
 
     public JavaFxApp()
     {
-        this(new DefaultWorkingDirProvider(), Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1));
+        this(new DefaultWorkingDirProvider(), Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1),
+                new OsCheck());
     }
 
-    JavaFxApp(WorkingDirProvider workingDirProvider, Clock clock, ScheduledExecutorService executorService)
+    JavaFxApp(WorkingDirProvider workingDirProvider, Clock clock, ScheduledExecutorService executorService,
+            OsCheck osCheck)
     {
         this.workingDirProvider = workingDirProvider;
         this.clock = clock;
         this.scheduledExecutor = executorService;
+        this.osCheck = osCheck;
     }
 
     @Override
@@ -132,7 +138,7 @@ public class JavaFxApp extends Application
 
     private void doStart(Stage primaryStage)
     {
-        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state).build();
+        this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state, osCheck).build();
 
         primaryStage.show();
 

@@ -28,7 +28,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public final class UiActions
+public class UiActions
 {
     private static final Logger LOG = LogManager.getLogger(UiActions.class);
 
