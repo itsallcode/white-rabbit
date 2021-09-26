@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,13 +16,16 @@ import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
+import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public final class UiActions
@@ -145,5 +149,26 @@ public final class UiActions
     public void exitApp()
     {
         Platform.exit();
+    }
+
+    public void showAboutDialog()
+    {
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            final AppProperties appProperties = appService.getAppProperties();
+            final Alert aboutDialog = new Alert(AlertType.INFORMATION);
+            aboutDialog.initModality(Modality.NONE);
+            if (state.getPrimaryStage().isPresent())
+            {
+                aboutDialog.initOwner(state.getPrimaryStage().get());
+            }
+            aboutDialog.setTitle("About White Rabbit");
+            aboutDialog.setHeaderText("About White Rabbit:");
+            aboutDialog.setContentText("Version: " + appProperties.getVersion());
+            final ButtonType close = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
+            final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
+            aboutDialog.getButtonTypes().setAll(close, homepage);
+            final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
+            selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> this.openHomepage());
+        });
     }
 }

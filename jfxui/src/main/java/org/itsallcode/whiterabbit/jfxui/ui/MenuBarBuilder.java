@@ -1,30 +1,22 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.UiActions;
 import org.itsallcode.whiterabbit.jfxui.tray.OsCheck;
 import org.itsallcode.whiterabbit.jfxui.tray.OsCheck.OSType;
-import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 class MenuBarBuilder
 {
@@ -32,13 +24,10 @@ class MenuBarBuilder
     private final UiActions actions;
     private final AppService appService;
     private final BooleanProperty stoppedWorkingForToday;
-    private final Stage primaryStage;
 
-    MenuBarBuilder(UiActions actions, Stage primaryStage, AppService appService,
-            BooleanProperty stoppedWorkingForToday)
+    MenuBarBuilder(UiActions actions, AppService appService, BooleanProperty stoppedWorkingForToday)
     {
         this.actions = actions;
-        this.primaryStage = primaryStage;
         this.appService = appService;
         this.stoppedWorkingForToday = Objects.requireNonNull(stoppedWorkingForToday);
     }
@@ -72,7 +61,7 @@ class MenuBarBuilder
                         menuItem("_Vacation report", "menuitem_vacation_report", actions::showVacationReport));
         menuPlugins.getItems()
                 .addAll(menuItem("_Plugin manager", "menuitem_pluginmanager", actions::showPluginManager));
-        menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", this::showAboutDialog));
+        menuHelp.getItems().addAll(menuItem("_About", "menuitem_about", actions::showAboutDialog));
         menuBar.getMenus().addAll(menuFile, menuCalculations, menuReports, menuPlugins, menuHelp);
         if (OsCheck.getOperatingSystemType() == OSType.MACOS)
         {
@@ -115,21 +104,5 @@ class MenuBarBuilder
         menuItem.setId(id);
         menuItem.setOnAction(action);
         return menuItem;
-    }
-
-    private void showAboutDialog()
-    {
-        final AppProperties appProperties = appService.getAppProperties();
-        final Alert aboutDialog = new Alert(AlertType.INFORMATION);
-        aboutDialog.initModality(Modality.NONE);
-        aboutDialog.initOwner(primaryStage);
-        aboutDialog.setTitle("About White Rabbit");
-        aboutDialog.setHeaderText("About White Rabbit:");
-        aboutDialog.setContentText("Version: " + appProperties.getVersion());
-        final ButtonType close = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
-        final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
-        aboutDialog.getButtonTypes().setAll(close, homepage);
-        final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
-        selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> actions.openHomepage());
     }
 }

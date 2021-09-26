@@ -107,6 +107,8 @@ public class JavaFxApp extends Application
         state = AppState.create(appService,
                 UiStateService.loadState(config, new DelayedPropertyListener(appService.scheduler())));
         actions = UiActions.create(config, state, appService, getHostServices());
+
+        MenuIntegration.getInstance().setUiActions(actions);
     }
 
     private Config loadConfig()
