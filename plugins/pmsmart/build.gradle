@@ -1,10 +1,10 @@
 
 dependencies {
-    def seleniumVersion = "4.0.0-rc-1"
+    def seleniumVersion = "4.0.0-rc-3"
 
     implementation "org.seleniumhq.selenium:selenium-edge-driver:$seleniumVersion"
     implementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-    runtimeOnly "org.seleniumhq.selenium:selenium-devtools:$seleniumVersion"
+    runtimeOnly "org.seleniumhq.selenium:selenium-devtools:4.0.0-rc-1"
     implementation "io.github.bonigarcia:webdrivermanager:5.0.3"
     
     testImplementation project(':logic')
