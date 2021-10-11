@@ -3,11 +3,6 @@ plugins {
     id 'org.panteleyev.jpackageplugin'
 }
 
-ext {
-    javaFxVersion = '18-ea+3'
-    monocleVersion = '12.0.1+2'
-}
-
 dependencies {
     implementation project(':logic')
     ['win', 'mac', 'linux'].forEach {platform ->
