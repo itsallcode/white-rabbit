@@ -341,6 +341,14 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 ./gradlew dependencyUpdates
 ```
 
+### Build Native Packages
+
+Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and add it to the `PATH`.
+
+```bash
+./gradlew jpackage --info -PreleaseVersion=x.y.z
+```
+
 ### Deployment
 
 This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plugin api to Maven Central.
