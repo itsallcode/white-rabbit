@@ -150,7 +150,12 @@ tasks.jpackage {
     javaOptions = ["-Dfile.encoding=UTF-8"]
     additionalParameters = ["--about-url", "https://github.com/itsallcode/white-rabbit/blob/develop/README.md"]
     windows {
-        winConsole = true
+        winConsole = false
+        winPerUserInstall = true
+        winMenu = true
+        winMenuGroup = "Time Recording"
+        winShortcut = true
+        icon = "${projectDir}/src/main/resources/icon.ico"
     }
 
     mac {
