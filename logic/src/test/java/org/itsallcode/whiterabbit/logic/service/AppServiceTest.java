@@ -212,9 +212,6 @@ class AppServiceTest
         day.setBegin(begin);
         day.setEnd(begin);
 
-        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(2)))
-                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
-
         updateNow(now, day);
 
         assertThat(day.getBegin()).isEqualTo(begin);
@@ -251,6 +248,26 @@ class AppServiceTest
         day.setEnd(begin);
 
         when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(3)))
+                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
+
+        updateNow(now, day);
+
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(now);
+    }
+
+    @Test
+    void testUpdateExistingDayAfter4Min()
+    {
+        final LocalTime begin = LocalTime.of(8, 0);
+        final LocalTime now = LocalTime.of(8, 4);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final DayData day = modelFactory.createDayData();
+        day.setDate(today);
+        day.setBegin(begin);
+        day.setEnd(begin);
+
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(4)))
                 .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
 
         updateNow(now, day);
