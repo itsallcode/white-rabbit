@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#216](https://github.com/itsallcode/white-rabbit/pull/216): Add support for macOS.
 * [#219](https://github.com/itsallcode/white-rabbit/pull/219): Configure installer for Windows.
 
+### Bugfix
+
+* [#210](https://github.com/itsallcode/white-rabbit/issues/210): Skip unwanted 2 minute interruptions.
+
 ### Changed
 
 * [#215](https://github.com/itsallcode/white-rabbit/pull/215): Upgrade dependencies, fix sonar issues.
