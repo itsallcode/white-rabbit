@@ -15,7 +15,7 @@ import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class WorkingTimeService
 {
-    private static final Duration AUTO_INTERRUPTION_THRESHOLD = Duration.ofMinutes(2);
+    private static final Duration AUTO_INTERRUPTION_THRESHOLD = Duration.ofMinutes(3);
 
     private static final Logger LOG = LogManager.getLogger(WorkingTimeService.class);
 
