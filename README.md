@@ -74,6 +74,30 @@ A time recording tool
   java -jar whiterabbitfx-signed.jar
   ```
 
+### Install Native Package
+
+Follow the [instructions](#build_native_package) to build a native package for your platform. The package will be built in `jfxui/build/jpackage-dist/`. Install it as usual for your platform.
+
+#### Ubuntu
+
+Install the `.deb` file like this:
+
+```shell
+sudo dpkg --install jfxui/build/jpackage-dist/whiterabbit_${version}_amd64.deb
+```
+
+This will install WhiteRabbit to `/opt/whiterabbit/`. You can launch it by running
+
+```shell
+/opt/whiterabbit/bin/WhiteRabbit &
+```
+
+To remove WhiteRabbit, run
+
+```shell
+sudo dpkg --remove whiterabbit
+```
+
 ### Install WhiteRabbit via WebStart
 
 1. Install [OpenWebStart](https://openwebstart.com).
@@ -341,7 +365,7 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 ./gradlew dependencyUpdates
 ```
 
-### Build Native Packages
+### <a name="build_native_package"></a>Build Native Packages
 
 Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and add it to the `PATH`.
 
