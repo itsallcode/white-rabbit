@@ -44,6 +44,8 @@ jar {
 
 build.dependsOn shadowJar
 
+def jPackageDir = "$buildDir/jpackage-jars"
+
 project(':plugins').afterEvaluate {
     List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
     
@@ -63,6 +65,28 @@ project(':plugins').afterEvaluate {
 
     task runJfxuiWithPlugins(dependsOn: runWithPlugins, group: 'run') {
         // deprecated
+    }
+
+    def getUnwantedPlatforms = {
+        OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+        if(os.isLinux()) {
+            return ["mac", "win"]
+        }
+        if(os.isWindows()) {
+            return ["mac", "linux"]
+        }
+        if(os.isMacOs()) {
+            return ["linux", "win"]
+        }
+    }
+
+    task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
+        def unwantedPlatforms = getUnwantedPlatforms()
+        from(configurations.runtimeClasspath.filter { file -> 
+            unwantedPlatforms.every { platform -> !file.name.endsWith("-${platform}.jar") }
+        }).into jPackageDir
+        from(tasks.jar.outputs.files).into jPackageDir
+        from(pluginJarTasks).into jPackageDir
     }
 }
 
@@ -119,15 +143,6 @@ task uiTest(type: Test, group: 'verification') {
 check.dependsOn uiTest
 
 tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jacoco/*.exec")
-
-
-def jPackageDir = "$buildDir/jpackage-jars"
-
-task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
-    from(configurations.runtimeClasspath).into jPackageDir
-    from(tasks.jar.outputs.files).into jPackageDir
-}
-
 
 tasks.jpackage {
     dependsOn("copyJPackageDependencies")
