@@ -75,7 +75,7 @@ project(':plugins').afterEvaluate {
         if(os.isWindows()) {
             return ["mac", "linux"]
         }
-        if(os.isMacOs()) {
+        if(os.isMacOsX()) {
             return ["linux", "win"]
         }
     }
