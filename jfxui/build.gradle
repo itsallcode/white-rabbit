@@ -67,8 +67,24 @@ project(':plugins').afterEvaluate {
         // deprecated
     }
 
+    def getUnwantedPlatforms = {
+        OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+        if(os.isLinux()) {
+            return ["mac", "win"]
+        }
+        if(os.isWindows()) {
+            return ["mac", "linux"]
+        }
+        if(os.isMacOs()) {
+            return ["linux", "win"]
+        }
+    }
+
     task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
-        from(configurations.runtimeClasspath).into jPackageDir
+        def unwantedPlatforms = getUnwantedPlatforms()
+        from(configurations.runtimeClasspath.filter { file -> 
+            unwantedPlatforms.every { platform -> !file.name.endsWith("-${platform}.jar") }
+        }).into jPackageDir
         from(tasks.jar.outputs.files).into jPackageDir
         from(pluginJarTasks).into jPackageDir
     }
