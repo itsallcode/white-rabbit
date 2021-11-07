@@ -43,34 +43,37 @@ public class WorkingTimeService
         final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         final LocalTime now = clock.getCurrentTime();
-        if (day.getType().isWorkDay())
+        if (updateDay(day, now))
         {
-            boolean updated = false;
-            if (shouldUpdateBegin(day, now))
-            {
-                day.setBegin(now);
-                updated = true;
-            }
-            if (shouldUpdateEnd(day, now))
-            {
-                day.setEnd(now);
-                updated = true;
-            }
-            if (updated)
-            {
-                LOG.debug("Day {} updated at {}", day.getDate(), now);
-                storage.storeMonth(month);
-                appServiceCallback.recordUpdated(day);
-            }
-            else
-            {
-                LOG.trace("No update for {} at {}", day.getDate(), now);
-            }
+            LOG.debug("Day {} updated at {}", day.getDate(), now);
+            storage.storeMonth(month);
+            appServiceCallback.recordUpdated(day);
         }
         else
         {
-            LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
+            LOG.trace("No update for {} at {}", day.getDate(), now);
         }
+    }
+
+    private boolean updateDay(final DayRecord day, final LocalTime now)
+    {
+        if (!day.getType().isWorkDay())
+        {
+            LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
+            return false;
+        }
+        boolean updated = false;
+        if (shouldUpdateBegin(day, now))
+        {
+            day.setBegin(now);
+            updated = true;
+        }
+        if (shouldUpdateEnd(day, now))
+        {
+            day.setEnd(now);
+            updated = true;
+        }
+        return updated;
     }
 
     private boolean workStoppedForToday(LocalDate today)
