@@ -48,6 +48,10 @@ subprojects {
         modularity.inferModulePath = false
     }
 
+    tasks.withType(JavaExec) {
+        javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    }
+
     dependencies {
         testImplementation "org.assertj:assertj-core:3.21.0"
         testImplementation "org.mockito:mockito-core:$mockitoVersion"
