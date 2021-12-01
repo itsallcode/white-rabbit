@@ -92,7 +92,7 @@ public class Element
 
     public Element waitUntilVisible()
     {
-        driver.waitUntil(Duration.ofSeconds(1), ExpectedConditions.visibilityOf(webElement));
+        driver.waitUntil(Duration.ofSeconds(5), ExpectedConditions.visibilityOf(webElement));
         return this;
     }
 

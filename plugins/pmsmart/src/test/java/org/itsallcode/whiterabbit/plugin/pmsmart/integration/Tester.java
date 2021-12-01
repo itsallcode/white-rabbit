@@ -1,5 +1,8 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart.integration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -8,6 +11,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,13 +62,15 @@ import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.DateSelector;
 public class Tester
 {
     private static final String PMSMART_URL = "http://pmsmart";
+    private static final String APPLICATION_CONFIG_FILE = "/path/to/.whiterabbit.properties";
     private static final String PROJECT_FILE = "/path/to/projects.json";
     private static final String TIME_RECORDING_FILE = "/path/to/time-recordings/year/year-month.json";
     private static final long HOURS_PER_DAY = 8L;
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
-        final PluginConfiguration configMock = new TestingPluginConfiguration();
+        final PluginConfiguration configMock = new TestingPluginConfiguration("pmsmart",
+                Paths.get(APPLICATION_CONFIG_FILE));
         final PMSmartExporter exporter = new PMSmartExporter(configMock, new WebDriverFactory());
         final ProjectReport report = createFullProjectReport();
         exporter.export(report, new NullProgressMonitor());
@@ -97,6 +103,19 @@ public class Tester
 
     private static final class TestingPluginConfiguration implements PluginConfiguration
     {
+        private final Properties config;
+        private final String prefix;
+
+        public TestingPluginConfiguration(String prefix, Path configFile) throws IOException
+        {
+            this.prefix = prefix;
+            try (InputStream stream = Files.newInputStream(configFile))
+            {
+                config = new Properties();
+                config.load(stream);
+            }
+        }
+
         @Override
         public String getMandatoryValue(String propertyName)
         {
@@ -106,7 +125,7 @@ public class Tester
         @Override
         public Optional<String> getOptionalValue(String propertyName)
         {
-            return Optional.empty();
+            return Optional.ofNullable(config.getProperty(prefix + "." + propertyName));
         }
 
         @Override

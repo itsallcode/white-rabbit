@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -43,7 +44,9 @@ public class Driver implements Closeable
 
     public void waitUntil(Duration timeout, ExpectedCondition<?> condition)
     {
-        new WebDriverWait(webDriver, timeout).until(condition);
+        new WebDriverWait(webDriver, timeout)
+                .ignoring(StaleElementReferenceException.class)
+                .until(condition);
     }
 
     @Override

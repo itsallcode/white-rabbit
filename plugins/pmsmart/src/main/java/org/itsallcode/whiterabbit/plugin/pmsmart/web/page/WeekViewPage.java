@@ -8,6 +8,9 @@ import java.time.format.DateTimeFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.Element;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.TenaciousChecker;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverKey;
 import org.openqa.selenium.By;
 
 public class WeekViewPage implements Page
@@ -36,14 +39,18 @@ public class WeekViewPage implements Page
 
     public void selectWeek(LocalDate day)
     {
-        LOG.debug("Selecting week for day {}...", day);
+        LOG.debug("Selecting day {}...", day);
 
-        driver.findElement(By.id("MainContent_EdtDate_B-1")).click();
-        final var dateSelector = new DateSelector(driver, driver.findElement(By.id("MainContent_EdtDate_DDD_PW-1")));
-        dateSelector.select(day);
-        if (!isDaySelected(day))
+        final Element el = driver.findElement(By.id("MainContent_EdtDate_I"));
+        el.click();
+        el.sendKeys(WebDriverKey.END
+                + WebDriverKey.BACKSPACE.repeat(20)
+                + DateTimeFormatter.ofPattern("dd.MM.yyyy").format(day)
+                + WebDriverKey.RETURN);
+        final TenaciousChecker checker = new TenaciousChecker(() -> isDaySelected(day));
+        if (!checker.check(Duration.ofSeconds(5)))
         {
-            throw new IllegalStateException("Expected day " + day + " selected");
+            throw new IllegalStateException("Expected day " + day + " was not selected");
         }
     }
 

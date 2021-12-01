@@ -10,13 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Element;
+import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverKey;
 import org.openqa.selenium.By;
 
 public class ProjectRow
 {
     private static final Logger LOG = LogManager.getLogger(ProjectRow.class);
 
-    private static final String BACKSPACE_CHAR = "\u0008";
+    // private static final String BACKSPACE_CHAR = "\u0008";
     private static final int MAX_COMMENT_LENGTH = 250;
     private static final String COMMENT_FILLER = "...";
 
@@ -113,11 +114,12 @@ public class ProjectRow
 
     private void clearAndEnterDuration(Element field, String text)
     {
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
-        field.sendKeys(BACKSPACE_CHAR);
+        field.waitUntilVisible();
+        field.sendKeys(WebDriverKey.BACKSPACE.toString());
+        field.sendKeys(WebDriverKey.BACKSPACE.toString());
+        field.sendKeys(WebDriverKey.BACKSPACE.toString());
+        field.sendKeys(WebDriverKey.BACKSPACE.toString());
+        field.sendKeys(WebDriverKey.BACKSPACE.toString());
         field.sendKeys(text);
         field.sendKeys("\t");
     }
