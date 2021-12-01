@@ -23,7 +23,7 @@ public class TenaciousChecker
         final Duration interval = maxDuration.dividedBy(NUMBER_OF_CHECKS);
         for (int i = 0; i < NUMBER_OF_CHECKS; i++)
         {
-            if (condition.get())
+            if (Boolean.TRUE.equals(condition.get()))
             {
                 LOG.debug("Condition was met after {} ms.", interval.multipliedBy(i).toMillis());
                 return true;
@@ -34,6 +34,7 @@ public class TenaciousChecker
             }
             catch (final InterruptedException e)
             {
+                Thread.currentThread().interrupt();
                 return false;
             }
         }

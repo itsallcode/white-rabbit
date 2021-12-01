@@ -17,7 +17,6 @@ public class ProjectRow
 {
     private static final Logger LOG = LogManager.getLogger(ProjectRow.class);
 
-    // private static final String BACKSPACE_CHAR = "\u0008";
     private static final int MAX_COMMENT_LENGTH = 250;
     private static final String COMMENT_FILLER = "...";
 
