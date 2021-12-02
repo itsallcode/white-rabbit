@@ -42,14 +42,12 @@ class TenaciousCheckTest
         private final int failures;
         private int iterations = 0;
         private final Driver driver;
-        // private final TenaciousChecker checker;
         private Duration duration = Duration.ZERO;
 
         public Testee(int failures)
         {
             this.failures = failures;
             this.driver = new Driver(null, null);
-            // checker = new TenaciousChecker(condition());
         }
 
         public Duration getDuration()
@@ -77,7 +75,6 @@ class TenaciousCheckTest
         public boolean check(Duration timeout)
         {
             final long start = System.currentTimeMillis();
-            // final boolean result = checker.check(timeout);
             final boolean result = driver.tenaciousCheck(timeout, condition());
             this.duration = Duration.ofMillis(System.currentTimeMillis() - start);
             return result;
