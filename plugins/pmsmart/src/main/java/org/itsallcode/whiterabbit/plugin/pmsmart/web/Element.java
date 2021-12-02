@@ -102,6 +102,12 @@ public class Element
         return this;
     }
 
+    public Element waitUntilContainsText(Duration timeout, String text)
+    {
+        driver.waitUntil(timeout, ExpectedConditions.textToBePresentInElement(webElement, text));
+        return this;
+    }
+
     public List<Element> findElements(By by)
     {
         return wrap(driver, webElement.findElements(by));

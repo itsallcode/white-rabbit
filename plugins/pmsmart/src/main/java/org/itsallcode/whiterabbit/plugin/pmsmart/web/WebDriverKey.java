@@ -5,7 +5,6 @@ package org.itsallcode.whiterabbit.plugin.pmsmart.web;
  */
 public enum WebDriverKey
 {
-
     BACKSPACE("\uE003"), //
     END("\uE010"), //
     RETURN("\uE006");

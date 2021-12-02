@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 public class TenaciousChecker
 {
     private static final Logger LOG = LogManager.getLogger(TenaciousChecker.class);
-    private static final long NUMBER_OF_CHECKS = 10;
+    static final int NUMBER_OF_CHECKS = 10;
 
     private final Supplier<Boolean> condition;
 
