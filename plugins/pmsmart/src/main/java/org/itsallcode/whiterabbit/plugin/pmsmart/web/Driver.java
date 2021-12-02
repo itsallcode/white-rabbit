@@ -3,7 +3,7 @@ package org.itsallcode.whiterabbit.plugin.pmsmart.web;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,12 +51,12 @@ public class Driver implements Closeable
                 .until(condition);
     }
 
-    public boolean tenaciousCheck(Duration maxDuration, Supplier<Boolean> condition)
+    public boolean tenaciousCheck(Duration maxDuration, BooleanSupplier condition)
     {
         final Duration interval = maxDuration.dividedBy(NUMBER_OF_TENACIOUS_CHECKS);
         for (int i = 0; i < NUMBER_OF_TENACIOUS_CHECKS; i++)
         {
-            if (Boolean.TRUE.equals(condition.get()))
+            if (condition.getAsBoolean())
             {
                 LOG.debug("Condition was met after {} ms.", interval.multipliedBy(i).toMillis());
                 return true;

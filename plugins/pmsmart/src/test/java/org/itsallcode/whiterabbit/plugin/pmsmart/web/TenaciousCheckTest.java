@@ -3,11 +3,11 @@ package org.itsallcode.whiterabbit.plugin.pmsmart.web;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
 import org.junit.jupiter.api.Test;
 
-public class TenaciousCheckTest
+class TenaciousCheckTest
 {
 
     @Test
@@ -62,12 +62,12 @@ public class TenaciousCheckTest
             return iterations;
         }
 
-        private Supplier<Boolean> condition()
+        private BooleanSupplier condition()
         {
-            return new Supplier<Boolean>()
+            return new BooleanSupplier()
             {
                 @Override
-                public Boolean get()
+                public boolean getAsBoolean()
                 {
                     return ++iterations > failures;
                 }

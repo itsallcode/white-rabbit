@@ -16,8 +16,8 @@ import org.openqa.selenium.By;
 
 public class WeekViewPage implements Page
 {
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String EXPECTED_PAGE_TITLE = "Zeiterfassung - Wochenansicht";
-
     private static final Logger LOG = LogManager.getLogger(WeekViewPage.class);
 
     private final Driver driver;
@@ -46,7 +46,7 @@ public class WeekViewPage implements Page
         el.click();
         el.sendKeys(WebDriverKey.END
                 + WebDriverKey.BACKSPACE.repeat(20)
-                + DateTimeFormatter.ofPattern("dd.MM.yyyy").format(day)
+                + DateTimeFormatter.ofPattern(DATE_FORMAT).format(day)
                 + WebDriverKey.RETURN);
 
         final String expected = expectedWeekDisplay(day);
@@ -72,7 +72,7 @@ public class WeekViewPage implements Page
 
     public LocalDate getSelectedWeekFirstDay()
     {
-        final var formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        final var formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         final String text = getDisplayedWeek();
         final String[] parts = text.split("[\\s-,]");
 
@@ -93,7 +93,7 @@ public class WeekViewPage implements Page
         // 29.11.2021 - 05.12.2021, KW 48
         final LocalDate monday = day.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         final LocalDate sunday = monday.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         final DateTimeFormatter week = DateTimeFormatter.ofPattern("w").withLocale(Locale.GERMANY);
         return String.format("%s - %s, KW %s", formatter.format(monday), formatter.format(sunday),
                 week.format(monday));
