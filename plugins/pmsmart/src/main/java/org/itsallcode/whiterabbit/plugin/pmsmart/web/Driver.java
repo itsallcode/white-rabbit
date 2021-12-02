@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.plugin.pmsmart.web;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Driver implements Closeable
 {
+    static final int NUMBER_OF_TENACIOUS_CHECKS = 10;
     private static final Logger LOG = LogManager.getLogger(Driver.class);
 
     private final WebDriver webDriver;
@@ -47,6 +49,21 @@ public class Driver implements Closeable
         new WebDriverWait(webDriver, timeout)
                 .ignoring(StaleElementReferenceException.class)
                 .until(condition);
+    }
+
+    public boolean tenaciousCheck(Duration maxDuration, Supplier<Boolean> condition)
+    {
+        final Duration interval = maxDuration.dividedBy(NUMBER_OF_TENACIOUS_CHECKS);
+        for (int i = 0; i < NUMBER_OF_TENACIOUS_CHECKS; i++)
+        {
+            if (Boolean.TRUE.equals(condition.get()))
+            {
+                LOG.debug("Condition was met after {} ms.", interval.multipliedBy(i).toMillis());
+                return true;
+            }
+            sleep(interval);
+        }
+        return false;
     }
 
     @Override

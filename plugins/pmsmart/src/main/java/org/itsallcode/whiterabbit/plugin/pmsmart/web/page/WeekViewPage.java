@@ -1,15 +1,16 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart.web.page;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Driver;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.Element;
-import org.itsallcode.whiterabbit.plugin.pmsmart.web.TenaciousChecker;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.WebDriverKey;
 import org.openqa.selenium.By;
 
@@ -47,23 +48,19 @@ public class WeekViewPage implements Page
                 + WebDriverKey.BACKSPACE.repeat(20)
                 + DateTimeFormatter.ofPattern("dd.MM.yyyy").format(day)
                 + WebDriverKey.RETURN);
-        final TenaciousChecker checker = new TenaciousChecker(() -> isDaySelected(day));
-        if (!checker.check(Duration.ofSeconds(5)))
+
+        final String expected = expectedWeekDisplay(day);
+        final boolean result = driver.tenaciousCheck(Duration.ofSeconds(5),
+                () -> expected.equals(getDisplayedWeek()));
+        if (!result)
         {
-            throw new IllegalStateException("Expected day " + day + " was not selected");
+            throw new IllegalStateException("Expected day " + day + " but selected was " + getDisplayedWeek());
         }
     }
 
     public boolean isDaySelected(LocalDate day)
     {
-        final LocalDate firstWeekDay = getSelectedWeekFirstDay();
-        final int diff = Period.between(firstWeekDay, day).getDays();
-        final boolean daySelected = diff >= 0 && diff < 7;
-        if (!daySelected)
-        {
-            LOG.debug("Day {} is not selected. First week day: {}, difference: {}", day, firstWeekDay, diff);
-        }
-        return daySelected;
+        return expectedWeekDisplay(day).equals(getDisplayedWeek());
     }
 
     public ProjectTable getProjectTable()
@@ -76,7 +73,7 @@ public class WeekViewPage implements Page
     public LocalDate getSelectedWeekFirstDay()
     {
         final var formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        final String text = getCurrentWeek();
+        final String text = getDisplayedWeek();
         final String[] parts = text.split("[\\s-,]");
 
         final var firstDay = LocalDate.parse(parts[0], formatter);
@@ -85,9 +82,21 @@ public class WeekViewPage implements Page
         return firstDay;
     }
 
-    private String getCurrentWeek()
+    private String getDisplayedWeek()
     {
         return driver.findElement(By.id("MainContent_ASPxCPWeek_ASPxLblWeek")).waitUntilVisible().getText();
+    }
+
+    private String expectedWeekDisplay(LocalDate day)
+    {
+        // span with id="MainContent_ASPxCPWeek_ASPxLblWeek" displays
+        // 29.11.2021 - 05.12.2021, KW 48
+        final LocalDate monday = day.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        final LocalDate sunday = monday.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        final DateTimeFormatter week = DateTimeFormatter.ofPattern("w").withLocale(Locale.GERMANY);
+        return String.format("%s - %s, KW %s", formatter.format(monday), formatter.format(sunday),
+                week.format(monday));
     }
 
     public void saveWeek()
