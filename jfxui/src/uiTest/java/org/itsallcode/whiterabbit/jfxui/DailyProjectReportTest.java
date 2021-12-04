@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.Project;
-import org.itsallcode.whiterabbit.jfxui.testutil.model.ProjectReportWindow;
+import org.itsallcode.whiterabbit.jfxui.testutil.model.DailyProjectReportWindow;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import org.testfx.framework.junit5.Stop;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
-class ProjectReportTest extends JavaFxAppUiTestBase
+class DailyProjectReportTest extends JavaFxAppUiTestBase
 {
     private static final ProjectImpl PROJECT1 = project("p1", "Project 1");
     private static final ProjectImpl PROJECT2 = project("p2", "Project 2");
@@ -29,7 +29,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     void emptyProjectReport()
     {
         time().tickSeparateMinutes(2);
-        final ProjectReportWindow report = app().openProjectReport();
+        final DailyProjectReportWindow report = app().openDailyProjectReport();
         report.assertDayCount(31).assertProjectCount(0, 0);
 
         report.closeViaCloseButton();
@@ -39,7 +39,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     void closeReportByTypingEscKey()
     {
         time().tickSeparateMinutes(2);
-        final ProjectReportWindow report = app().openProjectReport();
+        final DailyProjectReportWindow report = app().openDailyProjectReport();
         report.assertExportButtons();
         report.closeViaEscKey();
     }
@@ -49,7 +49,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
     void exportButtonsFromPluginsAvailable()
     {
         time().tickSeparateMinutes(2);
-        final ProjectReportWindow report = app().openProjectReport();
+        final DailyProjectReportWindow report = app().openDailyProjectReport();
         report.assertExportButtons("Export to demo", "Export to pmsmart");
         report.closeViaEscKey();
     }
@@ -62,7 +62,7 @@ class ProjectReportTest extends JavaFxAppUiTestBase
         final Project project = new ProjectImpl("p1", "Project 1", null);
         app().activitiesTable().addRemainderActivity(project, "a1");
 
-        final ProjectReportWindow report = app().openProjectReport();
+        final DailyProjectReportWindow report = app().openDailyProjectReport();
         final int dayIndex = time().getCurrentDayRowIndex();
         report.assertDayCount(31)
                 .assertProjectCount(dayIndex, 1)

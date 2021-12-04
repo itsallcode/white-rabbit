@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -157,7 +158,7 @@ public class PMSmartExporter implements ProjectReportExporter
             projectRow.enterDuration(day.getDate(), project.getWorkingTime());
             if (transferComments)
             {
-                projectRow.enterComment(day.getDate(), project.getComment());
+                projectRow.enterComment(day.getDate(), project.getComments().stream().collect(joining(", ")));
             }
         }
     }

@@ -28,7 +28,7 @@ public class OsCheck
      * Detect the operating system from the {@code os.name} System property and
      * cache the result.
      * 
-     * @returns the operating system detected
+     * @return the operating system detected
      */
     public OSType getOperatingSystemType()
     {

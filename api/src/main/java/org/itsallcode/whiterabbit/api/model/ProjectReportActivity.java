@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.api.model;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * An activity during a {@link ProjectReportDay day} where you worked for a
@@ -12,5 +13,5 @@ public interface ProjectReportActivity
 
     Duration getWorkingTime();
 
-    String getComment();
+    List<String> getComments();
 }

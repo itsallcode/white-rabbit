@@ -72,6 +72,10 @@ subprojects {
         useJUnitPlatform()
     }
 
+    javadoc {
+        enabled = false
+    }
+
     jacocoTestReport {
         reports {
             xml.required = true

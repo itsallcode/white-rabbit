@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -10,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -128,7 +130,7 @@ class PMSmartExporterTest
 
     private ProjectReportImpl projectReport(ProjectReportDay... days)
     {
-        return new ProjectReportImpl(YearMonth.of(2021, Month.MAY), asList(days));
+        return new ProjectReportImpl(YearMonth.of(2021, Month.MAY), asList(days), emptyList());
     }
 
     private ProjectReportDay day(LocalDate date, DayType type, ProjectReportActivity... projects)
@@ -139,6 +141,6 @@ class PMSmartExporterTest
     private ProjectReportActivity activity(String costCarrier, Duration workingTime, String comment)
     {
         return new ProjectReportImpl.ProjectActivityImpl(new ProjectImpl(null, null, costCarrier), workingTime,
-                comment);
+                List.of(comment));
     }
 }
