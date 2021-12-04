@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.plugin.csv;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -76,14 +77,14 @@ class CSVExporterTest
         runExport(false,
                 day(dateOne, DayType.WORK,
                         activity(Duration.ofHours(1)),
-                        activity(Duration.ofHours(3), "other_project", null),
-                        activity(Duration.ofHours(3), null, null)));
+                        activity(Duration.ofHours(3), "other_project", "comment 1"),
+                        activity(Duration.ofHours(3), null, "comment 2")));
         assertThat(tmpOutStream).hasToString(lines(
                 "Date,Project,TimePerProject,TimePerDay,Comment",
                 "2021-06-04,,,07:00,day comment",
                 ",Project9FromOuterSpace,01:00,,abc",
-                ",other_project,03:00,,",
-                ",,03:00,,"));
+                ",other_project,03:00,,comment 1",
+                ",,03:00,,comment 2"));
     }
 
     private static String lines(String... elements)
@@ -133,7 +134,7 @@ class CSVExporterTest
 
     private ProjectReportImpl projectReport(List<ProjectReportDay> days)
     {
-        return new ProjectReportImpl(YearMonth.of(2021, Month.JUNE), days);
+        return new ProjectReportImpl(YearMonth.of(2021, Month.JUNE), days, emptyList());
     }
 
     private ProjectReportDay day(LocalDate date, DayType type, ProjectReportActivity... projects)

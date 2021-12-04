@@ -63,7 +63,7 @@ public class MonthlyProjectReportViewer
                         new DefaultStringConverter(), ReportRow::getComment)));
 
         treeTable.setEditable(false);
-        treeTable.setId("monthly-project-table-tree");
+        treeTable.setId("monthly-project-table");
         return treeTable;
     }
 

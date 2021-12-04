@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.plugin.pmsmart.integration;
 
+import static java.util.Collections.emptyList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -85,7 +87,7 @@ public class Tester
         final ProjectReportDay day1 = new DayImpl(LocalDate.of(2021, 5, 17),
                 DayType.WORK, "comment",
                 List.of(activity));
-        return new ProjectReportImpl(YearMonth.of(2021, 5), List.of(day1));
+        return new ProjectReportImpl(YearMonth.of(2021, 5), List.of(day1), emptyList());
     }
 
     private static ProjectReport createFullProjectReport()

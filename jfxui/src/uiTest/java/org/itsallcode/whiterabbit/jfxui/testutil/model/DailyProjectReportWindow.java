@@ -13,13 +13,13 @@ import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Window;
 
-public class ProjectReportWindow
+public class DailyProjectReportWindow
 {
     private final FxRobot robot;
     private final Window window;
     private final JavaFxTreeTable<ReportRow> table;
 
-    ProjectReportWindow(FxRobot robot, Window window)
+    DailyProjectReportWindow(FxRobot robot, Window window)
     {
         this.robot = robot;
         this.window = window;
@@ -39,19 +39,19 @@ public class ProjectReportWindow
         Assertions.assertThat(window).isNotShowing();
     }
 
-    public ProjectReportWindow assertDayCount(int expectedDayCount)
+    public DailyProjectReportWindow assertDayCount(int expectedDayCount)
     {
         assertThat(table.getRootChildNodes()).hasSize(expectedDayCount);
         return this;
     }
 
-    public ProjectReportWindow assertProjectCount(int dayIndex, int expectedProjectCount)
+    public DailyProjectReportWindow assertProjectCount(int dayIndex, int expectedProjectCount)
     {
         assertThat(table.getChildNodes(dayIndex)).hasSize(expectedProjectCount);
         return this;
     }
 
-    public ProjectReportWindow assertProject(int dayIndex, int projectIndex, Project expectedProject,
+    public DailyProjectReportWindow assertProject(int dayIndex, int projectIndex, Project expectedProject,
             Duration expectedWorkingTime, String expectedComment)
     {
         final ReportRow row = table.getChildNodes(dayIndex).get(projectIndex);

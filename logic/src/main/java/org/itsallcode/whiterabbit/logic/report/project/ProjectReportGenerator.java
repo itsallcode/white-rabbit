@@ -37,6 +37,7 @@ public class ProjectReportGenerator
 
         final List<ProjectReportActivity> reportProjects = sortedDays.stream()
                 .flatMap(day -> day.activities().getAll().stream())
+                .filter(activity -> activity.getProject() != null)
                 .collect(groupingBy(Activity::getProject)).entrySet().stream()
                 .map(entry -> aggregateProject(entry.getValue())).collect(toList());
 

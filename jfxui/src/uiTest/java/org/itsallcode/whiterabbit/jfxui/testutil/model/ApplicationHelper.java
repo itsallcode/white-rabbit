@@ -130,14 +130,24 @@ public class ApplicationHelper
         return robot.lookup("#selected-month-combobox").queryComboBox();
     }
 
-    public ProjectReportWindow openProjectReport()
+    public DailyProjectReportWindow openDailyProjectReport()
     {
         robot.clickOn("#menu_reports");
-        robot.clickOn("#menuitem_project_report");
+        robot.clickOn("#menuitem_daily_project_report");
 
-        final Window window = robot.window("Project Report");
+        final Window window = robot.window("Daily Project Report");
         Assertions.assertThat(window).isShowing();
-        return new ProjectReportWindow(robot, window);
+        return new DailyProjectReportWindow(robot, window);
+    }
+
+    public MonthlyProjectReportWindow openMonthlyProjectReport()
+    {
+        robot.clickOn("#menu_reports");
+        robot.clickOn("#menuitem_monthly_project_report");
+
+        final Window window = robot.window("Monthly Project Report");
+        Assertions.assertThat(window).isShowing();
+        return new MonthlyProjectReportWindow(robot, window);
     }
 
     public VacationReportWindow openVacationReport()
