@@ -3,11 +3,13 @@ package org.itsallcode.whiterabbit.plugin.pmsmart.web;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.plugin.pmsmart.web.page.WeekViewPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -15,6 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Driver implements Closeable
 {
+    static final int NUMBER_OF_TENACIOUS_CHECKS = 10;
     private static final Logger LOG = LogManager.getLogger(Driver.class);
 
     private final WebDriver webDriver;
@@ -43,7 +46,24 @@ public class Driver implements Closeable
 
     public void waitUntil(Duration timeout, ExpectedCondition<?> condition)
     {
-        new WebDriverWait(webDriver, timeout).until(condition);
+        new WebDriverWait(webDriver, timeout)
+                .ignoring(StaleElementReferenceException.class)
+                .until(condition);
+    }
+
+    public boolean tenaciousCheck(Duration maxDuration, BooleanSupplier condition)
+    {
+        final Duration interval = maxDuration.dividedBy(NUMBER_OF_TENACIOUS_CHECKS);
+        for (int i = 0; i < NUMBER_OF_TENACIOUS_CHECKS; i++)
+        {
+            if (condition.getAsBoolean())
+            {
+                LOG.debug("Condition was met after {} ms.", interval.multipliedBy(i).toMillis());
+                return true;
+            }
+            sleep(interval);
+        }
+        return false;
     }
 
     @Override

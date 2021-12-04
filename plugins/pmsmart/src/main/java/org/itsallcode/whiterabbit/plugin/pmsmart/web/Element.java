@@ -92,13 +92,19 @@ public class Element
 
     public Element waitUntilVisible()
     {
-        driver.waitUntil(Duration.ofSeconds(1), ExpectedConditions.visibilityOf(webElement));
+        driver.waitUntil(Duration.ofSeconds(5), ExpectedConditions.visibilityOf(webElement));
         return this;
     }
 
     public Element waitUntilClickable()
     {
         driver.waitUntil(Duration.ofSeconds(1), ExpectedConditions.elementToBeClickable(webElement));
+        return this;
+    }
+
+    public Element waitUntilContainsText(Duration timeout, String text)
+    {
+        driver.waitUntil(timeout, ExpectedConditions.textToBePresentInElement(webElement, text));
         return this;
     }
 

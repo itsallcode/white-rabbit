@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bugfix
 
+* [#206](https://github.com/itsallcode/white-rabbit/issues/206): Fix failure of PM Smart export. 
 * [#210](https://github.com/itsallcode/white-rabbit/issues/210): Skip unwanted 2 minute interruptions.
 * [#222](https://github.com/itsallcode/white-rabbit/pull/222): Fix opening files on Ubuntu.
 
