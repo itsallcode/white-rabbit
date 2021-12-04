@@ -10,6 +10,7 @@ java {
 }
 
 javadoc {
+    enabled = true
     options.addBooleanOption('html5', true)
 }
 

@@ -16,7 +16,7 @@ import javafx.util.StringConverter;
  * supports persisting edit changes on focus loss.
  * <p>
  * Implementation based on proposed workaround for <a href=
- * "https://bugs.openjdk.java.net/browse/JDK-8089311?focusedCommentId=13810219&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-13810219">JDK-8089311</a>.
+ * "https://bugs.openjdk.java.net/browse/JDK-8089311?focusedCommentId=13810219&amp;page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-13810219">JDK-8089311</a>.
  * <p>
  * Note: inheriting from {@link javafx.scene.control.cell.TextFieldTableCell} is
  * not possible because it would require writing to private field
