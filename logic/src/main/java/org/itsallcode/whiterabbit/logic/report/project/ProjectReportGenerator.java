@@ -31,15 +31,18 @@ public class ProjectReportGenerator
     {
         final List<DayRecord> sortedDays = storage.loadMonth(month)
                 .map(MonthIndex::getSortedDays).orElse(Stream.empty()).collect(toList());
+
         final List<ProjectReportDay> reportDays = sortedDays.stream()
                 .map(this::generateDayReport)
-                .collect(toList());
+                .toList();
 
         final List<ProjectReportActivity> reportProjects = sortedDays.stream()
                 .flatMap(day -> day.activities().getAll().stream())
                 .filter(activity -> activity.getProject() != null)
-                .collect(groupingBy(Activity::getProject)).entrySet().stream()
-                .map(entry -> aggregateProject(entry.getValue())).collect(toList());
+                .collect(groupingBy(Activity::getProject))
+                .values().stream()
+                .map(this::aggregateProject)
+                .collect(toList());
 
         return new ProjectReportImpl(month, reportDays, reportProjects);
     }
