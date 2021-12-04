@@ -10,8 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
+import org.itsallcode.whiterabbit.jfxui.ui.DailyProjectReportViewer;
+import org.itsallcode.whiterabbit.jfxui.ui.MonthlyProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.PluginManagerViewer;
-import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
@@ -111,7 +112,7 @@ public class UiActions
         new VacationReportViewer(getPrimaryStage(), state.uiState, vacationReport).show();
     }
 
-    public void showProjectReport()
+    public void showDailyProjectReport()
     {
         final MonthIndex monthIndex = state.currentMonth.get();
         if (monthIndex == null)
@@ -120,7 +121,19 @@ public class UiActions
             return;
         }
         final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new ProjectReportViewer(getPrimaryStage(), state.uiState, appService, this, report).show();
+        new DailyProjectReportViewer(getPrimaryStage(), state.uiState, appService, this, report).show();
+    }
+
+    public void showMonthlyProjectReport()
+    {
+        final MonthIndex monthIndex = state.currentMonth.get();
+        if (monthIndex == null)
+        {
+            LOG.warn("No month selected, can't generate project report");
+            return;
+        }
+        final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
+        new MonthlyProjectReportViewer(getPrimaryStage(), state.uiState, appService, report).show();
     }
 
     public void showPluginManager()

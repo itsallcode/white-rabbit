@@ -15,11 +15,13 @@ public class ProjectReportImpl implements ProjectReport
 {
     private final YearMonth month;
     private final List<ProjectReportDay> days;
+    private final List<ProjectReportActivity> projects;
 
-    public ProjectReportImpl(YearMonth month, List<ProjectReportDay> days)
+    public ProjectReportImpl(YearMonth month, List<ProjectReportDay> days, List<ProjectReportActivity> projects)
     {
         this.month = month;
         this.days = days;
+        this.projects = projects;
     }
 
     @Override
@@ -32,6 +34,12 @@ public class ProjectReportImpl implements ProjectReport
     public List<ProjectReportDay> getDays()
     {
         return days;
+    }
+
+    @Override
+    public List<ProjectReportActivity> getProjects()
+    {
+        return projects;
     }
 
     public static class DayImpl implements ProjectReportDay
@@ -78,13 +86,13 @@ public class ProjectReportImpl implements ProjectReport
     {
         private final ProjectImpl project;
         private final Duration workingTime;
-        private final String comment;
+        private final List<String> comments;
 
-        public ProjectActivityImpl(ProjectImpl project, Duration workingTime, String comment)
+        public ProjectActivityImpl(ProjectImpl project, Duration workingTime, List<String> comments)
         {
             this.project = project;
             this.workingTime = workingTime;
-            this.comment = comment;
+            this.comments = comments;
         }
 
         @Override
@@ -100,9 +108,9 @@ public class ProjectReportImpl implements ProjectReport
         }
 
         @Override
-        public String getComment()
+        public List<String> getComments()
         {
-            return comment;
+            return comments;
         }
     }
 }

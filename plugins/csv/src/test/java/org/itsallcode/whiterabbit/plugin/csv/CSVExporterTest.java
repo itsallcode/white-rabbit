@@ -156,7 +156,7 @@ class CSVExporterTest
     private ProjectReportActivity activity(Duration workingTime, String projectId, String comment)
     {
         return new ProjectReportImpl.ProjectActivityImpl(
-                new ProjectImpl(null, projectId, null), workingTime, comment);
+                new ProjectImpl(null, projectId, null), workingTime, List.of(comment));
     }
 
     CSVConfig createTestConfig(boolean filterForWeekDays)

@@ -62,7 +62,8 @@ class CSVProjectReportExporter implements ProjectReportExporter
                     {
                         final String projectWorkingTime = formatDuration(project.getWorkingTime());
                         final String projectLabel = formatEmptyString(project.getProject().getLabel());
-                        final String activityComment = formatEmptyString(project.getComment());
+                        final String comments = project.getComments().stream().collect(Collectors.joining(", "));
+                        final String activityComment = formatEmptyString(comments);
                         os.println(MessageFormat.format("{0}{1}{0}{2}{0}{0}{3}",
                                 separator, projectLabel, projectWorkingTime, activityComment));
                     }

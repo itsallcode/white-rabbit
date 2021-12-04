@@ -55,7 +55,10 @@ class MenuBarBuilder
                 separatorItem(),
                 createStopWorkingForTodayMenuItem());
         menuReports.getItems()
-                .addAll(menuItem("_Project report", "menuitem_project_report", actions::showProjectReport),
+                .addAll(menuItem("Daily _Project report", "menuitem_daily_project_report",
+                        actions::showDailyProjectReport),
+                        menuItem("_Monthly Project report", "menuitem_monthly_project_report",
+                                actions::showMonthlyProjectReport),
                         menuItem("_Vacation report", "menuitem_vacation_report", actions::showVacationReport));
         menuPlugins.getItems()
                 .addAll(menuItem("_Plugin manager", "menuitem_pluginmanager", actions::showPluginManager));

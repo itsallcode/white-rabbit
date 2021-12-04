@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
@@ -35,9 +36,9 @@ import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.LocalDateStringConverter;
 
-public class ProjectReportViewer
+public class DailyProjectReportViewer
 {
-    private static final Logger LOG = LogManager.getLogger(ProjectReportViewer.class);
+    private static final Logger LOG = LogManager.getLogger(DailyProjectReportViewer.class);
 
     private final ProjectReport report;
     private final ReportWindow reportWindow;
@@ -47,14 +48,15 @@ public class ProjectReportViewer
 
     private final Stage primaryStage;
 
-    public ProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService, UiActions uiActions,
+    public DailyProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService,
+            UiActions uiActions,
             ProjectReport report)
     {
         this.primaryStage = primaryStage;
         this.uiState = uiState;
         this.appService = appService;
         this.uiActions = uiActions;
-        this.reportWindow = new ReportWindow(primaryStage, uiState, "project-report", "Project Report");
+        this.reportWindow = new ReportWindow(primaryStage, uiState, "daily-project-report", "Daily Project Report");
         this.report = report;
     }
 
@@ -168,7 +170,7 @@ public class ProjectReportViewer
                 this.dayType = null;
                 this.project = (ProjectImpl) project.getProject();
                 this.workingTime = project.getWorkingTime();
-                this.comment = project.getComment();
+                this.comment = project.getComments().stream().collect(joining(", "));
             }
         }
 

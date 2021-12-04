@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -139,6 +140,6 @@ class PMSmartExporterTest
     private ProjectReportActivity activity(String costCarrier, Duration workingTime, String comment)
     {
         return new ProjectReportImpl.ProjectActivityImpl(new ProjectImpl(null, null, costCarrier), workingTime,
-                comment);
+                List.of(comment));
     }
 }

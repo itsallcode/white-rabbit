@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
 
 import org.itsallcode.whiterabbit.api.model.Project;
-import org.itsallcode.whiterabbit.jfxui.ui.ProjectReportViewer.ReportRow;
+import org.itsallcode.whiterabbit.jfxui.ui.DailyProjectReportViewer.ReportRow;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 

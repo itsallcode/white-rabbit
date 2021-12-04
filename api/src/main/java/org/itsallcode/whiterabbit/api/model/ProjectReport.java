@@ -11,4 +11,6 @@ public interface ProjectReport
     YearMonth getMonth();
 
     List<ProjectReportDay> getDays();
+
+    List<ProjectReportActivity> getProjects();
 }

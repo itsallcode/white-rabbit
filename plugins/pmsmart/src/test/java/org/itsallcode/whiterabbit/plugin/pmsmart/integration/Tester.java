@@ -81,7 +81,7 @@ public class Tester
     {
         final String comment = "aslködfj 123";
         final ProjectReportActivity activity = new ProjectActivityImpl(new ProjectImpl("P1000", "p1000", "P1000"),
-                Duration.ofHours(1), comment);
+                Duration.ofHours(1), List.of(comment));
         final ProjectReportDay day1 = new DayImpl(LocalDate.of(2021, 5, 17),
                 DayType.WORK, "comment",
                 List.of(activity));
