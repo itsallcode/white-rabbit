@@ -4,9 +4,8 @@ import java.time.Duration;
 import java.util.List;
 
 /**
- * An activity during a {@link ProjectReportDay day} or
- * {@link ProjectReportMonth month} where you worked for a specific time
- * duration on a {@link Project}.
+ * An activity during a {@link ProjectReportDay day} where you worked for a
+ * specific time duration on a {@link Project}.
  */
 public interface ProjectReportActivity
 {
