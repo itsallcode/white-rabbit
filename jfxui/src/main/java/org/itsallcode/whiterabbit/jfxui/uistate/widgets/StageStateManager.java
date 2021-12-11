@@ -20,7 +20,7 @@ class StageStateManager implements WidgetStateManager<Stage, StageStateModel>
     @Override
     public void restore(Stage widget, StageStateModel model)
     {
-        if (model.width == 0 || model.height == 0)
+        if (model.width == null || model.height == null || model.width == 0 || model.height == 0)
         {
             LOG.debug("State not available, don't restore stage {}: {}", model.id, this);
             return;

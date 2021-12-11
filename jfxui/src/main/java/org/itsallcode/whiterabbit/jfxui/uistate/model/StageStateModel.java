@@ -9,10 +9,10 @@ import jakarta.json.bind.annotation.JsonbVisibility;
 public class StageStateModel
 {
     public String id;
-    public double x;
-    public double y;
-    public double width;
-    public double height;
+    public Double x;
+    public Double y;
+    public Double width;
+    public Double height;
 
     public StageStateModel()
     {
@@ -26,21 +26,36 @@ public class StageStateModel
 
     public void setX(Number x)
     {
-        this.x = x.doubleValue();
+
+        this.x = assertValid(x);
+    }
+
+    private Double assertValid(Number n)
+    {
+        final double d = n.doubleValue();
+        if (Double.isInfinite(d))
+        {
+            return null;
+        }
+        if (Double.isNaN(d))
+        {
+            return null;
+        }
+        return d;
     }
 
     public void setY(Number y)
     {
-        this.y = y.doubleValue();
+        this.y = assertValid(y);
     }
 
     public void setWidth(Number width)
     {
-        this.width = width.doubleValue();
+        this.width = assertValid(width);
     }
 
     public void setHeight(Number height)
     {
-        this.height = height.doubleValue();
+        this.height = assertValid(height);
     }
 }
