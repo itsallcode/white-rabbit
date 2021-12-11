@@ -50,8 +50,9 @@ class ReschedulingRunnableTest
     @BeforeEach
     void setUp()
     {
-        reschedulingRunnable = new ReschedulingRunnable(commandMock, triggerMock, executorServiceMock, clockMock,
-                errorHandlerMock);
+        reschedulingRunnable = new ReschedulingRunnable(
+                new DelegatingErrorHandlingRunnable(commandMock, errorHandlerMock), triggerMock, executorServiceMock,
+                clockMock);
         lenient().when(clockMock.instant()).thenReturn(NOW);
     }
 
