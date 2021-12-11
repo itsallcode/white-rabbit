@@ -26,36 +26,21 @@ public class StageStateModel
 
     public void setX(Number x)
     {
-
-        this.x = assertValid(x);
-    }
-
-    private Double assertValid(Number n)
-    {
-        final double d = n.doubleValue();
-        if (Double.isInfinite(d))
-        {
-            return null;
-        }
-        if (Double.isNaN(d))
-        {
-            return null;
-        }
-        return d;
+        this.x = StateModelUtil.assertValidDouble(x);
     }
 
     public void setY(Number y)
     {
-        this.y = assertValid(y);
+        this.y = StateModelUtil.assertValidDouble(y);
     }
 
     public void setWidth(Number width)
     {
-        this.width = assertValid(width);
+        this.width = StateModelUtil.assertValidDouble(width);
     }
 
     public void setHeight(Number height)
     {
-        this.height = assertValid(height);
+        this.height = StateModelUtil.assertValidDouble(height);
     }
 }

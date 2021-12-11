@@ -38,8 +38,8 @@ class TableStateManager implements WidgetStateManager<TableView<?>, TableStateMo
 
         for (int i = 0; i < widget.getColumns().size(); i++)
         {
-            final double width = model.columns.get(i).width;
-            if (width <= 0)
+            final Double width = model.columns.get(i).width;
+            if (width != null || width <= 0)
             {
                 LOG.warn("Invalid width {} for column {}: Skip restoring.", width, i);
             }
