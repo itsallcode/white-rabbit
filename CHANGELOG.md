@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#206](https://github.com/itsallcode/white-rabbit/issues/206): Fix failure of PM Smart export (thanks to [@ckunki](https://github.com/ckunki) for his contribution!).
 * [#210](https://github.com/itsallcode/white-rabbit/issues/210): Skip unwanted 2 minute interruptions.
 * [#222](https://github.com/itsallcode/white-rabbit/pull/222): Fix opening files on Ubuntu.
+* [#226](https://github.com/itsallcode/white-rabbit/pull/226): Fix duplicate automatic interruption dialogs
 
 ### Changed
 
