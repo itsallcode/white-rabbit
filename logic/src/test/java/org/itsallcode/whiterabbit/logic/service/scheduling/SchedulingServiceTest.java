@@ -56,4 +56,11 @@ class SchedulingServiceTest
         service.schedule(triggerMock, runnableMock);
         verify(executorServiceMock).schedule(any(ReschedulingRunnable.class), eq(100L), eq(TimeUnit.MILLISECONDS));
     }
+
+    @Test
+    void close()
+    {
+        service.close();
+        verify(executorServiceMock).shutdownNow();
+    }
 }

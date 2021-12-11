@@ -5,11 +5,21 @@ import org.apache.logging.log4j.Logger;
 
 class LoggingErrorHandler implements ErrorHandler
 {
-    private static final Logger LOG = LogManager.getLogger(LoggingErrorHandler.class);
+    private final Logger logger;
+
+    LoggingErrorHandler()
+    {
+        this(LogManager.getLogger(LoggingErrorHandler.class));
+    }
+
+    LoggingErrorHandler(Logger logger)
+    {
+        this.logger = logger;
+    }
 
     @Override
     public void handleError(Throwable t)
     {
-        LOG.error("Error occurred: {}", t.getMessage(), t);
+        logger.error("Error occurred: {}", t.getMessage(), t);
     }
 }

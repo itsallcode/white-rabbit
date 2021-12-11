@@ -8,7 +8,7 @@ class ErrorHandlingRunnable implements Runnable
 
     private final ErrorHandler errorHandler;
 
-    public ErrorHandlingRunnable(Runnable delegate, ErrorHandler errorHandler)
+    ErrorHandlingRunnable(Runnable delegate, ErrorHandler errorHandler)
     {
         this.delegate = delegate;
         this.errorHandler = errorHandler;
