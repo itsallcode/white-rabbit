@@ -2,13 +2,13 @@ package org.itsallcode.whiterabbit.logic.service.scheduling;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
-public class DelegatingErrorHandlingRunnable implements Runnable
+class ErrorHandlingRunnable implements Runnable
 {
     private final Runnable delegate;
 
     private final ErrorHandler errorHandler;
 
-    public DelegatingErrorHandlingRunnable(Runnable delegate, ErrorHandler errorHandler)
+    ErrorHandlingRunnable(Runnable delegate, ErrorHandler errorHandler)
     {
         this.delegate = delegate;
         this.errorHandler = errorHandler;
@@ -35,6 +35,6 @@ public class DelegatingErrorHandlingRunnable implements Runnable
     @Override
     public String toString()
     {
-        return "DelegatingErrorHandlingRunnable for " + this.delegate;
+        return "ErrorHandlingRunnable for " + this.delegate;
     }
 }

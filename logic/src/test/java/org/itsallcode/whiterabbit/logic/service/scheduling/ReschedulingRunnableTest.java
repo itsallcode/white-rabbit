@@ -9,7 +9,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -50,8 +52,9 @@ class ReschedulingRunnableTest
     @BeforeEach
     void setUp()
     {
-        reschedulingRunnable = new ReschedulingRunnable(commandMock, triggerMock, executorServiceMock, clockMock,
-                errorHandlerMock);
+        reschedulingRunnable = new ReschedulingRunnable(
+                new ErrorHandlingRunnable(commandMock, errorHandlerMock), triggerMock, executorServiceMock,
+                clockMock);
         lenient().when(clockMock.instant()).thenReturn(NOW);
     }
 
@@ -115,10 +118,31 @@ class ReschedulingRunnableTest
         assertTrue(reschedulingRunnable.isCancelled());
     }
 
+    @Test
+    void notScheduledWhenExecutorIsShutdown()
+    {
+        when(executorServiceMock.isShutdown()).thenReturn(true);
+        scheduleExecution();
+
+        verify(executorServiceMock, never()).schedule(any(Runnable.class), anyLong(), any());
+    }
+
+    @Test
+    void scheduledNextExecutionWhenRunnableFails()
+    {
+        doThrow(new RuntimeException("expected")).when(commandMock).run();
+        scheduleExecution();
+        when(triggerMock.nextExecutionTime(eq(NOW), any())).thenReturn(NOW.plusSeconds(60));
+        reschedulingRunnable.run();
+        verify(executorServiceMock).schedule(same(reschedulingRunnable), eq(50_000L), eq(TimeUnit.MILLISECONDS));
+        verify(executorServiceMock).schedule(same(reschedulingRunnable), eq(60_000L), eq(TimeUnit.MILLISECONDS));
+    }
+
     private void scheduleExecution()
     {
         when(triggerMock.nextExecutionTime(NOW, Optional.empty())).thenReturn(NEXT_EXECUTION);
-        doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class), anyLong(), any());
+        lenient().doReturn(scheduledFutureMock).when(executorServiceMock).schedule(any(Runnable.class), anyLong(),
+                any());
 
         reschedulingRunnable.schedule();
     }

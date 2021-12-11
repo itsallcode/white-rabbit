@@ -43,7 +43,7 @@ class SchedulingServiceTest
     void scheduleWithDelay()
     {
         service.schedule(Duration.ofMillis(150), runnableMock);
-        verify(executorServiceMock).schedule(any(DelegatingErrorHandlingRunnable.class), eq(150L),
+        verify(executorServiceMock).schedule(any(ErrorHandlingRunnable.class), eq(150L),
                 eq(TimeUnit.MILLISECONDS));
     }
 
@@ -55,5 +55,12 @@ class SchedulingServiceTest
         when(triggerMock.nextExecutionTime(any(), any())).thenReturn(nextExecution);
         service.schedule(triggerMock, runnableMock);
         verify(executorServiceMock).schedule(any(ReschedulingRunnable.class), eq(100L), eq(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    void close()
+    {
+        service.close();
+        verify(executorServiceMock).shutdownNow();
     }
 }

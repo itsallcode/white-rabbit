@@ -9,10 +9,10 @@ import jakarta.json.bind.annotation.JsonbVisibility;
 public class ColumnStateModel
 {
     public String id;
-    public double width;
+    public Double width;
 
     public void setWidth(Number width)
     {
-        this.width = width.doubleValue();
+        this.width = StateModelUtil.assertValidDouble(width);
     }
 }

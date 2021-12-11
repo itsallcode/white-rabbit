@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -27,6 +28,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class TimeUtil
 {
@@ -67,6 +70,16 @@ public class TimeUtil
 
                     return scheduledFutureMock;
                 });
+        doAnswer(new Answer<Void>()
+        {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable
+            {
+                final Runnable runnable = invocation.getArgument(0, Runnable.class);
+                runnable.run();
+                return null;
+            }
+        }).when(executorServiceMock).execute(any());
 
         when(clockMock.getZone()).thenReturn(ZoneId.of("Europe/Berlin"));
         when(clockMock.instant()).thenReturn(initialTime);
