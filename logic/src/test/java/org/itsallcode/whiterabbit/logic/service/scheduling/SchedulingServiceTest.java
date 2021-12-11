@@ -43,7 +43,7 @@ class SchedulingServiceTest
     void scheduleWithDelay()
     {
         service.schedule(Duration.ofMillis(150), runnableMock);
-        verify(executorServiceMock).schedule(any(DelegatingErrorHandlingRunnable.class), eq(150L),
+        verify(executorServiceMock).schedule(any(ErrorHandlingRunnable.class), eq(150L),
                 eq(TimeUnit.MILLISECONDS));
     }
 
