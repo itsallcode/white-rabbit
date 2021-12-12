@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#219](https://github.com/itsallcode/white-rabbit/pull/219): Configure installer for Windows.
 * [#221](https://github.com/itsallcode/white-rabbit/issues/221): Add plugins to native packages.
 * [#82](https://github.com/itsallcode/white-rabbit/issues/82) / [#225](https://github.com/itsallcode/white-rabbit/pull/225): Add monthly project report.
+* [#227](https://github.com/itsallcode/white-rabbit/pull/227): Add activity when double clicking in activities table.
 
 ### Bugfix
 
