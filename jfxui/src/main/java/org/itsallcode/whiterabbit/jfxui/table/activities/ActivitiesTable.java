@@ -3,7 +3,9 @@ package org.itsallcode.whiterabbit.jfxui.table.activities;
 import static java.util.Arrays.asList;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,13 +28,19 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventTarget;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -41,6 +49,7 @@ public class ActivitiesTable
     private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
 
     private final ObservableList<ActivityPropertyAdapter> activities = FXCollections.observableArrayList();
+    private final ReadOnlyProperty<DayRecord> selectedDay;
     private final SimpleObjectProperty<Activity> selectedActivity;
 
     private final EditListener<DayRecord> editListener;
@@ -52,6 +61,7 @@ public class ActivitiesTable
         this.selectedActivity = selectedActivity;
         this.editListener = editListener;
         this.appService = appService;
+        this.selectedDay = selectedDay;
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
@@ -106,7 +116,7 @@ public class ActivitiesTable
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("activities-table");
-        table.setPlaceholder(new Label("No activities for selected day. Click the + button to add an activity."));
+        table.setPlaceholder(createPlaceholder());
         table.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> selectedActivity
                         .set(newValue != null ? newValue.getRecord() : null));
@@ -122,7 +132,61 @@ public class ActivitiesTable
             keyEvent.consume();
             appService.activities().removeActivity(selectedActivity.get());
         });
+        table.setOnMouseClicked(event -> {
+            if (isDoubleClickEvent(event) && targetIsEmptySpace(event.getTarget()))
+            {
+                event.consume();
+                addActivity();
+            }
+        });
         return table;
+    }
+
+    private boolean isDoubleClickEvent(MouseEvent event)
+    {
+        return event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2;
+    }
+
+    private boolean targetIsEmptySpace(EventTarget target)
+    {
+        if (target instanceof TableRow<?> row)
+        {
+            return row.getItem() == null;
+        }
+        else if (target instanceof TableCell<?, ?> cell)
+        {
+            return cell.getTableRow().getItem() == null;
+        }
+        return false;
+    }
+
+    private Node createPlaceholder()
+    {
+        final BorderPane pane = new BorderPane();
+        pane.setCenter(new Label(
+                "No activities for selected day. Click the + button to add an activity."));
+        pane.setOnMouseClicked(event -> {
+            if (isDoubleClickEvent(event))
+            {
+                event.consume();
+                addActivity();
+            }
+        });
+        return pane;
+    }
+
+    private void addActivity()
+    {
+        final Optional<LocalDate> date = getSelectedDay().map(DayRecord::getDate);
+        if (date.isPresent())
+        {
+            appService.activities().addActivity(date.get());
+        }
+    }
+
+    private Optional<DayRecord> getSelectedDay()
+    {
+        return Optional.ofNullable(selectedDay.getValue());
     }
 
     private List<TableColumn<ActivityPropertyAdapter, ?>> createColumns()

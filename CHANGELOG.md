@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#216](https://github.com/itsallcode/white-rabbit/pull/216): Add support for macOS.
 * [#219](https://github.com/itsallcode/white-rabbit/pull/219): Configure installer for Windows.
 * [#221](https://github.com/itsallcode/white-rabbit/issues/221): Add plugins to native packages.
-* [225](https://github.com/itsallcode/white-rabbit/pull/225): Add monthly project report.
+* [#82](https://github.com/itsallcode/white-rabbit/issues/82) / [#225](https://github.com/itsallcode/white-rabbit/pull/225): Add monthly project report.
 
 ### Bugfix
 

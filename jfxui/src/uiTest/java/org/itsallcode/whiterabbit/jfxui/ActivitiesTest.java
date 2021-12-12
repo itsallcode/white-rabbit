@@ -62,12 +62,21 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void clickingAddButtonAddsActivity()
     {
+        assertActionAddsActivity(() -> app().activitiesTable().addActivity());
+    }
+
+    @Test
+    void doubleClickingEmptyTableAddsActivity()
+    {
+        assertActionAddsActivity(() -> app().activitiesTable().table().doubleClick());
+    }
+
+    private void assertActionAddsActivity(Runnable action)
+    {
         time().tickMinute();
         selectCurrentDay();
+        action.run();
         final ActivitiesTable activities = app().activitiesTable();
-
-        activities.addActivity();
-
         activities.table().assertRowCount(1);
     }
 
