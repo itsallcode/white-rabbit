@@ -85,6 +85,18 @@ public class JavaFxTable<T>
         return this;
     }
 
+    public JavaFxTable<T> doubleClick()
+    {
+        robot.doubleClickOn(table);
+        return this;
+    }
+
+    public JavaFxTable<T> doubleClickRow(int index)
+    {
+        robot.doubleClickOn(getTableRow(index));
+        return this;
+    }
+
     public JavaFxTable<T> assertRowCount(int expectedRowCount)
     {
         Assertions.assertThat(table).hasExactlyNumRows(expectedRowCount);
@@ -118,7 +130,7 @@ public class JavaFxTable<T>
 
     public void assertNoRowSelected()
     {
-        assertThat(getSelectedRowIndex()).as("selected row index").isLessThan(0);
+        assertThat(getSelectedRowIndex()).as("selected row index").isNegative();
     }
 
     public void assertRowHasPseudoClass(int rowIndex, String expectedClass)
