@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#210](https://github.com/itsallcode/white-rabbit/issues/210): Skip unwanted 2 minute interruptions.
 * [#222](https://github.com/itsallcode/white-rabbit/pull/222): Fix opening files on Ubuntu.
 * [#226](https://github.com/itsallcode/white-rabbit/pull/226): Fix duplicate automatic interruption dialogs
+* [#228](https://github.com/itsallcode/white-rabbit/pull/228): Upgrade log4j to fix [CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228).
 
 ### Changed
 
