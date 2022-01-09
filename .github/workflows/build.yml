@@ -71,3 +71,22 @@ jobs:
       with:
         name: jfxui
         path: jfxui/build/libs/white-rabbit-fx-*.jar
+
+    - name: Build native package
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
+      run: |
+        ./gradlew jpackage createChecksums --warning-mode=summary --info
+    
+    - name: Archive native package
+      uses: actions/upload-artifact@v2
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
+      with:
+        name: native-package
+        path: jfxui/build/jpackage-dist/*
+
+    - name: Archive checksums
+      uses: actions/upload-artifact@v2
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
+      with:
+        name: checksums
+        path: jfxui/build/generatedChecksums/*

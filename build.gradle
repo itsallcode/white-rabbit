@@ -24,7 +24,7 @@ def getProjectVersion() {
     if(project.hasProperty("releaseVersion")) {
         return project.property("releaseVersion")
     }
-    return "1.8.0-SNAPSHOT"
+    return "1.8.0"
 }
 
 version = getProjectVersion()
