@@ -5,11 +5,22 @@ package org.itsallcode.whiterabbit.api.model;
  */
 public enum DayType
 {
-    HOLIDAY(false), VACATION(false), FLEX_TIME(true), SICK(false), WORK(true), WEEKEND(false);
+    /** Public holiday (not working) */
+    HOLIDAY(false),
+    /** Vacation, paid time off (not working) */
+    VACATION(false),
+    /** Flex time, reduce overtime (not working) */
+    FLEX_TIME(true),
+    /** Sick, paid sick leave (not working) */
+    SICK(false),
+    /** Normal working day */
+    WORK(true),
+    /** Weekend (Saturday, Sunday, not working) */
+    WEEKEND(false);
 
     private final boolean workDay;
 
-    DayType(boolean workDay)
+    private DayType(boolean workDay)
     {
         this.workDay = workDay;
     }

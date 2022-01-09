@@ -6,9 +6,18 @@ package org.itsallcode.whiterabbit.api.model;
  */
 public interface Project
 {
+    /**
+     * @return the ID of this project.
+     */
     String getProjectId();
 
+    /**
+     * @return the label of this project.
+     */
     String getLabel();
 
+    /**
+     * @return the cost carrier of this project.
+     */
     String getCostCarrier();
 }
