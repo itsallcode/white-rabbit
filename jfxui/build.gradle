@@ -1,6 +1,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow'
     id 'org.panteleyev.jpackageplugin'
+    id 'org.gradle.crypto.checksum'
 }
 
 dependencies {
@@ -178,4 +179,12 @@ tasks.jpackage {
         macPackageName = "WhiteRabbit"
         icon = "${projectDir}/src/main/resources/icon.icns"
     }
+}
+
+task createChecksums(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.jpackage, tasks.shadowJar]) {
+    files = files(tasks.shadowJar.outputs.files, fileTree(tasks.jpackage.destination) {
+        include '*'
+    })
+    outputDir = new File(project.buildDir, "generatedChecksums")
+    algorithm = org.gradle.crypto.checksum.Checksum.Algorithm.SHA512
 }
