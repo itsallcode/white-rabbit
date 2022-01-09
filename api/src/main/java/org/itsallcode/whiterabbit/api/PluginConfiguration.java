@@ -32,5 +32,10 @@ public interface PluginConfiguration
      */
     Optional<String> getOptionalValue(String propertyName);
 
+    /**
+     * Get the {@link Path} to the data directory.
+     * 
+     * @return the {@link Path} to the data directory.
+     */
     Path getDataDir();
 }

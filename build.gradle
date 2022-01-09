@@ -3,19 +3,20 @@ plugins {
     id "org.sonarqube" version "3.3"
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.1"
     id "io.codearte.nexus-staging" version "0.30.0"
-    id 'com.github.johnrengelman.shadow' version '7.1.1' apply false
+    id 'com.github.johnrengelman.shadow' version '7.1.2' apply false
     id "com.moowork.node" version "1.3.1" apply false
-    id "com.github.ben-manes.versions" version "0.39.0"
+    id "com.github.ben-manes.versions" version "0.41.0"
     id "org.panteleyev.jpackageplugin" version "1.3.1" apply false
+    id "org.gradle.crypto.checksum" version "1.2.0" apply false
 }
 
 ext {
     junitVersion = '5.8.2'
-    log4jVersion = '2.17.0'
+    log4jVersion = '2.17.1'
     mockitoVersion = '4.2.0'
     yassonVersion = '2.0.3'
     jsonBindApiVersion = '2.0.0'
-    javaFxVersion = '18-ea+8'
+    javaFxVersion = '18-ea+9'
     monocleVersion = '12.0.1+2'
 }
 
@@ -23,7 +24,7 @@ def getProjectVersion() {
     if(project.hasProperty("releaseVersion")) {
         return project.property("releaseVersion")
     }
-    return "1.8.0-SNAPSHOT"
+    return "1.8.0"
 }
 
 version = getProjectVersion()
@@ -53,13 +54,13 @@ subprojects {
     }
 
     dependencies {
-        testImplementation "org.assertj:assertj-core:3.21.0"
+        testImplementation "org.assertj:assertj-core:3.22.0"
         testImplementation "org.mockito:mockito-core:$mockitoVersion"
         testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
         testImplementation "org.junit-pioneer:junit-pioneer:1.5.0"
-        testImplementation "nl.jqno.equalsverifier:equalsverifier:3.8.1"
+        testImplementation "nl.jqno.equalsverifier:equalsverifier:3.8.2"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
         testRuntimeOnly "org.apache.logging.log4j:log4j-core:$log4jVersion"
     }
@@ -74,6 +75,9 @@ subprojects {
 
     javadoc {
         enabled = false
+        failOnError = true
+        options.addBooleanOption('html5', true)
+        options.addStringOption('Xwerror', '-quiet')
     }
 
     jacocoTestReport {
