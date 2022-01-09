@@ -8,13 +8,15 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         java: [17]
+        os: ['ubuntu-latest', 'windows-latest']
+
+    runs-on: ${{ matrix.os }}
     env:
       DEFAULT_JAVA: 17
+      DEFAULT_OS: 'ubuntu-latest'
 
     steps:
 
@@ -51,7 +53,7 @@ jobs:
         ./gradlew build --warning-mode=summary -PskipFlakyTests=true
 
     - name: Sonar analysis
-      if: ${{ env.DEFAULT_JAVA == matrix.java && env.SONAR_TOKEN != null }}
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}
       run: |
         ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --warning-mode=summary
       env:
@@ -67,15 +69,15 @@ jobs:
 
     - name: Archive jfxui binary
       uses: actions/upload-artifact@v2
-      if: ${{ env.DEFAULT_JAVA == matrix.java }}
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         name: jfxui
         path: jfxui/build/libs/white-rabbit-fx-*.jar
 
-    - name: Build native package
+    - name: Build native package for ${{ matrix.os }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
-        ./gradlew jpackage createChecksums --warning-mode=summary --info
+        ./gradlew jpackage createChecksums --warning-mode=summary
     
     - name: Archive native package
       uses: actions/upload-artifact@v2
