@@ -75,6 +75,9 @@ subprojects {
 
     javadoc {
         enabled = false
+        failOnError = true
+        options.addBooleanOption('html5', true)
+        options.addStringOption('Xwerror', '-quiet')
     }
 
     jacocoTestReport {
