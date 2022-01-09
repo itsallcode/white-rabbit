@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         java: [17]
-        os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     name: Build on ${{ matrix.os }} with Java ${{ matrix.java }}
     runs-on: ${{ matrix.os }}
     env:
@@ -60,7 +60,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Publish Test Report for Java ${{ matrix.java }}
+    - name: Publish Test Report for Java ${{ matrix.java }} on ${{ matrix.os }}
       uses: scacap/action-surefire-report@v1
       if:  ${{ always() && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
       with:
@@ -83,7 +83,7 @@ jobs:
       uses: actions/upload-artifact@v2
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
-        name: native-package
+        name: native-package-${{ matrix.java }}
         path: jfxui/build/jpackage-dist/*
 
     - name: Archive checksums
