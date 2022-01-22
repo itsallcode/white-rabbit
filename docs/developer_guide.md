@@ -1,4 +1,4 @@
-# <a name="development"></a>Development
+# Developer Guide
 
 ## Clone and configure
 

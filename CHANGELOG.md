@@ -37,6 +37,10 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.8.0) / 
 * [#215](https://github.com/itsallcode/white-rabbit/pull/215): Upgrade dependencies, fix sonar issues.
 * [#207](https://github.com/itsallcode/white-rabbit/pull/207): Upgrade dependencies.
 
+### Documentation
+
+* [#232](https://github.com/itsallcode/white-rabbit/pull/232): Restructure user and developer guide.
+
 ## [1.7.0] - 2021-07-26
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.7.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/9?closed=1)

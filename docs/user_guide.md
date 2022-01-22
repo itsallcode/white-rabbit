@@ -1,16 +1,14 @@
 
 # User Guide
 
-## Requirements
+## Install WhiteRabbit as Executable JAR
 
-* Java Runtime Environment (JRE) 17, e.g. [Eclipse Temurin](https://adoptium.net/).
+Precondition: Install Java Runtime Environment (JRE) 17, e.g. from [Adoptium / Eclipse Temurin](https://adoptium.net/).
 
-## Install WhiteRabbit Locally
-
-1. Download the JAR from the latest [release](https://github.com/itsallcode/white-rabbit/releases)
+1. Download the `.jar` file from the latest [release](https://github.com/itsallcode/white-rabbit/releases)
 2. Launch it by
 
-  * double clicking
+  * double clicking or
   * executing command
 
   ```bash
@@ -19,18 +17,18 @@
 
 ## Install Native Package
 
-You can download native packages for your platform from the latest [release](https://github.com/itsallcode/white-rabbit/releases):
+Native packages already contain a Java Runtime Environment. You can download native packages for your platform from the latest [release](https://github.com/itsallcode/white-rabbit/releases):
 
 * Windows Installer: `.exe`
 * macOS Disk Image: `.dmg`
 * Ubuntu/Debian Package: `.deb`
 
-### Ubuntu
+### Installing a `.deb` file
 
 Install the `.deb` file like this:
 
 ```shell
-sudo dpkg --install jfxui/build/jpackage-dist/whiterabbit_${version}_amd64.deb
+sudo dpkg --install whiterabbit_${version}_amd64.deb
 ```
 
 This will install WhiteRabbit to `/opt/whiterabbit/`. You can launch it by running
@@ -127,9 +125,9 @@ To use activity tracking, create file `projects.json` in your data directory wit
 
 * Double click on a table cell (Type, Begin, End, Interruption and Comment) to edit it
   * Interruptions must be entered as `01:23` for 1 hour, 23 minutes
-* Close the window to minimize in the task bar: <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/>
-  * Double click <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/> to open the window again
-  * Right click on <img src="jfxui\src\main\resources\icon.png" alt="white rabbit icon" width="16px"/> to add an interruption or exit the program
+* Close the window to minimize in the task bar: <img src="../jfxui/src/main/resources/icon.png" alt="white rabbit icon" width="16px"/>
+  * Double click <img src="../jfxui/src/main/resources/icon.png" alt="white rabbit icon" width="16px"/> to open the window again
+  * Right click on <img src="../jfxui/src/main/resources/icon.png" alt="white rabbit icon" width="16px"/> to add an interruption or exit the program
 
 ### Notes
 
@@ -146,20 +144,7 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
 ## <a name="plugins"></a>Using Plugins
 
-1. Download one of the available plugins:
-    * [pmsmart](https://whiterabbit.chp1.net/plugins/pmsmart-plugin-signed.jar): Export project working time to pm-smart, see [details](#pmsmart).
-    * [holidays-calculator](https://whiterabbit.chp1.net/plugins/holidays-calculator-plugin-signed.jar): Calculate holidays based on simple formulas, see [details](#holidays_calculator).
-    * [csv](https://whiterabbit.chp1.net/plugins/csv-plugin-signed.jar): Export monthly reports to CSV, see [details](#csvexport).
-    * [demo](https://whiterabbit.chp1.net/plugins/demo-plugin-signed.jar): Sample plugin without specific functionality.
-1. Copy the downloaded plugin to `$HOME/.whiterabbit/plugins/`.
-
-```bash
-for plugin in pmsmart holidays-calculator csv demo
-do
-    fileName=$plugin-plugin-signed.jar
-    curl https://whiterabbit.chp1.net/plugins/$fileName --output $HOME/.whiterabbit/plugins/$fileName
-done
-```
+The default plugins pmsmart, holidays-calculator and csv are already included in the download packages. To install third-party plugins, copy them to `$HOME/.whiterabbit/plugins/`.
 
 ### <a name="pmsmart"></a>Using the PM-Smart Exporter Plugin
 
@@ -170,7 +155,6 @@ done
 #### Setup and usage
 
 1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
-1. Make sure to install the latest version of the pmsmart plugin, see [above](#plugins) for details.
 1. Add the base URL of your pm-smart server to the configuration file:
 
     ```properties
@@ -224,7 +208,6 @@ CSVExport plugin supports the export of the current monthly report to a pre-conf
 #### Setup and usage
 
 1. Create a project configuration as described [above](#project_config).
-1. Make sure to install the latest version of the csv plugin, see [above](#plugins) for details.
 1. Start the export in WhiteRabbit:
 
     1. Select the month that you want to export
@@ -237,7 +220,7 @@ Currently, you can configure the destination path, separator and flag in WhiteRa
 
 ```properties
 csv.destination = ~/working_time_reports
-csv.separator = \t
+csv.separator = /t
 csv.filter_for_weekdays = True
 ```
 
@@ -266,6 +249,6 @@ Workaround: delete local plugins
 rm -i $HOME/.whiterabbit/plugins/*.jar
 ```
 
-### Not all plugins are availble when launching via WebStart
+### Not all plugins are available when launching via WebStart
 
 Your `whiterabbit.jnlp` file might be outdated and not contain newer plugins. Please download the latest version from [here](https://whiterabbit.chp1.net/whiterabbit.jnlp).
