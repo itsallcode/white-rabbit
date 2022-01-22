@@ -1,9 +1,9 @@
 import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
-import { Certificate } from 'aws-cdk-lib/lib/aws-certificatemanager';
-import { CloudFrontWebDistribution, HttpVersion, OriginAccessIdentity, PriceClass, SecurityPolicyProtocol, SSLMethod, ViewerCertificate, ViewerProtocolPolicy } from 'aws-cdk-lib/lib/aws-cloudfront';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/lib/aws-iam';
-import { CfnRecordSetGroup } from 'aws-cdk-lib/lib/aws-route53';
-import { BlockPublicAccess, Bucket, BucketPolicy } from 'aws-cdk-lib/lib/aws-s3';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { CloudFrontWebDistribution, HttpVersion, OriginAccessIdentity, PriceClass, SecurityPolicyProtocol, SSLMethod, ViewerCertificate, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { CfnRecordSetGroup } from 'aws-cdk-lib/aws-route53';
+import { BlockPublicAccess, Bucket, BucketPolicy } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 interface StaticContentProps {
