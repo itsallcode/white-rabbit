@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         java: [17]
-        os: ['ubuntu-latest']
+        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
     name: Build on ${{ matrix.os }} with Java ${{ matrix.java }}
     runs-on: ${{ matrix.os }}
     env:
@@ -49,6 +49,7 @@ jobs:
         restore-keys: ${{ runner.os }}-java-${{ matrix.java }}-sonar
 
     - name: Build with Gradle
+      if: ${{ env.DEFAULT_OS == matrix.os }}
       run: |
         ./gradlew build --warning-mode=summary -PskipFlakyTests=true
 
@@ -60,7 +61,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Publish Test Report for Java ${{ matrix.java }} on ${{ matrix.os }}
+    - name: Publish Test Report for Java ${{ matrix.java }} on ${{ runner.os }}
       uses: scacap/action-surefire-report@v1
       if:  ${{ always() && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
       with:
@@ -74,7 +75,7 @@ jobs:
         name: jfxui
         path: jfxui/build/libs/white-rabbit-fx-*.jar
 
-    - name: Build native package for ${{ matrix.os }}
+    - name: Build native package for ${{ runner.os }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
         ./gradlew jpackage createChecksums --warning-mode=summary
