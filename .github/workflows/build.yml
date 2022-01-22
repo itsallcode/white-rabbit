@@ -79,7 +79,12 @@ jobs:
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
         ./gradlew jpackage createChecksums --warning-mode=summary
-    
+
+    - name: Stop Gradle Daemon
+      run: |
+        ./gradlew -status
+        ./gradlew -stop
+
     - name: Archive native package
       uses: actions/upload-artifact@v2
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
