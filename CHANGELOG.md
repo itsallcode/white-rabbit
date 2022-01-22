@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.8.0] - unreleased
+## [1.9.0] - unreleased
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/11?closed=1)
+
+## [1.8.0] - 2022-01-22
+
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.8.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/10?closed=1)
 
 ### Breaking change
 
@@ -30,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * [#215](https://github.com/itsallcode/white-rabbit/pull/215): Upgrade dependencies, fix sonar issues.
 * [#207](https://github.com/itsallcode/white-rabbit/pull/207): Upgrade dependencies.
+
+### Documentation
+
+* [#232](https://github.com/itsallcode/white-rabbit/pull/232): Restructure user and developer guide.
 
 ## [1.7.0] - 2021-07-26
 
