@@ -156,7 +156,7 @@ public class UiActions
 
     public void openHomepage()
     {
-        hostServices.showDocument("https://github.com/itsallcode/white-rabbit/blob/develop/README.md");
+        hostServices.showDocument("https://github.com/itsallcode/white-rabbit/blob/main/README.md");
     }
 
     public void exitApp()
