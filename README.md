@@ -410,7 +410,7 @@ This will build WhiteRabbit, upload it to the AWS S3 bucket and publish the plug
 
 This project requires some configuration files with deployment specific information, e.g. domain names that should not be stored in a public git repository. That's why these files are added to `.gitignore`. If you want to still keep your configuration under version control you can do so in a private branch (e.g. `private-master`) that you push to a private repository only.
 
-When switching from `private-master` to the public `develop` branch, git will delete the configuration files. To restore them you can run the following command in the project root:
+When switching from `private-master` to the public `main` branch, git will delete the configuration files. To restore them you can run the following command in the project root:
 
 ```bash
 git show private-master:webstart-infrastructure/config.ts > webstart-infrastructure/config.ts \

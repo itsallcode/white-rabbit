@@ -164,7 +164,7 @@ tasks.jpackage {
     verbose = false
     arguments = []
     javaOptions = ["-Dfile.encoding=UTF-8"]
-    additionalParameters = ["--about-url", "https://github.com/itsallcode/white-rabbit/blob/develop/README.md"]
+    additionalParameters = ["--about-url", "https://github.com/itsallcode/white-rabbit/blob/main/README.md"]
     windows {
         winConsole = false
         winPerUserInstall = true
