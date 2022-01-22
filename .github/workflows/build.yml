@@ -78,7 +78,7 @@ jobs:
     - name: Build native package for ${{ runner.os }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
-        ./gradlew jpackage createChecksums --warning-mode=summary
+        ./gradlew jpackage createChecksums --info --warning-mode=summary
 
     - name: Stop Gradle Daemon
       run: |
