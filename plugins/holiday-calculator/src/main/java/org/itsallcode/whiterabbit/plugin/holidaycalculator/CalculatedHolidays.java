@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.plugin.holidaycalculator;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -25,7 +23,7 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
 
     private final HolidaySet holidaySet;
 
-    public CalculatedHolidays(Path dataDir)
+    CalculatedHolidays(Path dataDir)
     {
         holidaySet = new HolidaySet(readHolidays(dataDir.resolve(HOLIDAYS_CONFIGURATION_FILE)));
     }
@@ -61,9 +59,14 @@ class CalculatedHolidays implements org.itsallcode.whiterabbit.api.features.Holi
     @Override
     public List<Holidays.HolidayInstance> getHolidays(LocalDate date)
     {
-        return holidaySet.instances(date).stream()
+        List<HolidayInstance> holidays = holidaySet.instances(date).stream()
                 .map(h -> new HolidayInstanceImpl(h.getCategory(), h.getName(), date))
-                .collect(toList());
+                .map(HolidayInstance.class::cast)
+                .toList();
+        if (!holidays.isEmpty())
+        {
+            LOG.debug("Found {} holidays for date {}: {}", holidays.size(), date, holidays);
+        }
+        return holidays;
     }
-
 }

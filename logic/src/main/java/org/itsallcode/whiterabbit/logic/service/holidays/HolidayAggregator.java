@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service.holidays;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -20,6 +19,12 @@ class HolidayAggregator
     // used to separate names of of multiple holidays occurring on the same day
     private static final String DELIMITER = ", ";
     private final HashMap<LocalDate, List<HolidayInstance>> holidays = new HashMap<>();
+    private final ModelFactory modelFactory;
+
+    HolidayAggregator(ModelFactory modelFactory)
+    {
+        this.modelFactory = modelFactory;
+    }
 
     public void collect(Holidays holidayProvider, YearMonth month)
     {
@@ -29,12 +34,12 @@ class HolidayAggregator
         }
     }
 
-    public List<DayData> createDayData(ModelFactory factory)
+    public List<DayData> createDayData()
     {
         return holidays.entrySet().stream()
-                .map(e -> toDayData(factory, e.getKey(), e.getValue()))
+                .map(e -> toDayData(e.getKey(), e.getValue()))
                 .sorted((a, b) -> a.getDate().compareTo(b.getDate()))
-                .collect(toList());
+                .toList();
     }
 
     private void collect(Holidays holidayProvider, LocalDate date)
@@ -56,9 +61,9 @@ class HolidayAggregator
         }
     }
 
-    private DayData toDayData(ModelFactory factory, LocalDate date, List<HolidayInstance> instances)
+    private DayData toDayData(LocalDate date, List<HolidayInstance> instances)
     {
-        final DayData holiday = factory.createDayData();
+        final DayData holiday = modelFactory.createDayData();
         holiday.setDate(date);
         // Depending on the category of each instance we could set different
         // types here.
