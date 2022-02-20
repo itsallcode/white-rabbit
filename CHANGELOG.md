@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/11?closed=1)
 
+* [#233](https://github.com/itsallcode/white-rabbit/pull/233): Upgrade dependencies, use [Gradle versions catalog](https://docs.gradle.org/current/userguide/platforms.html).
+
 ## [1.8.0] - 2022-01-22
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.8.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/10?closed=1)
