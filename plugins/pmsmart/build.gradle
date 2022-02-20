@@ -1,16 +1,15 @@
 
 dependencies {
-    def seleniumVersion = "4.1.1"
+    implementation libs.selenium.edgeDriver
+    implementation libs.selenium.support
+    runtimeOnly libs.selenium.devtools
+    implementation libs.webdrivermanager
 
-    implementation "org.seleniumhq.selenium:selenium-edge-driver:$seleniumVersion"
-    implementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-    runtimeOnly "org.seleniumhq.selenium:selenium-devtools:4.0.0-rc-1"
-    implementation "io.github.bonigarcia:webdrivermanager:5.0.3"
-    
     testImplementation project(':logic')
-    testImplementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
-    
-    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}") {
+    testImplementation libs.jsonBindApi
+    testImplementation libs.bundles.testUtils
+
+    runtimeOnly(libs.log4j.slf4j) {
         exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
         exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
     }

@@ -13,6 +13,10 @@ javadoc {
     enabled = true
 }
 
+dependencies {
+    testImplementation libs.bundles.testUtils
+}
+
 def getOptionalProperty(String name) {
     if(project.hasProperty(name)) {
         return project.property(name)

@@ -1,3 +1,4 @@
 dependencies {
     testImplementation project(':logic')
+    testImplementation libs.bundles.testUtils
 }

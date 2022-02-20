@@ -6,25 +6,26 @@ plugins {
 
 dependencies {
     implementation project(':logic')
+    def javaFxVersion = libs.versions.javafx.get()
     ['win', 'mac', 'linux'].forEach {platform ->
         implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
     }
 
-    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
-    implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
-    implementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
+    implementation libs.log4j.api
+    implementation libs.jdtAnnotations
+    implementation libs.jsonBindApi
 
-    runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
-    runtimeOnly "org.fusesource.jansi:jansi:2.4.0"
+    runtimeOnly libs.log4j.core
+    runtimeOnly libs.log4j.jul
+    runtimeOnly libs.jansi
 
-    testImplementation "jakarta.json.bind:jakarta.json.bind-api:${jsonBindApiVersion}"
-    testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
+    testImplementation libs.testfx
+    testImplementation libs.bundles.testUtils
 
-    testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
-    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-$monocleVersion"
+    testRuntimeOnly libs.yasson
+    testRuntimeOnly libs.monocle
 }
 
 shadowJar {
