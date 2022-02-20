@@ -29,17 +29,9 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
+        cache: 'gradle'
 
     - uses: gradle/wrapper-validation-action@v1
-
-    - name: Cache Gradle packages and wrapper
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-java-${{ matrix.java }}-gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: ${{ runner.os }}-java-${{ matrix.java }}-gradle
 
     - name: Cache SonarQube packages
       uses: actions/cache@v2
