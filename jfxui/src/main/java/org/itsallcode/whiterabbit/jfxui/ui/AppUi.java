@@ -43,7 +43,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -137,13 +136,6 @@ public class AppUi
             createTrayIcon();
 
             primaryStage.setScene(scene);
-            primaryStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-                if (event.getCode() == KeyCode.ESCAPE)
-                {
-                    event.consume();
-                    primaryStage.hide();
-                }
-            });
 
             state.uiState.register("main-window", primaryStage);
             LOG.debug("User interface finished");
