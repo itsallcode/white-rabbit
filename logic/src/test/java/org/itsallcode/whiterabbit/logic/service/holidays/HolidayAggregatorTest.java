@@ -58,11 +58,11 @@ class HolidayAggregatorTest
         when(holidayProvider2.getHolidays(D2)).thenReturn(Arrays.asList(h4));
         when(holidayProvider2.getHolidays(not(or(eq(D1), eq(D2))))).thenReturn(Collections.emptyList());
 
-        final HolidayAggregator aggregator = new HolidayAggregator();
+        final HolidayAggregator aggregator = new HolidayAggregator(new JsonModelFactory());
         aggregator.collect(holidayProvider1, YEAR_MONTH);
         aggregator.collect(holidayProvider2, YEAR_MONTH);
 
-        final List<DayData> days = aggregator.createDayData(new JsonModelFactory());
+        final List<DayData> days = aggregator.createDayData();
         assertThat(days.get(0).getComment()).isEqualTo("h4");
         assertThat(days.get(1).getComment()).isEqualTo("h1, h2, h3");
     }

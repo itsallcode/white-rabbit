@@ -1,7 +1,9 @@
 dependencies {
-	implementation 'org.itsallcode:holiday-calculator:0.2.0'
-
-    testRuntimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}") {
+    implementation(libs.holidaycalculator) {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    testImplementation libs.bundles.testUtils
+    testRuntimeOnly(libs.log4j.slf4j) {
         exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
         exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
     }

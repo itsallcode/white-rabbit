@@ -18,12 +18,11 @@ public class HolidayService
 
     public List<DayData> getHolidays(ModelFactory factory, YearMonth month)
     {
-        final HolidayAggregator aggregator = new HolidayAggregator();
+        final HolidayAggregator aggregator = new HolidayAggregator(factory);
         for (final Holidays provider : holidayProviders)
         {
             aggregator.collect(provider, month);
         }
-        return aggregator.createDayData(factory);
+        return aggregator.createDayData();
     }
-
 }
