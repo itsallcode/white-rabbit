@@ -25,14 +25,15 @@ public class InterruptionDialog
     {
         Assertions.assertThat(window).isShowing();
         final Labeled label = robot.from(window.getScene().getRoot()).lookup(".label").queryLabeled();
-        Assertions.assertThat(label).hasText("Interruption started at " + startTime + ". End interruption now?");
+        Assertions.assertThat(label).as("Interruption dialog label")
+                .hasText("Interruption started at " + startTime + ". End interruption now?");
     }
 
     public void assertContent(LocalTime currentTime, Duration interruption)
     {
         Assertions.assertThat(window).isShowing();
         final Labeled label = robot.from(window.getScene().getRoot()).lookup(".content").queryLabeled();
-        Assertions.assertThat(label)
+        Assertions.assertThat(label).as("Interruption dialog content")
                 .hasText("Current time: " + currentTime + ". Add interruption of " + interruption + "?");
     }
 

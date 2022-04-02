@@ -68,6 +68,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
         final DayTable dayTable = app().dayTable();
 
         time().tickMinute();
+        LocalTime dayBeginTime = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
         final InterruptionDialog interruptionDialog = app().startInterruption();
 
@@ -77,15 +78,40 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
                 () -> interruptionDialog.assertContent(interruptionStartTime, Duration.ZERO));
 
         time().tickMinute();
+        LocalTime dayEndTime = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime.plusMinutes(1), Duration.ofMinutes(1)),
-                () -> dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO));
+                () -> dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO),
+                () -> dayTable.assertBeginAndEnd(currentDayRowIndex, dayBeginTime, dayEndTime));
 
         interruptionDialog.clickAddInterruption();
 
         dayTable.assertInterruption(currentDayRowIndex, Duration.ofMinutes(1));
+    }
+
+    @Test
+    void endTimeUpdatedWhenAutomaticInterruptionDetected()
+    {
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
+        final DayTable dayTable = app().dayTable();
+
+        time().tickMinute();
+        LocalTime dayBeginTime = time().getCurrentTimeMinutes();
+        TestUtil.sleepShort();
+        final InterruptionDialog interruptionDialog = app().startInterruption();
+
+        Duration sleepTime = Duration.ofMinutes(5);
+        time().addTime(sleepTime);
+
+        LocalTime dayEndTime = time().getCurrentTimeMinutes();
+        TestUtil.sleepShort();
+
+        interruptionDialog.clickAddInterruption();
+
+        assertAll(() -> dayTable.assertInterruption(currentDayRowIndex, sleepTime),
+                () -> dayTable.assertBeginAndEnd(currentDayRowIndex, dayBeginTime, dayEndTime));
     }
 
     @Test

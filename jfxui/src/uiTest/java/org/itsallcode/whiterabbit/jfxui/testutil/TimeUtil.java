@@ -162,7 +162,7 @@ public class TimeUtil
         this.updateEveryMinuteRunnable.run();
     }
 
-    private void addTime(final Duration duration)
+    public void addTime(final Duration duration)
     {
         assertThat(duration).isPositive();
         setCurrentTime(clockMock.instant().plus(duration));
