@@ -9,7 +9,6 @@ include 'webstart-infrastructure'
 include 'api'
 include 'plugins'
 include 'plugins:demo'
-include 'plugins:pmsmart'
 include 'plugins:holiday-calculator'
 include 'plugins:csv'
 
@@ -48,11 +47,6 @@ dependencyResolutionManagement {
             library('log4j.slf4j', 'org.apache.logging.log4j', 'log4j-slf4j-impl').versionRef('log4j')
 
             library('holidaycalculator', 'org.itsallcode:holiday-calculator:0.2.0')
-
-            library('selenium.edgeDriver', 'org.seleniumhq.selenium', 'selenium-edge-driver').versionRef('seleniumVersion')
-            library('selenium.support', 'org.seleniumhq.selenium', 'selenium-support').versionRef('seleniumVersion')
-            library('selenium.devtools', 'org.seleniumhq.selenium:selenium-devtools:4.0.0-rc-1')
-            library('webdrivermanager', 'io.github.bonigarcia:webdrivermanager:5.1.0')
         }
     }
 }
