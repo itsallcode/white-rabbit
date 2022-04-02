@@ -10,7 +10,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 
 ### Breaking Change
 
-* [](): Removed pmsmart plugin as it is not maintained any more.
+* [#239](https://github.com/itsallcode/white-rabbit/pull/239): Removed pmsmart plugin as it is not maintained any more.
 
 ### Changes / Bugfixes
 
