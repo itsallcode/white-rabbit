@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -230,5 +231,15 @@ class WorkingTimeServiceTest
         assertThatThrownBy(() -> workingTimeService.startInterruption()).isInstanceOf(IllegalStateException.class)
                 .hasMessage(
                         "An interruption was already started: Interruption [start=2021-11-08T08:00:00Z, currently: PT10M, duration=null]");
+    }
+
+    @Test
+    void addingInterruptionUpdatesEndTime()
+    {
+        when(clockServiceMock.getCurrentTime()).thenReturn(LocalTime.of(10, 30));
+        workingTimeService.addInterruption(TODAY, Duration.ofMinutes(5));
+
+        assertAll(() -> assertThat(day.getEnd()).isEqualTo(LocalTime.of(10, 30)),
+                () -> assertThat(day.getInterruption()).isEqualTo(Duration.ofMinutes(5)));
     }
 }

@@ -14,6 +14,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 
 ### Changes / Bugfixes
 
+* [#241](https://github.com/itsallcode/white-rabbit/pull/241): Fix automatic interruption dialog popup after resume.
 * [#233](https://github.com/itsallcode/white-rabbit/pull/233): Upgrade dependencies, use [Gradle versions catalog](https://docs.gradle.org/current/userguide/platforms.html).
 * [#240](https://github.com/itsallcode/white-rabbit/pull/240): Upgrade dependencies.
 * [#147](https://github.com/itsallcode/white-rabbit/issues/147): Escape key no longer closes the main window.

@@ -155,10 +155,9 @@ public class WorkingTimeService
         switch (decision)
         {
         case ADD_INTERRUPTION:
-            addToInterruption(day, interruptionToAdd);
+            addInterruption(day, interruptionToAdd);
             return true;
         case SKIP_INTERRUPTION:
-            // ignore
             return true;
         case STOP_WORKING_FOR_TODAY:
             stopWorkForToday();
@@ -204,7 +203,8 @@ public class WorkingTimeService
     {
         final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
-        addToInterruption(day, interruption);
+        addInterruption(day, interruption);
+        day.setEnd(clock.getCurrentTime());
         storage.storeMonth(month);
         appServiceCallback.recordUpdated(day);
     }
@@ -222,7 +222,7 @@ public class WorkingTimeService
         resetInterruption();
     }
 
-    private void addToInterruption(final DayRecord day, Duration additionalInterruption)
+    private void addInterruption(final DayRecord day, Duration additionalInterruption)
     {
         final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
         LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption, day.getDate(),
