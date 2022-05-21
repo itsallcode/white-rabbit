@@ -43,27 +43,6 @@ To remove WhiteRabbit, run
 sudo dpkg --remove whiterabbit
 ```
 
-### Install WhiteRabbit via WebStart
-
-1. Install [OpenWebStart](https://openwebstart.com).
-2. Download the [WhiteRabbit JNLP file](https://whiterabbit.chp1.net/whiterabbit.jnlp).
-3. Start WhiteRabbit by double clicking `whiterabbit.jnlp`. At the first start this will automatically install a new Java Runtime if not available.
-4. For the initial start, you need to confirm that the certificate is correct. Verify the fingerprints:
-  * SHA1 fingerprint: `89:EB:AC:59:CC:8E:34:42:BF:1F:22:47:BC:D2:94:C3:7A:04:BD:6C`
-  * MD5 fingerprint: `A0:55:BC:15:77:DA:A3:97:0B:CD:B1:DF:4C:1A:A6:6A`
-5. Confirm that the jar file is downloaded from `https://whiterabbit.chp1.net/whiterabbitfx-signed.jar`.
-6. WhiteRabbit will start now, using configuration file `$HOME/.whiterabbit.properties`.
-
-You can also start WhiteRabbit from the command line:
-
-```bash
-<OpenWebStartInstllationDir>/javaws https://whiterabbit.chp1.net/whiterabbit.jnlp
-# Default for windows:
-$USERPROFILE/AppData/Local/Programs/OpenWebStart/javaws https://whiterabbit.chp1.net/whiterabbit.jnlp
-```
-
-For details about OpenWebStart see the [OpenWebStart User guide](https://openwebstart.com/docs/OWSGuide.html).
-
 ## <a name="configuration"></a>Configuration
 
 White Rabbit will search for the configuration file in the following locations:
@@ -231,24 +210,3 @@ csv.destination = $HOME
 csv.separator = ","
 csv.filter_for_weekdays = False
 ```
-
-## <a name="troubleshooting"></a>Troubleshooting
-
-### Launching via WebStart fails
-
-```
-java.util.ServiceConfigurationError: org.itsallcode.whiterabbit.api.Plugin: Provider org.itsallcode.whiterabbit.plugin.csv.CSVExporterPlugin could not be instantiated
-```
-
-Loading local plugins from `$HOME/.whiterabbit/plugins/` is not supported when starting WhiteRabbit via WebStart. This will be fixed in [issue #77](https://github.com/itsallcode/white-rabbit/issues/77).
-
-
-Workaround: delete local plugins
-
-```bash
-rm -i $HOME/.whiterabbit/plugins/*.jar
-```
-
-### Not all plugins are available when launching via WebStart
-
-Your `whiterabbit.jnlp` file might be outdated and not contain newer plugins. Please download the latest version from [here](https://whiterabbit.chp1.net/whiterabbit.jnlp).
