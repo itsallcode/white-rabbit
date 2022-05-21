@@ -24,14 +24,3 @@ jobs:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: ${{ runner.os }}-node-
-    - name: Configure webstart
-      run: |
-        cp .github/workflows/webstart.properties.template webstart/webstart.properties
-        cp .github/workflows/infrastructure-config.ts.template webstart-infrastructure/config.ts
-
-    - name: Build webstart infrastructure
-      run: |
-        cd webstart-infrastructure
-        npm ci
-        npm run build
-        npm run cdk synth

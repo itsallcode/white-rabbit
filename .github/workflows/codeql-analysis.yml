@@ -35,10 +35,6 @@ jobs:
 
     - uses: gradle/wrapper-validation-action@v1
 
-    - name: Configure webstart
-      run: |
-        cp .github/workflows/webstart.properties.template webstart/webstart.properties
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:

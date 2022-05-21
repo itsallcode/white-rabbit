@@ -3,9 +3,6 @@ rootProject.name = 'white-rabbit'
 include 'logic'
 include 'jfxui'
 
-include 'webstart'
-include 'webstart-infrastructure'
-
 include 'api'
 include 'plugins'
 include 'plugins:demo'

@@ -1,8 +1,0 @@
-import { InfrastructureConfig } from "./lib/config-interface";
-export const CONFIG: InfrastructureConfig = {
-    region: 'eu-west-1',
-    domain: "whiterabbit.example.com",
-    hostedZoneName: "example.com.",
-    sslCertificateArn: "arn:aws:acm:us-east-1:000000000000:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    stackName: "whiterabbit-webstart"
-};
