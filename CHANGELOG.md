@@ -11,7 +11,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 ### Breaking Change
 
 * [#239](https://github.com/itsallcode/white-rabbit/pull/239): Removed pmsmart plugin as it is not maintained any more.
-* [#240](https://github.com/itsallcode/white-rabbit/pull/240): Removed webstart deployment.
+* [#245](https://github.com/itsallcode/white-rabbit/pull/245): Removed webstart deployment.
 
 ### Changes / Bugfixes
 
