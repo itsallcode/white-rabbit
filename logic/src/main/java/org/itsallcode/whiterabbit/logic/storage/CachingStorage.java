@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.holidays.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
@@ -20,4 +21,11 @@ public interface CachingStorage extends Storage
     }
 
     List<DayRecord> getLatestDays(LocalDate maxAge);
+
+    void addCacheInvalidationListener(CacheInvalidationListener listener);
+
+    public interface CacheInvalidationListener
+    {
+        void cacheUpdated(MonthIndex updatedMonth);
+    }
 }

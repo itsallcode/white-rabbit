@@ -99,4 +99,11 @@ class CachingStorageImpl implements CachingStorage
                 .filter(month -> !month.isBefore(oldestYearMonth))
                 .collect(toList());
     }
+
+    @Override
+    public void addCacheInvalidationListener(CacheInvalidationListener listener)
+    {
+        this.cache.addCacheInvalidationListener(listener);
+
+    }
 }

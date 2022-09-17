@@ -1,8 +1,8 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.storage.CachingStorage.CacheInvalidationListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -90,19 +91,43 @@ class MonthCacheTest
         assertThat(cache.getLatestDays(RECENT)).containsExactly(day1);
     }
 
-    private DayRecord day(LocalDate date)
+    @Test
+    void singleListenerNotified()
+    {
+        final CacheInvalidationListener listener = mock(CacheInvalidationListener.class);
+        final MonthIndex month = month(YearMonth.from(RECENT));
+        cache.addCacheInvalidationListener(listener);
+        cache.update(month);
+
+        verify(listener).cacheUpdated(same(month));
+    }
+
+    @Test
+    void multipleListenerNotified()
+    {
+        final CacheInvalidationListener listener1 = mock(CacheInvalidationListener.class);
+        final CacheInvalidationListener listener2 = mock(CacheInvalidationListener.class);
+        final MonthIndex month = month(YearMonth.from(RECENT));
+        cache.addCacheInvalidationListener(listener1);
+        cache.addCacheInvalidationListener(listener2);
+        cache.update(month);
+
+        verify(listener1).cacheUpdated(same(month));
+        verify(listener2).cacheUpdated(same(month));
+    }
+
+    private DayRecord day(final LocalDate date)
     {
         final DayRecord day = mock(DayRecord.class);
         when(day.getDate()).thenReturn(date);
         return day;
     }
 
-    private MonthIndex month(YearMonth yearMonth, DayRecord... days)
+    private MonthIndex month(final YearMonth yearMonth, final DayRecord... days)
     {
         final MonthIndex monthMock = mock(MonthIndex.class);
         when(monthMock.getYearMonth()).thenReturn(yearMonth);
         when(monthMock.getSortedDays()).thenReturn(Stream.of(days));
         return monthMock;
     }
-
 }
