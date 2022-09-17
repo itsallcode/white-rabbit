@@ -15,16 +15,15 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            version('junitJupiter', '5.8.2')
-            version('mockito', '4.4.0')
-            version('log4j', '2.17.2')
-            version('seleniumVersion', '4.1.2')
-            version("javafx", '19-ea+4')
+            version('junitJupiter', '5.9.0')
+            version('mockito', '4.8.0')
+            version('log4j', '2.19.0')
+            version("javafx", '20-ea+2')
 
             library('junitParams', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junitJupiter')
-            library('assertj', 'org.assertj:assertj-core:3.22.0')
-            library('junitPioneer', 'org.junit-pioneer:junit-pioneer:1.6.2')
-            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:3.10')
+            library('assertj', 'org.assertj:assertj-core:3.23.1')
+            library('junitPioneer', 'org.junit-pioneer:junit-pioneer:1.7.1')
+            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:3.10.1')
             library('hamcrest', 'org.hamcrest:hamcrest-all:1.3')
             library('mockito', 'org.mockito', 'mockito-core').versionRef('mockito')
             library('mocktioJunit', 'org.mockito', 'mockito-junit-jupiter').versionRef('mockito')
@@ -33,10 +32,10 @@ dependencyResolutionManagement {
             library('testfx', 'org.testfx:testfx-junit5:4.0.16-alpha')
             library('monocle', 'org.testfx:openjfx-monocle:jdk-12.0.1+2')
 
-            library('jsonBindApi', 'jakarta.json.bind:jakarta.json.bind-api:2.0.0')
-            library('yasson', 'org.eclipse:yasson:2.0.4')
+            library('jsonBindApi', 'jakarta.json.bind:jakarta.json.bind-api:3.0.0')
+            library('yasson', 'org.eclipse:yasson:3.0.2')
 
-            library('jdtAnnotations', 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600')
+            library('jdtAnnotations', 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700')
             library('jansi', 'org.fusesource.jansi:jansi:2.4.0')
             library('log4j.api', 'org.apache.logging.log4j', 'log4j-api').versionRef('log4j')
             library('log4j.core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')

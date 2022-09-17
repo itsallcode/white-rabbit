@@ -21,7 +21,7 @@ class JarPluginOriginTest
     private JarPluginOrigin origin;
 
     @BeforeEach
-    private void setup()
+    void setup()
     {
         origin = new JarPluginOrigin(JAR, classLoaderMock);
     }
