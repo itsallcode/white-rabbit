@@ -65,7 +65,19 @@ Restart WhiteRabbit after changing the configuration file.
 
 * `locale`: format of date and time values as an [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag), e.g. `de`, `de-DE` or `en-GB`. Default: system locale.
   * Note: enter a locale with country code (e.g. `de-DE`) to get correct formatting of date and time, e.g. the calendar week.
-* `current_working_time_per_day`: custom working time per day differing from the default of 8 hours. Format: see [Duration.parse()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)), e.g. `PT5H` for 5 hours or `PT5H30M` for 5 hours and 30 minutes. This setting will only affect the future.
+* `current_working_time_per_day`: working time per day (default: 8 hours). Format: see [below](#duration-format). Caution: This setting will only affect the future.
+  * We recommend to configure this when starting to use WhiteRabbit.
+* `mandatory_break`: mandatory break per day (default: 45 minutes). Format: see [below](#duration-format). Caution: This setting will also affect the past, i.e. the overtime of **all** days will be re-calculated.
+  * We recommend to configure this when starting to use WhiteRabbit.
+
+#### Duration format
+
+Enter duration values in the format used by [Duration.parse()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)). Examples:
+
+* `PT5H`: 5 hours
+* `PT5H30M`: 5 hours and 30 minutes
+* `PT45M`: 45 minutes
+* `PT0M`: 0 minutes
 
 ### <a name="project_config"></a>Project configuration
 

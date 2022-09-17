@@ -31,9 +31,22 @@ class ContractTermsServiceTest
                 .getCurrentWorkingTimePerDay()).hasHours(4);
     }
 
-    private ContractTermsService create(Builder builder)
+    @Test
+    void getMandatoryBreakReturnsDefault()
     {
-        return new ContractTermsService(builder.build().getCurrentHoursPerDay());
+        assertThat(create(TestingConfig.builder().withMandatoryBreak(null))
+                .getMandatoryBreak()).hasMinutes(45);
     }
 
+    @Test
+    void getMandatoryBreakReturnsConfiguredValue()
+    {
+        assertThat(create(TestingConfig.builder().withMandatoryBreak(Duration.ofMinutes(0)))
+                .getMandatoryBreak()).hasMinutes(0);
+    }
+
+    private ContractTermsService create(final Builder builder)
+    {
+        return new ContractTermsService(builder.build());
+    }
 }

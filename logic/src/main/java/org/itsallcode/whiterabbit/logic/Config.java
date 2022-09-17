@@ -19,6 +19,8 @@ public interface Config
 
     Optional<Duration> getCurrentHoursPerDay();
 
+    Optional<Duration> getMandatoryBreak();
+
     default Path getProjectFile()
     {
         return getDataDir().resolve(PROJECTS_JSON);

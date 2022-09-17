@@ -1,30 +1,25 @@
 package org.itsallcode.whiterabbit.logic.service.contract;
 
 import java.time.Duration;
-import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 
 public class ContractTermsService
 {
-    public static final Duration BASIC_BREAK = Duration.ofMinutes(45);
+    private static final Duration DEFAULT_MANDATORY_BREAK = Duration.ofMinutes(45);
     private static final Duration CONTRACTED_HOURS_PER_DAY = Duration.ofHours(8);
     private static final Duration MIN_WORKING_TIME_WITHOUT_BREAK = Duration.ofHours(6);
 
-    private final Optional<Duration> hoursPerDay;
+    private final Config config;
 
-    public ContractTermsService(Config config)
+    public ContractTermsService(final Config config)
     {
-        this(config.getCurrentHoursPerDay());
+        this.config = config;
     }
 
-    public ContractTermsService(Optional<Duration> hoursPerDay)
-    {
-        this.hoursPerDay = hoursPerDay;
-    }
 
-    public Duration getMandatoryBreak(DayRecord day)
+    public Duration getMandatoryBreak(final DayRecord day)
     {
         if (!day.getType().isWorkDay())
         {
@@ -33,9 +28,14 @@ public class ContractTermsService
         final Duration workingTime = day.getRawWorkingTime().minus(day.getInterruption());
         if (workingTime.compareTo(MIN_WORKING_TIME_WITHOUT_BREAK) > 0)
         {
-            return BASIC_BREAK;
+            return getMandatoryBreak();
         }
         return Duration.ZERO;
+    }
+
+    public Duration getMandatoryBreak()
+    {
+        return config.getMandatoryBreak().orElse(DEFAULT_MANDATORY_BREAK);
     }
 
     public Duration getContractedWorkingTimePerDay()
@@ -45,10 +45,10 @@ public class ContractTermsService
 
     public Duration getCurrentWorkingTimePerDay()
     {
-        return hoursPerDay.orElse(getContractedWorkingTimePerDay());
+        return config.getCurrentHoursPerDay().orElse(getContractedWorkingTimePerDay());
     }
 
-    public Duration getMandatoryWorkingTime(DayRecord day)
+    public Duration getMandatoryWorkingTime(final DayRecord day)
     {
         if (day.isDummyDay())
         {
@@ -61,25 +61,25 @@ public class ContractTermsService
         return Duration.ZERO;
     }
 
-    public Duration getWorkingTime(DayRecord day)
+    public Duration getWorkingTime(final DayRecord day)
     {
         return day.getRawWorkingTime() //
                 .minus(getMandatoryBreak(day)) //
                 .minus(day.getInterruption());
     }
 
-    public Duration getOvertime(DayRecord day)
+    public Duration getOvertime(final DayRecord day)
     {
         return getWorkingTime(day) //
                 .minus(getMandatoryWorkingTime(day));
     }
 
-    public Duration getOverallOvertime(DayRecord day)
+    public Duration getOverallOvertime(final DayRecord day)
     {
         return getTotalOvertimeThisMonth(day).plus(getOvertimePreviousMonth(day));
     }
 
-    private Duration getOvertimePreviousMonth(DayRecord day)
+    private Duration getOvertimePreviousMonth(final DayRecord day)
     {
         if (day.getMonth() != null && day.getMonth().getOvertimePreviousMonth() != null)
         {
@@ -88,7 +88,7 @@ public class ContractTermsService
         return Duration.ZERO;
     }
 
-    public Duration getTotalOvertimeThisMonth(DayRecord day)
+    public Duration getTotalOvertimeThisMonth(final DayRecord day)
     {
         return day.getPreviousDayOvertime() //
                 .plus(getOvertime(day));

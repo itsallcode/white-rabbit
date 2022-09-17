@@ -19,6 +19,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 * [#233](https://github.com/itsallcode/white-rabbit/pull/233): Upgrade dependencies, use [Gradle versions catalog](https://docs.gradle.org/current/userguide/platforms.html).
 * [#240](https://github.com/itsallcode/white-rabbit/pull/240): Upgrade dependencies.
 * [#147](https://github.com/itsallcode/white-rabbit/issues/147): Escape key no longer closes the main window.
+* [#247](https://github.com/itsallcode/white-rabbit/issues/247): Allow configuring mandatory break.
 
 ## [1.8.0] - 2022-01-22
 
