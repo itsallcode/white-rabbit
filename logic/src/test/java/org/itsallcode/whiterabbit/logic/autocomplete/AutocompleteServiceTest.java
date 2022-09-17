@@ -3,8 +3,8 @@ package org.itsallcode.whiterabbit.logic.autocomplete;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,9 +19,11 @@ import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 import org.itsallcode.whiterabbit.logic.storage.CachingStorage;
+import org.itsallcode.whiterabbit.logic.storage.CachingStorage.CacheInvalidationListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -54,12 +56,61 @@ class AutocompleteServiceTest
     }
 
     @Test
+    void dayCommentAutocompleterCachesEntries()
+    {
+        simulateDays(dayRecordsWithComments(null, "", "Comment A", "Comment B"));
+        final AutocompleteEntrySupplier completer = autocompleteService.dayCommentAutocompleter();
+        completer.getEntries("comm");
+        completer.getEntries("comm");
+        verify(storageMock, times(1)).getLatestDays(any());
+    }
+
+    @Test
+    void dayCommentAutocompleterRefreshesInvalidatedCache()
+    {
+        simulateDays(dayRecordsWithComments(null, "", "Comment A", "Comment B"));
+        final AutocompleteEntrySupplier completer = autocompleteService.dayCommentAutocompleter();
+        completer.getEntries("comm");
+        callInvalidCacheListener();
+        completer.getEntries("comm");
+        verify(storageMock, times(2)).getLatestDays(any());
+    }
+
+    @Test
     void activityCommentAutocompleter()
     {
         simulateDays(createDayRecordsWithActivityComments(null, "", "Comment A", "Comment B"));
         assertThat(autocompleteService.activityCommentAutocompleter().getEntries("comm"))
                 .extracting(AutocompleteProposal::getText)
                 .containsExactly("Comment A", "Comment B");
+    }
+
+    @Test
+    void activityCommentAutocompleterCachesEntries()
+    {
+        simulateDays(createDayRecordsWithActivityComments(null, "", "Comment A", "Comment B"));
+        final AutocompleteEntrySupplier completer = autocompleteService.activityCommentAutocompleter();
+        completer.getEntries("comm");
+        completer.getEntries("comm");
+        verify(storageMock, times(1)).getLatestDays(any());
+    }
+
+    @Test
+    void activityCommentRefreshesInvalidatedCache()
+    {
+        simulateDays(createDayRecordsWithActivityComments(null, "", "Comment A", "Comment B"));
+        final AutocompleteEntrySupplier completer = autocompleteService.activityCommentAutocompleter();
+        completer.getEntries("comm");
+        callInvalidCacheListener();
+        completer.getEntries("comm");
+        verify(storageMock, times(2)).getLatestDays(any());
+    }
+
+    private void callInvalidCacheListener()
+    {
+        final ArgumentCaptor<CacheInvalidationListener> arg = ArgumentCaptor.forClass(CacheInvalidationListener.class);
+        verify(this.storageMock).addCacheInvalidationListener(arg.capture());
+        arg.getValue().cacheUpdated(null);
     }
 
     @Test
@@ -83,7 +134,7 @@ class AutocompleteServiceTest
         assertProjectFound("p2");
     }
 
-    private void assertProjectFound(String expectedProjectId)
+    private void assertProjectFound(final String expectedProjectId)
     {
         final Optional<ProjectImpl> suggestedProject = autocompleteService.getSuggestedProject();
         assertThat(suggestedProject).isPresent();
@@ -98,17 +149,17 @@ class AutocompleteServiceTest
         when(storageMock.getLatestDays(maxAge)).thenReturn(days);
     }
 
-    private List<DayRecord> createDayRecordsWithActivityComments(String... comments)
+    private List<DayRecord> createDayRecordsWithActivityComments(final String... comments)
     {
         return Arrays.stream(comments).map(this::createDayRecordWithActivityComment).collect(toList());
     }
 
-    private List<DayRecord> createDayRecordsWithActivityProjects(String... projectIds)
+    private List<DayRecord> createDayRecordsWithActivityProjects(final String... projectIds)
     {
         return Arrays.stream(projectIds).map(this::createDayRecordWithProject).collect(toList());
     }
 
-    private DayRecord createDayRecordWithProject(String projectId)
+    private DayRecord createDayRecordWithProject(final String projectId)
     {
         final Activity activity = mock(Activity.class);
         final ProjectImpl project = new ProjectImpl(projectId, "Project " + projectId, null);
@@ -116,28 +167,28 @@ class AutocompleteServiceTest
         return dayWithActivities(activity);
     }
 
-    private DayRecord createDayRecordWithActivityComment(String comment)
+    private DayRecord createDayRecordWithActivityComment(final String comment)
     {
         final Activity activity = mock(Activity.class);
-        when(activity.getComment()).thenReturn(comment);
+        lenient().when(activity.getComment()).thenReturn(comment);
         return dayWithActivities(activity);
     }
 
-    private DayRecord dayWithActivities(Activity... activityList)
+    private DayRecord dayWithActivities(final Activity... activityList)
     {
         final DayActivities activities = mock(DayActivities.class);
-        when(activities.getAll()).thenReturn(asList(activityList));
+        lenient().when(activities.getAll()).thenReturn(asList(activityList));
         final DayRecord dayRecord = mock(DayRecord.class);
-        when(dayRecord.activities()).thenReturn(activities);
+        lenient().when(dayRecord.activities()).thenReturn(activities);
         return dayRecord;
     }
 
-    private List<DayRecord> dayRecordsWithComments(String... comments)
+    private List<DayRecord> dayRecordsWithComments(final String... comments)
     {
         return Arrays.stream(comments).map(this::createDayRecord).collect(toList());
     }
 
-    private DayRecord createDayRecord(String comment)
+    private DayRecord createDayRecord(final String comment)
     {
         final DayRecord dayRecord = mock(DayRecord.class);
         when(dayRecord.getComment()).thenReturn(comment);
