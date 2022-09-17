@@ -110,7 +110,7 @@ class ConfigFileTest
     @Test
     void getMandatoryBreak_returnsCustomValue()
     {
-        when(propertiesMock.getProperty("mandatory_break")).thenReturn("P0M");
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn("PT0M");
         assertThat(configFile.getMandatoryBreak()).isPresent().hasValue(Duration.ofMinutes(0));
     }
 
