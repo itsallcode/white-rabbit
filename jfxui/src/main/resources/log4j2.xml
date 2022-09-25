@@ -13,11 +13,10 @@
                 <Charset>UTF-8</Charset>
             </PatternLayout>
             <Policies>
-                <SizeBasedTriggeringPolicy size="50 MB" />
+                <SizeBasedTriggeringPolicy size="25 MB" />
             </Policies>
         </RollingFile>
     </Appenders>
-
 
     <Loggers>
         <Root level="debug">
