@@ -28,61 +28,32 @@ public class JavaFxTable<T>
     private final FxRobot robot;
     private final TableView<T> table;
 
-    private JavaFxTable(FxRobot robot, TableView<T> table)
+    private JavaFxTable(final FxRobot robot, final TableView<T> table)
     {
         this.robot = robot;
         this.table = table;
     }
 
-    static <T> JavaFxTable<T> find(FxRobot robot, String query, Class<T> rowType)
+    static <T> JavaFxTable<T> find(final FxRobot robot, final String query, final Class<T> rowType)
     {
         return new JavaFxTable<>(robot, robot.lookup(query).queryTableView());
     }
 
-    public void assertContent(TableRowExpectedContent... expectedRows)
+    public JavaFxTableRow row(final int rowIndex)
+    {
+        return new JavaFxTableRow(rowIndex);
+    }
+
+    public void assertContent(final TableRowExpectedContent... expectedRows)
     {
         final List<Executable> expectations = new ArrayList<>();
         expectations.add(() -> assertRowCount(expectedRows.length));
         for (int i = 0; i < expectedRows.length; i++)
         {
             final int row = i;
-            expectations.add(() -> assertRowContent(row, expectedRows[row]));
+            expectations.add(() -> row(row).assertContent(expectedRows[row]));
         }
         assertAll(expectations);
-    }
-
-    public void assertRowContent(final int rowIndex, final TableRowExpectedContent expectedRowContent)
-    {
-        Assertions.assertThat(table).containsRowAtIndex(rowIndex, expectedRowContent.expectedCellContent());
-    }
-
-    public TableCell<?, ?> getTableCell(final int rowIndex, final String columnId)
-    {
-        LOG.debug("Getting row {} / column {}", rowIndex, columnId);
-        final IndexedCell<T> row = getTableRow(rowIndex);
-        return row.getChildrenUnmodifiable().stream()
-                .filter(cell -> cell.getId().equals(columnId))
-                .map(TableCell.class::cast)
-                .findFirst().orElseThrow();
-    }
-
-    public IndexedCell<T> getTableRow(final int rowIndex)
-    {
-        @SuppressWarnings("unchecked")
-        final VirtualFlow<IndexedCell<T>> virtualFlow = table.getChildrenUnmodifiable().stream()
-                .filter(VirtualFlow.class::isInstance)
-                .map(VirtualFlow.class::cast)
-                .findFirst().orElseThrow();
-        assertThat(virtualFlow.getCellCount()).as("row count of " + virtualFlow).isGreaterThan(rowIndex);
-        final IndexedCell<T> row = JavaFxUtil.runOnFxApplicationThread(() -> virtualFlow.getCell(rowIndex));
-        LOG.debug("Got row #{} of {}: {}", rowIndex, virtualFlow, row);
-        return row;
-    }
-
-    public JavaFxTable<T> clickRow(int rowIndex)
-    {
-        robot.clickOn(getTableRow(rowIndex));
-        return this;
     }
 
     public JavaFxTable<T> doubleClick()
@@ -91,13 +62,7 @@ public class JavaFxTable<T>
         return this;
     }
 
-    public JavaFxTable<T> doubleClickRow(int index)
-    {
-        robot.doubleClickOn(getTableRow(index));
-        return this;
-    }
-
-    public JavaFxTable<T> assertRowCount(int expectedRowCount)
+    public JavaFxTable<T> assertRowCount(final int expectedRowCount)
     {
         Assertions.assertThat(table).hasExactlyNumRows(expectedRowCount);
         return this;
@@ -120,10 +85,10 @@ public class JavaFxTable<T>
         {
             throw new AssertionError("No row is selected");
         }
-        return getTableRow(selectedRowIndex);
+        return row(selectedRowIndex).tableRow();
     }
 
-    public void assertRowSelected(int expectedRow)
+    public void assertRowSelected(final int expectedRow)
     {
         assertThat(getSelectedRowIndex()).as("selected row").isEqualTo(expectedRow);
     }
@@ -133,21 +98,71 @@ public class JavaFxTable<T>
         assertThat(getSelectedRowIndex()).as("selected row index").isNegative();
     }
 
-    public void assertRowHasPseudoClass(int rowIndex, String expectedClass)
+    public class JavaFxTableRow
     {
-        assertThat(getPseudoClass(rowIndex, expectedClass))
-                .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).hasSize(1);
-    }
+        private final int rowIndex;
 
-    public void assertRowDoesNotHavePseudoClass(int rowIndex, String expectedClass)
-    {
-        assertThat(getPseudoClass(rowIndex, expectedClass))
-                .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).isEmpty();
-    }
+        private JavaFxTableRow(final int rowIndex)
+        {
+            this.rowIndex = rowIndex;
+        }
 
-    private Stream<PseudoClass> getPseudoClass(int rowIndex, String pseudoClassName)
-    {
-        return getTableRow(rowIndex).getPseudoClassStates().stream()
-                .filter(pseudoClass -> pseudoClass.getPseudoClassName().equals(pseudoClassName));
+        public void assertContent(final TableRowExpectedContent expectedRowContent)
+        {
+            Assertions.assertThat(table).containsRowAtIndex(rowIndex, expectedRowContent.expectedCellContent());
+        }
+
+        public TableCell<?, ?> cell(final String columnId)
+        {
+            LOG.debug("Getting row {} / column {}", rowIndex, columnId);
+            final IndexedCell<T> row = tableRow();
+            return row.getChildrenUnmodifiable().stream()
+                    .filter(cell -> cell.getId().equals(columnId))
+                    .map(TableCell.class::cast)
+                    .findFirst().orElseThrow();
+        }
+
+        public IndexedCell<T> tableRow()
+        {
+            @SuppressWarnings("unchecked")
+            final VirtualFlow<IndexedCell<T>> virtualFlow = table.getChildrenUnmodifiable().stream()
+                    .filter(VirtualFlow.class::isInstance)
+                    .map(VirtualFlow.class::cast)
+                    .findFirst().orElseThrow();
+            assertThat(virtualFlow.getCellCount()).as("row count of " + virtualFlow).isGreaterThan(rowIndex);
+            final IndexedCell<T> row = JavaFxUtil.runOnFxApplicationThread(() -> virtualFlow.getCell(rowIndex));
+            LOG.debug("Got row #{} of {}: {}", rowIndex, virtualFlow, row);
+            return row;
+        }
+
+        public void assertHasPseudoClass(final String expectedClass)
+        {
+            assertThat(getPseudoClass(expectedClass))
+                    .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).hasSize(1);
+        }
+
+        public void assertDoesNotHavePseudoClass(final String expectedClass)
+        {
+            assertThat(getPseudoClass(expectedClass))
+                    .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).isEmpty();
+        }
+
+        private Stream<PseudoClass> getPseudoClass(final String pseudoClassName)
+        {
+            return tableRow().getPseudoClassStates().stream()
+                    .filter(pseudoClass -> pseudoClass.getPseudoClassName().equals(pseudoClassName));
+        }
+
+        public JavaFxTable<T>.JavaFxTableRow clickRow(final int rowIndex)
+        {
+            robot.clickOn(tableRow());
+            return this;
+        }
+
+        public JavaFxTable<T>.JavaFxTableRow doubleClick()
+        {
+            robot.doubleClickOn(tableRow());
+            return this;
+        }
     }
 }
