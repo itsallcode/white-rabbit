@@ -20,6 +20,8 @@ def getProjectVersion() {
 version = getProjectVersion()
 group = "org.itsallcode.whiterabbit"
 
+def javaVersion = project.hasProperty('javaVersion') ? project.getProperty('javaVersion') : 17
+
 subprojects {
     group = rootProject.group
     version = rootProject.version
@@ -29,7 +31,7 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(javaVersion)
         }
         modularity.inferModulePath = false
     }
