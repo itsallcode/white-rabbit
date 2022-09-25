@@ -27,16 +27,22 @@ public interface Holidays extends PluginFeature
     interface HolidayInstance
     {
         /**
+         * Get the holiday category, e.g. "public".
+         * 
          * @return the holiday category, e.g. "public".
          */
         String getCategory();
 
         /**
+         * Get the local name of the holiday.
+         * 
          * @return the local name of the holiday.
          */
         String getName();
 
         /**
+         * Get the date of the holiday.
+         * 
          * @return the date of the holiday.
          */
         LocalDate getDate();

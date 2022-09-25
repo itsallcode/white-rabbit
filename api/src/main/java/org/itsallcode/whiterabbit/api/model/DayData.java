@@ -12,36 +12,50 @@ import java.util.List;
 public interface DayData
 {
     /**
+     * Get the date of this day.
+     * 
      * @return the date of this day.
      */
     LocalDate getDate();
 
     /**
+     * Get the {@link DayType} of this day.
+     * 
      * @return the {@link DayType} of this day.
      */
     DayType getType();
 
     /**
+     * Get the begin working time of this day.
+     * 
      * @return the begin working time of this day.
      */
     LocalTime getBegin();
 
     /**
+     * Get the end working time of this day.
+     * 
      * @return the end working time of this day.
      */
     LocalTime getEnd();
 
     /**
+     * Get the duration of the interruption of this day.
+     * 
      * @return the duration of the interruption of this day.
      */
     Duration getInterruption();
 
     /**
+     * Get the working hours of this day.
+     * 
      * @return the working hours of this day.
      */
     Duration getWorkingHours();
 
     /**
+     * Get the comment of this day.
+     * 
      * @return the comment of this day.
      */
     String getComment();
@@ -103,6 +117,8 @@ public interface DayData
     void setInterruption(Duration interruption);
 
     /**
+     * Get the the {@link ActivityData}s for this day.
+     * 
      * @return the {@link ActivityData}s for this day.
      */
     List<ActivityData> getActivities();
