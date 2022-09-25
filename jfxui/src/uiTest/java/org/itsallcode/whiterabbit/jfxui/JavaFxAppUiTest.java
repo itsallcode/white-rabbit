@@ -267,11 +267,14 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     @Test
     void higlightedWeekends()
     {
+        time().tickMinute();
         final DayTable dayTable = app().dayTable();
+        dayTable.table().clickRow(0);
 
-        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
-        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
-                25, 26, 27, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
+                        23, 24,
+                        25, 26, 27, 30));
     }
 
     @Test
@@ -280,23 +283,23 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final DayTable dayTable = app().dayTable();
 
-        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
-        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
-                25, 26, 27, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
+                        23, 24, 25, 26, 27, 30));
 
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
         TestUtil.sleepShort();
 
-        dayTable.assertRowsHighlightedAsWeekend(4, 5, 11, 12, 18, 19, 25, 26);
-        dayTable.assertRowsNotHighlightedAsWeekend(0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 20, 21, 22,
-                23, 24, 27, 28, 29, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(4, 5, 11, 12, 18, 19, 25, 26),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 20, 21,
+                        22, 23, 24, 27, 28, 29, 30));
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
         TestUtil.sleepShort();
 
-        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
-        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
-                25, 26, 27, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
+                        23, 24, 25, 26, 27, 30));
     }
 
     @Test
