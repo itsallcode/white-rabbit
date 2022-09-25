@@ -17,9 +17,9 @@ public interface ProjectReportActivity
     Project getProject();
 
     /**
-     * Get the total duration of this activity.
+     * Get the working time used for for activity.
      * 
-     * @return the total duration of this activity.
+     * @return the working time used for for activity.
      */
     Duration getWorkingTime();
 
