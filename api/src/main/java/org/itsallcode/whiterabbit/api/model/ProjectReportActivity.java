@@ -10,16 +10,22 @@ import java.util.List;
 public interface ProjectReportActivity
 {
     /**
+     * Get the {@link Project} of this activity.
+     * 
      * @return the {@link Project} of this activity.
      */
     Project getProject();
 
     /**
+     * Get the total duration of this activity.
+     * 
      * @return the total duration of this activity.
      */
     Duration getWorkingTime();
 
     /**
+     * Get the comments for this activity.
+     * 
      * @return the comments for this activity.
      */
     List<String> getComments();

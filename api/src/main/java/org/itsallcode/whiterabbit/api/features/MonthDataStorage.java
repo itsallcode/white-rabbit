@@ -16,6 +16,8 @@ import org.itsallcode.whiterabbit.api.model.MonthData;
 public interface MonthDataStorage extends PluginFeature
 {
     /**
+     * Get the data for the given month.
+     * 
      * @param month
      *            the month for which to load the data.
      * @return the data for the given month.
@@ -33,16 +35,22 @@ public interface MonthDataStorage extends PluginFeature
     void store(YearMonth month, MonthData data);
 
     /**
+     * Get all months for that data is available in the store.
+     * 
      * @return all months for that data is available in the store.
      */
     List<YearMonth> getAvailableDataMonths();
 
     /**
+     * Get all available data.
+     * 
      * @return all available data.
      */
     List<MonthData> loadAll();
 
     /**
+     * Get the model factory that can be used to create instances of the model.
+     * 
      * @return the model factory that can be used to create instances of the
      *         model.
      */
@@ -54,16 +62,22 @@ public interface MonthDataStorage extends PluginFeature
     public interface ModelFactory
     {
         /**
+         * Create a new {@link MonthData} instance.
+         * 
          * @return a new {@link MonthData} instance.
          */
         MonthData createMonthData();
 
         /**
+         * Create a new {@link DayData} instance.
+         * 
          * @return a new {@link DayData} instance.
          */
         DayData createDayData();
 
         /**
+         * Create a new {@link ActivityData} instance.
+         * 
          * @return a new {@link ActivityData} instance.
          */
         ActivityData createActivityData();

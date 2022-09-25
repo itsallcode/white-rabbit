@@ -9,6 +9,8 @@ import java.time.Duration;
 public interface ActivityData
 {
     /**
+     * Get the project's ID.
+     * 
      * @return the project's ID.
      */
     String getProjectId();
@@ -22,11 +24,15 @@ public interface ActivityData
     void setProjectId(String id);
 
     /**
+     * Get the duration of the activity.
+     * 
      * @return the duration of the activity.
      */
     Duration getDuration();
 
     /**
+     * Check if this is the remainder activity.
+     * 
      * @return {@code true} if this is the remainder activity i.e. the duration
      *         is {@code null}.
      */
@@ -42,6 +48,8 @@ public interface ActivityData
     void setDuration(Duration duration);
 
     /**
+     * Get the activity's comment.
+     * 
      * @return the activity's comment.
      */
     String getComment();

@@ -20,12 +20,14 @@ public enum DayType
 
     private final boolean workDay;
 
-    private DayType(boolean workDay)
+    private DayType(final boolean workDay)
     {
         this.workDay = workDay;
     }
 
     /**
+     * Check if this is a working day.
+     * 
      * @return <code>true</code> if you need to work on a day of this type.
      */
     public boolean isWorkDay()
