@@ -49,12 +49,12 @@ jobs:
     - name: Build with Gradle
       if: ${{ env.DEFAULT_OS == matrix.os }}
       run: |
-        ./gradlew build --warning-mode=summary -PskipFlakyTests=true
+        ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true
 
     - name: Sonar analysis
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}
       run: |
-        ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --warning-mode=summary
+        ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --info --warning-mode=summary
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
