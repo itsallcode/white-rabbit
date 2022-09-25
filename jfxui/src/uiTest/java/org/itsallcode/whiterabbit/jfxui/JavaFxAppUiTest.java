@@ -226,6 +226,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    @Tag(JunitTags.FLAKY)
     void weekendsAreHighlightedAsWeekend()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
@@ -236,6 +237,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    @Tag(JunitTags.FLAKY)
     void weekendsAreHighlightedAsNotWorking()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
