@@ -229,9 +229,9 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowHasPseudoClass(0, "weekend"),
-                () -> dayTable.assertRowHasPseudoClass(1, "weekend"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "weekend"));
+                () -> dayTable.assertRowHasPseudoClass(7, "weekend"),
+                () -> dayTable.assertRowHasPseudoClass(8, "weekend"),
+                () -> dayTable.assertRowDoesNotHavePseudoClass(9, "weekend"));
     }
 
     @Test
@@ -239,9 +239,9 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowHasPseudoClass(0, "not-working"),
-                () -> dayTable.assertRowHasPseudoClass(1, "not-working"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "not-working"));
+                () -> dayTable.assertRowHasPseudoClass(7, "not-working"),
+                () -> dayTable.assertRowHasPseudoClass(8, "not-working"),
+                () -> dayTable.assertRowDoesNotHavePseudoClass(9, "not-working"));
     }
 
     @Test
@@ -322,7 +322,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
