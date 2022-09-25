@@ -12,6 +12,9 @@ jobs:
       matrix:
         java: [17]
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        include:
+          - os: ubuntu-latest
+            java: 18
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
       cancel-in-progress: true
