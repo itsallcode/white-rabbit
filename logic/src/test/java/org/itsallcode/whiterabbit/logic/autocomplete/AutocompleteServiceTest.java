@@ -56,7 +56,7 @@ class AutocompleteServiceTest
     }
 
     @Test
-    void dayCommentAutocompleterCachesEntries()
+    void testSecondAutocompletedDayRecordGetsServedFromCache()
     {
         simulateDays(dayRecordsWithComments(null, "", "Comment A", "Comment B"));
         final AutocompleteEntrySupplier completer = autocompleteService.dayCommentAutocompleter();

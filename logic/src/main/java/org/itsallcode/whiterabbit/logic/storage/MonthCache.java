@@ -30,7 +30,7 @@ class MonthCache
         return cache.containsKey(month);
     }
 
-    List<DayRecord> getLatestDays(final LocalDate maxAge)
+    List<DayRecord> getLatestDayRecords(final LocalDate maxAge)
     {
         final YearMonth oldestYearMonth = YearMonth.from(maxAge);
         return cache.values().stream()
@@ -42,7 +42,7 @@ class MonthCache
 
     private void notifyListeners(final MonthIndex updatedMonth)
     {
-        listeners.forEach(l -> l.cacheUpdated(updatedMonth));
+        listeners.forEach(listener -> listener.cacheUpdated(updatedMonth));
     }
 
     public void addCacheInvalidationListener(final CacheInvalidationListener listener)

@@ -31,7 +31,7 @@ class MonthCacheTest
     @Test
     void getLatestDays_emptyCache_returnsEmptyList()
     {
-        assertThat(cache.getLatestDays(VERY_OLD)).isEmpty();
+        assertThat(cache.getLatestDayRecords(VERY_OLD)).isEmpty();
     }
 
     @Test
@@ -39,7 +39,7 @@ class MonthCacheTest
     {
         final DayRecord day1 = day(LocalDate.of(2020, Month.OCTOBER, 25));
         cache.update(month(YearMonth.of(2020, Month.OCTOBER), day1));
-        assertThat(cache.getLatestDays(VERY_OLD)).containsExactly(day1);
+        assertThat(cache.getLatestDayRecords(VERY_OLD)).containsExactly(day1);
     }
 
     @Test
@@ -49,10 +49,10 @@ class MonthCacheTest
         final DayRecord day2 = day(LocalDate.of(2020, Month.OCTOBER, 26));
 
         cache.update(month(YearMonth.of(2020, Month.OCTOBER), day1));
-        assertThat(cache.getLatestDays(VERY_OLD)).containsExactly(day1);
+        assertThat(cache.getLatestDayRecords(VERY_OLD)).containsExactly(day1);
 
         cache.update(month(YearMonth.of(2020, Month.OCTOBER), day2));
-        assertThat(cache.getLatestDays(VERY_OLD)).containsExactly(day2);
+        assertThat(cache.getLatestDayRecords(VERY_OLD)).containsExactly(day2);
     }
 
     @Test
@@ -61,7 +61,7 @@ class MonthCacheTest
         final DayRecord day1 = day(LocalDate.of(2020, Month.OCTOBER, 25));
         cache.update(month(YearMonth.from(RECENT).minusMonths(1), day1));
 
-        assertThat(cache.getLatestDays(RECENT)).isEmpty();
+        assertThat(cache.getLatestDayRecords(RECENT)).isEmpty();
     }
 
     @Test
@@ -70,7 +70,7 @@ class MonthCacheTest
         final DayRecord day1 = day(LocalDate.of(2020, Month.OCTOBER, 25));
         cache.update(month(YearMonth.from(RECENT), day1));
 
-        assertThat(cache.getLatestDays(RECENT)).containsExactly(day1);
+        assertThat(cache.getLatestDayRecords(RECENT)).containsExactly(day1);
     }
 
     @Test
@@ -79,7 +79,7 @@ class MonthCacheTest
         final DayRecord day1 = day(RECENT.minusDays(1));
         cache.update(month(YearMonth.from(RECENT), day1));
 
-        assertThat(cache.getLatestDays(RECENT)).isEmpty();
+        assertThat(cache.getLatestDayRecords(RECENT)).isEmpty();
     }
 
     @Test
@@ -88,7 +88,7 @@ class MonthCacheTest
         final DayRecord day1 = day(RECENT);
         cache.update(month(YearMonth.from(RECENT), day1));
 
-        assertThat(cache.getLatestDays(RECENT)).containsExactly(day1);
+        assertThat(cache.getLatestDayRecords(RECENT)).containsExactly(day1);
     }
 
     @Test

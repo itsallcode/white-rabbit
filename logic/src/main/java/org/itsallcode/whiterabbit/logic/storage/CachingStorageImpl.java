@@ -20,19 +20,19 @@ class CachingStorageImpl implements CachingStorage
     private final Storage delegateStorage;
     private final MonthCache cache;
 
-    CachingStorageImpl(Storage delegateStorage)
+    CachingStorageImpl(final Storage delegateStorage)
     {
         this(delegateStorage, new MonthCache());
     }
 
-    CachingStorageImpl(Storage delegateStorage, MonthCache cache)
+    CachingStorageImpl(final Storage delegateStorage, final MonthCache cache)
     {
         this.delegateStorage = delegateStorage;
         this.cache = cache;
     }
 
     @Override
-    public Optional<MonthIndex> loadMonth(YearMonth date)
+    public Optional<MonthIndex> loadMonth(final YearMonth date)
     {
         return delegateStorage.loadMonth(date).map(this::updateCache);
     }
@@ -44,7 +44,7 @@ class CachingStorageImpl implements CachingStorage
     }
 
     @Override
-    public void storeMonth(MonthIndex month)
+    public void storeMonth(final MonthIndex month)
     {
         delegateStorage.storeMonth(updateCache(month));
     }
@@ -55,13 +55,13 @@ class CachingStorageImpl implements CachingStorage
         return updateCache(delegateStorage.loadAll());
     }
 
-    private MultiMonthIndex updateCache(MultiMonthIndex index)
+    private MultiMonthIndex updateCache(final MultiMonthIndex index)
     {
         index.getMonths().forEach(this::updateCache);
         return index;
     }
 
-    private MonthIndex updateCache(MonthIndex month)
+    private MonthIndex updateCache(final MonthIndex month)
     {
         cache.update(month);
         return month;
@@ -74,13 +74,13 @@ class CachingStorageImpl implements CachingStorage
     }
 
     @Override
-    public List<DayRecord> getLatestDays(LocalDate maxAge)
+    public List<DayRecord> getLatestDays(final LocalDate maxAge)
     {
         ensureLatestDaysCached(maxAge);
-        return cache.getLatestDays(maxAge);
+        return cache.getLatestDayRecords(maxAge);
     }
 
-    void ensureLatestDaysCached(LocalDate maxAge)
+    void ensureLatestDaysCached(final LocalDate maxAge)
     {
         for (final YearMonth requiredMonth : getRequiredYearMonths(maxAge))
         {
@@ -92,7 +92,7 @@ class CachingStorageImpl implements CachingStorage
         }
     }
 
-    List<YearMonth> getRequiredYearMonths(LocalDate maxAge)
+    List<YearMonth> getRequiredYearMonths(final LocalDate maxAge)
     {
         final YearMonth oldestYearMonth = YearMonth.from(maxAge);
         return delegateStorage.getAvailableDataMonths().stream()
@@ -101,7 +101,7 @@ class CachingStorageImpl implements CachingStorage
     }
 
     @Override
-    public void addCacheInvalidationListener(CacheInvalidationListener listener)
+    public void addCacheInvalidationListener(final CacheInvalidationListener listener)
     {
         this.cache.addCacheInvalidationListener(listener);
 

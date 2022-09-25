@@ -38,10 +38,10 @@ public class AutocompleteService
     {
         this.storage = storage;
         this.clockService = clockService;
-        storage.addCacheInvalidationListener(this::cacheUpdated);
+        storage.addCacheInvalidationListener(this::invalidateCache);
     }
 
-    private void cacheUpdated(final MonthIndex updatedMonth)
+    private void invalidateCache(final MonthIndex updatedMonth)
     {
         dayCommentAutocompleter.invalidateCache();
         activityCommentAutocompleter.invalidateCache();
