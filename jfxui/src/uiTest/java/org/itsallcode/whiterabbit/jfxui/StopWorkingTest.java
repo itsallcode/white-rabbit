@@ -1,8 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
@@ -12,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -47,14 +43,14 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         time().tickSeparateMinutes(3);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 18));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 18));
 
         robot.clickOn(startStopWorkButton);
 
         time().tickSeparateMinutes(3);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 18));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 18));
     }
 
     @Test
@@ -67,7 +63,7 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         time().tickSeparateMinutes(3);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 18));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 18));
 
         robot.clickOn(startStopWorkButton);
         time().tickMinute();
@@ -76,7 +72,7 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         time().tickSeparateMinutes(3);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 22));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 22));
     }
 
     @Test
@@ -89,7 +85,7 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         time().tickSeparateMinutes(3);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 18));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 18));
 
         robot.clickOn(startStopWorkButton);
         time().tickMinute(Duration.ofMinutes(10));
@@ -98,8 +94,8 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         final AutomaticInterruptionDialog interruptionDialog = app().assertAutomaticInterruption();
         interruptionDialog.clickAddInterruption();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 28));
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ofMinutes(10));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 28));
+        dayTable.row(currentDayRowIndex).assertInterruption(Duration.ofMinutes(10));
     }
 
     @Test
@@ -112,7 +108,7 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         time().tickSeparateMinutes(3);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 18));
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 18));
 
         robot.clickOn(startStopWorkButton);
         time().tickMinute(Duration.ofMinutes(10));
@@ -121,8 +117,8 @@ class StopWorkingTest extends JavaFxAppUiTestBase
         final AutomaticInterruptionDialog interruptionDialog = app().assertAutomaticInterruption();
         interruptionDialog.clickSkipInterruption();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, LocalTime.of(11, 16), LocalTime.of(11, 28));
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(LocalTime.of(11, 16), LocalTime.of(11, 28));
+        dayTable.row(currentDayRowIndex).assertInterruption(Duration.ZERO);
     }
 
     private Button getStartStopButton()
@@ -132,7 +128,7 @@ class StopWorkingTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));

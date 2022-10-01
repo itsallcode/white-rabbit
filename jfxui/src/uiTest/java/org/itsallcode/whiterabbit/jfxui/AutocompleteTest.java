@@ -9,9 +9,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
@@ -29,10 +27,10 @@ class AutocompleteTest extends JavaFxAppUiTestBase
 
         final DayTable dayTable = app().dayTable();
 
-        dayTable.typeComment(3, "txt1");
-        dayTable.typeComment(4, "txt2");
+        dayTable.row(3).typeComment("txt1");
+        dayTable.row(4).typeComment("txt2");
 
-        final TableCell<?, ?> commentCell = dayTable.getCommentCell(5);
+        final TableCell<?, ?> commentCell = dayTable.row(5).getCommentCell();
 
         robot.doubleClickOn(commentCell)
                 .write("t")
@@ -46,7 +44,7 @@ class AutocompleteTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
