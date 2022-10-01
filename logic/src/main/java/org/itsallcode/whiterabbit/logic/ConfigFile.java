@@ -22,20 +22,20 @@ class ConfigFile implements Config
     private final Path file;
     private final WorkingDirProvider dirProvider;
 
-    ConfigFile(WorkingDirProvider dirProvider, Properties properties, Path configFile)
+    ConfigFile(final WorkingDirProvider dirProvider, final Properties properties, final Path configFile)
     {
         this.dirProvider = dirProvider;
         this.properties = properties;
         this.file = configFile;
     }
 
-    static ConfigFile read(WorkingDirProvider dirProvider, Path configFile)
+    static ConfigFile read(final WorkingDirProvider dirProvider, final Path configFile)
     {
         final Path file = configFile.normalize();
         return new ConfigFile(dirProvider, loadProperties(file), file);
     }
 
-    private static Properties loadProperties(Path configFile)
+    private static Properties loadProperties(final Path configFile)
     {
         if (!Files.exists(configFile))
         {
@@ -74,6 +74,12 @@ class ConfigFile implements Config
     }
 
     @Override
+    public Optional<Duration> getMandatoryBreak()
+    {
+        return getOptionalValue("mandatory_break").map(Duration::parse);
+    }
+
+    @Override
     public boolean allowMultipleInstances()
     {
         return getOptionalValue("allow_multiple_instances").map(Boolean::valueOf).orElse(false);
@@ -92,14 +98,14 @@ class ConfigFile implements Config
     }
 
     @Override
-    public String getMandatoryValue(String param)
+    public String getMandatoryValue(final String param)
     {
         return getOptionalValue(param).orElseThrow(
                 () -> new IllegalStateException("Property '" + param + "' not found in config file " + file));
     }
 
     @Override
-    public Optional<String> getOptionalValue(String param)
+    public Optional<String> getOptionalValue(final String param)
     {
         return Optional.ofNullable(this.properties.getProperty(param));
     }

@@ -93,6 +93,28 @@ class ConfigFileTest
     }
 
     @Test
+    void getMandatoryBreak_failsForInvalidValue()
+    {
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn("invalid");
+        assertThatThrownBy(() -> configFile.getMandatoryBreak())
+                .isInstanceOf(DateTimeParseException.class);
+    }
+
+    @Test
+    void getMandatoryBreak_returnsDefault()
+    {
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn(null);
+        assertThat(configFile.getMandatoryBreak()).isEmpty();
+    }
+
+    @Test
+    void getMandatoryBreak_returnsCustomValue()
+    {
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn("PT0M");
+        assertThat(configFile.getMandatoryBreak()).isPresent().hasValue(Duration.ofMinutes(0));
+    }
+
+    @Test
     void getLocale_returnsDefault()
     {
         when(propertiesMock.getProperty("locale")).thenReturn(null);

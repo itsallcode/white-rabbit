@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 import org.itsallcode.whiterabbit.logic.service.AppService;
-import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -33,7 +32,7 @@ public class InterruptionPresetFeature
     private static final List<Integer> PRESETS_IN_MINUTES = List.of(5, 10, 15, 30, 45, 60, 90, 120);
     private final AppService appService;
 
-    public InterruptionPresetFeature(AppService appService)
+    public InterruptionPresetFeature(final AppService appService)
     {
         this.appService = appService;
     }
@@ -44,7 +43,7 @@ public class InterruptionPresetFeature
         button.setId("add-interruption-button");
         button.setText("Add interruption");
         button.getItems().addAll(createPresetMenuItems());
-        button.getItems().add(createMenuitem(ContractTermsService.BASIC_BREAK.negated()));
+        button.getItems().add(createMenuitem(appService.getContractTerms().getMandatoryBreak().negated()));
         button.setOnAction(event -> showDialog());
         return button;
     }
@@ -62,7 +61,7 @@ public class InterruptionPresetFeature
                 .collect(toList());
     }
 
-    private MenuItem createMenuitem(Duration interruption)
+    private MenuItem createMenuitem(final Duration interruption)
     {
         final String verb = interruption.isNegative() ? "Subtract" : "Add";
         final MenuItem menuItem = new MenuItem(
@@ -72,7 +71,7 @@ public class InterruptionPresetFeature
         return menuItem;
     }
 
-    private void addInterruptionForToday(Duration interruption)
+    private void addInterruptionForToday(final Duration interruption)
     {
         appService.addInterruption(appService.getClock().getCurrentDate(), interruption);
     }
@@ -150,7 +149,7 @@ public class InterruptionPresetFeature
             });
         }
 
-        private static Label createContentLabel(String text)
+        private static Label createContentLabel(final String text)
         {
             final Label label = new Label(text);
             label.setMaxWidth(Double.MAX_VALUE);

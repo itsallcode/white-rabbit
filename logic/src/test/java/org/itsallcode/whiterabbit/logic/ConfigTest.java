@@ -54,6 +54,12 @@ class ConfigTest
         }
 
         @Override
+        public Optional<Duration> getMandatoryBreak()
+        {
+            return Optional.empty();
+        }
+
+        @Override
         public boolean allowMultipleInstances()
         {
             return false;
@@ -66,7 +72,7 @@ class ConfigTest
         }
 
         @Override
-        public String getMandatoryValue(String key)
+        public String getMandatoryValue(final String key)
         {
             return null;
         }
@@ -78,7 +84,7 @@ class ConfigTest
         }
 
         @Override
-        public Optional<String> getOptionalValue(String key)
+        public Optional<String> getOptionalValue(final String key)
         {
             return Optional.empty();
         }

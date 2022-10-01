@@ -20,6 +20,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 * [#240](https://github.com/itsallcode/white-rabbit/pull/240): Upgrade dependencies.
 * [#147](https://github.com/itsallcode/white-rabbit/issues/147): Escape key no longer closes the main window.
 * [#252](https://github.com/itsallcode/white-rabbit/pull/252): Upgrade dependencies.
+* [#247](https://github.com/itsallcode/white-rabbit/issues/247): Allow configuring mandatory break.
 * [#250](https://github.com/itsallcode/white-rabbit/issues/250): Fix missing autocomplete proposals.
   * Added build with Java 18.
 
