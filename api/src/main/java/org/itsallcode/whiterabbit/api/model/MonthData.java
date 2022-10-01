@@ -10,6 +10,8 @@ import java.util.List;
 public interface MonthData
 {
     /**
+     * Get the year of this month.
+     * 
      * @return the year of this month.
      */
     int getYear();
@@ -23,6 +25,8 @@ public interface MonthData
     void setYear(int year);
 
     /**
+     * Get the {@link Month}.
+     * 
      * @return the {@link Month}.
      */
     Month getMonth();
@@ -36,6 +40,8 @@ public interface MonthData
     void setMonth(Month month);
 
     /**
+     * Get the duration of the previous month's overtime.
+     * 
      * @return the duration of the previous month's overtime.
      */
     Duration getOvertimePreviousMonth();
@@ -49,6 +55,8 @@ public interface MonthData
     void setOvertimePreviousMonth(Duration overtimePreviousMonth);
 
     /**
+     * Get the {@link DayData}s in this month.
+     * 
      * @return the {@link DayData}s in this month.
      */
     List<DayData> getDays();

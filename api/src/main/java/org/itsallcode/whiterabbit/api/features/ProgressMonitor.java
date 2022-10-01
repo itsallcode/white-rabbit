@@ -25,6 +25,8 @@ public interface ProgressMonitor
     void beginTask(String name, int totalWork);
 
     /**
+     * Set the name of the current task shown to the user.
+     * 
      * @param name
      *            the name of the current task shown to the user.
      */

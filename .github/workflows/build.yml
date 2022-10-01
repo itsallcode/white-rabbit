@@ -12,6 +12,9 @@ jobs:
       matrix:
         java: [17]
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        include:
+          - os: ubuntu-latest
+            java: 18
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
       cancel-in-progress: true
@@ -44,14 +47,13 @@ jobs:
         restore-keys: ${{ runner.os }}-java-${{ matrix.java }}-sonar
 
     - name: Build with Gradle
-      if: ${{ env.DEFAULT_OS == matrix.os }}
       run: |
-        ./gradlew build --warning-mode=summary -PskipFlakyTests=true
+        ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
 
     - name: Sonar analysis
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}
       run: |
-        ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --warning-mode=summary
+        ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -73,7 +75,7 @@ jobs:
     - name: Build native package for ${{ runner.os }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
-        ./gradlew jpackage createChecksums --info --warning-mode=summary
+        ./gradlew jpackage createChecksums --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
 
     - name: Stop Gradle Daemon
       run: |
