@@ -1,9 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import java.time.Instant;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.DayType;
@@ -12,9 +9,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.model.VacationReportWindow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.stage.Stage;
 
@@ -46,7 +41,7 @@ class VacationReportTest extends JavaFxAppUiTestBase
     {
         time().tickMinute();
         final int row = time().getCurrentDayRowIndex();
-        app().dayTable().selectDayTypeDirect(row, DayType.VACATION);
+        app().dayTable().row(row).selectDayTypeDirect(DayType.VACATION);
 
         final VacationReportWindow report = app().openVacationReport();
 
@@ -60,7 +55,7 @@ class VacationReportTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));

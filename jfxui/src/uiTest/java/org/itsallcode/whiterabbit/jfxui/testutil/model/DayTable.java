@@ -3,9 +3,7 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -168,7 +166,7 @@ public class DayTable
 
         public TableCell<?, ?> getCommentCell()
         {
-            return table.getTableCell("comment");
+            return table.row(row).cell("comment");
         }
 
         public void selectDayTypeDirect(final DayType type)
@@ -196,7 +194,7 @@ public class DayTable
         @SuppressWarnings("unchecked")
         public TableCell<DayRecordPropertyAdapter, DayType> getDayTypeCell()
         {
-            return (TableCell<DayRecordPropertyAdapter, DayType>) table.getTableCell(row, "day-type");
+            return (TableCell<DayRecordPropertyAdapter, DayType>) table.row(row).cell("day-type");
         }
     }
 }

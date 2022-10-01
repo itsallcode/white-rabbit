@@ -16,9 +16,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
 import javafx.css.PseudoClass;
-import javafx.scene.control.IndexedCell;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.skin.VirtualFlow;
 
 public class JavaFxTable<T>
@@ -153,7 +151,7 @@ public class JavaFxTable<T>
                     .filter(pseudoClass -> pseudoClass.getPseudoClassName().equals(pseudoClassName));
         }
 
-        public JavaFxTable<T>.JavaFxTableRow clickRow(final int rowIndex)
+        public JavaFxTable<T>.JavaFxTableRow click()
         {
             robot.clickOn(tableRow());
             return this;

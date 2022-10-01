@@ -3,17 +3,10 @@ package org.itsallcode.whiterabbit.jfxui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.Locale;
 
-import org.itsallcode.whiterabbit.api.model.DayData;
-import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.api.model.MonthData;
+import org.itsallcode.whiterabbit.api.model.*;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
 import org.itsallcode.whiterabbit.jfxui.testutil.JunitTags;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
@@ -24,9 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.scene.control.Labeled;
 import javafx.scene.input.KeyCode;
@@ -118,14 +109,14 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         time().tickMinute();
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2007, Month.DECEMBER, 1)));
 
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
         TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2008, Month.JANUARY, 1)));
     }
 
     @Test
@@ -136,14 +127,14 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2008, Month.JANUARY, 1)));
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
         TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2007, Month.DECEMBER, 1)));
     }
 
     @Test
@@ -200,7 +191,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         dayTable.assertRowSelected(2);
 
-        dayTable.clickRow(5);
+        dayTable.row(5).click();
         dayTable.assertRowSelected(5);
 
         time().tickMinute();
@@ -216,7 +207,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         dayTable.assertRowSelected(2);
 
-        dayTable.clickRow(5);
+        dayTable.row(5).click();
         dayTable.assertRowSelected(5);
 
         time().tickDay();
@@ -231,9 +222,9 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowHasPseudoClass(7, "weekend"),
-                () -> dayTable.assertRowHasPseudoClass(8, "weekend"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(9, "weekend"));
+                () -> dayTable.row(7).assertHasPseudoClass("weekend"),
+                () -> dayTable.row(8).assertHasPseudoClass("weekend"),
+                () -> dayTable.row(9).assertDoesNotHavePseudoClass("weekend"));
     }
 
     @Test
@@ -242,9 +233,9 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowHasPseudoClass(7, "not-working"),
-                () -> dayTable.assertRowHasPseudoClass(8, "not-working"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(9, "not-working"));
+                () -> dayTable.row(7).assertHasPseudoClass( "not-working"),
+                () -> dayTable.row(8).assertHasPseudoClass( "not-working"),
+                () -> dayTable.row(9).assertDoesNotHavePseudoClass( "not-working"));
     }
 
     @Test
@@ -252,18 +243,18 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "weekend"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "not-working"));
+                () -> dayTable.row(2).assertDoesNotHavePseudoClass( "weekend"),
+                () -> dayTable.row(2).assertDoesNotHavePseudoClass( "not-working"));
     }
 
     @Test
     void holidaysAreHighlightedAsNotWorking()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
-        dayTable.assertRowDoesNotHavePseudoClass(2, "not-working");
+        dayTable.row(2).assertDoesNotHavePseudoClass( "not-working");
 
-        app().dayTable().selectDayType(2, DayType.HOLIDAY);
-        dayTable.assertRowHasPseudoClass(2, "not-working");
+        app().dayTable().row(2).selectDayType( DayType.HOLIDAY);
+        dayTable.row(2).assertHasPseudoClass( "not-working");
     }
 
     @Test
@@ -271,7 +262,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         time().tickMinute();
         final DayTable dayTable = app().dayTable();
-        dayTable.table().clickRow(0);
+        dayTable.table().row(0).click();
 
         assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
                 () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,

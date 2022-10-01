@@ -16,7 +16,7 @@ public class ActivitiesTable
     private final JavaFxTable<ActivityPropertyAdapter> table;
     private final FxRobot robot;
 
-    ActivitiesTable(JavaFxTable<ActivityPropertyAdapter> table, FxRobot robot)
+    ActivitiesTable(final JavaFxTable<ActivityPropertyAdapter> table, final FxRobot robot)
     {
         this.table = table;
         this.robot = robot;
@@ -27,38 +27,38 @@ public class ActivitiesTable
         return robot.lookup("#add-activity-button").queryButton();
     }
 
-    public void addRemainderActivity(String comment)
+    public void addRemainderActivity(final String comment)
     {
         addRemainderActivity(null, comment);
     }
 
-    public void addRemainderActivity(Project project, String comment)
+    public void addRemainderActivity(final Project project, final String comment)
     {
         final int rowIndex = addActivity();
 
         if (project != null)
         {
-            final Node projectCell = table.getTableCell(rowIndex, "project");
+            final Node projectCell = table.row(rowIndex).cell("project");
             robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
         }
-        final TableCell<?, ?> remainderCell = table.getTableCell(rowIndex, "remainder");
+        final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
         if (!(Boolean) remainderCell.getItem())
         {
             robot.clickOn(remainderCell);
         }
-        robot.doubleClickOn(table.getTableCell(rowIndex, "comment")).write(comment).type(KeyCode.ENTER);
+        robot.doubleClickOn(table.row(rowIndex).cell("comment")).write(comment).type(KeyCode.ENTER);
     }
 
-    public void addActivity(Duration duration, String comment)
+    public void addActivity(final Duration duration, final String comment)
     {
         addActivity(null, duration, comment);
     }
 
-    public void addActivity(Project project, Duration duration, String comment)
+    public void addActivity(final Project project, final Duration duration, final String comment)
     {
         final int rowIndex = addActivity();
 
-        final TableCell<?, ?> remainderCell = table.getTableCell(rowIndex, "remainder");
+        final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
         if ((Boolean) remainderCell.getItem())
         {
             robot.clickOn(remainderCell);
@@ -66,20 +66,20 @@ public class ActivitiesTable
 
         if (project != null)
         {
-            final Node projectCell = table.getTableCell(rowIndex, "project");
+            final Node projectCell = table.row(rowIndex).cell("project");
             robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
-            robot.clickOn(table.getTableCell(rowIndex, "duration"));
+            robot.clickOn(table.row(rowIndex).cell("duration"));
         }
 
-        robot.doubleClickOn(table.getTableCell(rowIndex, "duration"))
+        robot.doubleClickOn(table.row(rowIndex).cell("duration"))
                 .write("0:" + duration.toMinutes())
                 .type(KeyCode.ENTER);
-        robot.doubleClickOn(table.getTableCell(rowIndex, "comment")).write(comment).type(KeyCode.ENTER);
+        robot.doubleClickOn(table.row(rowIndex).cell("comment")).write(comment).type(KeyCode.ENTER);
     }
 
-    public void toggleRemainder(int rowIndex)
+    public void toggleRemainder(final int rowIndex)
     {
-        robot.clickOn(table.getTableCell(rowIndex, "remainder"));
+        robot.clickOn(table.row(rowIndex).cell("remainder"));
     }
 
     public int addActivity()
@@ -100,9 +100,9 @@ public class ActivitiesTable
         return robot.lookup("#remove-activity-button").queryButton();
     }
 
-    public TableCell<?, ?> getCommentCell(int rowIndex)
+    public TableCell<?, ?> getCommentCell(final int rowIndex)
     {
-        return table.getTableCell(rowIndex, "comment");
+        return table.row(rowIndex).cell("comment");
     }
 
     public JavaFxTable<ActivityPropertyAdapter> table()

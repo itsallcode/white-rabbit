@@ -18,7 +18,7 @@ public class MonthlyProjectReportWindow
     private final Window window;
     private final JavaFxTable<ReportRow> table;
 
-    MonthlyProjectReportWindow(FxRobot robot, Window window)
+    MonthlyProjectReportWindow(final FxRobot robot, final Window window)
     {
         this.robot = robot;
         this.window = window;
@@ -38,16 +38,16 @@ public class MonthlyProjectReportWindow
         Assertions.assertThat(window).isNotShowing();
     }
 
-    public MonthlyProjectReportWindow assertRowCount(int expectedRowCount)
+    public MonthlyProjectReportWindow assertRowCount(final int expectedRowCount)
     {
         assertThat(table.getRowCount()).isEqualTo(expectedRowCount);
         return this;
     }
 
-    public MonthlyProjectReportWindow assertProject(int projectIndex, Project expectedProject,
-            Duration expectedWorkingTime, String expectedComment)
+    public MonthlyProjectReportWindow assertProject(final int projectIndex, final Project expectedProject,
+            final Duration expectedWorkingTime, final String expectedComment)
     {
-        final ReportRow row = table.getTableRow(projectIndex).getItem();
+        final ReportRow row = table.row(projectIndex).tableRow().getItem();
         assertThat(row.getProject()).isEqualTo(expectedProject);
         assertThat(row.getWorkingTime()).isEqualTo(expectedWorkingTime);
         assertThat(row.getComment()).isEqualTo(expectedComment);

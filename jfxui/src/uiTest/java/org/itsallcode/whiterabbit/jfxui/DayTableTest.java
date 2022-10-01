@@ -2,9 +2,7 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.DayType;
@@ -15,9 +13,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.stage.Stage;
 
@@ -39,7 +35,7 @@ class DayTableTest extends JavaFxAppUiTestBase
         final int currentDayRowIndex = time().getCurrentDayRowIndex();
 
         final DayTable dayTable = app().dayTable();
-        dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(null, null);
     }
 
     @Test
@@ -51,7 +47,7 @@ class DayTableTest extends JavaFxAppUiTestBase
         final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final LocalTime now = time().getCurrentTimeMinutes();
         final DayTable dayTable = app().dayTable();
-        dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(now, now);
     }
 
     @Test
@@ -64,14 +60,14 @@ class DayTableTest extends JavaFxAppUiTestBase
         final LocalTime firstTick = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, firstTick);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(firstTick, firstTick);
 
         time().tickMinute();
 
         TestUtil.sleepShort();
 
         final LocalTime secondTick = time().getCurrentTimeMinutes();
-        dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, secondTick);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(firstTick, secondTick);
     }
 
     @Test
@@ -92,7 +88,7 @@ class DayTableTest extends JavaFxAppUiTestBase
 
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, firstTick, secondTick);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(firstTick, secondTick);
     }
 
     @Test
@@ -105,12 +101,12 @@ class DayTableTest extends JavaFxAppUiTestBase
         final LocalTime now = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, now, now);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(now, now);
 
-        dayTable.selectDayType(currentDayRowIndex, DayType.SICK);
+        dayTable.row(currentDayRowIndex).selectDayType(DayType.SICK);
         TestUtil.sleepShort();
 
-        dayTable.assertBeginAndEnd(currentDayRowIndex, null, null);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(null, null);
     }
 
     @Test
@@ -167,24 +163,24 @@ class DayTableTest extends JavaFxAppUiTestBase
         assertTimeParsed("08", LocalTime.of(8, 0));
     }
 
-    private void assertTimeParsed(String enteredText, LocalTime expectedTime)
+    private void assertTimeParsed(final String enteredText, final LocalTime expectedTime)
     {
         final int row = time().getCurrentDayRowIndex() + 1;
         final DayTable dayTable = app().dayTable();
 
-        dayTable.typeBegin(row, enteredText);
+        dayTable.row(row).typeBegin(enteredText);
 
-        assertThat(dayTable.getBegin(row)).isEqualTo(expectedTime);
+        assertThat(dayTable.row(row).getBegin()).isEqualTo(expectedTime);
     }
 
-    private void assertDurationParsed(String enteredText, Duration expectedDuration)
+    private void assertDurationParsed(final String enteredText, final Duration expectedDuration)
     {
         final int row = time().getCurrentDayRowIndex() + 1;
         final DayTable dayTable = app().dayTable();
 
-        dayTable.typeInterruption(row, enteredText);
+        dayTable.row(row).typeInterruption( enteredText);
 
-        assertThat(dayTable.getInterruption(row)).isEqualTo(expectedDuration);
+        assertThat(dayTable.row(row).getInterruption()).isEqualTo(expectedDuration);
     }
 
     @Test
@@ -195,7 +191,7 @@ class DayTableTest extends JavaFxAppUiTestBase
 
         final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
-        assertThat(dayTable.getBeginText(currentDayRowIndex)).isEqualTo("11:16");
+        assertThat(dayTable.row(currentDayRowIndex).getBeginText()).isEqualTo("11:16");
     }
 
     @Test
@@ -206,7 +202,7 @@ class DayTableTest extends JavaFxAppUiTestBase
 
         final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
-        assertThat(dayTable.getInterruptionText(currentDayRowIndex)).isEqualTo("00:00");
+        assertThat(dayTable.row(currentDayRowIndex).getInterruptionText()).isEqualTo("00:00");
     }
 
     @Test
@@ -215,9 +211,9 @@ class DayTableTest extends JavaFxAppUiTestBase
         final int row = time().getCurrentDayRowIndex() + 1;
         final DayTable dayTable = app().dayTable();
 
-        dayTable.typeInterruption(row, "1:02");
+        dayTable.row(row).typeInterruption( "1:02");
 
-        assertThat(dayTable.getInterruptionText(row)).isEqualTo("01:02");
+        assertThat(dayTable.row(row).getInterruptionText()).isEqualTo("01:02");
     }
 
     @Test
@@ -242,7 +238,7 @@ class DayTableTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
