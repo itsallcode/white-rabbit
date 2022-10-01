@@ -70,7 +70,7 @@ Add the following to your `~/.gradle/gradle.properties`:
 
 ### <a name="build_and_deploy"></a>Build and deploy
 
-1. Make sure the [Changelog](CHANGELOG.md) is updated
+1. Make sure the [Changelog](../CHANGELOG.md) is updated
 2. Run the following command:
 
     ```bash
