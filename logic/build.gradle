@@ -20,9 +20,11 @@ sourceSets {
 }
 
 task createAppProperties(type: WriteProperties) {
+    def buildDate = Instant.now().toString()
     comment = "White Rabbit app properties"
     outputFile = "$generatedResourcesFolder/white-rabbit.properties"
     property 'version', project.version
+    property 'buildDate', buildDate
 }
 
 tasks['processResources'].dependsOn createAppProperties

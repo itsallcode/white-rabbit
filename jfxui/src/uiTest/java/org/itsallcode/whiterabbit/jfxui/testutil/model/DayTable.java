@@ -89,19 +89,19 @@ public class DayTable
 
         public void assertInterruption(final Duration expectedInterruption)
         {
-            assertThat(getInterruption()).as("interruption duration").isEqualTo(expectedInterruption);
+            assertThat(getInterruption()).as("interruption duration in row " + row).isEqualTo(expectedInterruption);
         }
 
         public void assertBeginAndEnd(final LocalTime begin, final LocalTime end)
         {
             assertAll(
-                    () -> assertThat(getBegin()).as("begin time").isEqualTo(begin),
-                    () -> assertThat(getEnd()).as("end time").isEqualTo(end));
+                    () -> assertThat(getBegin()).as("begin time in row " + row).isEqualTo(begin),
+                    () -> assertThat(getEnd()).as("end time in row " + row).isEqualTo(end));
         }
 
         public void assertDate(final LocalDate expectedDate)
         {
-            assertThat(getDate()).isEqualTo(expectedDate);
+            assertThat(getDate()).as("date in row " + row).isEqualTo(expectedDate);
         }
 
         public LocalDate getDate()

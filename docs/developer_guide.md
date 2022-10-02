@@ -10,7 +10,9 @@ cd white-rabbit
 echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 ```
 
-## Build and launch
+## Using Build Scripts
+
+### Build and launch
 
 ```bash
 # Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
@@ -28,22 +30,36 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 ./gradlew runWithPlugins
 ```
 
-## Run UI-Tests
+### Running Tests
+
+Run all tests:
+
+```bash
+./gradlew check
+```
+
+Run only UI-Tests:
 
 ```bash
 # Headless (default)
 ./gradlew check
-# Not Headless (don't move mouse while running)
+# Not Headless (don't move mouse while running!)
 ./gradlew check -PuiTestsHeadless=false
 ```
 
-## Check that dependencies are up-to-date
+Run a single test:
+
+```bash
+./gradlew uiTest -i --tests AboutDialogUiTest
+```
+
+### Check that dependencies are up-to-date
 
 ```bash
 ./gradlew dependencyUpdates
 ```
 
-## <a name="build_native_package"></a>Build Native Packages
+### <a name="build_native_package"></a>Build Native Packages
 
 Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and add it to the `PATH`.
 
