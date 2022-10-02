@@ -16,7 +16,7 @@ module org.itsallcode.whiterabbit.logic
     exports org.itsallcode.whiterabbit.logic.report.project;
     exports org.itsallcode.whiterabbit.logic.service.singleinstance;
 
-    requires java.json.bind;
+    requires jakarta.json.bind;
     requires org.apache.logging.log4j;
     requires org.eclipse.yasson;
     requires org.itsallcode.whiterabbit.api;

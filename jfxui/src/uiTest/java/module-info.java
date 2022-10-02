@@ -1,5 +1,6 @@
-module org.itsallcode.whiterabbit.jfxui
+open module org.itsallcode.whiterabbit.jfxuitest
 {
+    requires org.itsallcode.whiterabbit.jfxui;
     requires java.desktop;
     requires jakarta.json.bind;
     requires javafx.base;
