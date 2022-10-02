@@ -33,7 +33,7 @@ subprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(javaVersion)
         }
-        modularity.inferModulePath = true
+        modularity.inferModulePath = false
     }
 
     tasks.withType(JavaExec) {
