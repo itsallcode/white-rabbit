@@ -13,11 +13,13 @@ public interface Config
 
     Locale getLocale();
 
-    Optional<Duration> getCurrentHoursPerDay();
-
     boolean allowMultipleInstances();
 
     Path getConfigFile();
+
+    Optional<Duration> getCurrentHoursPerDay();
+
+    Optional<Duration> getMandatoryBreak();
 
     default Path getProjectFile()
     {
@@ -42,4 +44,6 @@ public interface Config
     }
 
     String getMandatoryValue(String key);
+
+    Optional<String> getOptionalValue(String key);
 }

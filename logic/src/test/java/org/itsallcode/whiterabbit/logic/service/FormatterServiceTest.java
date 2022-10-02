@@ -17,7 +17,7 @@ class FormatterServiceTest
     @BeforeEach
     void setUp()
     {
-        formatter = new FormatterService(Locale.GERMAN, ZoneId.of("Europe/Berlin"));
+        formatter = new FormatterService(Locale.GERMANY, ZoneId.of("Europe/Berlin"));
     }
 
     @Test
@@ -30,6 +30,6 @@ class FormatterServiceTest
     void testFormatDateAndTime()
     {
         assertThat(formatter.formatDateAndTime(Instant.parse("2007-12-03T10:15:30.00Z")))
-                .isEqualTo("03.12.07, 11:15:30");
+                .isEqualTo("Mo 03.12.2007 CW49, 11:15:30");
     }
 }

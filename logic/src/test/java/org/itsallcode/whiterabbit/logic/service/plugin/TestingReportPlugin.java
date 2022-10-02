@@ -1,5 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
+import java.util.Optional;
+
 import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
@@ -38,9 +40,9 @@ public class TestingReportPlugin implements Plugin, ProjectReportExporter
     }
 
     @Override
-    public <T extends PluginFeature> T getFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType)
     {
-        return featureType.cast(this);
+        return Optional.of(featureType.cast(this));
     }
 
     public PluginConfiguration getConfig()

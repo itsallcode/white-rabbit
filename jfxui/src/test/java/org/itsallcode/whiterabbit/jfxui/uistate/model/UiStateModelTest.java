@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 
 class UiStateModelTest
 {
@@ -46,10 +46,10 @@ class UiStateModelTest
     {
         model = new UiStateModel();
         final StageStateModel stage1 = new StageStateModel("id");
-        stage1.height = 1;
-        stage1.width = 2;
-        stage1.x = 3;
-        stage1.y = 4;
+        stage1.height = 1D;
+        stage1.width = 2D;
+        stage1.x = 3D;
+        stage1.y = 4D;
         model.stages.put("s1", stage1);
         assertSerialized(
                 "{\"splitPanes\":{},\"stages\":{\"s1\":{\"height\":1.0,\"id\":\"id\",\"width\":2.0,\"x\":3.0,\"y\":4.0}},\"tables\":{},\"titledPanes\":{}}");

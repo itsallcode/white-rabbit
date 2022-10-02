@@ -7,10 +7,7 @@
 /time.properties
 /.idea
 /plugins/pmsmart/src/test/java/org/itsallcode/whiterabbit/plugin/pmsmart/Tester.java
-/webstart/keystore.jks
-/webstart/webstart.properties
-/webstart-infrastructure/node_modules/
-/webstart-infrastructure/cdk.out/
-/webstart-infrastructure/config.ts
-/webstart-infrastructure/**/*.js
-/webstart-infrastructure/**/*.d.ts
+/build-fast.bat
+/build-fast-and-run.bat
+/launch.bat
+.DS_Store

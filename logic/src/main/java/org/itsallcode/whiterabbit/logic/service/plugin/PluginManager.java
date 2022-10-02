@@ -8,9 +8,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
-import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 
 public class PluginManager
@@ -31,16 +29,19 @@ public class PluginManager
         return new PluginManager(pluginRegistry);
     }
 
-    public List<String> getProjectReportExporterPlugins()
+    public <T extends PluginFeature> List<T> getAllFeatures(Class<T> featureType)
     {
-        return findPluginsSupporting(ProjectReportExporter.class);
+        return findPluginsSupporting(featureType).stream()
+                .map(plugin -> plugin.getFeature(featureType))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
     }
 
-    private List<String> findPluginsSupporting(Class<? extends PluginFeature> featureType)
+    public List<AppPlugin> findPluginsSupporting(Class<? extends PluginFeature> featureType)
     {
         return pluginRegistry.getAllPlugins().stream()
                 .filter(plugin -> plugin.supports(featureType))
-                .map(PluginWrapper::getId)
                 .collect(toList());
     }
 
@@ -50,43 +51,19 @@ public class PluginManager
         return pluginRegistry.getAllPlugins();
     }
 
-    public ProjectReportExporter getProjectReportExporter(String id)
+    public <T extends PluginFeature> Optional<T> getUniqueFeature(Class<T> featureType)
     {
-        return getFeature(id, ProjectReportExporter.class);
-    }
-
-    public Optional<MonthDataStorage> getMonthDataStorage()
-    {
-        return getUniqueFeature(MonthDataStorage.class);
-    }
-
-    private Optional<MonthDataStorage> getUniqueFeature(Class<MonthDataStorage> featureType)
-    {
-        final List<String> pluginIds = findPluginsSupporting(featureType);
-        if (pluginIds.isEmpty())
+        final List<AppPlugin> plugins = findPluginsSupporting(featureType);
+        if (plugins.isEmpty())
         {
             return Optional.empty();
         }
-        if (pluginIds.size() > 1)
+        if (plugins.size() > 1)
         {
             throw new IllegalStateException("Found multiple plugins supporting " + featureType.getName()
-                    + ": " + pluginIds + ". Please add only one storage plugin to the classpath.");
+                    + ": " + plugins + ". Please add only one storage plugin to the classpath.");
         }
-        return Optional.of(getFeature(pluginIds.get(0), featureType));
-    }
-
-    private <T extends PluginFeature> T getFeature(String id, final Class<T> featureType)
-    {
-        final PluginWrapper plugin = pluginRegistry.getPlugin(id);
-        if (plugin == null)
-        {
-            throw new IllegalStateException("Plugin '" + id + "' not found");
-        }
-        if (!plugin.supports(featureType))
-        {
-            throw new IllegalStateException("Plugin '" + id + "' does not support feature " + featureType.getName());
-        }
-        return plugin.getFeature(featureType);
+        return plugins.get(0).getFeature(featureType);
     }
 
     public void close()

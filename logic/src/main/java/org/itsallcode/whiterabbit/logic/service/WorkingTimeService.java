@@ -15,7 +15,7 @@ import org.itsallcode.whiterabbit.logic.storage.Storage;
 
 public class WorkingTimeService
 {
-    private static final Duration AUTO_INTERRUPTION_THRESHOLD = Duration.ofMinutes(2);
+    private static final Duration AUTO_INTERRUPTION_THRESHOLD = Duration.ofMinutes(3);
 
     private static final Logger LOG = LogManager.getLogger(WorkingTimeService.class);
 
@@ -43,34 +43,37 @@ public class WorkingTimeService
         final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
         final LocalTime now = clock.getCurrentTime();
-        if (day.getType().isWorkDay())
+        if (updateDay(day, now))
         {
-            boolean updated = false;
-            if (shouldUpdateBegin(day, now))
-            {
-                day.setBegin(now);
-                updated = true;
-            }
-            if (shouldUpdateEnd(day, now))
-            {
-                day.setEnd(now);
-                updated = true;
-            }
-            if (updated)
-            {
-                LOG.debug("Day {} updated at {}", day.getDate(), now);
-                storage.storeMonth(month);
-                appServiceCallback.recordUpdated(day);
-            }
-            else
-            {
-                LOG.trace("No update for {} at {}", day.getDate(), now);
-            }
+            LOG.debug("Day {} updated at {}", day.getDate(), now);
+            storage.storeMonth(month);
+            appServiceCallback.recordUpdated(day);
         }
         else
         {
-            LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
+            LOG.trace("No update for {} at {}", day.getDate(), now);
         }
+    }
+
+    private boolean updateDay(final DayRecord day, final LocalTime now)
+    {
+        if (!day.getType().isWorkDay())
+        {
+            LOG.trace("Today {} is a {}, no update required", day.getDate(), day.getType());
+            return false;
+        }
+        boolean updated = false;
+        if (shouldUpdateBegin(day, now))
+        {
+            day.setBegin(now);
+            updated = true;
+        }
+        if (shouldUpdateEnd(day, now))
+        {
+            day.setEnd(now);
+            updated = true;
+        }
+        return updated;
     }
 
     private boolean workStoppedForToday(LocalDate today)
@@ -152,10 +155,9 @@ public class WorkingTimeService
         switch (decision)
         {
         case ADD_INTERRUPTION:
-            addToInterruption(day, interruptionToAdd);
+            addInterruption(day, interruptionToAdd);
             return true;
         case SKIP_INTERRUPTION:
-            // ignore
             return true;
         case STOP_WORKING_FOR_TODAY:
             stopWorkForToday();
@@ -201,7 +203,8 @@ public class WorkingTimeService
     {
         final MonthIndex month = storage.loadOrCreate(YearMonth.from(today));
         final DayRecord day = month.getDay(today);
-        addToInterruption(day, interruption);
+        addInterruption(day, interruption);
+        day.setEnd(clock.getCurrentTime());
         storage.storeMonth(month);
         appServiceCallback.recordUpdated(day);
     }
@@ -219,7 +222,7 @@ public class WorkingTimeService
         resetInterruption();
     }
 
-    private void addToInterruption(final DayRecord day, Duration additionalInterruption)
+    private void addInterruption(final DayRecord day, Duration additionalInterruption)
     {
         final Duration updatedInterruption = day.getInterruption().plus(additionalInterruption);
         LOG.info("Add interruption {} for {}, total interruption: {}", additionalInterruption, day.getDate(),

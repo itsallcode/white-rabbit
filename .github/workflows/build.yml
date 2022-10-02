@@ -2,72 +2,96 @@ name: Build
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ main ]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [17]
+        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        include:
+          - os: ubuntu-latest
+            java: 18
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
+      cancel-in-progress: true
+    name: Build on ${{ matrix.os }} with Java ${{ matrix.java }}
+    runs-on: ${{ matrix.os }}
+    env:
+      DEFAULT_JAVA: 17
+      DEFAULT_OS: 'ubuntu-latest'
 
     steps:
-    - uses: actions/checkout@v2
+
+    - uses: actions/checkout@v3
+
     - name: Fetch all history for all tags and branches
       run: git fetch --prune --unshallow
-    - uses: actions/setup-java@v1
+
+    - uses: actions/setup-java@v3
       with:
-        java-version: 11
-    - uses: actions/setup-node@v2.1.5
-      with:
-        node-version: 12.x
+        distribution: 'temurin'
+        java-version: ${{ matrix.java }}
+        cache: 'gradle'
+
     - uses: gradle/wrapper-validation-action@v1
-    - name: Cache Gradle packages and wrapper
-      uses: actions/cache@v2.1.4
+
+    - name: Cache SonarQube packages
+      uses: actions/cache@v3
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: ${{ runner.os }}-gradle-
-    - name: Cache npm files
-      uses: actions/cache@v2.1.4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: ${{ runner.os }}-node-
-    - name: Configure webstart
-      run: |
-        cp .github/workflows/webstart.properties.template webstart/webstart.properties
-        cp .github/workflows/infrastructure-config.ts.template webstart-infrastructure/config.ts
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-java-${{ matrix.java }}-sonar
+        restore-keys: ${{ runner.os }}-java-${{ matrix.java }}-sonar
 
     - name: Build with Gradle
       run: |
-        ./gradlew build --warning-mode=summary
+        ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
+
     - name: Sonar analysis
-      if: ${{ env.SONAR_TOKEN != null }}
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}
       run: |
-        ./gradlew sonarqube -Dsonar.host.url=https://sonarcloud.io \
-                            -Dsonar.organization=itsallcode \
-                            -Dsonar.login=$SONAR_TOKEN \
-                            --warning-mode=summary
+        ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     - name: Publish Test Report
       uses: scacap/action-surefire-report@v1
-      if: ${{ always() }}
+      if:  ${{ always() && env.DEFAULT_OS == matrix.os && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
       with:
         report_paths: '**/build/test-results/*/TEST-*.xml'
         github_token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Archive jfxui binary
-      uses: actions/upload-artifact@v2
+
+    - name: Archive executable jar
+      uses: actions/upload-artifact@v3
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
-        name: jfxui
+        name: packages
         path: jfxui/build/libs/white-rabbit-fx-*.jar
 
-    - name: Build webstart infrastructure
+    - name: Build native package for ${{ runner.os }}
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
-        cd webstart-infrastructure
-        npm ci
-        npm run build
+        ./gradlew jpackage createChecksums --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
+
+    - name: Stop Gradle Daemon
+      run: |
+        ./gradlew -status
+        ./gradlew -stop
+
+    - name: Archive native package
+      uses: actions/upload-artifact@v3
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
+      with:
+        name: packages
+        path: jfxui/build/jpackage-dist/*
+
+    - name: Archive checksums
+      uses: actions/upload-artifact@v3
+      if: ${{ env.DEFAULT_JAVA == matrix.java }}
+      with:
+        name: checksums
+        path: jfxui/build/generatedChecksums/*

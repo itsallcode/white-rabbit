@@ -2,10 +2,9 @@
 subprojects {
     apply plugin: "com.github.johnrengelman.shadow"
 
-    def log4jApi = "org.apache.logging.log4j:log4j-api:$log4jVersion"
     dependencies {
         implementation project(':api')
-        implementation log4jApi
+        implementation libs.log4j.api
     }
 
     shadowJar {
@@ -13,7 +12,7 @@ subprojects {
         archiveClassifier.set(null)
         archiveVersion.set("")
         dependencies {
-            exclude(dependency(log4jApi))
+            exclude(dependency('org.apache.logging.log4j:log4j-api'))
             exclude(project(':api'))
         }
     }

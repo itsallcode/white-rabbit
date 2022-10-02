@@ -1,5 +1,8 @@
 package org.itsallcode.whiterabbit.api;
 
+import java.util.Optional;
+
+import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
@@ -14,6 +17,7 @@ import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
  * <ul>
  * <li>{@link ProjectReportExporter}</li>
  * <li>{@link MonthDataStorage}</li>
+ * <li>{@link Holidays}</li>
  * </ul>
  */
 public interface Plugin
@@ -51,10 +55,10 @@ public interface Plugin
      *            the feature type.
      * @param <T>
      *            the type of the feature.
-     * @return the instance of the given feature. May return <code>null</code>
-     *         or throw an exception if the feature is not supported.
+     * @return the instance of the given feature or an empty {@link Optional} if
+     *         the feature is not supported.
      */
-    <T extends PluginFeature> T getFeature(Class<T> featureType);
+    <T extends PluginFeature> Optional<T> getFeature(Class<T> featureType);
 
     /**
      * Called before closing the plugin. The plugin should cleanup any resources

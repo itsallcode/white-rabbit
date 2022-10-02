@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,10 +20,14 @@ import org.itsallcode.whiterabbit.jfxui.tray.TrayCallback;
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
+import org.itsallcode.whiterabbit.logic.service.DayOfWeekWithoutDotFormatter;
 import org.itsallcode.whiterabbit.logic.service.FormatterService;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -40,7 +43,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -73,9 +75,9 @@ public class AppUi
         dayRecordTable.selectRow(date);
     }
 
-    public void updateActivities(DayRecord record)
+    public void updateActivities(DayRecord dayRecord)
     {
-        activitiesTable.updateTableValues(record);
+        activitiesTable.updateTableValues(dayRecord);
     }
 
     public static class Builder
@@ -85,7 +87,7 @@ public class AppUi
         private final JavaFxApp app;
         private final AppState state;
         private final UiActions actions;
-        private final DateTimeFormatter shortDateFormatter;
+        private final DayOfWeekWithoutDotFormatter shortDateFormatter;
 
         private DayRecordTable dayRecordTable;
         private ActivitiesTable activitiesTable;
@@ -98,28 +100,28 @@ public class AppUi
             this.state = appState;
             this.appService = appService;
             this.primaryStage = primaryStage;
-            this.shortDateFormatter = appService.formatter().getShortDateFormatter();
+            this.shortDateFormatter = appService.formatter().getCustomShortDateFormatter();
         }
 
         public AppUi build()
         {
             LOG.debug("Creating user interface");
-            dayRecordTable = new DayRecordTable(state.selectedDay, state.currentMonth, record -> {
-                appService.store(record);
-                if (record.getDate().equals(state.getSelectedDay().map(DayRecord::getDate).orElse(null)))
+            dayRecordTable = new DayRecordTable(state.selectedDay, state.currentMonth, dayRecord -> {
+                appService.store(dayRecord);
+                if (dayRecord.getDate().equals(state.getSelectedDay().map(DayRecord::getDate).orElse(null)))
                 {
-                    LOG.debug("Current day {} updated: refresh activities", record.getDate());
+                    LOG.debug("Current day {} updated: refresh activities", dayRecord.getDate());
                     activitiesTable.refresh();
                 }
             }, appService);
 
-            activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, record -> {
-                appService.store(record);
+            activitiesTable = new ActivitiesTable(state.selectedDay, state.selectedActivity, dayRecord -> {
+                appService.store(dayRecord);
                 activitiesTable.refresh();
-            }, appService.formatter(), appService.projects(), appService.autocomplete());
+            }, appService);
             final BorderPane rootPane = new BorderPane(createMainPane());
             rootPane.setTop(createTopContainer());
-            final Scene scene = new Scene(rootPane, 780, 800);
+            final Scene scene = UiWidget.scene(rootPane, 780, 800);
             scene.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.F5)
                 {
@@ -134,13 +136,6 @@ public class AppUi
             createTrayIcon();
 
             primaryStage.setScene(scene);
-            primaryStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-                if (event.getCode() == KeyCode.ESCAPE)
-                {
-                    event.consume();
-                    primaryStage.hide();
-                }
-            });
 
             state.uiState.register("main-window", primaryStage);
             LOG.debug("User interface finished");
@@ -149,7 +144,7 @@ public class AppUi
 
         private VBox createTopContainer()
         {
-            final MenuBar menuBar = new MenuBarBuilder(actions, primaryStage, appService, state.stoppedWorkingForToday)
+            final MenuBar menuBar = new MenuBarBuilder(actions, appService, state.stoppedWorkingForToday)
                     .build();
             final VBox topContainer = new VBox();
             topContainer.getChildren().addAll(menuBar, createToolBar());
@@ -209,8 +204,7 @@ public class AppUi
                     new HBox(UiResources.GAP_PIXEL, activitiesButtonPane, activitiesTab));
             titledPane.setId("activities-titled-pane");
             titledPane.setCollapsible(true);
-            titledPane.textProperty().bind(Bindings.createStringBinding(this::getActivitiesTitle, state.selectedDay,
-                    state.currentDateProperty.property()));
+            titledPane.textProperty().bind(activitiesPaneTitle());
             final SplitPane mainPane = new SplitPane(daysTable, titledPane);
             HBox.setHgrow(activitiesTab, Priority.ALWAYS);
             mainPane.setId("mainSplitPane");
@@ -232,24 +226,27 @@ public class AppUi
             return pane;
         }
 
-        private String getActivitiesTitle()
+        private StringBinding activitiesPaneTitle()
         {
-            final DayRecord selectedDay = state.selectedDay.get();
-            String title = "Activities";
-            if (selectedDay == null)
-            {
+            final SimpleObjectProperty<DayRecord> selectedDay = state.selectedDay;
+            final Property<LocalDate> currentDateProperty = state.currentDateProperty.property();
+            return Bindings.createStringBinding(() -> {
+                String title = "Activities";
+                if (selectedDay.get() == null)
+                {
+                    return title;
+                }
+                final LocalDate date = selectedDay.get().getDate();
+                if (date.equals(currentDateProperty.getValue()))
+                {
+                    title += " today";
+                }
+                else
+                {
+                    title += " on " + shortDateFormatter.format(date);
+                }
                 return title;
-            }
-            final LocalDate date = selectedDay.getDate();
-            if (date.equals(state.currentDateProperty.property().getValue()))
-            {
-                title += " today";
-            }
-            else
-            {
-                title += " on " + shortDateFormatter.format(date);
-            }
-            return title;
+            }, selectedDay, currentDateProperty);
         }
 
         private ToolBar createToolBar()
@@ -260,13 +257,22 @@ public class AppUi
                     e -> app.startManualInterruption());
             startInterruptionButton.disableProperty().bind(state.interruption.isNotNull());
 
-            return new ToolBar(monthDropDownBox(),
+            return new ToolBar(
+                    UiWidget.button("previous-month-button", "<", "Select previous month", e -> gotoMonth(-1)),
+                    monthDropDownBox(),
+                    UiWidget.button("next-month-button", ">", "Select next month", e -> gotoMonth(+1)),
                     new Separator(),
                     startInterruptionButton,
                     interruptionPreset.createButton(),
                     createStopWorkForTodayButton(),
                     new Separator(),
                     UiWidget.button("update-button", "Update", e -> appService.updateNow()));
+        }
+
+        private void gotoMonth(int step)
+        {
+            final YearMonth selecteMonth = state.currentMonth.get().getYearMonth().plusMonths(step);
+            app.loadMonth(selecteMonth);
         }
 
         private Button createStopWorkForTodayButton()

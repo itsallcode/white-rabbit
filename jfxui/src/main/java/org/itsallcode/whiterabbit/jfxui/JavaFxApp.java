@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.property.DelayedPropertyListener;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification;
 import org.itsallcode.whiterabbit.jfxui.splashscreen.ProgressPreloaderNotification.Type;
+import org.itsallcode.whiterabbit.jfxui.systemmenu.DesktopIntegration;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
@@ -107,6 +108,8 @@ public class JavaFxApp extends Application
         state = AppState.create(appService,
                 UiStateService.loadState(config, new DelayedPropertyListener(appService.scheduler())));
         actions = UiActions.create(config, state, appService, getHostServices());
+
+        DesktopIntegration.getInstance().setUiActions(actions);
     }
 
     private Config loadConfig()
@@ -148,8 +151,20 @@ public class JavaFxApp extends Application
 
     public void loadMonth(final YearMonth month)
     {
-        final MonthIndex record = appService.getOrCreateMonth(month);
-        state.currentMonth.setValue(record);
+        final MonthIndex monthIndex = appService.getOrCreateMonth(month);
+        ensureMonthAvailable(month);
+        state.currentMonth.setValue(monthIndex);
+    }
+
+    private void ensureMonthAvailable(final YearMonth month)
+    {
+        JavaFxUtil.runOnFxApplicationThread(() -> {
+            if (!state.availableMonths.isEmpty() && !state.availableMonths.contains(month))
+            {
+                LOG.trace("Adding month {} to combo box", month);
+                state.availableMonths.add(month);
+            }
+        });
     }
 
     @Override
@@ -312,29 +327,26 @@ public class JavaFxApp extends Application
         }
 
         @Override
-        public void recordUpdated(DayRecord record)
+        public void recordUpdated(DayRecord day)
         {
+            final YearMonth month = YearMonth.from(day.getDate());
             JavaFxUtil.runOnFxApplicationThread(() -> {
-                final YearMonth recordMonth = YearMonth.from(record.getDate());
-                if (!state.availableMonths.isEmpty() && !state.availableMonths.contains(recordMonth))
+                ensureMonthAvailable(month);
+                if (state.currentMonth.get().getYearMonth().equals(month))
                 {
-                    state.availableMonths.add(recordMonth);
-                }
-                if (state.currentMonth.get().getYearMonth().equals(recordMonth))
-                {
-                    state.currentMonth.setValue(record.getMonth());
-                    if (daySelected(record))
+                    state.currentMonth.setValue(day.getMonth());
+                    if (daySelected(day))
                     {
-                        ui.updateActivities(record);
+                        ui.updateActivities(day);
                     }
                 }
             });
         }
 
-        private boolean daySelected(DayRecord record)
+        private boolean daySelected(DayRecord dayRecord)
         {
             final Optional<DayRecord> selectedDay = state.getSelectedDay();
-            return selectedDay.isPresent() && selectedDay.get().getDate().equals(record.getDate());
+            return selectedDay.isPresent() && selectedDay.get().getDate().equals(dayRecord.getDate());
         }
 
         @Override

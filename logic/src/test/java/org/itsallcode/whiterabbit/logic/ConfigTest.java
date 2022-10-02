@@ -50,7 +50,13 @@ class ConfigTest
         @Override
         public Optional<Duration> getCurrentHoursPerDay()
         {
-            return null;
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Duration> getMandatoryBreak()
+        {
+            return Optional.empty();
         }
 
         @Override
@@ -66,7 +72,7 @@ class ConfigTest
         }
 
         @Override
-        public String getMandatoryValue(String key)
+        public String getMandatoryValue(final String key)
         {
             return null;
         }
@@ -75,6 +81,12 @@ class ConfigTest
         public Path getUserDir()
         {
             return Paths.get("userDir");
+        }
+
+        @Override
+        public Optional<String> getOptionalValue(final String key)
+        {
+            return Optional.empty();
         }
     }
 }

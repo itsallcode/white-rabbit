@@ -6,13 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -110,7 +104,9 @@ class AppServiceTest
         appService = createAppService(appServiceCallback, workingTimeService);
         appService.setUpdateListener(updateListenerMock);
         modelFactory = new JsonModelFactory();
-        contractTerms = new ContractTermsService(configMock);
+        final TestingConfig config = TestingConfig.builder().withCurrentHoursPerDay(Duration.ofHours(8))
+                .withMandatoryBreak(Duration.ofMinutes(45)).build();
+        contractTerms = new ContractTermsService(config);
     }
 
     private AppService createAppService(final DelegatingAppServiceCallback appServiceCallback,
@@ -119,7 +115,7 @@ class AppServiceTest
         return new AppService(workingTimeService, storageMock, formatterServiceMock, clockMock,
                 schedulingServiceMock, singleInstanceService, appServiceCallback, activityService, projectServiceMock,
                 autocompleteServiceMock, appPropertiesServiceMock, vacationReportGeneratorMock,
-                projectReportGeneratorMock, pluginManagerMock);
+                projectReportGeneratorMock, pluginManagerMock, contractTerms);
     }
 
     @Test
@@ -211,9 +207,6 @@ class AppServiceTest
         day.setBegin(begin);
         day.setEnd(begin);
 
-        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(2)))
-                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
-
         updateNow(now, day);
 
         assertThat(day.getBegin()).isEqualTo(begin);
@@ -250,6 +243,26 @@ class AppServiceTest
         day.setEnd(begin);
 
         when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(3)))
+                .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
+
+        updateNow(now, day);
+
+        assertThat(day.getBegin()).isEqualTo(begin);
+        assertThat(day.getEnd()).isEqualTo(now);
+    }
+
+    @Test
+    void testUpdateExistingDayAfter4Min()
+    {
+        final LocalTime begin = LocalTime.of(8, 0);
+        final LocalTime now = LocalTime.of(8, 4);
+        final LocalDate today = LocalDate.of(2019, 3, 8);
+        final DayData day = modelFactory.createDayData();
+        day.setDate(today);
+        day.setBegin(begin);
+        day.setEnd(begin);
+
+        when(updateListenerMock.automaticInterruptionDetected(day.getEnd(), Duration.ofMinutes(4)))
                 .thenReturn(InterruptionDetectedDecision.SKIP_INTERRUPTION);
 
         updateNow(now, day);
@@ -614,7 +627,7 @@ class AppServiceTest
         when(storageMock.loadAll()).thenReturn(new MultiMonthIndex(asList(months)));
     }
 
-    private DayData day(LocalDate date, Duration overtime)
+    private DayData day(final LocalDate date, final Duration overtime)
     {
         final DayData day = modelFactory.createDayData();
         day.setDate(date);
@@ -623,7 +636,7 @@ class AppServiceTest
         return day;
     }
 
-    private MonthIndex monthIndex(YearMonth month, DayData... days)
+    private MonthIndex monthIndex(final YearMonth month, final DayData... days)
     {
         final MonthData monthData = modelFactory.createMonthData();
         monthData.setYear(month.getYear());
@@ -753,7 +766,7 @@ class AppServiceTest
         assertThat(appService.registerSingleInstance(callback)).isPresent();
     }
 
-    private void simulateOtherInstance(final RunningInstanceCallback callback, boolean otherInstanceRunning)
+    private void simulateOtherInstance(final RunningInstanceCallback callback, final boolean otherInstanceRunning)
     {
         final RegistrationResult registrationResultMock = mock(RegistrationResult.class);
         when(registrationResultMock.isOtherInstanceRunning()).thenReturn(otherInstanceRunning);

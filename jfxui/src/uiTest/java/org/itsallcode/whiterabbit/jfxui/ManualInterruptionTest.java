@@ -2,9 +2,7 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
@@ -13,9 +11,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.model.InterruptionDialog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.stage.Stage;
 
@@ -35,7 +31,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
 
         TestUtil.sleepShort();
 
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
+        dayTable.row(currentDayRowIndex).assertInterruption(Duration.ZERO);
     }
 
     @Test
@@ -58,7 +54,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime.plusMinutes(1), Duration.ofMinutes(1)),
-                () -> dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO));
+                () -> dayTable.row(currentDayRowIndex).assertInterruption(Duration.ZERO));
     }
 
     @Test
@@ -68,6 +64,7 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
         final DayTable dayTable = app().dayTable();
 
         time().tickMinute();
+        final LocalTime dayBeginTime = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
         final InterruptionDialog interruptionDialog = app().startInterruption();
 
@@ -77,15 +74,40 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
                 () -> interruptionDialog.assertContent(interruptionStartTime, Duration.ZERO));
 
         time().tickMinute();
+        final LocalTime dayEndTime = time().getCurrentTimeMinutes();
         TestUtil.sleepShort();
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime.plusMinutes(1), Duration.ofMinutes(1)),
-                () -> dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO));
+                () -> dayTable.row(currentDayRowIndex).assertInterruption(Duration.ZERO),
+                () -> dayTable.row(currentDayRowIndex).assertBeginAndEnd(dayBeginTime, dayEndTime));
 
         interruptionDialog.clickAddInterruption();
 
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ofMinutes(1));
+        dayTable.row(currentDayRowIndex).assertInterruption(Duration.ofMinutes(1));
+    }
+
+    @Test
+    void endTimeUpdatedWhenAutomaticInterruptionDetected()
+    {
+        final int currentDayRowIndex = time().getCurrentDayRowIndex();
+        final DayTable dayTable = app().dayTable();
+
+        time().tickMinute();
+        final LocalTime dayBeginTime = time().getCurrentTimeMinutes();
+        TestUtil.sleepShort();
+        final InterruptionDialog interruptionDialog = app().startInterruption();
+
+        final Duration sleepTime = Duration.ofMinutes(5);
+        time().addTime(sleepTime);
+
+        final LocalTime dayEndTime = time().getCurrentTimeMinutes();
+        TestUtil.sleepShort();
+
+        interruptionDialog.clickAddInterruption();
+
+        assertAll(() -> dayTable.row(currentDayRowIndex).assertInterruption(sleepTime),
+                () -> dayTable.row(currentDayRowIndex).assertBeginAndEnd(dayBeginTime, dayEndTime));
     }
 
     @Test
@@ -108,16 +130,16 @@ class ManualInterruptionTest extends JavaFxAppUiTestBase
 
         assertAll(() -> interruptionDialog.assertLabel(interruptionStartTime),
                 () -> interruptionDialog.assertContent(interruptionStartTime.plusMinutes(1), Duration.ofMinutes(1)),
-                () -> dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO));
+                () -> dayTable.row(currentDayRowIndex).assertInterruption(Duration.ZERO));
 
         interruptionDialog.clickCancelInterruption();
 
-        dayTable.assertInterruption(currentDayRowIndex, Duration.ZERO);
+        dayTable.row(currentDayRowIndex).assertInterruption(Duration.ZERO);
     }
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));

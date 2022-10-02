@@ -19,19 +19,22 @@ public class SchedulingService implements AutoCloseable
 
     public ScheduledTaskFuture schedule(Trigger trigger, Runnable command)
     {
-        final ErrorHandler errorHandler = new DefaultErrorHandler();
-        return new ReschedulingRunnable(command, trigger, executorService, clockService, errorHandler).schedule();
+        final ErrorHandler errorHandler = new LoggingErrorHandler();
+        final Runnable errorHandlingRunnable = new ErrorHandlingRunnable(command,
+                errorHandler);
+        final Runnable otherThreadRunnable = new OtherThreadRunnable(executorService, errorHandlingRunnable);
+        return new ReschedulingRunnable(otherThreadRunnable, trigger, executorService, clockService).schedule();
     }
 
     public void schedule(Duration delay, Runnable command)
     {
-        final ErrorHandler errorHandler = new DefaultErrorHandler();
+        final ErrorHandler errorHandler = new LoggingErrorHandler();
         schedule(delay, command, errorHandler);
     }
 
     public void schedule(Duration delay, Runnable command, final ErrorHandler errorHandler)
     {
-        executorService.schedule(new DelegatingErrorHandlingRunnable(command, errorHandler), delay.toMillis(),
+        executorService.schedule(new ErrorHandlingRunnable(command, errorHandler), delay.toMillis(),
                 TimeUnit.MILLISECONDS);
     }
 

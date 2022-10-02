@@ -8,9 +8,7 @@ import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.stage.Stage;
 
@@ -83,7 +81,7 @@ class AddInterruptionTest extends JavaFxAppUiTestBase
     {
         final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
-        dayTable.assertInterruption(currentDayRowIndex, expectedDuration);
+        dayTable.row(currentDayRowIndex).assertInterruption(expectedDuration);
     }
 
     @Override

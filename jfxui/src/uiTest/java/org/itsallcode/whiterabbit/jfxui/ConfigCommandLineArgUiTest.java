@@ -31,7 +31,7 @@ class ConfigCommandLineArgUiTest extends JavaFxAppUiTestBase
         time().tickMinute();
 
         final Path jsonMonthPath = getDataDir().resolve("2007").resolve("2007-12.json");
-        assertThat(jsonMonthPath).exists();
+        assertThat(jsonMonthPath).exists().isNotEmptyFile();
     }
 
     @Override
@@ -64,7 +64,7 @@ class ConfigCommandLineArgUiTest extends JavaFxAppUiTestBase
 
     private Path getDataDir()
     {
-        return tempDir.resolve("data-dir");
+        return tempDir.resolve("testing-data-dir");
     }
 
     @Override

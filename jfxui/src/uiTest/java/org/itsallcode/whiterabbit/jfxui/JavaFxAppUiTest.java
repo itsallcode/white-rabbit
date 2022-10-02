@@ -3,29 +3,21 @@ package org.itsallcode.whiterabbit.jfxui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.Locale;
 
-import org.itsallcode.whiterabbit.api.model.DayData;
-import org.itsallcode.whiterabbit.api.model.DayType;
-import org.itsallcode.whiterabbit.api.model.MonthData;
+import org.itsallcode.whiterabbit.api.model.*;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
+import org.itsallcode.whiterabbit.jfxui.testutil.JunitTags;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.scene.control.Labeled;
 import javafx.scene.input.KeyCode;
@@ -43,19 +35,19 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final Labeled overtimeLabel = robot.lookup("#overtime-label").queryLabeled();
 
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:30"),
+                () -> Assertions.assertThat(timeLabel).hasText("Mo 03.12.2007 CW49, 11:15:30"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         time().tickSecond();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("Mo 03.12.2007 CW49, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         time().tickMinute();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("Mo 03.12.2007 CW49, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
@@ -71,19 +63,19 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
         final Labeled overtimeLabel = robot.lookup("#overtime-label").queryLabeled();
 
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:30"),
+                () -> Assertions.assertThat(timeLabel).hasText("Mo 03.12.2007 CW49, 11:15:30"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         time().tickSecond();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:15:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("Mo 03.12.2007 CW49, 11:15:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: 00:00, total: 00:00"));
 
         time().tickMinute();
         assertAll(
-                () -> Assertions.assertThat(timeLabel).hasText("03.12.07, 11:16:31"),
+                () -> Assertions.assertThat(timeLabel).hasText("Mo 03.12.2007 CW49, 11:16:31"),
                 () -> Assertions.assertThat(overtimeLabel)
                         .hasText("Overtime previous month: 00:00, this month: -08:00, total: -08:00"));
 
@@ -114,16 +106,17 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     @Test
     void newMonthSelectedWhenMonthChanges()
     {
+        time().tickMinute();
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2007, Month.DECEMBER, 1)));
 
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 2, 8, 15, 0));
         TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2008, Month.JANUARY, 1)));
     }
 
     @Test
@@ -134,14 +127,14 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2008, Month.JANUARY, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2008, Month.JANUARY, 1)));
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
         TestUtil.sleepShort();
 
         assertAll(
                 () -> assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER)),
-                () -> app().dayTable().assertDate(0, LocalDate.of(2007, Month.DECEMBER, 1)));
+                () -> app().dayTable().row(0).assertDate(LocalDate.of(2007, Month.DECEMBER, 1)));
     }
 
     @Test
@@ -198,7 +191,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         dayTable.assertRowSelected(2);
 
-        dayTable.clickRow(5);
+        dayTable.row(5).click();
         dayTable.assertRowSelected(5);
 
         time().tickMinute();
@@ -214,7 +207,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
         dayTable.assertRowSelected(2);
 
-        dayTable.clickRow(5);
+        dayTable.row(5).click();
         dayTable.assertRowSelected(5);
 
         time().tickDay();
@@ -224,23 +217,25 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     }
 
     @Test
+    @Tag(JunitTags.FLAKY)
     void weekendsAreHighlightedAsWeekend()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowHasPseudoClass(0, "weekend"),
-                () -> dayTable.assertRowHasPseudoClass(1, "weekend"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "weekend"));
+                () -> dayTable.row(7).assertHasPseudoClass("weekend"),
+                () -> dayTable.row(8).assertHasPseudoClass("weekend"),
+                () -> dayTable.row(9).assertDoesNotHavePseudoClass("weekend"));
     }
 
     @Test
+    @Tag(JunitTags.FLAKY)
     void weekendsAreHighlightedAsNotWorking()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowHasPseudoClass(0, "not-working"),
-                () -> dayTable.assertRowHasPseudoClass(1, "not-working"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "not-working"));
+                () -> dayTable.row(7).assertHasPseudoClass( "not-working"),
+                () -> dayTable.row(8).assertHasPseudoClass( "not-working"),
+                () -> dayTable.row(9).assertDoesNotHavePseudoClass( "not-working"));
     }
 
     @Test
@@ -248,53 +243,72 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
         assertAll(
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "weekend"),
-                () -> dayTable.assertRowDoesNotHavePseudoClass(2, "not-working"));
+                () -> dayTable.row(2).assertDoesNotHavePseudoClass( "weekend"),
+                () -> dayTable.row(2).assertDoesNotHavePseudoClass( "not-working"));
     }
 
     @Test
     void holidaysAreHighlightedAsNotWorking()
     {
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
-        dayTable.assertRowDoesNotHavePseudoClass(2, "not-working");
+        dayTable.row(2).assertDoesNotHavePseudoClass( "not-working");
 
-        app().dayTable().selectDayType(2, DayType.HOLIDAY);
-        dayTable.assertRowHasPseudoClass(2, "not-working");
+        app().dayTable().row(2).selectDayType( DayType.HOLIDAY);
+        dayTable.row(2).assertHasPseudoClass( "not-working");
     }
 
     @Test
     void higlightedWeekends()
     {
+        time().tickMinute();
         final DayTable dayTable = app().dayTable();
+        dayTable.table().row(0).click();
 
-        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
-        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
-                25, 26, 27, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
+                        23, 24,
+                        25, 26, 27, 30));
     }
 
     @Test
-    @Disabled("Test is instable")
+    @Tag(JunitTags.FLAKY)
     void higlightedWeekendsUpdatedWhenMonthChanges()
     {
         final DayTable dayTable = app().dayTable();
 
-        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
-        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
-                25, 26, 27, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
+                        23, 24, 25, 26, 27, 30));
 
         time().tickDay(LocalDateTime.of(2008, Month.JANUARY, 5, 8, 15, 0));
         TestUtil.sleepShort();
 
-        dayTable.assertRowsHighlightedAsWeekend(4, 5, 11, 12, 18, 19, 25, 26);
-        dayTable.assertRowsNotHighlightedAsWeekend(0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 20, 21, 22,
-                23, 24, 27, 28, 29, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(4, 5, 11, 12, 18, 19, 25, 26),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 20, 21,
+                        22, 23, 24, 27, 28, 29, 30));
 
         app().setSelectedMonth(YearMonth.of(2007, Month.DECEMBER));
         TestUtil.sleepShort();
 
-        dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29);
-        dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24,
-                25, 26, 27, 30);
+        assertAll(() -> dayTable.assertRowsHighlightedAsWeekend(0, 1, 7, 8, 14, 15, 21, 22, 28, 29),
+                () -> dayTable.assertRowsNotHighlightedAsWeekend(2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
+                        23, 24, 25, 26, 27, 30));
+    }
+
+    @Test
+    void nextButtonSelectsNextMonth()
+    {
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER));
+        app().gotoNextMonth();
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2008, Month.JANUARY));
+    }
+
+    @Test
+    void prevButtonSelectsPrevMonth()
+    {
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.DECEMBER));
+        app().gotoPreviousMonth();
+        assertThat(app().getSelectedMonth()).isEqualTo(YearMonth.of(2007, Month.NOVEMBER));
     }
 
     @Test
@@ -305,7 +319,7 @@ class JavaFxAppUiTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));

@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.logic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
@@ -92,6 +93,28 @@ class ConfigFileTest
     }
 
     @Test
+    void getMandatoryBreak_failsForInvalidValue()
+    {
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn("invalid");
+        assertThatThrownBy(() -> configFile.getMandatoryBreak())
+                .isInstanceOf(DateTimeParseException.class);
+    }
+
+    @Test
+    void getMandatoryBreak_returnsDefault()
+    {
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn(null);
+        assertThat(configFile.getMandatoryBreak()).isEmpty();
+    }
+
+    @Test
+    void getMandatoryBreak_returnsCustomValue()
+    {
+        when(propertiesMock.getProperty("mandatory_break")).thenReturn("PT0M");
+        assertThat(configFile.getMandatoryBreak()).isPresent().hasValue(Duration.ofMinutes(0));
+    }
+
+    @Test
     void getLocale_returnsDefault()
     {
         when(propertiesMock.getProperty("locale")).thenReturn(null);
@@ -103,5 +126,19 @@ class ConfigFileTest
     {
         when(propertiesMock.getProperty("locale")).thenReturn("zh");
         assertThat(configFile.getLocale()).isEqualTo(Locale.forLanguageTag("zh"));
+    }
+
+    @Test
+    void mandatoryValueFailsForMissingValue()
+    {
+        assertThrows(IllegalStateException.class, () -> {
+            configFile.getMandatoryValue("missing.mandatory.property");
+        });
+    }
+
+    @Test
+    void optionalValueReturnsEmptyOptionalForMissingValue()
+    {
+        assertThat(configFile.getOptionalValue("missing.optional.property")).isEmpty();
     }
 }

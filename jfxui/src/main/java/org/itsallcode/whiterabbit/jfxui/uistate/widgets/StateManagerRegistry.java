@@ -31,10 +31,10 @@ public class StateManagerRegistry
         return new StateManagerRegistry(stateManagers);
     }
 
-    public <T> WidgetStateManager<T, ?> getManager(Class<T> widgetType)
+    public <T, M> WidgetStateManager<T, M> getManager(Class<T> widgetType)
     {
         @SuppressWarnings("unchecked")
-        final WidgetStateManager<T, ?> manager = (WidgetStateManager<T, ?>) stateManagers.get(widgetType);
+        final WidgetStateManager<T, M> manager = (WidgetStateManager<T, M>) stateManagers.get(widgetType);
         return manager;
     }
 }

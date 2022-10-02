@@ -19,11 +19,11 @@ class DelegatingAppServiceCallback implements AppServiceCallback
     }
 
     @Override
-    public void recordUpdated(DayRecord record)
+    public void recordUpdated(DayRecord dayRecord)
     {
         if (delegate != null)
         {
-            this.delegate.recordUpdated(record);
+            this.delegate.recordUpdated(dayRecord);
         }
         else
         {

@@ -1,8 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,14 +9,10 @@ import java.util.function.Consumer;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.AutomaticInterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.stage.Stage;
 
@@ -90,8 +84,8 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
     {
         final int currentDayRowIndex = time().getCurrentDayRowIndex();
         final DayTable dayTable = app().dayTable();
-        dayTable.assertInterruption(currentDayRowIndex, expectedInterruption);
-        dayTable.assertBeginAndEnd(currentDayRowIndex, expectedBegin, expectedEnd);
+        dayTable.row(currentDayRowIndex).assertInterruption(expectedInterruption);
+        dayTable.row(currentDayRowIndex).assertBeginAndEnd(expectedBegin, expectedEnd);
     }
 
     @Override

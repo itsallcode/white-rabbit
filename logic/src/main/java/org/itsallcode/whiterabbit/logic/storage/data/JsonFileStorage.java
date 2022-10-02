@@ -14,13 +14,13 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import javax.json.bind.Jsonb;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.Config;
+
+import jakarta.json.bind.Jsonb;
 
 public class JsonFileStorage implements MonthDataStorage
 {
@@ -30,7 +30,9 @@ public class JsonFileStorage implements MonthDataStorage
     private final DateToFileMapper dateToFileMapper;
     private final ModelFactory modelFactory;
 
-    JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper, ModelFactory modelFactory)
+    // Made protected in order to allow tests in other packages to mock this
+    // class.
+    protected JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper, ModelFactory modelFactory)
     {
         this.jsonb = jsonb;
         this.dateToFileMapper = dateToFileMapper;
@@ -62,7 +64,9 @@ public class JsonFileStorage implements MonthDataStorage
         return Optional.empty();
     }
 
-    private JsonMonth loadFromFile(Path file)
+    // Made protected in order to allow tests in other packages to mock this
+    // class.
+    protected JsonMonth loadFromFile(Path file)
     {
         LOG.trace("Reading file {}", file);
         try (InputStream stream = Files.newInputStream(file))
@@ -76,7 +80,7 @@ public class JsonFileStorage implements MonthDataStorage
     }
 
     @Override
-    public void store(YearMonth yearMonth, MonthData record)
+    public void store(YearMonth yearMonth, MonthData monthRecord)
     {
         final Path file = dateToFileMapper.getPathForDate(yearMonth);
         LOG.trace("Write month {} to file {}", yearMonth, file);
@@ -84,7 +88,7 @@ public class JsonFileStorage implements MonthDataStorage
         try (OutputStream stream = Files.newOutputStream(file, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING))
         {
-            jsonb.toJson(record, stream);
+            jsonb.toJson(monthRecord, stream);
         }
         catch (final IOException e)
         {

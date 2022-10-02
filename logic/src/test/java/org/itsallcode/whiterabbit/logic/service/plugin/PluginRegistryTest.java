@@ -10,7 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Optional;
 
+import org.itsallcode.whiterabbit.api.features.ProjectReportExporter;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.service.plugin.AppPlugin.AppPluginFeature;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +72,7 @@ class PluginRegistryTest
     void getAllPlugins_returnsPlugins_WhenLoaded()
     {
         pluginRegistry.load();
-        final Collection<PluginWrapper> plugins = pluginRegistry.getAllPlugins();
+        final Collection<AppPluginImpl> plugins = pluginRegistry.getAllPlugins();
         assertThat(plugins).hasSize(EXPECTED_PLUGIN_COUNT);
     }
 
@@ -96,21 +98,34 @@ class PluginRegistryTest
     void getPlugin_returnsPluginWhenAvailable()
     {
         pluginRegistry.load();
-        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
+        final AppPluginImpl plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
         assertThat(plugin.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
         assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
         assertThat(plugin.getFeatures()).isEmpty();
-        final TestingPlugin pluginInstance = plugin.getFeature(TestingPlugin.class);
+        final Optional<TestingPlugin> optionalInstance = plugin.getFeature(TestingPlugin.class);
+        assertThat(optionalInstance).isPresent();
+        final TestingPlugin pluginInstance = optionalInstance.get();
         assertThat(pluginInstance).isInstanceOf(TestingPlugin.class);
         assertThat(pluginInstance.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
         assertThat(pluginInstance.isClosed()).isFalse();
     }
 
     @Test
+    void getPlugin_featureNotAvailable()
+    {
+        pluginRegistry.load();
+        final AppPluginImpl plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID);
+        assertThat(plugin.getId()).isEqualTo(TestingPlugin.PLUGIN_ID);
+        assertThat(plugin.getOrigin().getDescription()).isEqualTo("included");
+        assertThat(plugin.getFeatures()).isEmpty();
+        assertThat(plugin.getFeature(ProjectReportExporter.class)).isEmpty();
+    }
+
+    @Test
     void getPlugin_withFeature()
     {
         pluginRegistry.load();
-        final PluginWrapper plugin = pluginRegistry.getPlugin(TestingReportPlugin.PLUGIN_ID);
+        final AppPluginImpl plugin = pluginRegistry.getPlugin(TestingReportPlugin.PLUGIN_ID);
         assertThat(plugin.getId()).isEqualTo(TestingReportPlugin.PLUGIN_ID);
         assertThat(plugin.getFeatures()).hasSize(1).containsExactly(AppPluginFeature.PROJECT_REPORT);
     }
@@ -120,7 +135,7 @@ class PluginRegistryTest
     {
         pluginRegistry.load();
         final TestingPlugin pluginInstance = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID)
-                .getFeature(TestingPlugin.class);
+                .getFeature(TestingPlugin.class).get();
 
         when(configMock.getMandatoryValue(TestingPlugin.PLUGIN_ID + ".property")).thenReturn("propertyValue");
         assertThat(pluginInstance.getConfig().getMandatoryValue("property")).isEqualTo("propertyValue");
@@ -136,7 +151,8 @@ class PluginRegistryTest
     void close_closesPlugins()
     {
         pluginRegistry.load();
-        final TestingPlugin plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID).getFeature(TestingPlugin.class);
+        final TestingPlugin plugin = pluginRegistry.getPlugin(TestingPlugin.PLUGIN_ID).getFeature(TestingPlugin.class)
+                .get();
         assertThat(plugin.isClosed()).isFalse();
 
         pluginRegistry.close();

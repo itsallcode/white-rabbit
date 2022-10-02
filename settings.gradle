@@ -3,16 +3,46 @@ rootProject.name = 'white-rabbit'
 include 'logic'
 include 'jfxui'
 
-include 'webstart'
-include 'webstart-infrastructure'
-
 include 'api'
 include 'plugins'
 include 'plugins:demo'
-include 'plugins:pmsmart'
+include 'plugins:holiday-calculator'
+include 'plugins:csv'
 
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+    }
+    versionCatalogs {
+        libs {
+            version('junitJupiter', '5.9.1')
+            version('mockito', '4.8.0')
+            version('log4j', '2.19.0')
+            version("javafx", '20-ea+3')
+
+            library('junitParams', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junitJupiter')
+            library('assertj', 'org.assertj:assertj-core:3.23.1')
+            library('junitPioneer', 'org.junit-pioneer:junit-pioneer:1.7.1')
+            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:3.10.1')
+            library('hamcrest', 'org.hamcrest:hamcrest-all:1.3')
+            library('mockito', 'org.mockito', 'mockito-core').versionRef('mockito')
+            library('mocktioJunit', 'org.mockito', 'mockito-junit-jupiter').versionRef('mockito')
+            bundle('testUtils', ['assertj', 'junitPioneer', 'junitParams', 'equalsverifier', 'hamcrest', 'mockito', 'mocktioJunit'])
+
+            library('testfx', 'org.testfx:testfx-junit5:4.0.16-alpha')
+            library('monocle', 'org.testfx:openjfx-monocle:jdk-12.0.1+2')
+
+            library('jsonBindApi', 'jakarta.json.bind:jakarta.json.bind-api:3.0.0')
+            library('yasson', 'org.eclipse:yasson:3.0.2')
+
+            library('jdtAnnotations', 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700')
+            library('jansi', 'org.fusesource.jansi:jansi:2.4.0')
+            library('log4j.api', 'org.apache.logging.log4j', 'log4j-api').versionRef('log4j')
+            library('log4j.core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
+            library('log4j.jul', 'org.apache.logging.log4j', 'log4j-jul').versionRef('log4j')
+            library('log4j.slf4j', 'org.apache.logging.log4j', 'log4j-slf4j-impl').versionRef('log4j')
+
+            library('holidaycalculator', 'org.itsallcode:holiday-calculator:0.2.0')
+        }
     }
 }

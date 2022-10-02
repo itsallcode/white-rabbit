@@ -16,7 +16,7 @@ class ClassPathPluginOriginTest
     private ClassPathPluginOrigin origin;
 
     @BeforeEach
-    private void setup()
+    void setup()
     {
         origin = new ClassPathPluginOrigin(classLoaderMock);
     }

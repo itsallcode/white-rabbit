@@ -9,11 +9,31 @@ import java.util.List;
  */
 public interface ProjectReportDay
 {
+    /**
+     * Get the date of this day.
+     * 
+     * @return the date of this day.
+     */
     LocalDate getDate();
 
+    /**
+     * Get the {@link DayType} of this day.
+     * 
+     * @return the {@link DayType} of this day.
+     */
     DayType getType();
 
+    /**
+     * Get the comment of this day.
+     * 
+     * @return the comment of this day.
+     */
     String getComment();
 
+    /**
+     * Get the project activities of this day.
+     * 
+     * @return the project activities of this day.
+     */
     List<ProjectReportActivity> getProjects();
 }

@@ -1,5 +1,18 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.itsallcode.whiterabbit.logic.model.DayRecord;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.model.MultiMonthIndex;
@@ -9,19 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CachingStorageImplTest
@@ -214,7 +214,7 @@ class CachingStorageImplTest
 
         final LocalDate firstOfJanuary = LocalDate.of(2020, Month.JANUARY, 1);
         final List<DayRecord> days = new ArrayList<>();
-        when(cacheMock.getLatestDays(firstOfJanuary)).thenReturn(days);
+        when(cacheMock.getLatestDayRecords(firstOfJanuary)).thenReturn(days);
 
         assertThat(storage.getLatestDays(firstOfJanuary)).isSameAs(days);
 
@@ -223,7 +223,7 @@ class CachingStorageImplTest
         inOrder.verify(cacheMock).update(monthIndexMock1);
         inOrder.verify(delegateStorageMock).loadMonth(february);
         inOrder.verify(cacheMock).update(monthIndexMock2);
-        inOrder.verify(cacheMock).getLatestDays(firstOfJanuary);
+        inOrder.verify(cacheMock).getLatestDayRecords(firstOfJanuary);
 
         inOrder.verifyNoMoreInteractions();
     }

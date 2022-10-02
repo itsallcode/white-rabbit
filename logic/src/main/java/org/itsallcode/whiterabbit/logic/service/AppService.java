@@ -16,6 +16,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.itsallcode.whiterabbit.api.features.Holidays;
 import org.itsallcode.whiterabbit.api.features.MonthDataStorage;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.logic.Config;
@@ -27,6 +28,7 @@ import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReportGenerator;
 import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
+import org.itsallcode.whiterabbit.logic.service.holidays.HolidayService;
 import org.itsallcode.whiterabbit.logic.service.plugin.PluginManager;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.service.scheduling.PeriodicTrigger;
@@ -55,20 +57,22 @@ public class AppService implements Closeable
     private final ActivityService activityService;
     private final ProjectService projectService;
     private final AppPropertiesService appPropertiesService;
+    private final AutocompleteService autocompleteService;
+    private final PluginManager pluginManager;
+    private final ContractTermsService contractTerms;
 
     private RegistrationResult singleInstanceRegistration;
 
-    private final AutocompleteService autocompleteService;
-
-    private final PluginManager pluginManager;
-
     @SuppressWarnings("java:S107") // Large number of parameters is ok here.
-    AppService(WorkingTimeService workingTimeService, Storage storage, FormatterService formatterService,
-            ClockService clock, SchedulingService schedulingService, SingleInstanceService singleInstanceService,
-            DelegatingAppServiceCallback appServiceCallback, ActivityService activityService,
-            ProjectService projectService, AutocompleteService autocompleteService,
-            AppPropertiesService appPropertiesService, VacationReportGenerator vacationReportGenerator,
-            ProjectReportGenerator projectReportGenerator, PluginManager pluginManager)
+    AppService(final WorkingTimeService workingTimeService, final Storage storage,
+            final FormatterService formatterService,
+            final ClockService clock, final SchedulingService schedulingService,
+            final SingleInstanceService singleInstanceService,
+            final DelegatingAppServiceCallback appServiceCallback, final ActivityService activityService,
+            final ProjectService projectService, final AutocompleteService autocompleteService,
+            final AppPropertiesService appPropertiesService, final VacationReportGenerator vacationReportGenerator,
+            final ProjectReportGenerator projectReportGenerator, final PluginManager pluginManager,
+            final ContractTermsService contractTerms)
     {
         this.workingTimeService = workingTimeService;
         this.storage = storage;
@@ -84,6 +88,7 @@ public class AppService implements Closeable
         this.autocompleteService = autocompleteService;
         this.appPropertiesService = appPropertiesService;
         this.pluginManager = pluginManager;
+        this.contractTerms = contractTerms;
     }
 
     public static AppService create(final Config config)
@@ -91,15 +96,20 @@ public class AppService implements Closeable
         return create(config, Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1));
     }
 
-    public static AppService create(final Config config, Clock clock, ScheduledExecutorService scheduledExecutor)
+    public static AppService create(final Config config, final Clock clock,
+            final ScheduledExecutorService scheduledExecutor)
     {
         final SingleInstanceService singleInstanceService = SingleInstanceService.create(config);
-        final ProjectService projectService = new ProjectService(config);
+        final ProjectService projectService = ProjectService.load(config.getProjectFile());
         final PluginManager pluginManager = PluginManager.create(config);
 
         final MonthDataStorage dataStorage = createMonthDataStorage(config, pluginManager);
-        final CachingStorage storage = CachingStorage.create(dataStorage, new ContractTermsService(config),
-                projectService);
+        final List<Holidays> holidayProvider = pluginManager.getAllFeatures(Holidays.class);
+        final HolidayService holidayService = new HolidayService(holidayProvider);
+        final ContractTermsService contractTerms = new ContractTermsService(config);
+        final CachingStorage storage = CachingStorage.create(dataStorage, contractTerms,
+                projectService, holidayService);
+
         final ClockService clockService = new ClockService(clock);
         final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService);
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
@@ -112,12 +122,12 @@ public class AppService implements Closeable
         return new AppService(workingTimeService, storage, formatterService, clockService, schedulingService,
                 singleInstanceService, appServiceCallback, activityService, projectService, autocompleteService,
                 new AppPropertiesService(), vacationReportGenerator,
-                projectReportGenerator, pluginManager);
+                projectReportGenerator, pluginManager, contractTerms);
     }
 
     private static MonthDataStorage createMonthDataStorage(final Config config, final PluginManager pluginManager)
     {
-        final Optional<MonthDataStorage> dataStorage = pluginManager.getMonthDataStorage();
+        final Optional<MonthDataStorage> dataStorage = pluginManager.getUniqueFeature(MonthDataStorage.class);
         if (dataStorage.isPresent())
         {
             LOG.info("Using storage plugin {}", dataStorage.get().getClass().getName());
@@ -127,12 +137,12 @@ public class AppService implements Closeable
         return JsonFileStorage.create(config.getDataDir());
     }
 
-    public void setUpdateListener(AppServiceCallback callback)
+    public void setUpdateListener(final AppServiceCallback callback)
     {
         this.appServiceCallback.setDelegate(callback);
     }
 
-    public Optional<OtherInstance> registerSingleInstance(RunningInstanceCallback callback)
+    public Optional<OtherInstance> registerSingleInstance(final RunningInstanceCallback callback)
     {
         singleInstanceRegistration = singleInstanceService.tryToRegisterInstance(callback);
         if (singleInstanceRegistration.isOtherInstanceRunning())
@@ -194,17 +204,22 @@ public class AppService implements Closeable
         return storage.getAvailableDataMonths();
     }
 
-    public MonthIndex getOrCreateMonth(YearMonth yearMonth)
+    public MonthIndex getOrCreateMonth(final YearMonth yearMonth)
     {
         return storage.loadOrCreate(yearMonth);
     }
 
-    public void store(DayRecord record)
+    public void store(final DayRecord dayRecord)
     {
-        final MonthIndex monthRecord = storage.loadOrCreate(YearMonth.from(record.getDate()));
-        monthRecord.put(record);
+        final MonthIndex monthRecord = storage.loadOrCreate(YearMonth.from(dayRecord.getDate()));
+        monthRecord.put(dayRecord);
         storage.storeMonth(monthRecord);
-        appServiceCallback.recordUpdated(record);
+        appServiceCallback.recordUpdated(dayRecord);
+    }
+
+    public ContractTermsService getContractTerms()
+    {
+        return contractTerms;
     }
 
     public Interruption startInterruption()
@@ -212,7 +227,7 @@ public class AppService implements Closeable
         return workingTimeService.startInterruption();
     }
 
-    public void addInterruption(LocalDate date, Duration interruption)
+    public void addInterruption(final LocalDate date, final Duration interruption)
     {
         workingTimeService.addInterruption(date, interruption);
     }
@@ -232,7 +247,7 @@ public class AppService implements Closeable
         return vacationReportGenerator.generateReport();
     }
 
-    public ProjectReport generateProjectReport(YearMonth month)
+    public ProjectReport generateProjectReport(final YearMonth month)
     {
         return projectReportGenerator.generateReport(month);
     }

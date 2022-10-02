@@ -56,11 +56,27 @@ class ProjectReportGeneratorTest
     }
 
     @Test
+    void emptyMonthlyReportForMissingMonth()
+    {
+        when(storageMock.loadMonth(MONTH)).thenReturn(Optional.empty());
+
+        assertThat(reportGenerator.generateReport(MONTH).getProjects()).isEmpty();
+    }
+
+    @Test
     void emptyReportForMonthWithoutDays()
     {
         simulateDays();
 
         assertThat(reportGenerator.generateReport(MONTH).getDays()).isEmpty();
+    }
+
+    @Test
+    void emptyMonthlyReportForMonthWithoutDays()
+    {
+        simulateDays();
+
+        assertThat(reportGenerator.generateReport(MONTH).getProjects()).isEmpty();
     }
 
     @Test
@@ -84,6 +100,15 @@ class ProjectReportGeneratorTest
     }
 
     @Test
+    void monthlyReportForDayWithoutActivity()
+    {
+        simulateDays(day(DATE1, DayType.WORK));
+
+        final List<ProjectReportActivity> projects = reportGenerator.generateReport(MONTH).getProjects();
+        assertThat(projects).isEmpty();
+    }
+
+    @Test
     void dayWithActivity()
     {
         simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2))));
@@ -93,6 +118,33 @@ class ProjectReportGeneratorTest
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(0).getComments()).isEmpty();
+    }
+
+    @Test
+    void dayWithActivityAndComment()
+    {
+        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2), "p1")));
+
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportActivity> projects = days.get(0).getProjects();
+        assertThat(projects).hasSize(1);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(0).getComments()).containsExactly("p1");
+    }
+
+    @Test
+    void monthlyReportForDayWithActivity()
+    {
+        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2), "p1")));
+
+        final List<ProjectReportActivity> projects = reportGenerator.generateReport(MONTH).getProjects();
+        assertThat(projects).hasSize(1);
+
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(0).getComments()).containsExactly("p1");
     }
 
     @Test
@@ -101,6 +153,14 @@ class ProjectReportGeneratorTest
         simulateDays(day(DATE1, DayType.WORK, activity(null, Duration.ofHours(2))));
 
         assertThat(reportGenerator.generateReport(MONTH).getDays().get(0).getProjects()).isEmpty();
+    }
+
+    @Test
+    void monthlyReportForActivityWithoutProject()
+    {
+        simulateDays(day(DATE1, DayType.WORK, activity(null, Duration.ofHours(2))));
+
+        assertThat(reportGenerator.generateReport(MONTH).getProjects()).isEmpty();
     }
 
     @Test
@@ -116,40 +176,86 @@ class ProjectReportGeneratorTest
     }
 
     @Test
+    void monthlyReportForActivityWithoutDuration()
+    {
+        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, null)));
+
+        final List<ProjectReportActivity> projects = reportGenerator.generateReport(MONTH).getProjects();
+        assertThat(projects).hasSize(1);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).isZero();
+    }
+
+    @Test
     void dayWithTwoProjectsReturnsTwoProjects()
     {
         simulateDays(day(DATE1, DayType.WORK,
-                activity(PROJECT1, Duration.ofHours(2)),
-                activity(PROJECT2, Duration.ofHours(3))));
+                activity(PROJECT1, Duration.ofHours(2), "p1"),
+                activity(PROJECT2, Duration.ofHours(3), "p2")));
 
         final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         final List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(2);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(0).getComments()).containsExactly("p1");
         assertThat(projects.get(1).getProject()).isSameAs(PROJECT2);
         assertThat(projects.get(1).getWorkingTime()).hasHours(3);
+        assertThat(projects.get(1).getComments()).containsExactly("p2");
+    }
+
+    @Test
+    void monthlyReportForDayWithTwoProjectsReturnsTwoProjects()
+    {
+        simulateDays(day(DATE1, DayType.WORK,
+                activity(PROJECT1, Duration.ofHours(2), "p1"),
+                activity(PROJECT2, Duration.ofHours(3), "p2")));
+
+        final List<ProjectReportActivity> projects = reportGenerator.generateReport(MONTH).getProjects();
+        assertThat(projects).hasSize(2);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(0).getComments()).containsExactly("p1");
+        assertThat(projects.get(1).getProject()).isSameAs(PROJECT2);
+        assertThat(projects.get(1).getWorkingTime()).hasHours(3);
+        assertThat(projects.get(1).getComments()).containsExactly("p2");
     }
 
     @Test
     void dayWithTwoActivitiesForSameProjectAggregatesDuration()
     {
         simulateDays(day(DATE1, DayType.WORK,
-                activity(PROJECT1, Duration.ofHours(2)),
-                activity(PROJECT1, Duration.ofHours(3))));
+                activity(PROJECT1, Duration.ofHours(2), "a1"),
+                activity(PROJECT1, Duration.ofHours(3), "a2")));
 
         final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         final List<ProjectReportActivity> projects = days.get(0).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(5);
+        assertThat(projects.get(0).getComments()).containsExactly("a1", "a2");
+    }
+
+    @Test
+    void monthlyReportForDayWithTwoActivitiesForSameProjectAggregatesDuration()
+    {
+        simulateDays(day(DATE1, DayType.WORK,
+                activity(PROJECT1, Duration.ofHours(2), "a1"),
+                activity(PROJECT1, Duration.ofHours(3), "a2")));
+
+        final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
+        final List<ProjectReportActivity> projects = days.get(0).getProjects();
+        assertThat(projects).hasSize(1);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(5);
+        assertThat(projects.get(0).getComments()).containsExactly("a1", "a2");
     }
 
     @Test
     void twoDaysWithSameProject()
     {
-        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2))),
-                day(DATE2, DayType.WORK, activity(PROJECT1, Duration.ofHours(3))));
+        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2), "a1")),
+                day(DATE2, DayType.WORK, activity(PROJECT1, Duration.ofHours(3), "a2")));
 
         final List<ProjectReportDay> days = reportGenerator.generateReport(MONTH).getDays();
         assertThat(days).hasSize(2);
@@ -162,18 +268,50 @@ class ProjectReportGeneratorTest
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(2);
+        assertThat(projects.get(0).getComments()).containsExactly("a1");
 
         projects = days.get(1).getProjects();
         assertThat(projects).hasSize(1);
         assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
         assertThat(projects.get(0).getWorkingTime()).hasHours(3);
+        assertThat(projects.get(0).getComments()).containsExactly("a2");
+    }
+
+    @Test
+    void monthlyReportForTwoDaysWithSameProject()
+    {
+        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2), "a1")),
+                day(DATE2, DayType.WORK, activity(PROJECT1, Duration.ofHours(3), "a2")));
+
+        final List<ProjectReportActivity> projects = reportGenerator.generateReport(MONTH).getProjects();
+        assertThat(projects).hasSize(1);
+        assertThat(projects.get(0).getProject()).isSameAs(PROJECT1);
+        assertThat(projects.get(0).getWorkingTime()).hasHours(5);
+        assertThat(projects.get(0).getComments()).containsExactly("a1", "a2");
+    }
+
+    @Test
+    void monthlyReportRemovesDuplicateComments()
+    {
+        simulateDays(day(DATE1, DayType.WORK, activity(PROJECT1, Duration.ofHours(2), "a1")),
+                day(DATE2, DayType.WORK, activity(PROJECT1, Duration.ofHours(3), "a1")));
+
+        final List<ProjectReportActivity> projects = reportGenerator.generateReport(MONTH).getProjects();
+        assertThat(projects.get(0).getComments()).containsExactly("a1");
     }
 
     private Activity activity(ProjectImpl project, Duration duration)
     {
+        return activity(project, duration, null);
+    }
+
+    private Activity activity(ProjectImpl project, Duration duration, String comment)
+    {
         final Activity activityMock = mock(Activity.class);
         when(activityMock.getProject()).thenReturn(project);
+
         lenient().when(activityMock.getDuration()).thenReturn(duration);
+        lenient().when(activityMock.getComment()).thenReturn(comment);
         return activityMock;
     }
 

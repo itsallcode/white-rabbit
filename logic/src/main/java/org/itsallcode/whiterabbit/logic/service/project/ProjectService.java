@@ -1,61 +1,54 @@
 package org.itsallcode.whiterabbit.logic.service.project;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.itsallcode.whiterabbit.logic.Config;
+
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbException;
 
 public class ProjectService
 {
     private static final Logger LOG = LogManager.getLogger(ProjectService.class);
 
-    private final Jsonb jsonb;
-
     private final Map<String, ProjectImpl> projectsById;
     private final Map<String, ProjectImpl> projectsByLabel;
 
-    public ProjectService(Config config)
+    public static ProjectService load(Path projectConfigFile)
     {
-        this(JsonbBuilder.create(), config);
-    }
-
-    ProjectService(Jsonb jsonb, Config config)
-    {
-        this.jsonb = jsonb;
-
-        final Path projectConfigFile = config.getProjectFile();
-        if (projectConfigFile != null && Files.exists(projectConfigFile))
-        {
-            final List<ProjectImpl> allProjects = loadAvailableProjects(projectConfigFile);
-            projectsById = groupBy(allProjects, ProjectImpl::getProjectId);
-            projectsByLabel = groupBy(allProjects, ProjectImpl::getLabel);
-        }
-        else
+        if (projectConfigFile == null || !Files.exists(projectConfigFile))
         {
             LOG.warn("Project config file not found at {}", projectConfigFile);
-            projectsById = emptyMap();
-            projectsByLabel = emptyMap();
+            return new ProjectService(emptyMap(), emptyMap());
         }
+        final List<ProjectImpl> allProjects = loadAvailableProjects(projectConfigFile);
+        return new ProjectService(groupBy(allProjects, ProjectImpl::getProjectId),
+                groupBy(allProjects, ProjectImpl::getLabel));
     }
 
-    private LinkedHashMap<String, ProjectImpl> groupBy(final List<ProjectImpl> allProjects,
+    private ProjectService(Map<String, ProjectImpl> projectsById, Map<String, ProjectImpl> projectsByLabel)
+    {
+        this.projectsById = projectsById;
+        this.projectsByLabel = projectsByLabel;
+    }
+
+    private static LinkedHashMap<String, ProjectImpl> groupBy(final List<ProjectImpl> allProjects,
             Function<ProjectImpl, String> keyMapper)
     {
         return allProjects.stream()
@@ -77,25 +70,52 @@ public class ProjectService
         return projectsById.values();
     }
 
-    private List<ProjectImpl> loadAvailableProjects(Path projectConfigFile)
+    private static List<ProjectImpl> loadAvailableProjects(Path projectConfigFile)
     {
-        final List<ProjectImpl> projectList = readProjectConfig(projectConfigFile)
-                .map(ProjectConfig::getProjects)
-                .orElse(emptyList());
+        final List<ProjectImpl> projectList = Optional.ofNullable(readProjectConfig(projectConfigFile).getProjects())
+                .orElseGet(Collections::emptyList);
+        if (projectList.isEmpty())
+        {
+            throw new IllegalStateException("No projects found in file '" + projectConfigFile + "'");
+        }
         LOG.info("Found {} projects in file {}: {}", projectList.size(), projectConfigFile, projectList);
+        projectList.forEach(ProjectService::validateProject);
         return projectList;
     }
 
-    private Optional<ProjectConfig> readProjectConfig(final Path projectConfigFile)
+    private static void validateProject(ProjectImpl project)
     {
+        if (project.getProjectId() == null)
+        {
+            throw new IllegalStateException("Project ID is required for " + project);
+        }
+        if (project.getLabel() == null)
+        {
+            throw new IllegalStateException("Label is required for " + project);
+        }
+    }
+
+    private static ProjectConfig readProjectConfig(Path projectConfigFile)
+    {
+        final Jsonb jsonb = createJsonb();
         try (InputStream stream = Files.newInputStream(projectConfigFile))
         {
-            return Optional.of(jsonb.fromJson(stream, ProjectConfig.class));
+            return jsonb.fromJson(stream, ProjectConfig.class);
         }
         catch (final IOException e)
         {
-            LOG.warn("Error reading project config from {}: {}", projectConfigFile, e.getMessage(), e);
-            return Optional.empty();
+            throw new UncheckedIOException(
+                    "Error reading project config file " + projectConfigFile + ": " + e.getMessage(), e);
         }
+        catch (final JsonbException e)
+        {
+            throw new IllegalArgumentException(
+                    "Error parsing project config file " + projectConfigFile + ": " + e.getMessage(), e);
+        }
+    }
+
+    private static Jsonb createJsonb()
+    {
+        return JsonbBuilder.create();
     }
 }

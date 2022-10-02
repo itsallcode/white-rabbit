@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.features.ProgressMonitor;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.ui.UiResources;
+import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -29,9 +29,9 @@ public class ProgressDialog
 
     public static DialogProgressMonitor show(Stage primaryStage, String windowTitle)
     {
-        final Dialog dialog = new Dialog(primaryStage, windowTitle);
+        final var dialog = new Dialog(primaryStage, windowTitle);
         dialog.show();
-        final DialogProgressMonitor monitor = new DialogProgressMonitor(dialog);
+        final var monitor = new DialogProgressMonitor(dialog);
         dialog.cancelButton.addEventHandler(ActionEvent.ACTION, event -> monitor.setCanceled());
         return monitor;
     }
@@ -63,7 +63,7 @@ public class ProgressDialog
             progressBar = new ProgressBar(ProgressIndicator.INDETERMINATE_PROGRESS);
             progressBar.setPrefWidth(200);
             cancelButton = new Button("Cancel");
-            final VBox pane = new VBox();
+            final var pane = new VBox();
             pane.setAlignment(Pos.CENTER);
             pane.setPadding(UiResources.DEFAULT_MARGIN);
             pane.setSpacing(8);
@@ -73,9 +73,9 @@ public class ProgressDialog
 
         private Stage createStage(final Parent root)
         {
-            final Stage newStage = new Stage();
+            final var newStage = new Stage();
             newStage.setTitle(windowTitle);
-            newStage.setScene(new Scene(root));
+            newStage.setScene(UiWidget.scene(root));
             newStage.initModality(Modality.NONE);
             newStage.initOwner(primaryStage);
             newStage.getIcons().add(UiResources.APP_ICON);

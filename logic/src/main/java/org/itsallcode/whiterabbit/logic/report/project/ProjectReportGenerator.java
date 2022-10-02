@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.report.project;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
@@ -30,15 +29,27 @@ public class ProjectReportGenerator
 
     public ProjectReport generateReport(YearMonth month)
     {
-        return new ProjectReportImpl(month, storage.loadMonth(month)
-                .map(MonthIndex::getSortedDays).orElse(Stream.empty())
+        final List<DayRecord> sortedDays = storage.loadMonth(month)
+                .map(MonthIndex::getSortedDays).orElse(Stream.empty()).collect(toList());
+
+        final List<ProjectReportDay> reportDays = sortedDays.stream()
                 .map(this::generateDayReport)
-                .collect(toList()));
+                .toList();
+
+        final List<ProjectReportActivity> reportProjects = sortedDays.stream()
+                .flatMap(day -> day.activities().getAll().stream())
+                .filter(activity -> activity.getProject() != null)
+                .collect(groupingBy(Activity::getProject))
+                .values().stream()
+                .map(this::aggregateProject)
+                .collect(toList());
+
+        return new ProjectReportImpl(month, reportDays, reportProjects);
     }
 
-    private ProjectReportDay generateDayReport(DayRecord record)
+    private ProjectReportDay generateDayReport(DayRecord dayRecord)
     {
-        final List<ProjectReportActivity> projects = record.activities()
+        final List<ProjectReportActivity> projects = dayRecord.activities()
                 .getAll().stream()
                 .filter(activity -> activity.getProject() != null)
                 .collect(groupingBy(this::activityProject))
@@ -46,7 +57,7 @@ public class ProjectReportGenerator
                 .map(this::aggregateProject)
                 .collect(toList());
 
-        return new DayImpl(record.getDate(), record.getType(), record.getComment(), projects);
+        return new DayImpl(dayRecord.getDate(), dayRecord.getType(), dayRecord.getComment(), projects);
     }
 
     private String activityProject(Activity activity)
@@ -60,11 +71,13 @@ public class ProjectReportGenerator
                 .filter(activity -> activity.getDuration() != null)
                 .map(Activity::getDuration).reduce((a, b) -> a.plus(b))
                 .orElse(Duration.ZERO);
-        final String comments = projectActivites.stream()
+        final List<String> comments = projectActivites.stream()
                 .map(Activity::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .collect(joining(", "));
-        return new ProjectReportImpl.ProjectActivityImpl(projectActivites.get(0).getProject(), totalWorkingTime, comments);
+                .distinct()
+                .toList();
+        return new ProjectReportImpl.ProjectActivityImpl(projectActivites.get(0).getProject(), totalWorkingTime,
+                comments);
     }
 }

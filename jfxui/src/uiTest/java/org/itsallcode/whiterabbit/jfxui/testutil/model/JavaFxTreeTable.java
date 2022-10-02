@@ -11,12 +11,10 @@ import javafx.scene.control.TreeTableView;
 
 public class JavaFxTreeTable<T>
 {
-    private final FxRobot robot;
     private final TreeTableView<T> table;
 
     private JavaFxTreeTable(FxRobot robot, TreeTableView<T> table)
     {
-        this.robot = robot;
         this.table = table;
     }
 

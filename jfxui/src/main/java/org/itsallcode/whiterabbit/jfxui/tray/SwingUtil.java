@@ -57,4 +57,9 @@ public class SwingUtil
             throw new IllegalStateException("Error executing: " + e.getMessage(), e);
         }
     }
+
+    public static void invokeInAwtEventQueue(Runnable runnable)
+    {
+        java.awt.EventQueue.invokeLater(runnable);
+    }
 }

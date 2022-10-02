@@ -17,23 +17,26 @@ import org.junit.jupiter.api.io.TempDir;
 
 class DateToFileMapperTest
 {
-    private DateToFileMapper mapper;
+    @TempDir
+    Path tempDir;
+
+    DateToFileMapper mapper;
 
     @BeforeEach
-    void setUp(@TempDir Path tempDir)
+    void setUp()
     {
         mapper = new DateToFileMapper(tempDir);
     }
 
     @Test
-    void testGetPathForDate(@TempDir Path tempDir)
+    void testGetPathForDate()
     {
         final Path path = mapper.getPathForDate(YearMonth.of(2019, Month.MAY));
         assertThat(path).isEqualTo(tempDir.resolve("2019/2019-05.json"));
     }
 
     @Test
-    void testGetLegacyPathForDate(@TempDir Path tempDir)
+    void testGetLegacyPathForDate()
     {
         final Path path = mapper.getLegacyPathForDate(YearMonth.of(2019, Month.MAY));
         assertThat(path).isEqualTo(tempDir.resolve("2019-05.json"));
@@ -52,7 +55,7 @@ class DateToFileMapperTest
     }
 
     @Test
-    void testGetAllFilesDirInvalidFiles(@TempDir Path tempDir) throws IOException
+    void testGetAllFilesDirInvalidFiles() throws IOException
     {
         Files.createDirectory(tempDir.resolve("ignored-dir"));
         Files.createFile(tempDir.resolve("non-json-file.txt"));
@@ -61,7 +64,7 @@ class DateToFileMapperTest
     }
 
     @Test
-    void testGetAllFilesDirValidFiles(@TempDir Path tempDir) throws IOException
+    void testGetAllFilesDirValidFiles() throws IOException
     {
         final Path file1 = tempDir.resolve("file1.json");
         Files.createFile(file1);
@@ -69,7 +72,7 @@ class DateToFileMapperTest
     }
 
     @Test
-    void testGetAllFilesDirValidFilesInSubDir(@TempDir Path tempDir) throws IOException
+    void testGetAllFilesDirValidFilesInSubDir() throws IOException
     {
         final Path subDir = tempDir.resolve("subdir");
         Files.createDirectory(subDir);
@@ -91,7 +94,7 @@ class DateToFileMapperTest
     }
 
     @Test
-    void testGetAllYearMonthDirInvalidFiles(@TempDir Path tempDir) throws IOException
+    void testGetAllYearMonthDirInvalidFiles() throws IOException
     {
         Files.createDirectory(tempDir.resolve("ignored-dir"));
         Files.createFile(tempDir.resolve("non-json-file.txt"));
@@ -101,14 +104,14 @@ class DateToFileMapperTest
     }
 
     @Test
-    void testGetAllYearMonthDirValidFiles(@TempDir Path tempDir) throws IOException
+    void testGetAllYearMonthDirValidFiles() throws IOException
     {
         Files.createFile(tempDir.resolve("2019-05.json"));
         assertThat(mapper.getAllYearMonths()).hasSize(1).contains(YearMonth.of(2019, Month.MAY));
     }
 
     @Test
-    void testGetAllYearMonthDirValidFilesInSubDir(@TempDir Path tempDir) throws IOException
+    void testGetAllYearMonthDirValidFilesInSubDir() throws IOException
     {
         final Path subDir = tempDir.resolve("subdir");
         Files.createDirectory(subDir);

@@ -19,9 +19,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -62,12 +60,21 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     @Test
     void clickingAddButtonAddsActivity()
     {
+        assertActionAddsActivity(() -> app().activitiesTable().addActivity());
+    }
+
+    @Test
+    void doubleClickingEmptyTableAddsActivity()
+    {
+        assertActionAddsActivity(() -> app().activitiesTable().table().doubleClick());
+    }
+
+    private void assertActionAddsActivity(final Runnable action)
+    {
         time().tickMinute();
         selectCurrentDay();
+        action.run();
         final ActivitiesTable activities = app().activitiesTable();
-
-        activities.addActivity();
-
         activities.table().assertRowCount(1);
     }
 
@@ -113,11 +120,63 @@ class ActivitiesTest extends JavaFxAppUiTestBase
 
         activities.table().assertRowCount(1);
 
-        activities.table().clickRow(0);
+        activities.table().row(0).click();
 
         activities.removeActivity();
 
         activities.table().assertRowCount(0);
+    }
+
+    @Test
+    void typingDeleteKeyWhenNoActivitySelectedDoesNothing()
+    {
+        time().tickMinute();
+        selectCurrentDay();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        robot.type(KeyCode.DELETE);
+
+        activities.table().assertRowCount(1);
+    }
+
+    @Test
+    void typingDeleteKeyRemovesSelectedActivity()
+    {
+        time().tickMinute();
+        selectCurrentDay();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.table().row(0).click();
+
+        robot.type(KeyCode.DELETE);
+
+        activities.table().assertRowCount(0);
+    }
+
+    @Test
+    void typingOtherKeyKeyDoesNotRemoveSelectedActivity()
+    {
+        time().tickMinute();
+        selectCurrentDay();
+        final ActivitiesTable activities = app().activitiesTable();
+
+        activities.addActivity();
+
+        activities.table().assertRowCount(1);
+
+        activities.table().row(0).click();
+
+        robot.type(KeyCode.BACK_SPACE);
+
+        activities.table().assertRowCount(1);
     }
 
     @Test
@@ -240,8 +299,8 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         addActivity();
 
         final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
-        robot.clickOn(activitiesTable.getTableCell(0, "remainder"));
-        activitiesTable.assertRowContent(0, ActivitiesTableExpectedRow.defaultRow().withRemainder(false).build());
+        robot.clickOn(activitiesTable.row(0).cell("remainder"));
+        activitiesTable.row(0).assertContent(ActivitiesTableExpectedRow.defaultRow().withRemainder(false).build());
     }
 
     @Test
@@ -251,10 +310,10 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         addActivity();
 
         final JavaFxTable<ActivityPropertyAdapter> activitiesTable = app().activitiesTable().table();
-        final Node projectCell = activitiesTable.getTableCell(0, "project");
+        final Node projectCell = activitiesTable.row(0).cell("project");
 
         robot.doubleClickOn(projectCell).clickOn(projectCell).type(KeyCode.ENTER);
-        activitiesTable.assertRowContent(0,
+        activitiesTable.row(0).assertContent(
                 ActivitiesTableExpectedRow.defaultRow().withRemainder(true).withProject(PROJECT1).build());
     }
 
@@ -265,7 +324,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         final int rowTomorrow = time().getCurrentDayRowIndex() + 1;
         final JavaFxTable<ActivityPropertyAdapter> table = app().activitiesTable().table();
 
-        app().genericDayTable().clickRow(rowTomorrow);
+        app().genericDayTable().row(rowTomorrow).click();
 
         table.assertRowCount(0);
 
@@ -279,7 +338,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
     {
         time().tickMinute();
         final int row = time().getCurrentDayRowIndex();
-        app().genericDayTable().clickRow(row + 1);
+        app().genericDayTable().row(row + 1).click();
 
         final JavaFxTable<ActivityPropertyAdapter> table = app().activitiesTable().table();
         table.assertRowCount(0);
@@ -287,7 +346,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         addActivity();
         table.assertRowCount(1);
 
-        app().genericDayTable().clickRow(row);
+        app().genericDayTable().row(row).click();
         table.assertRowCount(0);
     }
 
@@ -320,7 +379,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         final Builder expectedRow = ActivitiesTableExpectedRow.defaultRow().withRemainder(true).withComment("act");
         activities.table().assertContent(expectedRow.withDuration(Duration.ZERO).build());
 
-        app().dayTable().typeBegin(row, "11:00");
+        app().dayTable().row(row).typeBegin("11:00");
         activities.table().assertContent(expectedRow.withDuration(Duration.ofMinutes(16)).build());
     }
 
@@ -335,7 +394,7 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         final Builder expectedRowContent = ActivitiesTableExpectedRow.defaultRow().withRemainder(isFirstActivity);
 
         assertAll(() -> table.assertRowCount(1),
-                () -> table.assertRowContent(0, expectedRowContent.build()));
+                () -> table.row(0).assertContent(expectedRowContent.build()));
     }
 
     private void selectCurrentDay()
@@ -343,12 +402,12 @@ class ActivitiesTest extends JavaFxAppUiTestBase
         final JavaFxTable<DayRecordPropertyAdapter> dayTable = app().genericDayTable();
 
         final int dayRowIndex = time().getCurrentDayRowIndex();
-        robot.clickOn(dayTable.getTableRow(dayRowIndex));
+        robot.clickOn(dayTable.row(dayRowIndex).tableRow());
     }
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));

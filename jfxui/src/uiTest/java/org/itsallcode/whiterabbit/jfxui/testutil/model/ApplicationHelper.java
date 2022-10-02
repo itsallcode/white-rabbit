@@ -19,12 +19,10 @@ import javafx.stage.Window;
 public class ApplicationHelper
 {
     private final FxRobot robot;
-    private final Window window;
 
     private ApplicationHelper(FxRobot robot, Window window)
     {
         this.robot = robot;
-        this.window = window;
     }
 
     public static ApplicationHelper create(FxRobot robot)
@@ -111,19 +109,45 @@ public class ApplicationHelper
         JavaFxUtil.runOnFxApplicationThread(() -> getSelectedMonthComboBox().setValue(month));
     }
 
+    public void gotoNextMonth()
+    {
+        clickButton("#next-month-button");
+    }
+
+    public void gotoPreviousMonth()
+    {
+        clickButton("#previous-month-button");
+    }
+
+    private void clickButton(String query)
+    {
+        final Button button = robot.lookup(query).queryButton();
+        robot.clickOn(button);
+    }
+
     private ComboBox<YearMonth> getSelectedMonthComboBox()
     {
         return robot.lookup("#selected-month-combobox").queryComboBox();
     }
 
-    public ProjectReportWindow openProjectReport()
+    public DailyProjectReportWindow openDailyProjectReport()
     {
         robot.clickOn("#menu_reports");
-        robot.clickOn("#menuitem_project_report");
+        robot.clickOn("#menuitem_daily_project_report");
 
-        final Window window = robot.window("Project Report");
+        final Window window = robot.window("Daily Project Report");
         Assertions.assertThat(window).isShowing();
-        return new ProjectReportWindow(robot, window);
+        return new DailyProjectReportWindow(robot, window);
+    }
+
+    public MonthlyProjectReportWindow openMonthlyProjectReport()
+    {
+        robot.clickOn("#menu_reports");
+        robot.clickOn("#menuitem_monthly_project_report");
+
+        final Window window = robot.window("Monthly Project Report");
+        Assertions.assertThat(window).isShowing();
+        return new MonthlyProjectReportWindow(robot, window);
     }
 
     public VacationReportWindow openVacationReport()

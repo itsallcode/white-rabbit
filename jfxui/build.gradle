@@ -1,33 +1,31 @@
 plugins {
     id 'com.github.johnrengelman.shadow'
-}
-
-ext {
-    javaFxVersion = '15.0.1'
-    monocleVersion = '12.0.1+2'
+    id 'org.panteleyev.jpackageplugin'
+    id 'org.gradle.crypto.checksum'
 }
 
 dependencies {
     implementation project(':logic')
+    def javaFxVersion = libs.versions.javafx.get()
     ['win', 'mac', 'linux'].forEach {platform ->
         implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
     }
 
-    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
-    implementation "org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.600"
-    implementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
+    implementation libs.log4j.api
+    implementation libs.jdtAnnotations
+    implementation libs.jsonBindApi
 
-    runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    runtimeOnly "org.apache.logging.log4j:log4j-jul:${log4jVersion}"
-    runtimeOnly "org.fusesource.jansi:jansi:2.3.2"
+    runtimeOnly libs.log4j.core
+    runtimeOnly libs.log4j.jul
+    runtimeOnly libs.jansi
 
-    testImplementation "javax.json.bind:javax.json.bind-api:${jsonBindApiVersion}"
-    testRuntimeOnly "org.eclipse:yasson:${yassonVersion}"
+    testImplementation libs.testfx
+    testImplementation libs.bundles.testUtils
 
-    testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
-    testRuntimeOnly "org.testfx:openjfx-monocle:jdk-$monocleVersion"
+    testRuntimeOnly libs.yasson
+    testRuntimeOnly libs.monocle
 }
 
 shadowJar {
@@ -48,22 +46,60 @@ jar {
 
 build.dependsOn shadowJar
 
+def jPackageDir = "$buildDir/jpackage-jars"
+
 project(':plugins').afterEvaluate {
     List<Task> pluginJarTasks = project(':plugins').ext.pluginBuildTasks
-
-    task runJfxuiWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
+    
+    def userHome = System.properties['user.home']
+    if(project.hasProperty('user.home')) {
+    	userHome = project.property('user.home')
+    }
+    
+    task runWithPlugins(type: JavaExec, dependsOn: [shadowJar] + pluginJarTasks, group: 'run') {
         group = "run"
         def pluginJars = files(pluginJarTasks.collect {it.outputs.files })
         classpath = shadowJar.outputs.files + pluginJars
-        main = project.mainClass
+        mainClass = project.mainClass
         workingDir = rootProject.projectDir
+        systemProperties = ['user.home': userHome]
+    }
+
+    task runJfxuiWithPlugins(dependsOn: runWithPlugins, group: 'run') {
+        // deprecated
+    }
+
+    def getUnwantedPlatforms = {
+        OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+        if(os.isLinux()) {
+            return ["mac", "win"]
+        }
+        if(os.isWindows()) {
+            return ["mac", "linux"]
+        }
+        if(os.isMacOsX()) {
+            return ["linux", "win"]
+        }
+    }
+
+    task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
+        def unwantedPlatforms = getUnwantedPlatforms()
+        from(configurations.runtimeClasspath.filter { file -> 
+            unwantedPlatforms.every { platform -> !file.name.endsWith("-${platform}.jar") }
+        }).into jPackageDir
+        from(tasks.jar.outputs.files).into jPackageDir
+        from(pluginJarTasks).into jPackageDir
     }
 }
 
-task runJfxui(type: JavaExec, dependsOn: shadowJar, group: 'run') {
+task run(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
-    main = project.mainClass
+    mainClass = project.mainClass
     workingDir = rootProject.projectDir
+}
+
+task runJfxui(dependsOn: run, group: 'run') {
+    // deprecated
 }
 
 sourceSets {
@@ -81,7 +117,11 @@ configurations {
 task uiTest(type: Test, group: 'verification') {
     description = 'Runs integration tests.'
 
-    useJUnitPlatform()
+    useJUnitPlatform {
+        if(project.hasProperty('skipFlakyTests') && project.property('skipFlakyTests') == 'true') {
+            excludeTags 'FLAKY'
+        }
+    }
 
     forkEvery 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError'
@@ -105,3 +145,47 @@ task uiTest(type: Test, group: 'verification') {
 check.dependsOn uiTest
 
 tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jacoco/*.exec")
+
+tasks.jpackage {
+    dependsOn("copyJPackageDependencies")
+
+    input  = jPackageDir
+    destination = "$buildDir/jpackage-dist"
+
+    appName = "WhiteRabbit"
+    vendor = '"It\'s all code"'
+    copyright = '"Copyright (C) 2021 Christoph Pirkl <christoph at users.sourceforge.net>"'
+    licenseFile = "${rootProject.rootDir}/LICENSE"
+    appDescription = '"A time recording tool"'
+    icon = "${projectDir}/src/main/resources/icon.png"
+
+    mainJar = tasks.jar.archiveFileName.get()
+    mainClass = project.mainClass
+
+    verbose = false
+    arguments = []
+    javaOptions = ["-Dfile.encoding=UTF-8"]
+    additionalParameters = ["--about-url", "https://github.com/itsallcode/white-rabbit/blob/main/README.md"]
+    windows {
+        winConsole = false
+        winPerUserInstall = true
+        winMenu = true
+        winMenuGroup = "Time Recording"
+        winShortcut = true
+        icon = "${projectDir}/src/main/resources/icon.ico"
+    }
+
+    mac {
+        macPackageIdentifier = "org.itsallcode.white-rabbit"
+        macPackageName = "WhiteRabbit"
+        icon = "${projectDir}/src/main/resources/icon.icns"
+    }
+}
+
+task createChecksums(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.jpackage, tasks.shadowJar]) {
+    files = files(tasks.shadowJar.outputs.files, fileTree(tasks.jpackage.destination) {
+        include '*'
+    })
+    outputDir = new File(project.buildDir, "generatedChecksums")
+    algorithm = org.gradle.crypto.checksum.Checksum.Algorithm.SHA512
+}

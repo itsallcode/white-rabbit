@@ -13,7 +13,6 @@ import org.itsallcode.whiterabbit.logic.service.plugin.PluginManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -78,7 +77,7 @@ public class PluginManagerViewer
     {
         final Stage newStage = new Stage();
         newStage.setTitle("Plugin Manager");
-        newStage.setScene(new Scene(root, 600, 400));
+        newStage.setScene(UiWidget.scene(root, 600, 400));
         newStage.initModality(Modality.NONE);
         newStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == KeyCode.ESCAPE)

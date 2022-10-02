@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.JavaFxUtil;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
+import org.itsallcode.whiterabbit.jfxui.table.converter.CustomLocalTimeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DayTypeStringConverter;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
 import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
@@ -35,9 +35,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
+import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.LocalDateStringConverter;
-import javafx.util.converter.LocalTimeStringConverter;
 
 public class DayRecordTable
 {
@@ -131,7 +130,7 @@ public class DayRecordTable
             throw new IllegalStateException("Table already initialized");
         }
         table = new TableView<>(dayRecords);
-        table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/style.css");
+        table.getStylesheets().add("org/itsallcode/whiterabbit/jfxui/table/days/style.css");
         table.setEditable(true);
         table.getColumns().addAll(createColumns());
         table.setId("day-table");
@@ -147,6 +146,19 @@ public class DayRecordTable
 
         table.setRowFactory(param -> new TableRow<DayRecordPropertyAdapter>()
         {
+            @Override
+            public void updateIndex(int newIndex)
+            {
+                if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
+                {
+                    final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
+                    LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
+                            dayRecord.date.get());
+                    dayRecord.setTableRow(this);
+                }
+                super.updateIndex(newIndex);
+            }
+
             @Override
             protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
             {
@@ -174,10 +186,10 @@ public class DayRecordTable
     {
         final TableColumn<DayRecordPropertyAdapter, LocalDate> dateCol = UiWidget.readOnlyColumn("date", "Date",
                 param -> new PersistOnFocusLossTextFieldTableCell<>(
-                        new LocalDateStringConverter(formatterService.getShortDateFormatter(), null)),
+                        new CustomLocalDateStringConverter(formatterService.getCustomShortDateFormatter())),
                 data -> data.getValue().date);
-        final DurationStringConverter durationConverter = new DurationStringConverter(formatterService);
-        final LocalTimeStringConverter localTimeConverter = new LocalTimeStringConverter(FormatStyle.SHORT,
+        final StringConverter<Duration> durationConverter = new DurationStringConverter(formatterService);
+        final StringConverter<LocalTime> localTimeConverter = new CustomLocalTimeStringConverter(
                 formatterService.getLocale());
         final TableColumn<DayRecordPropertyAdapter, org.itsallcode.whiterabbit.api.model.DayType> dayTypeCol = UiWidget
                 .column("day-type", "Type",

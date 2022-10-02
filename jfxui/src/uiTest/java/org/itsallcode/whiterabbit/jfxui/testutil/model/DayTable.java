@@ -3,9 +3,7 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,112 +26,20 @@ public class DayTable
     private final JavaFxTable<DayRecordPropertyAdapter> table;
     private final FxRobot robot;
 
-    DayTable(JavaFxTable<DayRecordPropertyAdapter> table, FxRobot robot)
+    DayTable(final JavaFxTable<DayRecordPropertyAdapter> table, final FxRobot robot)
     {
         this.table = table;
         this.robot = robot;
     }
 
+    public DayTableRow row(final int rowIndex)
+    {
+        return new DayTableRow(rowIndex);
+    }
+
     public DayRecord getSelectedRow()
     {
         return table.getSelectedTableRow().getItem().getRecord();
-    }
-
-    public void assertInterruption(int row, Duration expectedInterruption)
-    {
-        assertThat(getInterruption(row)).as("interruption").isEqualTo(expectedInterruption);
-    }
-
-    public void assertBeginAndEnd(int row, LocalTime begin, LocalTime end)
-    {
-        assertAll(
-                () -> assertThat(getBegin(row)).as("begin").isEqualTo(begin),
-                () -> assertThat(getEnd(row)).as("end").isEqualTo(end));
-    }
-
-    public void assertDate(int row, LocalDate expectedDate)
-    {
-        assertThat(getDate(row)).isEqualTo(expectedDate);
-    }
-
-    public LocalDate getDate(int row)
-    {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "date");
-        return (LocalDate) tableCell.getItem();
-    }
-
-    public LocalTime getBegin(int row)
-    {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
-        return (LocalTime) tableCell.getItem();
-    }
-
-    public String getBeginText(int row)
-    {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
-        return tableCell.getText();
-    }
-
-    public void typeBegin(int row, String value)
-    {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "begin");
-        robot.clickOn(tableCell).clickOn(tableCell).clickOn(tableCell).type(KeyCode.BACK_SPACE).write(value)
-                .type(KeyCode.TAB);
-    }
-
-    public LocalTime getEnd(int row)
-    {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "end");
-        return (LocalTime) tableCell.getItem();
-    }
-
-    public Duration getInterruption(int row)
-    {
-        final TableCell<?, ?> tableCell = getInterruptionCell(row);
-        return (Duration) tableCell.getItem();
-    }
-
-    public String getInterruptionText(int row)
-    {
-        final TableCell<?, ?> tableCell = getInterruptionCell(row);
-        return tableCell.getText();
-    }
-
-    public void typeInterruption(int row, String value)
-    {
-        final TableCell<?, ?> tableCell = getInterruptionCell(row);
-        robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
-    }
-
-    private TableCell<?, ?> getInterruptionCell(int row)
-    {
-        final TableCell<?, ?> tableCell = table.getTableCell(row, "interruption");
-        return tableCell;
-    }
-
-    public void typeComment(int row, String value)
-    {
-        robot.doubleClickOn(getCommentCell(row)).write(value).type(KeyCode.TAB);
-    }
-
-    public TableCell<?, ?> getCommentCell(int row)
-    {
-        return table.getTableCell(row, "comment");
-    }
-
-    public void selectDayTypeDirect(int row, DayType type)
-    {
-        robot.doubleClickOn(getDayTypeCell(row));
-        robot.clickOn(type.toString());
-    }
-
-    public void selectDayType(int row, DayType type)
-    {
-        final ChoiceBox<DayType> choiceBox = getChoiceBox(getDayTypeCell(row));
-        JavaFxUtil.runOnFxApplicationThread(() -> {
-            choiceBox.getSelectionModel().select(type);
-        });
-        assertThat(getDayType(row)).as("day type after selecting " + type).isEqualTo(type);
     }
 
     @SuppressWarnings("unchecked")
@@ -151,37 +57,144 @@ public class DayTable
         return choiceBox;
     }
 
-    public DayType getDayType(int row)
-    {
-        final TableCell<?, DayType> tableCell = getDayTypeCell(row);
-        LOG.debug("Got day type {} for row {}", tableCell.getItem(), row);
-        return tableCell.getItem();
-    }
-
-    @SuppressWarnings("unchecked")
-    public TableCell<DayRecordPropertyAdapter, DayType> getDayTypeCell(int row)
-    {
-        return (TableCell<DayRecordPropertyAdapter, DayType>) table.getTableCell(row, "day-type");
-    }
-
-    public void assertRowsHighlightedAsWeekend(int... rows)
+    public void assertRowsHighlightedAsWeekend(final int... rows)
     {
         for (final int i : rows)
         {
-            table.assertRowHasPseudoClass(i, "weekend");
+            table.row(i).assertHasPseudoClass("weekend");
         }
     }
 
-    public void assertRowsNotHighlightedAsWeekend(int... rows)
+    public void assertRowsNotHighlightedAsWeekend(final int... rows)
     {
         for (final int i : rows)
         {
-            table.assertRowDoesNotHavePseudoClass(i, "weekend");
+            table.row(i).assertDoesNotHavePseudoClass("weekend");
         }
     }
 
     public JavaFxTable<DayRecordPropertyAdapter> table()
     {
         return table;
+    }
+
+    public class DayTableRow
+    {
+        private final int row;
+
+        private DayTableRow(final int rowIndex)
+        {
+            this.row = rowIndex;
+        }
+
+        public void assertInterruption(final Duration expectedInterruption)
+        {
+            assertThat(getInterruption()).as("interruption duration").isEqualTo(expectedInterruption);
+        }
+
+        public void assertBeginAndEnd(final LocalTime begin, final LocalTime end)
+        {
+            assertAll(
+                    () -> assertThat(getBegin()).as("begin time").isEqualTo(begin),
+                    () -> assertThat(getEnd()).as("end time").isEqualTo(end));
+        }
+
+        public void assertDate(final LocalDate expectedDate)
+        {
+            assertThat(getDate()).isEqualTo(expectedDate);
+        }
+
+        public LocalDate getDate()
+        {
+            final TableCell<?, ?> tableCell = table.row(row).cell("date");
+            return (LocalDate) tableCell.getItem();
+        }
+
+        public LocalTime getBegin()
+        {
+            final TableCell<?, ?> tableCell = table.row(row).cell("begin");
+            return (LocalTime) tableCell.getItem();
+        }
+
+        public String getBeginText()
+        {
+            final TableCell<?, ?> tableCell = table.row(row).cell("begin");
+            return tableCell.getText();
+        }
+
+        public void typeBegin(final String value)
+        {
+            final TableCell<?, ?> tableCell = table.row(row).cell("begin");
+            robot.clickOn(tableCell).clickOn(tableCell).clickOn(tableCell).type(KeyCode.BACK_SPACE).write(value)
+                    .type(KeyCode.TAB);
+        }
+
+        public LocalTime getEnd()
+        {
+            final TableCell<?, ?> tableCell = table.row(row).cell("end");
+            return (LocalTime) tableCell.getItem();
+        }
+
+        public Duration getInterruption()
+        {
+            final TableCell<?, ?> tableCell = getInterruptionCell();
+            return (Duration) tableCell.getItem();
+        }
+
+        public String getInterruptionText()
+        {
+            final TableCell<?, ?> tableCell = getInterruptionCell();
+            return tableCell.getText();
+        }
+
+        public void typeInterruption(final String value)
+        {
+            final TableCell<?, ?> tableCell = getInterruptionCell();
+            robot.doubleClickOn(tableCell).write(value).type(KeyCode.TAB);
+        }
+
+        private TableCell<?, ?> getInterruptionCell()
+        {
+            final TableCell<?, ?> tableCell = table.row(row).cell("interruption");
+            return tableCell;
+        }
+
+        public void typeComment(final String value)
+        {
+            robot.doubleClickOn(getCommentCell()).write(value).type(KeyCode.TAB);
+        }
+
+        public TableCell<?, ?> getCommentCell()
+        {
+            return table.row(row).cell("comment");
+        }
+
+        public void selectDayTypeDirect(final DayType type)
+        {
+            robot.doubleClickOn(getDayTypeCell());
+            robot.clickOn(type.toString());
+        }
+
+        public void selectDayType(final DayType type)
+        {
+            final ChoiceBox<DayType> choiceBox = getChoiceBox(getDayTypeCell());
+            JavaFxUtil.runOnFxApplicationThread(() -> {
+                choiceBox.getSelectionModel().select(type);
+            });
+            assertThat(getDayType()).as("day type after selecting " + type).isEqualTo(type);
+        }
+
+        public DayType getDayType()
+        {
+            final TableCell<?, DayType> tableCell = getDayTypeCell();
+            LOG.debug("Got day type {} for row {}", tableCell.getItem(), row);
+            return tableCell.getItem();
+        }
+
+        @SuppressWarnings("unchecked")
+        public TableCell<DayRecordPropertyAdapter, DayType> getDayTypeCell()
+        {
+            return (TableCell<DayRecordPropertyAdapter, DayType>) table.row(row).cell("day-type");
+        }
     }
 }

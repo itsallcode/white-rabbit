@@ -12,23 +12,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.logic.service.ClockService;
 
-class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements ScheduledTaskFuture
+class ReschedulingRunnable implements ScheduledTaskFuture, Runnable
 {
     private static final Logger LOG = LogManager.getLogger(ReschedulingRunnable.class);
 
+    private final Runnable command;
     private final Trigger trigger;
     private final ScheduledExecutorService executorService;
+    private final ClockService clock;
 
     private final Object triggerContextMonitor = new Object();
     private Instant scheduledExecutionTime;
     private Optional<TriggerContext> triggerContext = Optional.empty();
-    private final ClockService clock;
     private ScheduledFuture<?> currentFuture;
 
     ReschedulingRunnable(Runnable command, Trigger trigger, ScheduledExecutorService executorService,
-            ClockService clock, ErrorHandler errorHandler)
+            ClockService clock)
     {
-        super(command, errorHandler);
+        this.command = command;
         this.trigger = trigger;
         this.executorService = executorService;
         this.clock = clock;
@@ -63,7 +64,7 @@ class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements Sc
     public void run()
     {
         final Instant actualExecutionTime = clock.instant();
-        super.run();
+        runCommand();
         final Instant completionTime = clock.instant();
         synchronized (this.triggerContextMonitor)
         {
@@ -74,6 +75,18 @@ class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements Sc
             {
                 schedule();
             }
+        }
+    }
+
+    private void runCommand()
+    {
+        try
+        {
+            command.run();
+        }
+        catch (final Exception t)
+        {
+            LOG.warn("Command failed with exception {}", t.getMessage(), t);
         }
     }
 
