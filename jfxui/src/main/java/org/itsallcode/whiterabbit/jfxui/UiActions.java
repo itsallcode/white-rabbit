@@ -16,6 +16,7 @@ import org.itsallcode.whiterabbit.jfxui.ui.*;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
+import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.HostServices;
@@ -174,7 +175,7 @@ public class UiActions
                 aboutDialog.initOwner(state.getPrimaryStage().get());
             }
             aboutDialog.setTitle("About White Rabbit");
-            aboutDialog.setHeaderText("White Rabbit version " + appService.getAppProperties().getVersion());
+            aboutDialog.setHeaderText(formatAboutHeaderText());
             aboutDialog.setContentText(formatSystemPropertyValues(getProperties()));
             final ButtonType close = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
             final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
@@ -182,6 +183,12 @@ public class UiActions
             final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
             selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> this.openHomepage());
         });
+    }
+
+    private String formatAboutHeaderText()
+    {
+        final AppProperties properties = appService.getAppProperties();
+        return "White Rabbit version " + properties.getVersion() + " (" + properties.getBuildDate() + ")";
     }
 
     private String formatSystemPropertyValues(final Map<String, String> properties)

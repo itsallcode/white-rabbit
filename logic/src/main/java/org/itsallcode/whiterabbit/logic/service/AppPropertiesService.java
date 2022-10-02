@@ -1,9 +1,8 @@
 package org.itsallcode.whiterabbit.logic.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -51,7 +50,7 @@ public class AppPropertiesService
     {
         private final Properties properties;
 
-        private AppProperties(Properties properties)
+        private AppProperties(final Properties properties)
         {
             this.properties = properties;
         }
@@ -61,7 +60,12 @@ public class AppPropertiesService
             return getRequiredProperty("version");
         }
 
-        private String getRequiredProperty(String key)
+        public Instant getBuildDate()
+        {
+            return Instant.parse(getRequiredProperty("buildDate"));
+        }
+
+        private String getRequiredProperty(final String key)
         {
             final Optional<String> value = Optional.ofNullable(properties.getProperty(key));
             return value.orElseThrow(() -> new IllegalStateException("Key '" + key + "' not found in " + properties));
