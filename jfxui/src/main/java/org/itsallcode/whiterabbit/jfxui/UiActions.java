@@ -1,23 +1,21 @@
 package org.itsallcode.whiterabbit.jfxui;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
-import org.itsallcode.whiterabbit.jfxui.ui.DailyProjectReportViewer;
-import org.itsallcode.whiterabbit.jfxui.ui.MonthlyProjectReportViewer;
-import org.itsallcode.whiterabbit.jfxui.ui.PluginManagerViewer;
-import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
+import org.itsallcode.whiterabbit.jfxui.ui.*;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
-import org.itsallcode.whiterabbit.logic.service.AppPropertiesService.AppProperties;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.HostServices;
@@ -39,8 +37,9 @@ public class UiActions
     private final AppService appService;
     private final HostServices hostServices;
 
-    private UiActions(Config config, AppState state, DesktopService desktopService, AppService appService,
-            HostServices hostServices)
+    private UiActions(final Config config, final AppState state, final DesktopService desktopService,
+            final AppService appService,
+            final HostServices hostServices)
     {
         this.config = config;
         this.state = state;
@@ -49,7 +48,8 @@ public class UiActions
         this.hostServices = hostServices;
     }
 
-    static UiActions create(Config config, AppState state, AppService appService, HostServices hostServices)
+    static UiActions create(final Config config, final AppState state, final AppService appService,
+            final HostServices hostServices)
     {
         return new UiActions(config, state, DesktopService.create(), appService, hostServices);
     }
@@ -79,7 +79,7 @@ public class UiActions
         createAndOpenDirectory(config.getPluginDir());
     }
 
-    private void createAndOpenDirectory(Path directory)
+    private void createAndOpenDirectory(final Path directory)
     {
         if (!Files.exists(directory))
         {
@@ -89,7 +89,7 @@ public class UiActions
         openFileWithDefaultProgram(directory);
     }
 
-    private void createDir(Path directory)
+    private void createDir(final Path directory)
     {
         try
         {
@@ -101,7 +101,7 @@ public class UiActions
         }
     }
 
-    private void openFileWithDefaultProgram(Path file)
+    private void openFileWithDefaultProgram(final Path file)
     {
         desktopService.open(file);
     }
@@ -141,7 +141,7 @@ public class UiActions
         new PluginManagerViewer(getPrimaryStage(), state.uiState, appService.pluginManager()).show();
     }
 
-    public void showErrorDialog(String message)
+    public void showErrorDialog(final String message)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             final Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
@@ -167,7 +167,6 @@ public class UiActions
     public void showAboutDialog()
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            final AppProperties appProperties = appService.getAppProperties();
             final Alert aboutDialog = new Alert(AlertType.INFORMATION);
             aboutDialog.initModality(Modality.NONE);
             if (state.getPrimaryStage().isPresent())
@@ -175,13 +174,32 @@ public class UiActions
                 aboutDialog.initOwner(state.getPrimaryStage().get());
             }
             aboutDialog.setTitle("About White Rabbit");
-            aboutDialog.setHeaderText("About White Rabbit:");
-            aboutDialog.setContentText("Version: " + appProperties.getVersion());
+            aboutDialog.setHeaderText("White Rabbit version " + appService.getAppProperties().getVersion());
+            aboutDialog.setContentText(formatSystemPropertyValues(getProperties()));
             final ButtonType close = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
             final ButtonType homepage = new ButtonType("Open Homepage", ButtonData.HELP);
             aboutDialog.getButtonTypes().setAll(close, homepage);
             final Optional<ButtonType> selectedButton = aboutDialog.showAndWait();
             selectedButton.filter(response -> response == homepage).ifPresent(buttonType -> this.openHomepage());
         });
+    }
+
+    private String formatSystemPropertyValues(final Map<String, String> properties)
+    {
+        return properties.entrySet().stream() //
+                .map(entry -> entry.getKey() + ": " + System.getProperty(entry.getValue())) //
+                .collect(joining("\n"));
+    }
+
+    private Map<String, String> getProperties()
+    {
+        final Map<String, String> properties = new LinkedHashMap<>();
+        properties.put("Java Vendor", "java.vendor");
+        properties.put("Java Version", "java.version");
+        properties.put("Java Home", "java.home");
+        properties.put("Operating system", "os.name");
+        properties.put("Operating system version", "os.version");
+        properties.put("Operating system architecture", "os.arch");
+        return properties;
     }
 }
