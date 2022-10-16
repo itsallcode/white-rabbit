@@ -64,16 +64,24 @@ public class ActivitiesTable
         final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
         if ((Boolean) remainderCell.getItem())
         {
+            LOG.debug("Remainder cell value is {}: click {}", remainderCell.getItem(), remainderCell);
             robot.clickOn(remainderCell);
+        }
+        else
+        {
+            LOG.debug("Remainder cell value is {}: don't click it", remainderCell.getItem());
         }
 
         if (project != null)
         {
             final Node projectCell = table.row(rowIndex).cell("project");
+            LOG.debug("Select project {}", project.getLabel());
             robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
+            LOG.debug("Click on duration cell");
             robot.clickOn(table.row(rowIndex).cell("duration"));
         }
 
+        LOG.debug("Type duration of {} minutes", duration.toMinutes());
         robot.doubleClickOn(table.row(rowIndex).cell("duration"))
                 .write("0:" + duration.toMinutes())
                 .type(KeyCode.ENTER);
