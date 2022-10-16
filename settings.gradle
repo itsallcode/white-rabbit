@@ -18,7 +18,7 @@ dependencyResolutionManagement {
             version('junitJupiter', '5.9.1')
             version('mockito', '4.8.0')
             version('log4j', '2.19.0')
-            version("javafx", '20-ea+3')
+            version('javafx', '20-ea+4')
 
             library('junitParams', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junitJupiter')
             library('assertj', 'org.assertj:assertj-core:3.23.1')
