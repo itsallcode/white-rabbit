@@ -88,7 +88,7 @@ public class ActivitiesTable
         {
             final Node projectCell = table.row(rowIndex).cell("project");
             LOG.debug("Select project '{}'' in {}", project.getLabel(), projectCell);
-            robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
+            robot.doubleClickOn(projectCell).clickOn(project.getLabel());
         }
     }
 
