@@ -13,18 +13,9 @@ import org.itsallcode.whiterabbit.logic.service.AppService;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.util.converter.IntegerStringConverter;
 
 public class InterruptionPresetFeature
@@ -56,7 +47,8 @@ public class InterruptionPresetFeature
     private List<MenuItem> createPresetMenuItems()
     {
         return PRESETS_IN_MINUTES.stream()
-                .map(Duration::ofMinutes)
+                .mapToLong(Integer::longValue)
+                .mapToObj(Duration::ofMinutes)
                 .map(this::createMenuitem)
                 .collect(toList());
     }
