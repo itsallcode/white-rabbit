@@ -63,7 +63,7 @@ public class ActivitiesTable
         LOG.debug("Configure activity #{}: use project {}, duration {}, comment '{}'", rowIndex, project, duration,
                 comment);
         final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
-        if ((Boolean) remainderCell.getItem())
+        if (remainderCell.getItem() != null && (Boolean) remainderCell.getItem())
         {
             LOG.debug("Remainder cell value is {}: click {}", remainderCell.getItem(), remainderCell);
             robot.clickOn(remainderCell);
@@ -73,23 +73,23 @@ public class ActivitiesTable
             LOG.debug("Remainder cell value is {}: don't click it", remainderCell.getItem());
         }
 
-        if (project != null)
-        {
-            final Node projectCell = table.row(rowIndex).cell("project");
-            LOG.debug("Select project {}", project.getLabel());
-            robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
-            LOG.debug("Click on duration cell");
-            robot.clickOn(table.row(rowIndex).cell("duration"));
-        }
+        final TableCell<?, ?> durationCell = table.row(rowIndex).cell("duration");
 
         final String durationText = "0:" + duration.toMinutes();
         LOG.debug("Type duration of '{}' minutes", durationText);
-        robot.doubleClickOn(table.row(rowIndex).cell("duration"))
+        robot.doubleClickOn(durationCell)
                 .write(durationText)
                 .type(KeyCode.ENTER);
 
         LOG.debug("Enter comment '{}'", comment);
         robot.doubleClickOn(table.row(rowIndex).cell("comment")).write(comment).type(KeyCode.ENTER);
+
+        if (project != null)
+        {
+            final Node projectCell = table.row(rowIndex).cell("project");
+            LOG.debug("Select project '{}'' in {}", project.getLabel(), projectCell);
+            robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
+        }
     }
 
     public void toggleRemainder(final int rowIndex)
