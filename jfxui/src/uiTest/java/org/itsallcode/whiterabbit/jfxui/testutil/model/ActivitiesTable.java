@@ -60,7 +60,8 @@ public class ActivitiesTable
     public void addActivity(final Project project, final Duration duration, final String comment)
     {
         final int rowIndex = addActivity();
-
+        LOG.debug("Configure activity #{}: use project {}, duration {}, comment '{}'", rowIndex, project, duration,
+                comment);
         final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
         if ((Boolean) remainderCell.getItem())
         {
@@ -81,10 +82,13 @@ public class ActivitiesTable
             robot.clickOn(table.row(rowIndex).cell("duration"));
         }
 
-        LOG.debug("Type duration of {} minutes", duration.toMinutes());
+        final String durationText = "0:" + duration.toMinutes();
+        LOG.debug("Type duration of '{}' minutes", durationText);
         robot.doubleClickOn(table.row(rowIndex).cell("duration"))
-                .write("0:" + duration.toMinutes())
+                .write(durationText)
                 .type(KeyCode.ENTER);
+
+        LOG.debug("Enter comment '{}'", comment);
         robot.doubleClickOn(table.row(rowIndex).cell("comment")).write(comment).type(KeyCode.ENTER);
     }
 
