@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import java.time.Duration;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.testfx.api.FxRobot;
@@ -13,6 +15,7 @@ import javafx.scene.input.KeyCode;
 
 public class ActivitiesTable
 {
+    private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
     private final JavaFxTable<ActivityPropertyAdapter> table;
     private final FxRobot robot;
 
@@ -42,7 +45,7 @@ public class ActivitiesTable
             robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
         }
         final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
-        if (!(Boolean) remainderCell.getItem())
+        if (remainderCell.getItem() != null && !(Boolean) remainderCell.getItem())
         {
             robot.clickOn(remainderCell);
         }
@@ -57,24 +60,36 @@ public class ActivitiesTable
     public void addActivity(final Project project, final Duration duration, final String comment)
     {
         final int rowIndex = addActivity();
-
+        LOG.debug("Configure activity #{}: use project {}, duration {}, comment '{}'", rowIndex, project, duration,
+                comment);
         final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
-        if ((Boolean) remainderCell.getItem())
+        if (remainderCell.getItem() != null && (Boolean) remainderCell.getItem())
         {
+            LOG.debug("Remainder cell value is {}: click {}", remainderCell.getItem(), remainderCell);
             robot.clickOn(remainderCell);
         }
+        else
+        {
+            LOG.debug("Remainder cell value is {}: don't click it", remainderCell.getItem());
+        }
+
+        final TableCell<?, ?> durationCell = table.row(rowIndex).cell("duration");
+
+        final String durationText = "0:" + duration.toMinutes();
+        LOG.debug("Type duration of '{}' minutes", durationText);
+        robot.doubleClickOn(durationCell)
+                .write(durationText)
+                .type(KeyCode.ENTER);
+
+        LOG.debug("Enter comment '{}'", comment);
+        robot.doubleClickOn(table.row(rowIndex).cell("comment")).write(comment).type(KeyCode.ENTER);
 
         if (project != null)
         {
             final Node projectCell = table.row(rowIndex).cell("project");
-            robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
-            robot.clickOn(table.row(rowIndex).cell("duration"));
+            LOG.debug("Select project '{}'' in {}", project.getLabel(), projectCell);
+            robot.doubleClickOn(projectCell).clickOn(project.getLabel());
         }
-
-        robot.doubleClickOn(table.row(rowIndex).cell("duration"))
-                .write("0:" + duration.toMinutes())
-                .type(KeyCode.ENTER);
-        robot.doubleClickOn(table.row(rowIndex).cell("comment")).write(comment).type(KeyCode.ENTER);
     }
 
     public void toggleRemainder(final int rowIndex)
@@ -85,6 +100,7 @@ public class ActivitiesTable
     public int addActivity()
     {
         final Button addActivityButton = getAddActivityButton();
+        LOG.debug("Clicking button {} to add an activity", addActivityButton);
         robot.clickOn(addActivityButton);
         return table.getRowCount() - 1;
     }
