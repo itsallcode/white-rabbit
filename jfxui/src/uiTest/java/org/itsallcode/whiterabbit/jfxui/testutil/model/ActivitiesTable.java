@@ -2,6 +2,8 @@ package org.itsallcode.whiterabbit.jfxui.testutil.model;
 
 import java.time.Duration;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.table.activities.ActivityPropertyAdapter;
 import org.testfx.api.FxRobot;
@@ -13,6 +15,7 @@ import javafx.scene.input.KeyCode;
 
 public class ActivitiesTable
 {
+    private static final Logger LOG = LogManager.getLogger(ActivitiesTable.class);
     private final JavaFxTable<ActivityPropertyAdapter> table;
     private final FxRobot robot;
 
@@ -42,7 +45,7 @@ public class ActivitiesTable
             robot.doubleClickOn(projectCell).clickOn(projectCell).clickOn(project.getLabel());
         }
         final TableCell<?, ?> remainderCell = table.row(rowIndex).cell("remainder");
-        if (!(Boolean) remainderCell.getItem())
+        if (remainderCell.getItem() != null && !(Boolean) remainderCell.getItem())
         {
             robot.clickOn(remainderCell);
         }
@@ -85,6 +88,7 @@ public class ActivitiesTable
     public int addActivity()
     {
         final Button addActivityButton = getAddActivityButton();
+        LOG.debug("Clicking button {} to add an activity", addActivityButton);
         robot.clickOn(addActivityButton);
         return table.getRowCount() - 1;
     }

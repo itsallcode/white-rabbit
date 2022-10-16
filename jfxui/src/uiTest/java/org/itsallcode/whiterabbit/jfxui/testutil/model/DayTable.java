@@ -124,8 +124,9 @@ public class DayTable
 
         public void typeBegin(final String value)
         {
+            LOG.debug("Type begin value '{}' into row {}", value, row);
             final TableCell<?, ?> tableCell = table.row(row).cell("begin");
-            robot.clickOn(tableCell).clickOn(tableCell).clickOn(tableCell).type(KeyCode.BACK_SPACE).write(value)
+            robot.clickOn(tableCell).doubleClickOn(tableCell).type(KeyCode.BACK_SPACE).write(value)
                     .type(KeyCode.TAB);
         }
 
