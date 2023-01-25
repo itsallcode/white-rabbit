@@ -6,7 +6,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch App",
+            "name": "Launch WhiteRabbit",
             "request": "launch",
             "mainClass": "org.itsallcode.whiterabbit.jfxui.App",
             "projectName": "jfxui"
