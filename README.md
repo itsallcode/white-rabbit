@@ -37,4 +37,3 @@ A time recording tool
   * Interruptions detected when computer sleeps for more than 2 minutes
 * Generates reports for your vacation and monthly working time
 * Detects when a second instance is started to avoid data corruption
-* Export project working times to pm-smart. See [the user guide](docs/user_guide.md#pmsmart) for details.
