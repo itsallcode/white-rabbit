@@ -126,7 +126,7 @@ task uiTest(type: Test, group: 'verification') {
     forkEvery 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError'
 
-    if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
+    if(project.hasProperty("uiTestsHeadless") && project.property("uiTestsHeadless") == "true") {
         systemProperty 'java.awt.headless', 'true'
         systemProperty 'testfx.headless', 'true'
         systemProperty 'testfx.robot', 'glass'

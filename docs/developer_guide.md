@@ -41,10 +41,10 @@ Run all tests:
 Run only UI-Tests:
 
 ```bash
-# Headless (default)
+# Headless (some tests will fail due to #261)
+./gradlew check -PuiTestsHeadless=true
+# Not Headless (default, don't move mouse while running!)
 ./gradlew check
-# Not Headless (don't move mouse while running!)
-./gradlew check -PuiTestsHeadless=false
 ```
 
 Run a single test:
