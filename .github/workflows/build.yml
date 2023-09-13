@@ -11,11 +11,10 @@ jobs:
     strategy:
       matrix:
         java: [17]
-        os: ['windows-latest']
-        #os: ['ubuntu-latest', 'windows-latest']
-        #include:
-        #  - os: ubuntu-latest
-        #    java: 19
+        os: ['ubuntu-latest', 'windows-latest']
+        include:
+          - os: ubuntu-latest
+            java: 20
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
       cancel-in-progress: true
@@ -47,10 +46,9 @@ jobs:
         key: ${{ runner.os }}-java-${{ matrix.java }}-sonar
         restore-keys: ${{ runner.os }}-java-${{ matrix.java }}-sonar
 
-    - name: Build with Gradle using xvfb
-      uses: coactions/setup-xvfb@v1
-      with:
-        run: ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PuiTestsHeadless=false -PjavaVersion=${{ matrix.java }}
+    - name: Build with Gradle
+      run: |
+        ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
 
     - name: Sonar analysis
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}

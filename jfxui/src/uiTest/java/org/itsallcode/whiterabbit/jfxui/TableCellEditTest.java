@@ -3,11 +3,9 @@ package org.itsallcode.whiterabbit.jfxui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.itsallcode.whiterabbit.api.model.DayType;
 import org.itsallcode.whiterabbit.jfxui.table.days.DayRecordPropertyAdapter;
@@ -17,14 +15,15 @@ import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.ActivitiesTable;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.JavaFxTable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
+import org.testfx.framework.junit5.*;
 
+import javafx.scene.Scene;
 import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 @ExtendWith(ApplicationExtension.class)
@@ -42,6 +41,26 @@ class TableCellEditTest extends JavaFxAppUiTestBase
     void commentPersistedAfterTabKeyPressed()
     {
         assertCommentCellPersistedAfterCommitAction(() -> robot.type(KeyCode.TAB));
+    }
+
+    @DisabledIfSystemProperty(named = "testfx.headless", matches = "true")
+    @Test
+    void commentPersistedAfterOtherWindowFocused()
+    {
+        assertCommentCellPersistedAfterCommitAction(() -> {
+            final AtomicReference<Stage> otherWindow = new AtomicReference<>();
+            robot.interact(() -> otherWindow.set(openOtherWindow()));
+            robot.clickOn(otherWindow.get());
+        });
+    }
+
+    private Stage openOtherWindow()
+    {
+        final Stage stage = new Stage();
+        stage.setTitle("Other Window");
+        stage.setScene(new Scene(new StackPane(), 230, 100));
+        stage.show();
+        return stage;
     }
 
     @Test
