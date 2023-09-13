@@ -6,7 +6,6 @@
 **/build/
 /time.properties
 /.idea
-/plugins/pmsmart/src/test/java/org/itsallcode/whiterabbit/plugin/pmsmart/Tester.java
 /build-fast.bat
 /build-fast-and-run.bat
 /launch.bat

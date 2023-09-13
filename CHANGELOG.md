@@ -28,6 +28,9 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 * [#250](https://github.com/itsallcode/white-rabbit/issues/250): Fix missing autocomplete proposals.
   * Added build with Java 18.
 * [#254](https://github.com/itsallcode/white-rabbit/issues/254): Show Java version in About dialog.
+* [#260](https://github.com/itsallcode/white-rabbit/pull/260): Upgraded dependencies.
+  * Added build with Java 20
+  * UI-Tests run only in non-headless mode due to restrictions with the latest JavaFX version, see #261
 
 ## [1.8.0] - 2022-01-22
 

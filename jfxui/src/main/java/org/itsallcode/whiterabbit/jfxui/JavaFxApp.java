@@ -159,7 +159,7 @@ public class JavaFxApp extends Application
     private void ensureMonthAvailable(final YearMonth month)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
-            if (!state.availableMonths.isEmpty() && !state.availableMonths.contains(month))
+            if (state != null && !state.availableMonths.isEmpty() && !state.availableMonths.contains(month))
             {
                 LOG.trace("Adding month {} to combo box", month);
                 state.availableMonths.add(month);
