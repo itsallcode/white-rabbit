@@ -1,6 +1,8 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,10 +11,14 @@ import java.util.function.Consumer;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.AutomaticInterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.testutil.model.DayTable;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.*;
+import org.testfx.framework.junit5.ApplicationExtension;
+import org.testfx.framework.junit5.Start;
+import org.testfx.framework.junit5.Stop;
 
 import javafx.stage.Stage;
 
@@ -35,6 +41,30 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
     {
         executorService.shutdown();
         executorService = null;
+    }
+
+    @Test
+    void duplicateInterruptionDialog()
+    {
+        time().tickMinute();
+
+        interruptionStart = time().getCurrentTimeMinutes();
+        executorService.submit(() -> {
+            time().tickMinute(Duration.ofMinutes(5));
+            time().tickMinute(Duration.ofMinutes(10));
+        });
+        TestUtil.sleepLong();
+        interruptionEnd = time().getCurrentTimeMinutes();
+
+        final AutomaticInterruptionDialog interruptionDialog = app().assertAutomaticInterruption();
+
+        interruptionDialog.assertLabel(interruptionStart, Duration.ofMinutes(5));
+        ((Consumer<AutomaticInterruptionDialog>) dialog -> dialog.clickAddInterruption()).accept(interruptionDialog);
+
+        TestUtil.sleepShort();
+        app().assertNoAutomaticInterruption();
+
+        assertDay(Duration.ofMinutes(5), interruptionStart, interruptionEnd);
     }
 
     @Test
