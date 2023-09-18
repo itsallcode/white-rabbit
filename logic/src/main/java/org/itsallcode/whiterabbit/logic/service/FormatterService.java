@@ -30,7 +30,6 @@ public class FormatterService
         {
             sign = "";
         }
-        System.out.println(duration + " -> " + " sign=" + sign + ", h=" + hours + ", min=" + minutes);
         return format("{0}{1,number,00}:{2,number,00}", sign, hours, minutes);
     }
 
