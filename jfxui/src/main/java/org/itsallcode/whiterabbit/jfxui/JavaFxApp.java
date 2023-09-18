@@ -2,11 +2,7 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import java.lang.ProcessHandle.Info;
 import java.nio.file.Paths;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,13 +17,8 @@ import org.itsallcode.whiterabbit.jfxui.systemmenu.DesktopIntegration;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
-import org.itsallcode.whiterabbit.logic.Config;
-import org.itsallcode.whiterabbit.logic.ConfigLoader;
-import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
-import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
-import org.itsallcode.whiterabbit.logic.model.Activity;
-import org.itsallcode.whiterabbit.logic.model.DayRecord;
-import org.itsallcode.whiterabbit.logic.model.MonthIndex;
+import org.itsallcode.whiterabbit.logic.*;
+import org.itsallcode.whiterabbit.logic.model.*;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
@@ -287,8 +278,17 @@ public class JavaFxApp extends Application
         private InterruptionDetectedDecision showAutomaticInterruptionDialog(LocalTime startOfInterruption,
                 Duration interruption)
         {
+            final Alert alert = createAlertDialog(startOfInterruption, interruption);
             LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
                     interruption);
+            final Optional<ButtonType> selectedButton = alert.showAndWait();
+            final InterruptionDetectedDecision decision = evaluateButton(selectedButton);
+            LOG.info("User clicked button {} -> {}", selectedButton, decision);
+            return decision;
+        }
+
+        private Alert createAlertDialog(LocalTime startOfInterruption, Duration interruption)
+        {
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Interruption detected");
             alert.initModality(Modality.NONE);
@@ -299,11 +299,7 @@ public class JavaFxApp extends Application
             final ButtonType skipInterruption = new ButtonType("Skip interruption", ButtonData.NO);
             final ButtonType stopWorkForToday = new ButtonType("Stop working for today", ButtonData.FINISH);
             alert.getButtonTypes().setAll(addInterruption, skipInterruption, stopWorkForToday);
-            final Optional<ButtonType> selectedButton = alert.showAndWait();
-
-            final InterruptionDetectedDecision decision = evaluateButton(selectedButton);
-            LOG.info("User clicked button {} -> {}", selectedButton, decision);
-            return decision;
+            return alert;
         }
 
         private InterruptionDetectedDecision evaluateButton(final Optional<ButtonType> selectedButton)
