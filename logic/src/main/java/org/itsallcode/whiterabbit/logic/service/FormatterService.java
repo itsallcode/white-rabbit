@@ -1,10 +1,7 @@
 package org.itsallcode.whiterabbit.logic.service;
 
 import java.text.MessageFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -26,9 +23,14 @@ public class FormatterService
 
     public String format(Duration duration)
     {
-        final String sign = duration.isNegative() ? "-" : "";
+        String sign = duration.isNegative() ? "-" : "";
         final long hours = Math.abs(duration.toHours());
         final int minutes = Math.abs(duration.toMinutesPart());
+        if (hours == 0 && minutes == 0)
+        {
+            sign = "";
+        }
+        System.out.println(duration + " -> " + " sign=" + sign + ", h=" + hours + ", min=" + minutes);
         return format("{0}{1,number,00}:{2,number,00}", sign, hours, minutes);
     }
 
@@ -53,5 +55,4 @@ public class FormatterService
     {
         return new DayOfWeekWithoutDotFormatter(DateTimeFormatter.ofPattern("E dd.MM.", locale));
     }
-
 }
