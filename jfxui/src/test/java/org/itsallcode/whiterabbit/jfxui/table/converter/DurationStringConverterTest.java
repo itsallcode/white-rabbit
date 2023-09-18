@@ -15,8 +15,13 @@ class DurationStringConverterTest
     @ParameterizedTest
     @CsvSource({
             "PT0S, 00:00",
+            "PT-20S, 00:00",
             "PT20S, 00:00",
             "PT4M, 00:04",
+            "PT4M20S, 00:04",
+            "PT-4M, -00:04",
+            "PT-4M-20S, -00:04",
+            "PT-4M20S, -00:03",
             "PT14M, 00:14",
             "PT100M, 01:40",
             "PT3H, 03:00",
@@ -31,7 +36,8 @@ class DurationStringConverterTest
     }
 
     @ParameterizedTest
-    @CsvSource({
+    @CsvSource(
+    {
             "00:00, PT0S",
             "00:04, PT4M",
             "00:14, PT14M",
@@ -67,14 +73,16 @@ class DurationStringConverterTest
     }
 
     @ParameterizedTest
-    @CsvSource(value = {
-            "string, NULL",
-            "1.2, NULL",
-            "1:2:3, NULL",
-    }, nullValues = "NULL")
-    void fromStringHandlesInvalidInput(String input, Duration expectedDuration)
+    @CsvSource(
     {
-        assertThat(converter().fromString(input)).isEqualTo(expectedDuration);
+            "string",
+            "1.2",
+            "-00:01",
+            "1:2:3",
+    })
+    void fromStringHandlesInvalidInput(String input)
+    {
+        assertThat(converter().fromString(input)).isNull();
     }
 
     private DurationStringConverter converter()
