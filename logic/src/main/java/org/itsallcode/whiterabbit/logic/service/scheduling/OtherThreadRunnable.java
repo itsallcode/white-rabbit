@@ -18,4 +18,10 @@ class OtherThreadRunnable implements Runnable
     {
         executorService.execute(delegate);
     }
+
+    @Override
+    public String toString()
+    {
+        return "OtherThreadRunnable [executorService=" + executorService + ", delegate=" + delegate + "]";
+    }
 }
