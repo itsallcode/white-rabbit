@@ -31,6 +31,7 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 * [#260](https://github.com/itsallcode/white-rabbit/pull/260): Upgraded dependencies.
   * Added build with Java 20
   * UI-Tests run only in non-headless mode due to restrictions with the latest JavaFX version, see #261
+* [#132](https://github.com/itsallcode/white-rabbit/issues/132): Fix display of negative zero duration
 
 ## [1.8.0] - 2022-01-22
 
