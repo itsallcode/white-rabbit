@@ -10,18 +10,15 @@ jobs:
   matrix-build:
     strategy:
       matrix:
-        java: [17]
+        java: [21]
         os: ['ubuntu-latest', 'windows-latest']
-        include:
-          - os: ubuntu-latest
-            java: 21
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
       cancel-in-progress: true
     name: Build on ${{ matrix.os }} with Java ${{ matrix.java }}
     runs-on: ${{ matrix.os }}
     env:
-      DEFAULT_JAVA: 17
+      DEFAULT_JAVA: 21
       DEFAULT_OS: 'ubuntu-latest'
 
     steps:

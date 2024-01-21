@@ -20,7 +20,7 @@ def getProjectVersion() {
 version = getProjectVersion()
 group = "org.itsallcode.whiterabbit"
 
-def javaVersion = project.hasProperty('javaVersion') ? project.getProperty('javaVersion') : 17
+def javaVersion = project.hasProperty('javaVersion') ? project.getProperty('javaVersion') : 21
 
 subprojects {
     group = rootProject.group
