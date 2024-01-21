@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  matrix-build:
     strategy:
       matrix:
         java: [17]
@@ -94,3 +94,10 @@ jobs:
       with:
         name: checksums-${{ runner.os }}
         path: jfxui/build/generatedChecksums/*
+
+
+  build:
+    needs: matrix-build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build successful"
