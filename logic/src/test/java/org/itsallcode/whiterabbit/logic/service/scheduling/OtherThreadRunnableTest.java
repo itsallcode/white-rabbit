@@ -11,13 +11,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.jparams.verifier.tostring.ToStringVerifier;
+
 @ExtendWith(MockitoExtension.class)
 class OtherThreadRunnableTest
 {
     @Mock
-    private ExecutorService executorServiceMock;
+    ExecutorService executorServiceMock;
     @Mock
-    private Runnable delegateMock;
+    Runnable delegateMock;
 
     private OtherThreadRunnable otherThreadRunnable;
 
@@ -28,9 +30,15 @@ class OtherThreadRunnableTest
     }
 
     @Test
-    void test()
+    void run()
     {
         otherThreadRunnable.run();
         verify(executorServiceMock).execute(same(delegateMock));
+    }
+
+    @Test
+    void testToString()
+    {
+        ToStringVerifier.forClass(OtherThreadRunnable.class).verify();
     }
 }
