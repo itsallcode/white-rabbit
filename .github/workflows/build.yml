@@ -14,7 +14,7 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
         include:
           - os: ubuntu-latest
-            java: 20
+            java: 21
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
       cancel-in-progress: true
@@ -27,6 +27,8 @@ jobs:
     steps:
 
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Fetch all history for all tags and branches
       run: git fetch --prune --unshallow
