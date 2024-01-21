@@ -86,12 +86,12 @@ jobs:
       uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
-        name: packages
+        name: packages-${{ runner.os }}
         path: jfxui/build/jpackage-dist/*
 
     - name: Archive checksums
       uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
-        name: checksums
+        name: checksums-${{ runner.os }}
         path: jfxui/build/generatedChecksums/*
