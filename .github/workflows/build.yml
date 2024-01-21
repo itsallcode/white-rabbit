@@ -40,13 +40,13 @@ jobs:
     - uses: gradle/wrapper-validation-action@v1
 
     - name: Cache SonarQube packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-java-${{ matrix.java }}-sonar
         restore-keys: ${{ runner.os }}-java-${{ matrix.java }}-sonar
 
-    - name: Build with Gradle
+    - name: Build with Gradle using Java ${{ matrix.java }}
       run: |
         ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
 
@@ -65,14 +65,14 @@ jobs:
         report_paths: '**/build/test-results/*/TEST-*.xml'
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Archive executable jar
-      uses: actions/upload-artifact@v3
+    - name: Archive executable JAR for ${{ matrix.java }}
+      uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         name: packages
         path: jfxui/build/libs/white-rabbit-fx-*.jar
 
-    - name: Build native package for ${{ runner.os }}
+    - name: Build native package for ${{ runner.os }} using Java ${{ matrix.java }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
         ./gradlew jpackage createChecksums --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
@@ -82,16 +82,16 @@ jobs:
         ./gradlew -status
         ./gradlew -stop
 
-    - name: Archive native package
-      uses: actions/upload-artifact@v3
+    - name: Archive native package for ${{ runner.os }}
+      uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
-        name: packages
+        name: packages-${{ runner.os }}
         path: jfxui/build/jpackage-dist/*
 
-    - name: Archive checksums
-      uses: actions/upload-artifact@v3
+    - name: Archive checksums for ${{ runner.os }}
+      uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
-        name: checksums
+        name: checksums-${{ runner.os }}
         path: jfxui/build/generatedChecksums/*
