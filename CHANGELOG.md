@@ -14,8 +14,11 @@ See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / 
 
 ### Breaking Changes
 
+This release requires Java 21.
+
 * [#239](https://github.com/itsallcode/white-rabbit/pull/239): Removed pmsmart plugin as it is not maintained any more.
 * [#245](https://github.com/itsallcode/white-rabbit/pull/245): Removed webstart deployment.
+* [#265](https://github.com/itsallcode/white-rabbit/pull/265): Upgraded dependencies, require Java 21.
 
 ### Changes / Bugfixes
 

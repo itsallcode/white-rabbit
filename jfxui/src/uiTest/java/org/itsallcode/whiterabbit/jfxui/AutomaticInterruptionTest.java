@@ -37,6 +37,31 @@ class AutomaticInterruptionTest extends JavaFxAppUiTestBase
         executorService = null;
     }
 
+    @Disabled("https://github.com/itsallcode/white-rabbit/issues/264")
+    @Test
+    void duplicateInterruptionDialog()
+    {
+        time().tickMinute();
+
+        interruptionStart = time().getCurrentTimeMinutes();
+        executorService.submit(() -> {
+            time().tickMinute(Duration.ofMinutes(5));
+            time().tickMinute(Duration.ofMinutes(10));
+        });
+        TestUtil.sleepLong();
+        interruptionEnd = time().getCurrentTimeMinutes();
+
+        final AutomaticInterruptionDialog interruptionDialog = app().assertAutomaticInterruption();
+
+        interruptionDialog.assertLabel(interruptionStart, Duration.ofMinutes(5));
+        ((Consumer<AutomaticInterruptionDialog>) dialog -> dialog.clickAddInterruption()).accept(interruptionDialog);
+
+        TestUtil.sleepShort();
+        app().assertNoAutomaticInterruption();
+
+        assertDay(Duration.ofMinutes(5), interruptionStart, interruptionEnd);
+    }
+
     @Test
     void skipInterruptionButtonDoesNotAddInterruption()
     {

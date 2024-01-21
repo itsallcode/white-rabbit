@@ -27,7 +27,7 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         }
         else
         {
-            throw new IllegalStateException();
+            throw noDelegateRegistered();
         }
     }
 
@@ -41,7 +41,7 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         }
         else
         {
-            throw new IllegalStateException();
+            throw noDelegateRegistered();
         }
     }
 
@@ -67,7 +67,12 @@ class DelegatingAppServiceCallback implements AppServiceCallback
         }
         else
         {
-            throw new IllegalStateException();
+            throw noDelegateRegistered();
         }
+    }
+
+    private RuntimeException noDelegateRegistered()
+    {
+        return new IllegalStateException("No delegate registered");
     }
 }

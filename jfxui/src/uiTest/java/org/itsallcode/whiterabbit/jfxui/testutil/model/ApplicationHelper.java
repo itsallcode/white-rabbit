@@ -66,6 +66,12 @@ public class ApplicationHelper
         return new AutomaticInterruptionDialog(robot, window);
     }
 
+    public void assertNoAutomaticInterruption()
+    {
+        final Window window = robot.window("Interruption detected");
+        Assertions.assertThat(window).isNotShowing();
+    }
+
     public AboutDialogWindow openAboutDialog()
     {
         robot.clickOn("#menu_help").clickOn("#menuitem_about");

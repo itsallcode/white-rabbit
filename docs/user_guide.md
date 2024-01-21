@@ -3,7 +3,7 @@
 
 ## Install WhiteRabbit as Executable JAR
 
-Precondition: Install Java Runtime Environment (JRE) 17, e.g. from [Adoptium / Eclipse Temurin](https://adoptium.net/).
+Precondition: Install Java Runtime Environment (JRE) 21, e.g. from [Adoptium / Eclipse Temurin](https://adoptium.net/).
 
 1. Download the `.jar` file from the latest [release](https://github.com/itsallcode/white-rabbit/releases)
 2. Launch it by

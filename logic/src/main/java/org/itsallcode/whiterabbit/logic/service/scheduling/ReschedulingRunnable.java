@@ -4,9 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +52,7 @@ class ReschedulingRunnable implements ScheduledTaskFuture, Runnable
             }
             if (!executorService.isShutdown())
             {
+                LOG.trace("Schedule next execution of {} in {}", trigger, delay);
                 this.currentFuture = this.executorService.schedule(this, delay.toMillis(), TimeUnit.MILLISECONDS);
             }
             return this;
@@ -66,6 +65,7 @@ class ReschedulingRunnable implements ScheduledTaskFuture, Runnable
         final Instant actualExecutionTime = clock.instant();
         runCommand();
         final Instant completionTime = clock.instant();
+        LOG.trace("Command {} finished in {}", command, Duration.between(actualExecutionTime, completionTime));
         synchronized (this.triggerContextMonitor)
         {
             Objects.requireNonNull(this.scheduledExecutionTime, "No scheduled execution");
