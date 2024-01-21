@@ -66,7 +66,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Archive executable jar
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         name: packages
@@ -83,14 +83,14 @@ jobs:
         ./gradlew -stop
 
     - name: Archive native package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
         name: packages
         path: jfxui/build/jpackage-dist/*
 
     - name: Archive checksums
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
         name: checksums
