@@ -48,6 +48,15 @@ subprojects {
         suites {
             test {
                 useJUnitJupiter(libs.versions.junitJupiter.get())
+                targets {
+                    all {
+                        testTask.configure {
+                            // Suppress warning caused by Mockito:
+                            // WARNING: A Java agent has been loaded dynamically (.../byte-buddy-agent-1.14.11.jar)
+                            jvmArgs("-XX:+EnableDynamicAgentLoading")
+                        }
+                    }
+                }
             }
         }
     }
