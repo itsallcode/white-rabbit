@@ -33,7 +33,7 @@ jobs:
         java-version: ${{ matrix.java }}
         cache: 'gradle'
 
-    - uses: gradle/wrapper-validation-action@v1
+    - uses: gradle/wrapper-validation-action@v2
 
     - name: Cache SonarQube packages
       uses: actions/cache@v4
