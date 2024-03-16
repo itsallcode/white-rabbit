@@ -12,14 +12,19 @@ jobs:
       matrix:
         java: [21]
         os: ['ubuntu-latest', 'windows-latest']
+    env:
+      DEFAULT_JAVA: 21
+      DEFAULT_OS: 'ubuntu-latest'
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}
       cancel-in-progress: true
     name: Build on ${{ matrix.os }} with Java ${{ matrix.java }}
     runs-on: ${{ matrix.os }}
-    env:
-      DEFAULT_JAVA: 21
-      DEFAULT_OS: 'ubuntu-latest'
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
 
     steps:
 
