@@ -1,8 +1,8 @@
 package org.itsallcode.whiterabbit.logic.service.plugin.origin;
 
-class ClassPathPluginOrigin extends PluginOrigin
+class ClasspathPluginOrigin extends PluginOrigin
 {
-    ClassPathPluginOrigin(ClassLoader classLoader)
+    ClasspathPluginOrigin(final ClassLoader classLoader)
     {
         super(classLoader);
     }

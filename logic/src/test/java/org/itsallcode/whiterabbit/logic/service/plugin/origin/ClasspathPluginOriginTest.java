@@ -9,16 +9,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ClassPathPluginOriginTest
+class ClasspathPluginOriginTest
 {
     @Mock
     private ClassLoader classLoaderMock;
-    private ClassPathPluginOrigin origin;
+    private ClasspathPluginOrigin origin;
 
     @BeforeEach
     void setup()
     {
-        origin = new ClassPathPluginOrigin(classLoaderMock);
+        origin = new ClasspathPluginOrigin(classLoaderMock);
     }
 
     @Test

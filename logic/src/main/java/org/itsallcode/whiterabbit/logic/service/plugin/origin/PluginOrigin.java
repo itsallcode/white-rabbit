@@ -9,19 +9,19 @@ import org.itsallcode.whiterabbit.logic.service.plugin.AppPlugin.AppPluginOrigin
 
 public abstract class PluginOrigin implements AppPluginOrigin
 {
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
-    protected PluginOrigin(ClassLoader classLoader)
+    protected PluginOrigin(final ClassLoader classLoader)
     {
         this.classLoader = classLoader;
     }
 
     public static PluginOrigin forCurrentClassPath()
     {
-        return new ClassPathPluginOrigin(getBaseClassLoader());
+        return new ClasspathPluginOrigin(getBaseClassLoader());
     }
 
-    public static PluginOrigin forJar(Path jar)
+    public static PluginOrigin forJar(final Path jar)
     {
         return new JarPluginOrigin(jar, createClassLoader(jar));
     }
@@ -31,14 +31,14 @@ public abstract class PluginOrigin implements AppPluginOrigin
         return PluginOrigin.class.getClassLoader();
     }
 
-    private static ClassLoader createClassLoader(Path jar)
+    private static ClassLoader createClassLoader(final Path jar)
     {
         final String name = "PluginClassLoader-" + jar.getFileName();
         final URL[] urls = new URL[] { toUrl(jar) };
         return new URLClassLoader(name, urls, getBaseClassLoader());
     }
 
-    private static URL toUrl(Path path)
+    private static URL toUrl(final Path path)
     {
         try
         {

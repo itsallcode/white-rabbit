@@ -13,7 +13,7 @@ public class ProjectImpl implements Project
     @JsonbProperty("costCarrier")
     private String costCarrier;
 
-    public ProjectImpl(String projectId, String label, String costCarrier)
+    public ProjectImpl(final String projectId, final String label, final String costCarrier)
     {
         this.projectId = projectId;
         this.label = label;
@@ -31,7 +31,7 @@ public class ProjectImpl implements Project
         return projectId;
     }
 
-    public void setProjectId(String projectId)
+    public void setProjectId(final String projectId)
     {
         this.projectId = projectId;
     }
@@ -42,7 +42,7 @@ public class ProjectImpl implements Project
         return label;
     }
 
-    public void setLabel(String label)
+    public void setLabel(final String label)
     {
         this.label = label;
     }
@@ -53,7 +53,7 @@ public class ProjectImpl implements Project
         return costCarrier;
     }
 
-    public void setCostCarrier(String costCarrier)
+    public void setCostCarrier(final String costCarrier)
     {
         this.costCarrier = costCarrier;
     }
@@ -70,7 +70,7 @@ public class ProjectImpl implements Project
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
