@@ -2,7 +2,7 @@
 
 ## Clone and configure
 
-```bash
+```sh
 mkdir time-recording-data
 git clone https://github.com/itsallcode/white-rabbit.git
 cd white-rabbit
@@ -14,7 +14,7 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 
 ### Build and launch
 
-```bash
+```sh
 # Build WhiteRabbit and install plugins to $HOME/.whiterabbit/plugins/
 ./gradlew build installPlugins
 # To skip unit and ui-tests, run
@@ -34,13 +34,13 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 
 Run all tests:
 
-```bash
+```sh
 ./gradlew check
 ```
 
 Run only UI-Tests:
 
-```bash
+```sh
 # Headless (default)
 ./gradlew check
 # Not Headless (don't move mouse while running!)
@@ -49,13 +49,13 @@ Run only UI-Tests:
 
 Run a single test:
 
-```bash
+```sh
 ./gradlew uiTest -i --tests AboutDialogUiTest
 ```
 
 ### Check that dependencies are up-to-date
 
-```bash
+```sh
 ./gradlew dependencyUpdates
 ```
 
@@ -63,7 +63,7 @@ Run a single test:
 
 Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and add it to the `PATH`.
 
-```bash
+```sh
 ./gradlew jpackage --info -PreleaseVersion=x.y.z
 ```
 
@@ -89,7 +89,7 @@ Add the following to your `~/.gradle/gradle.properties`:
 1. Make sure the [Changelog](../CHANGELOG.md) is updated
 2. Run the following command:
 
-    ```bash
+    ```sh
     ./gradlew clean build publish closeAndReleaseRepository --info -PreleaseVersion=<version>
     ```
 

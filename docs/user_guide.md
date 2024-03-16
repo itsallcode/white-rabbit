@@ -11,7 +11,7 @@ Precondition: Install Java Runtime Environment (JRE) 21, e.g. from [Adoptium / E
   * double clicking or
   * executing command
 
-  ```bash
+  ```sh
   java -jar whiterabbitfx-signed.jar
   ```
 
