@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.itsallcode.holidays.calculator.logic.variants.Holiday;
 import org.itsallcode.whiterabbit.api.features.Holidays.HolidayInstance;
 import org.junit.jupiter.api.Test;
@@ -32,19 +33,20 @@ class CalculatedHolidaysTest
     void nonExistingConfigurationFile() throws URISyntaxException
     {
         final Path path = Paths.get(this.getClass().getResource("/").toURI());
-        assertThat(new CalculatedHolidaysMock(path).readHolidays(path.resolve("non-existing-file.cfg"))).asList()
+        assertThat(new CalculatedHolidaysMock(path).readHolidays(path.resolve("non-existing-file.cfg")))
+                .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .isEmpty();
     }
 
     private static class CalculatedHolidaysMock extends CalculatedHolidays
     {
-        public CalculatedHolidaysMock(Path dataDir)
+        public CalculatedHolidaysMock(final Path dataDir)
         {
             super(dataDir);
         }
 
         @Override
-        public List<Holiday> readHolidays(Path configurationFile)
+        public List<Holiday> readHolidays(final Path configurationFile)
         {
             return super.readHolidays(configurationFile);
         }

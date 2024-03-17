@@ -15,6 +15,9 @@ jobs:
       cancel-in-progress: true
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
 
     strategy:
       fail-fast: false

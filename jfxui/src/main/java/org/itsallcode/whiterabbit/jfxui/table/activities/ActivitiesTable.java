@@ -55,8 +55,9 @@ public class ActivitiesTable
     private final EditListener<DayRecord> editListener;
     private final AppService appService;
 
-    public ActivitiesTable(ReadOnlyProperty<DayRecord> selectedDay, SimpleObjectProperty<Activity> selectedActivity,
-            EditListener<DayRecord> editListener, AppService appService)
+    public ActivitiesTable(final ReadOnlyProperty<DayRecord> selectedDay,
+            final SimpleObjectProperty<Activity> selectedActivity,
+            final EditListener<DayRecord> editListener, final AppService appService)
     {
         this.selectedActivity = selectedActivity;
         this.editListener = editListener;
@@ -65,7 +66,7 @@ public class ActivitiesTable
         selectedDay.addListener((observable, oldValue, newValue) -> updateTableValues(newValue));
     }
 
-    public void updateTableValues(DayRecord day)
+    public void updateTableValues(final DayRecord day)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> {
             if (day == null || day.activities().isEmpty())
@@ -142,18 +143,18 @@ public class ActivitiesTable
         return table;
     }
 
-    private boolean isDoubleClickEvent(MouseEvent event)
+    private boolean isDoubleClickEvent(final MouseEvent event)
     {
         return event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2;
     }
 
-    private boolean targetIsEmptySpace(EventTarget target)
+    private boolean targetIsEmptySpace(final EventTarget target)
     {
-        if (target instanceof TableRow<?> row)
+        if (target instanceof final TableRow<?> row)
         {
             return row.getItem() == null;
         }
-        else if (target instanceof TableCell<?, ?> cell)
+        else if (target instanceof final TableCell<?, ?> cell)
         {
             return cell.getTableRow().getItem() == null;
         }
