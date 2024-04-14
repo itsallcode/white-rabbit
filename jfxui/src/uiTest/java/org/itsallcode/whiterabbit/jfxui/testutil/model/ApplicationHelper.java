@@ -20,12 +20,12 @@ public class ApplicationHelper
 {
     private final FxRobot robot;
 
-    private ApplicationHelper(FxRobot robot, Window window)
+    private ApplicationHelper(final FxRobot robot, final Window window)
     {
         this.robot = robot;
     }
 
-    public static ApplicationHelper create(FxRobot robot)
+    public static ApplicationHelper create(final FxRobot robot)
     {
         Objects.requireNonNull(robot, "robot");
         return new ApplicationHelper(robot, robot.window(0));
@@ -88,7 +88,7 @@ public class ApplicationHelper
         return new PluginManagerWindow(robot, window);
     }
 
-    public void addPresetInterruption(Duration preset)
+    public void addPresetInterruption(final Duration preset)
     {
         final SplitMenuButton splitMenuButton = robot.lookup("#add-interruption-button").query();
         final StackPane arrowButton = (StackPane) robot.from(splitMenuButton).lookup(".arrow-button").query();
@@ -110,7 +110,7 @@ public class ApplicationHelper
         return getSelectedMonthComboBox().getValue();
     }
 
-    public void setSelectedMonth(YearMonth month)
+    public void setSelectedMonth(final YearMonth month)
     {
         JavaFxUtil.runOnFxApplicationThread(() -> getSelectedMonthComboBox().setValue(month));
     }
@@ -125,7 +125,7 @@ public class ApplicationHelper
         clickButton("#previous-month-button");
     }
 
-    private void clickButton(String query)
+    private void clickButton(final String query)
     {
         final Button button = robot.lookup(query).queryButton();
         robot.clickOn(button);
@@ -146,12 +146,12 @@ public class ApplicationHelper
         return new DailyProjectReportWindow(robot, window);
     }
 
-    public MonthlyProjectReportWindow openMonthlyProjectReport()
+    public MonthlyProjectReportWindow openMonthlyProjectReport(final YearMonth yearMonth)
     {
         robot.clickOn("#menu_reports");
         robot.clickOn("#menuitem_monthly_project_report");
 
-        final Window window = robot.window("Monthly Project Report");
+        final Window window = robot.window("Monthly Project Report " + yearMonth);
         Assertions.assertThat(window).isShowing();
         return new MonthlyProjectReportWindow(robot, window);
     }

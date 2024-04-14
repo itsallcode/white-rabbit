@@ -18,7 +18,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jdt.annotation.NonNull;
 
 class AwtTrayIcon implements Tray
 {
@@ -27,13 +26,13 @@ class AwtTrayIcon implements Tray
     private final SystemTray tray;
     private final TrayIcon trayIcon;
 
-    private AwtTrayIcon(SystemTray tray, TrayIcon trayIcon)
+    private AwtTrayIcon(final SystemTray tray, final TrayIcon trayIcon)
     {
         this.tray = tray;
         this.trayIcon = trayIcon;
     }
 
-    static @NonNull Tray createAwtTray(TrayCallback callback)
+    static Tray createAwtTray(final TrayCallback callback)
     {
         try
         {
@@ -52,7 +51,7 @@ class AwtTrayIcon implements Tray
         }
     }
 
-    private static Image loadImage(final String resourceName, Dimension size)
+    private static Image loadImage(final String resourceName, final Dimension size)
     {
         final URL imageUrl = AwtTrayIcon.class.getResource(resourceName);
         try
@@ -67,7 +66,7 @@ class AwtTrayIcon implements Tray
         }
     }
 
-    private static PopupMenu createPopupMenu(TrayCallback callback)
+    private static PopupMenu createPopupMenu(final TrayCallback callback)
     {
         final PopupMenu popupMenu = new PopupMenu("White Rabbit Time Recording");
         popupMenu.add(menuItem("Show", KeyEvent.VK_S, callback::showMainWindow));
@@ -77,7 +76,7 @@ class AwtTrayIcon implements Tray
         return popupMenu;
     }
 
-    private static MenuItem menuItem(String label, int shortcutKey, Runnable action)
+    private static MenuItem menuItem(final String label, final int shortcutKey, final Runnable action)
     {
         final MenuItem menuItem = new MenuItem(label, new MenuShortcut(shortcutKey));
         menuItem.addActionListener(event -> action.run());
@@ -85,13 +84,13 @@ class AwtTrayIcon implements Tray
     }
 
     @Override
-    public void setTooltip(String tooltip)
+    public void setTooltip(final String tooltip)
     {
         trayIcon.setToolTip(tooltip);
     }
 
     @Override
-    public void displayMessage(String caption, String text, MessageType messageType)
+    public void displayMessage(final String caption, final String text, final MessageType messageType)
     {
         SwingUtilities.invokeLater(() -> trayIcon.displayMessage(caption, text, messageType));
     }

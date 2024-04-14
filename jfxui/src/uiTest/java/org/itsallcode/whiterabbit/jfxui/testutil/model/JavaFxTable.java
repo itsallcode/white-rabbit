@@ -16,7 +16,9 @@ import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 
 import javafx.css.PseudoClass;
-import javafx.scene.control.*;
+import javafx.scene.control.IndexedCell;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableView;
 import javafx.scene.control.skin.VirtualFlow;
 
 public class JavaFxTable<T>
@@ -112,7 +114,7 @@ public class JavaFxTable<T>
 
         public TableCell<?, ?> cell(final String columnId)
         {
-            LOG.debug("Getting row {} / column {}", rowIndex, columnId);
+            LOG.trace("Getting row {} / column {}", rowIndex, columnId);
             final IndexedCell<T> row = tableRow();
             return row.getChildrenUnmodifiable().stream()
                     .filter(cell -> cell.getId().equals(columnId))
@@ -129,7 +131,7 @@ public class JavaFxTable<T>
                     .findFirst().orElseThrow();
             assertThat(virtualFlow.getCellCount()).as("row count of " + virtualFlow).isGreaterThan(rowIndex);
             final IndexedCell<T> row = JavaFxUtil.runOnFxApplicationThread(() -> virtualFlow.getCell(rowIndex));
-            LOG.debug("Got row #{} of {}: {}", rowIndex, virtualFlow, row);
+            LOG.trace("Got row #{} of {}: {}", rowIndex, virtualFlow, row);
             return row;
         }
 

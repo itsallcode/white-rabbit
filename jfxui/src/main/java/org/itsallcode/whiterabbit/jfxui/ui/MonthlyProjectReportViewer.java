@@ -1,12 +1,13 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
@@ -19,39 +20,62 @@ import org.itsallcode.whiterabbit.logic.service.project.ProjectImpl;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 
 public class MonthlyProjectReportViewer
 {
-    private final ProjectReport report;
+    private static final Logger LOG = LogManager.getLogger(MonthlyProjectReportViewer.class);
+
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
     private final AppService appService;
+    private YearMonth yearMonth;
 
-    public MonthlyProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService,
-            ProjectReport report)
+    public MonthlyProjectReportViewer(final Stage primaryStage, final UiStateService uiState,
+            final AppService appService, final YearMonth yearMonth)
     {
         this.uiState = uiState;
         this.appService = appService;
-        this.reportWindow = new ReportWindow(primaryStage, uiState, "monthly-project-report", "Monthly Project Report");
-        this.report = report;
+        this.yearMonth = yearMonth;
+        this.reportWindow = new ReportWindow(primaryStage, uiState, "monthly-project-report", getWindowTitle());
     }
 
     public void show()
     {
         final TableView<ReportRow> treeTable = createTreeTable();
-        reportWindow.show(treeTable);
+        updateTable(treeTable);
+        final Node previousMonthButton = UiWidget.button("prev-month-button", "< Previous Month",
+                e -> gotoMonth(treeTable, -1));
+        final Node nextMonthButton = UiWidget.button("next-month-button", "Next Month >",
+                e -> gotoMonth(treeTable, +1));
+        reportWindow.show(treeTable, previousMonthButton, nextMonthButton);
         uiState.register(treeTable);
+    }
+
+    private void gotoMonth(final TableView<ReportRow> treeTable, final int count)
+    {
+        yearMonth = yearMonth.plusMonths(count);
+        LOG.debug("Go {} months to {}", count, yearMonth);
+        updateTable(treeTable);
+        reportWindow.updateTitle(getWindowTitle());
+    }
+
+    private void updateTable(final TableView<ReportRow> treeTable)
+    {
+        treeTable.setItems(createRows());
+    }
+
+    private String getWindowTitle()
+    {
+        return "Monthly Project Report " + yearMonth;
     }
 
     private TableView<ReportRow> createTreeTable()
     {
-        final ObservableList<ReportRow> rows = FXCollections.observableList(
-                report.getProjects().stream()
-                        .map(project -> createRow(report.getMonth(), project)).collect(toList()));
-        final TableView<ReportRow> treeTable = new TableView<>(rows);
+        final TableView<ReportRow> treeTable = new TableView<>();
         treeTable.getColumns().addAll(List.of(
                 UiWidget.readOnlyColumn("yearMonth", "Month",
                         new YearMonthStringConverter(), ReportRow::getMonth),
@@ -67,7 +91,14 @@ public class MonthlyProjectReportViewer
         return treeTable;
     }
 
-    private ReportRow createRow(YearMonth month, ProjectReportActivity project)
+    private final ObservableList<ReportRow> createRows()
+    {
+        final ProjectReport report = appService.generateProjectReport(yearMonth);
+        return FXCollections.observableList(
+                report.getProjects().stream().map(project -> createRow(report.getMonth(), project)).toList());
+    }
+
+    private ReportRow createRow(final YearMonth month, final ProjectReportActivity project)
     {
         return new ReportRow(month, project);
     }
@@ -77,7 +108,7 @@ public class MonthlyProjectReportViewer
         private final YearMonth month;
         private final ProjectReportActivity project;
 
-        private ReportRow(YearMonth month, ProjectReportActivity project)
+        private ReportRow(final YearMonth month, final ProjectReportActivity project)
         {
             this.month = month;
             this.project = project;

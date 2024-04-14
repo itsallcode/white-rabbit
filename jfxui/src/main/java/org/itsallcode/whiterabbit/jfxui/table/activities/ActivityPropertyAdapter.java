@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.jfxui.table.EditListener;
 import org.itsallcode.whiterabbit.jfxui.table.RecordPropertyAdapter;
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -25,7 +24,7 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
     final ObjectProperty<Boolean> remainder;
     final ObjectProperty<String> comment;
 
-    private ActivityPropertyAdapter(EditListener<DayRecord> editListener, Activity act)
+    private ActivityPropertyAdapter(final EditListener<DayRecord> editListener, final Activity act)
     {
         super(dayRecord -> editListener.recordUpdated(dayRecord.getDay()));
         setRecord(act);
@@ -36,7 +35,7 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
         update();
     }
 
-    public void setActivity(Activity activity)
+    public void setActivity(final Activity activity)
     {
         super.setRecord(activity);
         update();
@@ -50,12 +49,13 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
         });
     }
 
-    public static ActivityPropertyAdapter wrap(EditListener<DayRecord> editListener, Activity activity)
+    public static ActivityPropertyAdapter wrap(final EditListener<DayRecord> editListener, final Activity activity)
     {
         return new ActivityPropertyAdapter(editListener, activity);
     }
 
-    static List<@NonNull ActivityPropertyAdapter> wrap(EditListener<DayRecord> editListener, List<Activity> activities)
+    static List<ActivityPropertyAdapter> wrap(final EditListener<DayRecord> editListener,
+            final List<Activity> activities)
     {
         return activities.stream()
                 .map(a -> wrap(editListener, a))

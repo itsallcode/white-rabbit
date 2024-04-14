@@ -20,7 +20,11 @@ This release requires Java 21.
 * [#245](https://github.com/itsallcode/white-rabbit/pull/245): Removed webstart deployment.
 * [#265](https://github.com/itsallcode/white-rabbit/pull/265): Upgraded dependencies, require Java 21.
 
-### Changes / Bugfixes
+### New Features
+
+* [#273](https://github.com/itsallcode/white-rabbit/pull/273): Added buttons to monthly report for jumping to the previous/next month
+
+### Bugfixes
 
 * [#241](https://github.com/itsallcode/white-rabbit/pull/241): Fix automatic interruption dialog popup after resume.
 * [#233](https://github.com/itsallcode/white-rabbit/pull/233): Upgrade dependencies, use [Gradle versions catalog](https://docs.gradle.org/current/userguide/platforms.html).

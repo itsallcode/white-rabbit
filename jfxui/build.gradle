@@ -124,7 +124,7 @@ task uiTest(type: Test, group: 'verification') {
     }
 
     forkEvery 5
-    jvmArgs '-XX:+HeapDumpOnOutOfMemoryError'
+    jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:+EnableDynamicAgentLoading'
 
     if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
         systemProperty 'java.awt.headless', 'true'

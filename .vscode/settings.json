@@ -5,12 +5,24 @@
         "source.fixAll": "explicit"
     },
     "java.codeGeneration.useBlocks": true,
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.test.config": {
+        "vmArgs": [
+            "-Djava.awt.headless=true",
+            "-Dtestfx.headless=true",
+            "-Dtestfx.robot=glass",
+            "-Dglass.platform=Monocle",
+            "-Dmonocle.platform=Headless"
+        ]
+    },
+    "[java]": {
+        "editor.indentSize": 4
+    },
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "file",
     "sonarlint.connectedMode.project": {
         "connectionId": "itsallcode",
         "projectKey": "white-rabbit"
     },
-    "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "automatic"
 }
