@@ -27,7 +27,7 @@ public class DayActivities
     private final DayData day;
     final DayRecord dayRecord;
 
-    DayActivities(DayRecord dayRecord, ProjectService projectService, ModelFactory modelFactory)
+    DayActivities(final DayRecord dayRecord, final ProjectService projectService, final ModelFactory modelFactory)
     {
         this.modelFactory = modelFactory;
         this.day = dayRecord.getJsonDay();
@@ -75,12 +75,12 @@ public class DayActivities
                 .stream();
     }
 
-    private Activity wrapActivity(ActivityData activity, int index)
+    private Activity wrapActivity(final ActivityData activity, final int index)
     {
         return new Activity(index, activity, this, projectService);
     }
 
-    public Optional<Activity> get(int index)
+    public Optional<Activity> get(final int index)
     {
         return Optional.ofNullable(day.getActivities())
                 .filter(list -> list.size() > index)
@@ -88,7 +88,7 @@ public class DayActivities
                 .map(a -> wrapActivity(a, index));
     }
 
-    public void remove(int index)
+    public void remove(final int index)
     {
         if (day.getActivities() == null)
         {
@@ -101,7 +101,7 @@ public class DayActivities
         }
     }
 
-    public void setRemainderActivity(ActivityData activity, boolean remainder)
+    public void setRemainderActivity(final ActivityData activity, final boolean remainder)
     {
         if (activity.isRemainder() == remainder)
         {
@@ -132,7 +132,7 @@ public class DayActivities
     {
         final Duration allocatedDuration = getActivities().map(ActivityData::getDuration)
                 .filter(Objects::nonNull)
-                .reduce((d1, d2) -> d1.plus(d2))
+                .reduce(Duration::plus)
                 .orElse(Duration.ZERO);
         return dayRecord.getWorkingTime().minus(allocatedDuration);
     }
@@ -167,7 +167,7 @@ public class DayActivities
         return getActivities().filter(a -> a.getDuration() == null).collect(toList());
     }
 
-    public Duration getDuration(Activity activity)
+    public Duration getDuration(final Activity activity)
     {
         if (activity.jsonActivity.getDuration() != null)
         {

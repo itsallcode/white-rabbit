@@ -17,13 +17,13 @@ class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, Tabl
 
     private final DelayedPropertyListener propertyListener;
 
-    TreeTableStateManager(DelayedPropertyListener propertyListener)
+    TreeTableStateManager(final DelayedPropertyListener propertyListener)
     {
         this.propertyListener = propertyListener;
     }
 
     @Override
-    public void restore(TreeTableView<?> widget, TableStateModel model)
+    public void restore(final TreeTableView<?> widget, final TableStateModel model)
     {
         if (model.columns == null)
         {
@@ -32,8 +32,8 @@ class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, Tabl
 
         if (model.columns.size() != widget.getColumns().size())
         {
-            LOG.warn("Number of columns has changed from {} to {}. Skip restoring column widths.", model.columns.size(),
-                    widget.getColumns().size());
+            LOG.warn("Number of tree columns has changed from {} to {}. Skip restoring column widths.",
+                    model.columns.size(), widget.getColumns().size());
             return;
         }
 
@@ -42,7 +42,7 @@ class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, Tabl
             final Double width = model.columns.get(i).width;
             if (width == null || width <= 0)
             {
-                LOG.warn("Invalid width {} for column {}: Skip restoring.", width, i);
+                LOG.warn("Invalid width {} for tree column {}: Skip restoring.", width, i);
             }
             else
             {
@@ -52,7 +52,7 @@ class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, Tabl
     }
 
     @Override
-    public void watch(TreeTableView<?> widget, TableStateModel model)
+    public void watch(final TreeTableView<?> widget, final TableStateModel model)
     {
         model.columns = new ArrayList<>();
         for (final TreeTableColumn<?, ?> column : widget.getColumns())
@@ -66,7 +66,7 @@ class TreeTableStateManager implements WidgetStateManager<TreeTableView<?>, Tabl
     }
 
     @Override
-    public TableStateModel createEmptyModel(String id)
+    public TableStateModel createEmptyModel(final String id)
     {
         return new TableStateModel(id);
     }

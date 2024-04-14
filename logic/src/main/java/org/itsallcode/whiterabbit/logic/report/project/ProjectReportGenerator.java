@@ -22,12 +22,12 @@ public class ProjectReportGenerator
 {
     private final Storage storage;
 
-    public ProjectReportGenerator(Storage storage)
+    public ProjectReportGenerator(final Storage storage)
     {
         this.storage = storage;
     }
 
-    public ProjectReport generateReport(YearMonth month)
+    public ProjectReport generateReport(final YearMonth month)
     {
         final List<DayRecord> sortedDays = storage.loadMonth(month)
                 .map(MonthIndex::getSortedDays).orElse(Stream.empty()).collect(toList());
@@ -47,7 +47,7 @@ public class ProjectReportGenerator
         return new ProjectReportImpl(month, reportDays, reportProjects);
     }
 
-    private ProjectReportDay generateDayReport(DayRecord dayRecord)
+    private ProjectReportDay generateDayReport(final DayRecord dayRecord)
     {
         final List<ProjectReportActivity> projects = dayRecord.activities()
                 .getAll().stream()
@@ -60,16 +60,16 @@ public class ProjectReportGenerator
         return new DayImpl(dayRecord.getDate(), dayRecord.getType(), dayRecord.getComment(), projects);
     }
 
-    private String activityProject(Activity activity)
+    private String activityProject(final Activity activity)
     {
         return activity.getProject().getProjectId();
     }
 
-    private ProjectReportImpl.ProjectActivityImpl aggregateProject(List<Activity> projectActivites)
+    private ProjectReportImpl.ProjectActivityImpl aggregateProject(final List<Activity> projectActivites)
     {
         final Duration totalWorkingTime = projectActivites.stream()
                 .filter(activity -> activity.getDuration() != null)
-                .map(Activity::getDuration).reduce((a, b) -> a.plus(b))
+                .map(Activity::getDuration).reduce(Duration::plus)
                 .orElse(Duration.ZERO);
         final List<String> comments = projectActivites.stream()
                 .map(Activity::getComment)
