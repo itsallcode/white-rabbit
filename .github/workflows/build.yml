@@ -52,6 +52,20 @@ jobs:
       run: |
         ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
 
+    - name: Archive executable JAR
+      uses: actions/upload-artifact@v4
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
+      with:
+        name: executable-jar
+        path: jfxui/build/libs/white-rabbit-fx-*.jar
+
+    - name: Archive test reports for ${{ runner.os }}
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: test-reports-${{ runner.os }}
+        path: "**/build/reports/tests/*/**"
+  
     - name: Sonar analysis
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}
       run: |
@@ -60,12 +74,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Archive executable JAR for ${{ matrix.java }}
-      uses: actions/upload-artifact@v4
-      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
-      with:
-        name: packages
-        path: jfxui/build/libs/white-rabbit-fx-*.jar
 
     - name: Build native package for ${{ runner.os }} using Java ${{ matrix.java }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
@@ -76,13 +84,6 @@ jobs:
       run: |
         ./gradlew -status
         ./gradlew -stop
-
-    - name: Archive test reports for ${{ runner.os }}
-      uses: actions/upload-artifact@v4
-      if: ${{ always() }}
-      with:
-        name: test-reports-${{ runner.os }}
-        path: "**/build/reports/tests/*/**"
 
     - name: Archive native package for ${{ runner.os }}
       uses: actions/upload-artifact@v4
