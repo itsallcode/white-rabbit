@@ -69,7 +69,6 @@ class MonthlyProjectReportTest extends JavaFxAppUiTestBase
         final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
         report.assertRowCount(1);
         report.gotoPreviousMonth();
-        time().tickSecond();
         report.assertWindowTitle("Monthly Project Report 2007-11");
         report.assertRowCount(0);
         report.closeViaCloseButton();
@@ -86,7 +85,6 @@ class MonthlyProjectReportTest extends JavaFxAppUiTestBase
         final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
         report.assertRowCount(1);
         report.gotoNextMonth();
-        time().tickSecond();
         report.assertWindowTitle("Monthly Project Report 2008-01");
         report.assertRowCount(0);
         report.closeViaCloseButton();

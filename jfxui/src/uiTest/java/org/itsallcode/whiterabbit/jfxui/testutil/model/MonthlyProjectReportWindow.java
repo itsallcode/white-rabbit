@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
 
 import org.itsallcode.whiterabbit.api.model.Project;
-import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.ui.MonthlyProjectReportViewer;
 import org.itsallcode.whiterabbit.jfxui.ui.MonthlyProjectReportViewer.ReportRow;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
+import org.testfx.util.WaitForAsyncUtils;
 
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -39,13 +39,13 @@ public class MonthlyProjectReportWindow
     public void gotoPreviousMonth()
     {
         robot.clickOn("#prev-month-button");
-        TestUtil.sleepLong();
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     public void gotoNextMonth()
     {
         robot.clickOn("#next-month-button");
-        TestUtil.sleepLong();
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     public void closeViaEscKey()
