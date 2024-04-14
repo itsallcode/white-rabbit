@@ -40,13 +40,13 @@ public class MonthlyProjectReportWindow
     public void gotoPreviousMonth()
     {
         robot.clickOn("#prev-month-button");
-        TestUtil.sleepShort();
+        TestUtil.sleepLong();
     }
 
     public void gotoNextMonth()
     {
         robot.clickOn("#next-month-button");
-        TestUtil.sleepShort();
+        TestUtil.sleepLong();
     }
 
     public void closeViaEscKey()
