@@ -7,7 +7,7 @@ import javafx.application.Application;
 
 public class App
 {
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
         System.setProperty("javafx.preloader", SplashScreenLoader.class.getName());
         System.setProperty("log4j.skipJansi", "false");
