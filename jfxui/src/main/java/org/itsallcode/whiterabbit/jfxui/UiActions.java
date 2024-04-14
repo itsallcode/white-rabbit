@@ -6,13 +6,18 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.jfxui.service.DesktopService;
-import org.itsallcode.whiterabbit.jfxui.ui.*;
+import org.itsallcode.whiterabbit.jfxui.ui.DailyProjectReportViewer;
+import org.itsallcode.whiterabbit.jfxui.ui.MonthlyProjectReportViewer;
+import org.itsallcode.whiterabbit.jfxui.ui.PluginManagerViewer;
+import org.itsallcode.whiterabbit.jfxui.ui.VacationReportViewer;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.report.vacation.VacationReport;
@@ -133,8 +138,7 @@ public class UiActions
             LOG.warn("No month selected, can't generate project report");
             return;
         }
-        final ProjectReport report = appService.generateProjectReport(monthIndex.getYearMonth());
-        new MonthlyProjectReportViewer(getPrimaryStage(), state.uiState, appService, report).show();
+        new MonthlyProjectReportViewer(getPrimaryStage(), state.uiState, appService, monthIndex.getYearMonth()).show();
     }
 
     public void showPluginManager()

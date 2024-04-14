@@ -5,6 +5,8 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.jfxui.ui.UiResources;
 import org.itsallcode.whiterabbit.jfxui.ui.UiWidget;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
@@ -20,13 +22,15 @@ import javafx.stage.Stage;
 
 public class ReportWindow
 {
+    private static final Logger LOG = LogManager.getLogger(ReportWindow.class);
     private final Stage primaryStage;
     private final String windowTitle;
     private final UiStateService uiState;
     private final String id;
     private Stage stage;
 
-    public ReportWindow(Stage primaryStage, UiStateService uiState, String id, String windowTitle)
+    public ReportWindow(final Stage primaryStage, final UiStateService uiState, final String id,
+            final String windowTitle)
     {
         this.primaryStage = primaryStage;
         this.uiState = uiState;
@@ -34,13 +38,13 @@ public class ReportWindow
         this.windowTitle = windowTitle;
     }
 
-    public void show(Node reportView, Node... toolBarItems)
+    public void show(final Node reportView, final Node... toolBarItems)
     {
         stage = createStage(reportView, toolBarItems);
         stage.show();
     }
 
-    private Stage createStage(Node reportView, Node... toolBarItems)
+    private Stage createStage(final Node reportView, final Node... toolBarItems)
     {
         final BorderPane pane = new BorderPane();
         pane.setTop(createToolBar(toolBarItems));
@@ -49,7 +53,7 @@ public class ReportWindow
         return createStage(pane);
     }
 
-    private ToolBar createToolBar(Node... items)
+    private ToolBar createToolBar(final Node... items)
     {
         final Node closeButton = UiWidget.button("close-button", "Close Report", e -> closeReportWindow());
         final List<Node> allItems = new ArrayList<>();
@@ -75,6 +79,12 @@ public class ReportWindow
         newStage.getIcons().add(UiResources.APP_ICON);
         uiState.register(id, newStage);
         return newStage;
+    }
+
+    public void updateTitle(final String title)
+    {
+        LOG.debug("Update window title to '{}'", title);
+        stage.setTitle(title);
     }
 
     private void closeReportWindow()

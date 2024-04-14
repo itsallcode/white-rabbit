@@ -2,6 +2,7 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.YearMonth;
 import java.util.Locale;
 
 import org.itsallcode.whiterabbit.api.model.Project;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
 @ExtendWith(ApplicationExtension.class)
 class MonthlyProjectReportTest extends JavaFxAppUiTestBase
 {
+    private static final Instant INITIAL_TIME = Instant.parse("2007-12-03T10:15:30.20Z");
     private static final ProjectImpl PROJECT1 = project("p1", "Project 1");
     private static final ProjectImpl PROJECT2 = project("p2", "Project 2");
 
@@ -28,7 +30,7 @@ class MonthlyProjectReportTest extends JavaFxAppUiTestBase
     void emptyProjectReport()
     {
         time().tickSeparateMinutes(2);
-        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport();
+        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
         report.assertRowCount(0);
 
         report.closeViaCloseButton();
@@ -38,7 +40,7 @@ class MonthlyProjectReportTest extends JavaFxAppUiTestBase
     void closeReportByTypingEscKey()
     {
         time().tickSeparateMinutes(2);
-        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport();
+        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
         report.closeViaEscKey();
     }
 
@@ -50,18 +52,52 @@ class MonthlyProjectReportTest extends JavaFxAppUiTestBase
         final Project project = new ProjectImpl("p1", "Project 1", null);
         app().activitiesTable().addRemainderActivity(project, "a1");
 
-        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport();
+        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
         report.assertRowCount(1)
                 .assertProject(0, PROJECT1, Duration.ofMinutes(2), "a1");
         report.closeViaCloseButton();
     }
 
+    @Test
+    void gotoPreviousMonth()
+    {
+        time().tickSeparateMinutes(3);
+
+        final Project project = new ProjectImpl("p1", "Project 1", null);
+        app().activitiesTable().addRemainderActivity(project, "a1");
+
+        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
+        report.assertRowCount(1);
+        report.gotoPreviousMonth();
+        time().tickSecond();
+        report.assertWindowTitle("Monthly Project Report 2007-11");
+        report.assertRowCount(0);
+        report.closeViaCloseButton();
+    }
+
+    @Test
+    void gotoNextMonth()
+    {
+        time().tickSeparateMinutes(3);
+
+        final Project project = new ProjectImpl("p1", "Project 1", null);
+        app().activitiesTable().addRemainderActivity(project, "a1");
+
+        final MonthlyProjectReportWindow report = app().openMonthlyProjectReport(YearMonth.of(2007, 12));
+        report.assertRowCount(1);
+        report.gotoNextMonth();
+        time().tickSecond();
+        report.assertWindowTitle("Monthly Project Report 2008-01");
+        report.assertRowCount(0);
+        report.closeViaCloseButton();
+    }
+
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
-        setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));
+        setInitialTime(INITIAL_TIME);
         doStart(stage, projectConfig(PROJECT1, PROJECT2));
         setRobot(robot);
     }
