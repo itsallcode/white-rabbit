@@ -8,7 +8,7 @@ import org.itsallcode.whiterabbit.jfxui.OsCheck.OSType;
 
 public interface Tray
 {
-    static Tray create(TrayCallback callback)
+    static Tray create(final TrayCallback callback)
     {
         return SwingUtil.runOnSwingThread(() -> {
             if (!isAwtSystemTraySupported())

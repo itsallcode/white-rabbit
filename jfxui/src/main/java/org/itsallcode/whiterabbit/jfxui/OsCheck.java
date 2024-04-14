@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui;
 
-
 import java.awt.Desktop;
 import java.util.Locale;
 
@@ -55,6 +54,13 @@ public class OsCheck
 
     public boolean isDesktopSupported()
     {
+        if (getOperatingSystemType() == OSType.LINUX)
+        {
+            // Calling Desktop.isDesktopSupported() on Linux throws exception
+            // "java.lang.UnsupportedOperationException: Unable to load glass
+            // GTK library."
+            return false;
+        }
         return Desktop.isDesktopSupported();
     }
 }

@@ -58,7 +58,7 @@ public class AppUi
     private final ActivitiesTable activitiesTable;
     private final Tray tray;
 
-    private AppUi(Builder builder)
+    private AppUi(final Builder builder)
     {
         dayRecordTable = builder.dayRecordTable;
         activitiesTable = builder.activitiesTable;
@@ -70,12 +70,12 @@ public class AppUi
         tray.removeTrayIcon();
     }
 
-    public void selectDay(LocalDate date)
+    public void selectDay(final LocalDate date)
     {
         dayRecordTable.selectRow(date);
     }
 
-    public void updateActivities(DayRecord dayRecord)
+    public void updateActivities(final DayRecord dayRecord)
     {
         activitiesTable.updateTableValues(dayRecord);
     }
@@ -93,7 +93,8 @@ public class AppUi
         private ActivitiesTable activitiesTable;
         private Tray tray;
 
-        public Builder(JavaFxApp app, UiActions actions, AppService appService, Stage primaryStage, AppState appState)
+        public Builder(final JavaFxApp app, final UiActions actions, final AppService appService,
+                final Stage primaryStage, final AppState appState)
         {
             this.app = app;
             this.actions = actions;
@@ -269,7 +270,7 @@ public class AppUi
                     UiWidget.button("update-button", "Update", e -> appService.updateNow()));
         }
 
-        private void gotoMonth(int step)
+        private void gotoMonth(final int step)
         {
             final YearMonth selecteMonth = state.currentMonth.get().getYearMonth().plusMonths(step);
             app.loadMonth(selecteMonth);
@@ -346,7 +347,8 @@ public class AppUi
             return comboBox;
         }
 
-        private void dateChanged(ObservableValue<? extends LocalDate> observable, LocalDate oldDate, LocalDate newDate)
+        private void dateChanged(final ObservableValue<? extends LocalDate> observable, final LocalDate oldDate,
+                final LocalDate newDate)
         {
             dayRecordTable.selectRow(newDate);
             if (oldDate.getMonth() != newDate.getMonth())
