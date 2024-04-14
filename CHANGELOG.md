@@ -35,6 +35,7 @@ This release requires Java 21.
   * Added build with Java 20
   * UI-Tests run only in non-headless mode due to restrictions with the latest JavaFX version, see #261
 * [#132](https://github.com/itsallcode/white-rabbit/issues/132): Fix display of negative zero duration
+* [#272](https://github.com/itsallcode/white-rabbit/pull/272): Fix startup under Linux
 
 ## [1.8.0] - 2022-01-22
 
