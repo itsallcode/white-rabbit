@@ -16,6 +16,9 @@
             "-Dmonocle.platform=Headless"
         ]
     },
+    "[java]": {
+        "editor.indentSize": 4
+    },
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "file",
     "sonarlint.connectedMode.project": {
