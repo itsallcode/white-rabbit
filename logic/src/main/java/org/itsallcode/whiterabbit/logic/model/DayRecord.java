@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.model;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -112,13 +113,8 @@ public class DayRecord implements RowRecord
 
     private boolean isWeekend()
     {
-        switch (day.getDate().getDayOfWeek())
-        {
-        case SATURDAY, SUNDAY:
-            return true;
-        default:
-            return false;
-        }
+        final DayOfWeek dayOfWeek = day.getDate().getDayOfWeek();
+        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
 
     public LocalTime getBegin()
