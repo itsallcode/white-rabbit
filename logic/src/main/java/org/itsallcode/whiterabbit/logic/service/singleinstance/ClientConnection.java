@@ -18,14 +18,14 @@ class ClientConnection implements AutoCloseable
 
     private final Socket clientSocket;
 
-    private ClientConnection(Socket clientSocket)
+    private ClientConnection(final Socket clientSocket)
     {
         this.clientSocket = clientSocket;
     }
 
     // Socket will be closed when client connection is closed.
     @SuppressWarnings("java:S2095")
-    static ClientConnection connect(InetAddress address, int port)
+    static ClientConnection connect(final InetAddress address, final int port)
     {
         try
         {
@@ -39,7 +39,7 @@ class ClientConnection implements AutoCloseable
         }
     }
 
-    public void sendMessage(String message)
+    public void sendMessage(final String message)
     {
         if (message.contains("\n"))
         {
@@ -59,7 +59,7 @@ class ClientConnection implements AutoCloseable
         }
     }
 
-    public String sendMessageWithResponse(String message)
+    public String sendMessageWithResponse(final String message)
     {
         sendMessage(message);
         return readResponse();
@@ -69,12 +69,8 @@ class ClientConnection implements AutoCloseable
     {
         try
         {
-            LOG.trace("Reading response...");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            final String response = reader.readLine();
-            LOG.trace("Read response '{}'", response);
-            return response;
+            return reader.readLine();
         }
         catch (final IOException e)
         {

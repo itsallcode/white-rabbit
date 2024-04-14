@@ -48,9 +48,9 @@ public class DailyProjectReportViewer
 
     private final Stage primaryStage;
 
-    public DailyProjectReportViewer(Stage primaryStage, UiStateService uiState, AppService appService,
-            UiActions uiActions,
-            ProjectReport report)
+    public DailyProjectReportViewer(final Stage primaryStage, final UiStateService uiState, final AppService appService,
+            final UiActions uiActions,
+            final ProjectReport report)
     {
         this.primaryStage = primaryStage;
         this.uiState = uiState;
@@ -75,14 +75,14 @@ public class DailyProjectReportViewer
                 .toArray(Node[]::new);
     }
 
-    private Button createExportButton(AppPlugin plugin)
+    private Button createExportButton(final AppPlugin plugin)
     {
         final String pluginId = plugin.getId();
         final EventHandler<ActionEvent> action = e -> exportReport(plugin);
         return UiWidget.button(pluginId + "-export-button", "Export to " + pluginId, action);
     }
 
-    private void exportReport(AppPlugin plugin)
+    private void exportReport(final AppPlugin plugin)
     {
         final var projectReportExporter = plugin.getFeature(ProjectReportExporter.class)
                 .orElseThrow(() -> new IllegalStateException(
@@ -126,7 +126,7 @@ public class DailyProjectReportViewer
         return treeTable;
     }
 
-    private TreeItem<ReportRow> createDayTreeItem(ProjectReportDay day)
+    private TreeItem<ReportRow> createDayTreeItem(final ProjectReportDay day)
     {
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);
@@ -146,12 +146,12 @@ public class DailyProjectReportViewer
         private final Duration workingTime;
         private final String comment;
 
-        private ReportRow(ProjectReportDay day)
+        private ReportRow(final ProjectReportDay day)
         {
             this(day, null);
         }
 
-        private ReportRow(ProjectReportDay day, ProjectReportActivity project)
+        private ReportRow(final ProjectReportDay day, final ProjectReportActivity project)
         {
             if (project == null)
             {
@@ -160,7 +160,7 @@ public class DailyProjectReportViewer
                 this.project = null;
                 this.workingTime = day.getProjects().stream()
                         .map(ProjectReportActivity::getWorkingTime)
-                        .reduce((a, b) -> a.plus(b))
+                        .reduce(Duration::plus)
                         .orElse(Duration.ZERO);
                 this.comment = day.getComment();
             }

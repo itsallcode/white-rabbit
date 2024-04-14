@@ -23,7 +23,7 @@ class CalculatedHolidaysTest
         final Path path = Paths.get(this.getClass().getResource("holidays.cfg").toURI()).getParent();
         final CalculatedHolidays holidays = new CalculatedHolidays(path);
 
-        assertThat(holidays.getHolidays(DATE).size()).isEqualTo(1);
+        assertThat(holidays.getHolidays(DATE)).hasSize(1);
         final HolidayInstance actual = holidays.getHolidays(DATE).get(0);
         assertThat(actual.getName()).isEqualTo("Fronleichnam");
         assertThat(actual.getDate()).isEqualTo(DATE);

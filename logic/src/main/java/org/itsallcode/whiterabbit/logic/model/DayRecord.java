@@ -1,5 +1,6 @@
 package org.itsallcode.whiterabbit.logic.model;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,8 +26,9 @@ public class DayRecord implements RowRecord
     private final MonthIndex month;
     private final DayRecord previousDay;
 
-    public DayRecord(ContractTermsService contractTerms, DayData day, DayRecord previousDay, MonthIndex month,
-            ProjectService projectService, ModelFactory modelFactory)
+    public DayRecord(final ContractTermsService contractTerms, final DayData day, final DayRecord previousDay,
+            final MonthIndex month,
+            final ProjectService projectService, final ModelFactory modelFactory)
     {
         this.contractTerms = contractTerms;
         this.projectService = Objects.requireNonNull(projectService);
@@ -111,14 +113,8 @@ public class DayRecord implements RowRecord
 
     private boolean isWeekend()
     {
-        switch (day.getDate().getDayOfWeek())
-        {
-        case SATURDAY:
-        case SUNDAY:
-            return true;
-        default:
-            return false;
-        }
+        final DayOfWeek dayOfWeek = day.getDate().getDayOfWeek();
+        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
 
     public LocalTime getBegin()
@@ -126,7 +122,7 @@ public class DayRecord implements RowRecord
         return day.getBegin();
     }
 
-    public void setBegin(LocalTime begin)
+    public void setBegin(final LocalTime begin)
     {
         day.setBegin(begin);
     }
@@ -136,7 +132,7 @@ public class DayRecord implements RowRecord
         return day.getEnd();
     }
 
-    public void setEnd(LocalTime end)
+    public void setEnd(final LocalTime end)
     {
         day.setEnd(end);
     }
@@ -146,7 +142,7 @@ public class DayRecord implements RowRecord
         return day.getInterruption() == null ? Duration.ZERO : day.getInterruption();
     }
 
-    public void setInterruption(Duration interruption)
+    public void setInterruption(final Duration interruption)
     {
         day.setInterruption(interruption.isZero() ? null : interruption);
     }
@@ -161,12 +157,12 @@ public class DayRecord implements RowRecord
         return day.getComment();
     }
 
-    public void setComment(String comment)
+    public void setComment(final String comment)
     {
         day.setComment(comment.isEmpty() ? null : comment);
     }
 
-    public void setType(DayType type)
+    public void setType(final DayType type)
     {
         day.setType(Objects.requireNonNull(type, "type"));
     }

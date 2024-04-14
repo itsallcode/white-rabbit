@@ -52,6 +52,22 @@ jobs:
       run: |
         ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
 
+    - name: Archive executable JAR
+      uses: actions/upload-artifact@v4
+      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
+      with:
+        name: executable-jar
+        path: jfxui/build/libs/white-rabbit-fx-*.jar
+        if-no-files-found: error
+
+    - name: Archive test reports for ${{ matrix.os }} using Java ${{ matrix.java }}
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: test-reports-${{ matrix.os }}-java-${{ matrix.java }}
+        path: "**/build/reports/tests/*/**"
+        if-no-files-found: error
+  
     - name: Sonar analysis
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os && env.SONAR_TOKEN != null }}
       run: |
@@ -59,13 +75,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    - name: Archive executable JAR for ${{ matrix.java }}
-      uses: actions/upload-artifact@v4
-      if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
-      with:
-        name: packages
-        path: jfxui/build/libs/white-rabbit-fx-*.jar
 
     - name: Build native package for ${{ runner.os }} using Java ${{ matrix.java }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
