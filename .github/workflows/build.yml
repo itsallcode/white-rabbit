@@ -77,6 +77,13 @@ jobs:
         ./gradlew -status
         ./gradlew -stop
 
+    - name: Archive test reports for ${{ runner.os }}
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: test-reports-${{ runner.os }}
+        path: "**/build/reports/tests/*/**"
+
     - name: Archive native package for ${{ runner.os }}
       uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
