@@ -5,7 +5,7 @@
         "source.fixAll": "explicit"
     },
     "java.codeGeneration.useBlocks": true,
-    "java.compile.nullAnalysis.mode": "automatic",
+    "java.compile.nullAnalysis.mode": "disabled",
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.test.config": {
         "vmArgs": [
