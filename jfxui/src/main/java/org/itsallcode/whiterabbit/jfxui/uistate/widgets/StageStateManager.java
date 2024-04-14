@@ -12,17 +12,17 @@ class StageStateManager implements WidgetStateManager<Stage, StageStateModel>
     private static final Logger LOG = LogManager.getLogger(StageStateManager.class);
     private final DelayedPropertyListener propertyListener;
 
-    public StageStateManager(DelayedPropertyListener propertyListener)
+    public StageStateManager(final DelayedPropertyListener propertyListener)
     {
         this.propertyListener = propertyListener;
     }
 
     @Override
-    public void restore(Stage widget, StageStateModel model)
+    public void restore(final Stage widget, final StageStateModel model)
     {
         if (model.width == null || model.height == null || model.width == 0 || model.height == 0)
         {
-            LOG.debug("State not available, don't restore stage {}: {}", model.id, this);
+            LOG.trace("State not available, don't restore stage {}", model.id);
             return;
         }
         widget.setX(model.x);
@@ -32,7 +32,7 @@ class StageStateManager implements WidgetStateManager<Stage, StageStateModel>
     }
 
     @Override
-    public void watch(Stage widget, StageStateModel model)
+    public void watch(final Stage widget, final StageStateModel model)
     {
         propertyListener.register(widget.xProperty(), model::setX);
         propertyListener.register(widget.yProperty(), model::setY);
@@ -41,7 +41,7 @@ class StageStateManager implements WidgetStateManager<Stage, StageStateModel>
     }
 
     @Override
-    public StageStateModel createEmptyModel(String id)
+    public StageStateModel createEmptyModel(final String id)
     {
         return new StageStateModel(id);
     }
