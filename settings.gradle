@@ -40,7 +40,6 @@ dependencyResolutionManagement {
             library('jsonBindApi', 'jakarta.json.bind:jakarta.json.bind-api:3.0.1')
             library('yasson', 'org.eclipse:yasson:3.0.3')
 
-            library('jdtAnnotations', 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.3.0')
             library('jansi', 'org.fusesource.jansi:jansi:2.4.1')
             library('log4j.api', 'org.apache.logging.log4j', 'log4j-api').versionRef('log4j')
             library('log4j.core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')

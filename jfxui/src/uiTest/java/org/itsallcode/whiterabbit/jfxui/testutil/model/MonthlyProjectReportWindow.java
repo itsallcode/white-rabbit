@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.itsallcode.whiterabbit.api.model.Project;
 import org.itsallcode.whiterabbit.jfxui.testutil.TestUtil;
 import org.itsallcode.whiterabbit.jfxui.ui.MonthlyProjectReportViewer;
@@ -21,7 +20,7 @@ public class MonthlyProjectReportWindow
     private final FxRobot robot;
     private final Window window;
 
-    private final JavaFxTable<MonthlyProjectReportViewer.@NonNull ReportRow> table;
+    private final JavaFxTable<MonthlyProjectReportViewer.ReportRow> table;
 
     MonthlyProjectReportWindow(final FxRobot robot, final Window window)
     {

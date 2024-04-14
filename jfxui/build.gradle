@@ -14,7 +14,6 @@ dependencies {
     }
 
     implementation libs.log4j.api
-    implementation libs.jdtAnnotations
     implementation libs.jsonBindApi
 
     runtimeOnly libs.log4j.core
