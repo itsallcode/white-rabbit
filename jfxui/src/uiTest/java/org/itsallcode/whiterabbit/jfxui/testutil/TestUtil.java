@@ -1,6 +1,7 @@
 package org.itsallcode.whiterabbit.jfxui.testutil;
 
 import java.time.Duration;
+import java.time.Instant;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,22 +39,28 @@ public class TestUtil
 
     public static void retryAssertion(final Duration duration, final Runnable assertion)
     {
-        final long start = System.currentTimeMillis();
+        final Instant start = Instant.now();
+        int tries = 0;
         while (true)
         {
             try
             {
+                tries++;
                 assertion.run();
                 return;
             }
             catch (final AssertionError e)
             {
-                LOG.warn("Assertion failed: {}", e.getMessage(), e);
-                if (System.currentTimeMillis() - start > duration.toMillis())
+                final Duration currentDuration = Duration.between(start, Instant.now());
+                final String message = "Assertion failed after " + currentDuration + " / " + tries + " tries: "
+                        + e.getMessage();
+                final Duration remaining = currentDuration.minus(duration);
+                if (remaining.isPositive())
                 {
-                    throw e;
+                    throw new AssertionError(message, e);
                 }
-                sleepShort();
+                LOG.warn(message);
+                sleepLong();
             }
         }
     }

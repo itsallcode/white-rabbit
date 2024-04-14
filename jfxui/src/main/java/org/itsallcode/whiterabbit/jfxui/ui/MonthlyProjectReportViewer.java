@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.model.ProjectReport;
 import org.itsallcode.whiterabbit.api.model.ProjectReportActivity;
 import org.itsallcode.whiterabbit.jfxui.table.converter.DurationStringConverter;
@@ -25,6 +27,7 @@ import javafx.util.converter.DefaultStringConverter;
 
 public class MonthlyProjectReportViewer
 {
+    private static final Logger LOG = LogManager.getLogger(MonthlyProjectReportViewer.class);
 
     private final ReportWindow reportWindow;
     private final UiStateService uiState;
@@ -45,23 +48,17 @@ public class MonthlyProjectReportViewer
         final TableView<ReportRow> treeTable = createTreeTable();
         updateTable(treeTable);
         final Node previousMonthButton = UiWidget.button("prev-month-button", "< Previous Month",
-                e -> gotoPreviousMonth(treeTable));
+                e -> gotoMonth(treeTable, -1));
         final Node nextMonthButton = UiWidget.button("next-month-button", "Next Month >",
-                e -> gotoNextMonth(treeTable));
+                e -> gotoMonth(treeTable, +1));
         reportWindow.show(treeTable, previousMonthButton, nextMonthButton);
         uiState.register(treeTable);
     }
 
-    private void gotoPreviousMonth(final TableView<ReportRow> treeTable)
+    private void gotoMonth(final TableView<ReportRow> treeTable, final int count)
     {
-        yearMonth = yearMonth.minusMonths(1);
-        updateTable(treeTable);
-        reportWindow.updateTitle(getWindowTitle());
-    }
-
-    private void gotoNextMonth(final TableView<ReportRow> treeTable)
-    {
-        yearMonth = yearMonth.plusMonths(1);
+        yearMonth = yearMonth.plusMonths(count);
+        LOG.debug("Go {} months to {}", count, yearMonth);
         updateTable(treeTable);
         reportWindow.updateTitle(getWindowTitle());
     }

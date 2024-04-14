@@ -41,6 +41,7 @@ public class ReportWindow
     public void show(final Node reportView, final Node... toolBarItems)
     {
         stage = createStage(reportView, toolBarItems);
+        LOG.debug("Show report window");
         stage.show();
     }
 
@@ -89,6 +90,7 @@ public class ReportWindow
 
     private void closeReportWindow()
     {
+        LOG.debug("Closing window '{}'", stage.getTitle());
         this.stage.close();
     }
 }

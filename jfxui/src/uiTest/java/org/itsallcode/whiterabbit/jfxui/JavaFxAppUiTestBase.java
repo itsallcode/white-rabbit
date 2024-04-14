@@ -60,7 +60,7 @@ abstract class JavaFxAppUiTestBase
     private ApplicationHelper applicationHelper;
     private TimeUtil timeUtil;
 
-    protected void setRobot(FxRobot robot)
+    protected void setRobot(final FxRobot robot)
     {
         applicationHelper = ApplicationHelper.create(robot);
     }
@@ -80,12 +80,12 @@ abstract class JavaFxAppUiTestBase
         doStart(stage, null);
     }
 
-    protected void setInitialTime(Instant initialTime)
+    protected void setInitialTime(final Instant initialTime)
     {
         this.initialTime = initialTime;
     }
 
-    public void setCommandLineArgs(List<String> commandLineArgs)
+    public void setCommandLineArgs(final List<String> commandLineArgs)
     {
         this.commandLineArgs = commandLineArgs;
     }
@@ -117,7 +117,7 @@ abstract class JavaFxAppUiTestBase
         LOG.info("Application shutdown done");
     }
 
-    private void prepareConfiguration(final ProjectConfig projectConfig, WorkingDirProvider testDirProvider)
+    private void prepareConfiguration(final ProjectConfig projectConfig, final WorkingDirProvider testDirProvider)
     {
         this.dataDir = this.tempDir.resolve("data-dir");
         String configFileContent = "data = " + this.dataDir.toString().replace('\\', '/') + "\n";
@@ -200,12 +200,12 @@ abstract class JavaFxAppUiTestBase
     {
         private final Path tempDir;
 
-        private TestDirProvider(Path tempDir)
+        private TestDirProvider(final Path tempDir)
         {
             this.tempDir = Objects.requireNonNull(tempDir, "tempDir");
         }
 
-        public static TestDirProvider create(Path tempDir)
+        public static TestDirProvider create(final Path tempDir)
         {
             final TestDirProvider dirProvider = new TestDirProvider(tempDir);
             try
@@ -215,7 +215,7 @@ abstract class JavaFxAppUiTestBase
             }
             catch (final IOException e)
             {
-                throw new UncheckedIOException("Error creating temp directories", e);
+                throw new UncheckedIOException("Error creating temp directories at " + tempDir, e);
             }
             return dirProvider;
         }

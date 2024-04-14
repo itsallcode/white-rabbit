@@ -36,6 +36,12 @@ public class MonthlyProjectReportWindow
         Assertions.assertThat(window).isNotShowing();
     }
 
+    public void closeViaEscKey()
+    {
+        robot.type(KeyCode.ESCAPE);
+        Assertions.assertThat(window).isNotShowing();
+    }
+
     public void gotoPreviousMonth()
     {
         robot.clickOn("#prev-month-button");
@@ -44,12 +50,6 @@ public class MonthlyProjectReportWindow
     public void gotoNextMonth()
     {
         robot.clickOn("#next-month-button");
-    }
-
-    public void closeViaEscKey()
-    {
-        robot.type(KeyCode.ESCAPE);
-        Assertions.assertThat(window).isNotShowing();
     }
 
     public MonthlyProjectReportWindow assertWindowTitle(final String expectedTitle)
