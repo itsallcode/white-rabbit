@@ -63,7 +63,7 @@ public class AutocompleteService
                 .map(DayRecord::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .collect(toList());
+                .toList();
     }
 
     private List<String> getActivityComments()
@@ -72,7 +72,7 @@ public class AutocompleteService
                 .map(Activity::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .collect(toList());
+                .toList();
     }
 
     private Stream<Activity> getActivities()
@@ -93,7 +93,7 @@ public class AutocompleteService
     {
         final List<ProjectImpl> projects = getActivities().map(Activity::getProject)
                 .filter(Objects::nonNull)
-                .collect(toList());
+                .toList();
         final Map<String, List<ProjectImpl>> groupedProjects = projects.stream()
                 .collect(groupingBy(ProjectImpl::getProjectId));
         final Map<String, Long> frequencyMap = projects.stream()

@@ -91,7 +91,7 @@ public class MonthIndex
         final List<DayData> sortedNonDummyJsonDays = getSortedDays() //
                 .filter(d -> !d.isDummyDay()) //
                 .map(DayRecord::getJsonDay) //
-                .collect(toList());
+                .toList();
 
         final MonthData month = modelFactory.createMonthData();
         month.setOvertimePreviousMonth(monthRecord.getOvertimePreviousMonth());
@@ -139,6 +139,6 @@ public class MonthIndex
         return monthRecord.getDays().stream()
                 .filter(day -> day.getType() == DayType.VACATION)
                 .map(DayData::getDate)
-                .collect(toList());
+                .toList();
     }
 }

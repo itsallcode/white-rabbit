@@ -50,7 +50,7 @@ class AppPluginImpl implements AppPlugin
     {
         return Stream.of(AppPluginFeature.values())
                 .filter(feature -> supports(feature.getFeatureClass()))
-                .collect(toList());
+                .toList();
     }
 
     @Override

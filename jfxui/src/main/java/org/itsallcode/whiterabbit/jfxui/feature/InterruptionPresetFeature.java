@@ -50,7 +50,7 @@ public class InterruptionPresetFeature
                 .mapToLong(Integer::longValue)
                 .mapToObj(Duration::ofMinutes)
                 .map(this::createMenuitem)
-                .collect(toList());
+                .toList();
     }
 
     private MenuItem createMenuitem(final Duration interruption)

@@ -62,7 +62,7 @@ class MonthIndexStorage implements Storage
     {
         return new MultiMonthIndex(fileStorage.loadAll().stream()
                 .map(this::createMonthIndex)
-                .collect(toList()));
+                .toList());
     }
 
     @Override

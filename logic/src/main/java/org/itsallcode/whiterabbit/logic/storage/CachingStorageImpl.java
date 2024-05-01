@@ -97,7 +97,7 @@ class CachingStorageImpl implements CachingStorage
         final YearMonth oldestYearMonth = YearMonth.from(maxAge);
         return delegateStorage.getAvailableDataMonths().stream()
                 .filter(month -> !month.isBefore(oldestYearMonth))
-                .collect(toList());
+                .toList();
     }
 
     @Override

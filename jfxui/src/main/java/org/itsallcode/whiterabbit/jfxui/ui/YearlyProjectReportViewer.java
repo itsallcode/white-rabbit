@@ -50,7 +50,7 @@ public class YearlyProjectReportViewer
     {
         final ObservableList<ReportRow> rows = FXCollections.observableList(
                 report.getProjects().stream()
-                        .map(project -> createRow(report.getMonth().getYear(), project)).collect(toList()));
+                        .map(project -> createRow(report.getMonth().getYear(), project)).toList());
         final TableView<ReportRow> treeTable = new TableView<>(rows);
         treeTable.getColumns().addAll(List.of(
                 UiWidget.readOnlyColumn("year", "Year",

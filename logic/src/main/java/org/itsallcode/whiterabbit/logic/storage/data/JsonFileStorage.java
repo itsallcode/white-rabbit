@@ -115,7 +115,7 @@ public class JsonFileStorage implements MonthDataStorage
     @Override
     public List<YearMonth> getAvailableDataMonths()
     {
-        return dateToFileMapper.getAllYearMonths().sorted().collect(toList());
+        return dateToFileMapper.getAllYearMonths().sorted().toList();
     }
 
     @Override
@@ -125,7 +125,7 @@ public class JsonFileStorage implements MonthDataStorage
                 .filter(file -> !file.getFileName().toString().equals(Config.PROJECTS_JSON))
                 .map(this::loadFromFile)
                 .sorted(comparing(JsonMonth::getYear).thenComparing(JsonMonth::getMonth))
-                .collect(toList());
+                .toList();
     }
 
     @Override

@@ -105,7 +105,7 @@ public class DailyProjectReportViewer
 
         root.getChildren().addAll(report.getDays().stream()
                 .map(this::createDayTreeItem)
-                .collect(toList()));
+                .toList());
 
         final TreeTableView<ReportRow> treeTable = new TreeTableView<>(root);
         treeTable.getColumns().addAll(List.of(
@@ -134,7 +134,7 @@ public class DailyProjectReportViewer
                 day.getProjects().stream()
                         .map(project -> new ReportRow(day, project))
                         .map(TreeItem::new)
-                        .collect(toList()));
+                        .toList());
         return treeItem;
     }
 

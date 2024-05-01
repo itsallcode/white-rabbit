@@ -117,7 +117,7 @@ public class JavaFxApp extends Application
     {
         this.primaryStage = primaryStage;
         state.setPrimaryStage(primaryStage);
-        LOG.info("Starting UI");
+        LOG.trace("Starting UI");
         doStart(primaryStage);
         notifyPreloaderProgress(Type.STARTUP_FINISHED);
     }

@@ -183,7 +183,7 @@ public class AppService implements Closeable
     {
         final List<MonthIndex> months = storage.loadAll().getMonths().stream()
                 .sorted(Comparator.comparing(MonthIndex::getYearMonth)) //
-                .collect(toList());
+                .toList();
         Duration totalOvertime = Duration.ZERO;
         for (final MonthIndex month : months)
         {

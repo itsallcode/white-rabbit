@@ -253,7 +253,7 @@ class VacationReportGeneratorTest
     private void simulateMonths(MonthIndex... months)
     {
         final List<YearMonth> availableDataYearMonth = Arrays.stream(months).map(MonthIndex::getYearMonth)
-                .collect(toList());
+                .toList();
         when(storageMock.getAvailableDataMonths()).thenReturn(availableDataYearMonth);
 
         for (final MonthIndex monthIndex : months)

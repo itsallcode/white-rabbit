@@ -56,10 +56,10 @@ public class DayActivities
 
     public List<Activity> getAll()
     {
-        final List<ActivityData> jsonActivities = getActivities().collect(toList());
+        final List<ActivityData> jsonActivities = getActivities().toList();
         return IntStream.range(0, jsonActivities.size())
                 .mapToObj(i -> wrapActivity(jsonActivities.get(i), i))
-                .collect(toList());
+                .toList();
     }
 
     public boolean isEmpty()
@@ -141,7 +141,7 @@ public class DayActivities
     {
         final List<ActivityData> remainderActivities = getActivities()
                 .filter(a -> a.getDuration() == null)
-                .collect(toList());
+                .toList();
         if (remainderActivities.size() > 1)
         {
             LOG.warn("Found {} remainder activities for day {}: {}", remainderActivities.size(), dayRecord.getDate(),
@@ -164,7 +164,7 @@ public class DayActivities
 
     private List<ActivityData> getRemainderActivities()
     {
-        return getActivities().filter(a -> a.getDuration() == null).collect(toList());
+        return getActivities().filter(a -> a.getDuration() == null).toList();
     }
 
     public Duration getDuration(final Activity activity)

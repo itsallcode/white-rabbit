@@ -151,12 +151,12 @@ class AutocompleteServiceTest
 
     private List<DayRecord> createDayRecordsWithActivityComments(final String... comments)
     {
-        return Arrays.stream(comments).map(this::createDayRecordWithActivityComment).collect(toList());
+        return Arrays.stream(comments).map(this::createDayRecordWithActivityComment).toList();
     }
 
     private List<DayRecord> createDayRecordsWithActivityProjects(final String... projectIds)
     {
-        return Arrays.stream(projectIds).map(this::createDayRecordWithProject).collect(toList());
+        return Arrays.stream(projectIds).map(this::createDayRecordWithProject).toList();
     }
 
     private DayRecord createDayRecordWithProject(final String projectId)
@@ -185,7 +185,7 @@ class AutocompleteServiceTest
 
     private List<DayRecord> dayRecordsWithComments(final String... comments)
     {
-        return Arrays.stream(comments).map(this::createDayRecord).collect(toList());
+        return Arrays.stream(comments).map(this::createDayRecord).toList();
     }
 
     private DayRecord createDayRecord(final String comment)

@@ -35,14 +35,14 @@ public class PluginManager
                 .map(plugin -> plugin.getFeature(featureType))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(toList());
+                .toList();
     }
 
     public List<AppPlugin> findPluginsSupporting(Class<? extends PluginFeature> featureType)
     {
         return pluginRegistry.getAllPlugins().stream()
                 .filter(plugin -> plugin.supports(featureType))
-                .collect(toList());
+                .toList();
     }
 
     @SuppressWarnings("java:S1452") // Use generic wildcard as return type.

@@ -13,13 +13,13 @@ public class JavaFxTreeTable<T>
 {
     private final TreeTableView<T> table;
 
-    private JavaFxTreeTable(FxRobot robot, TreeTableView<T> table)
+    private JavaFxTreeTable(final FxRobot robot, final TreeTableView<T> table)
     {
         this.table = table;
     }
 
     @SuppressWarnings("unchecked")
-    static <T> JavaFxTreeTable<T> find(FxRobot robot, String query, Class<T> rowType)
+    static <T> JavaFxTreeTable<T> find(final FxRobot robot, final String query, final Class<T> rowType)
     {
         return new JavaFxTreeTable<>(robot, robot.lookup(query).queryAs(TreeTableView.class));
     }
@@ -28,14 +28,14 @@ public class JavaFxTreeTable<T>
     {
         return table.getRoot().getChildren().stream()
                 .map(TreeItem::getValue)
-                .collect(toList());
+                .toList();
     }
 
-    List<T> getChildNodes(int level1ChildIndex)
+    List<T> getChildNodes(final int level1ChildIndex)
     {
         return table.getRoot().getChildren().get(level1ChildIndex)
                 .getChildren().stream()
                 .map(TreeItem::getValue)
-                .collect(toList());
+                .toList();
     }
 }

@@ -28,7 +28,8 @@ public class PluginManagerViewer
     private final UiStateService uiState;
     private Stage stage;
 
-    public PluginManagerViewer(Stage primaryStage, UiStateService uiState, PluginManager pluginManager)
+    public PluginManagerViewer(final Stage primaryStage, final UiStateService uiState,
+            final PluginManager pluginManager)
     {
         this.primaryStage = primaryStage;
         this.pluginManager = pluginManager;
@@ -65,10 +66,10 @@ public class PluginManagerViewer
     {
         return pluginManager.getAllPlugins().stream()
                 .map(this::createTableEntry)
-                .collect(toList());
+                .toList();
     }
 
-    private PluginTableEntry createTableEntry(AppPlugin plugin)
+    private PluginTableEntry createTableEntry(final AppPlugin plugin)
     {
         return new PluginTableEntry(plugin);
     }
@@ -96,7 +97,7 @@ public class PluginManagerViewer
     {
         private final AppPlugin plugin;
 
-        PluginTableEntry(AppPlugin plugin)
+        PluginTableEntry(final AppPlugin plugin)
         {
             this.plugin = plugin;
         }

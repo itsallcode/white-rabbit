@@ -52,9 +52,9 @@ public class DayRecordTable
 
     private final ClockService clockService;
 
-    public DayRecordTable(SimpleObjectProperty<DayRecord> selectedDay,
-            ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
-            AppService appService)
+    public DayRecordTable(final SimpleObjectProperty<DayRecord> selectedDay,
+            final ObjectProperty<MonthIndex> currentMonth, final EditListener<DayRecord> editListener,
+            final AppService appService)
     {
         this.editListener = editListener;
         this.formatterService = appService.formatter();
@@ -73,9 +73,9 @@ public class DayRecordTable
         }
     }
 
-    private void currentMonthChanged(MonthIndex previousMonth, MonthIndex month)
+    private void currentMonthChanged(final MonthIndex previousMonth, final MonthIndex month)
     {
-        final List<DayRecord> sortedDays = month.getSortedDays().collect(toList());
+        final List<DayRecord> sortedDays = month.getSortedDays().toList();
         JavaFxUtil.runOnFxApplicationThread(() -> {
             LOG.trace("Current month changed from {} to {}. Updating {} days.",
                     previousMonth != null ? previousMonth.getYearMonth() : null, month.getYearMonth(),
@@ -103,7 +103,7 @@ public class DayRecordTable
         }
     }
 
-    private void updateSelectedRow(MonthIndex previousMonth, MonthIndex month)
+    private void updateSelectedRow(final MonthIndex previousMonth, final MonthIndex month)
     {
         final boolean isCurrentMonth = month.getYearMonth().equals(clockService.getCurrentYearMonth());
         final boolean otherMonthSelected = previousMonth != null
@@ -147,7 +147,7 @@ public class DayRecordTable
         table.setRowFactory(param -> new TableRow<DayRecordPropertyAdapter>()
         {
             @Override
-            public void updateIndex(int newIndex)
+            public void updateIndex(final int newIndex)
             {
                 if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
                 {
@@ -160,7 +160,7 @@ public class DayRecordTable
             }
 
             @Override
-            protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
+            protected void updateItem(final DayRecordPropertyAdapter item, final boolean empty)
             {
                 super.updateItem(item, empty);
                 if (item != null)
@@ -172,7 +172,7 @@ public class DayRecordTable
         return table;
     }
 
-    public void selectRow(LocalDate date)
+    public void selectRow(final LocalDate date)
     {
         Objects.requireNonNull(table, "Table not yet initialized");
         final int row = date.getDayOfMonth() - 1;

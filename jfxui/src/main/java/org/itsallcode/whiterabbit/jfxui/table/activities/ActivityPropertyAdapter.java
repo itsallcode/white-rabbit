@@ -59,6 +59,6 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
     {
         return activities.stream()
                 .map(a -> wrap(editListener, a))
-                .collect(toList());
+                .toList();
     }
 }

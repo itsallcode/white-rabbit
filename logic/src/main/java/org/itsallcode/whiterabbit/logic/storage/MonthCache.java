@@ -37,7 +37,7 @@ class MonthCache
                 .filter(month -> !month.getYearMonth().isBefore(oldestYearMonth))
                 .flatMap(MonthIndex::getSortedDays)
                 .filter(day -> !day.getDate().isBefore(maxAge))
-                .collect(toList());
+                .toList();
     }
 
     private void notifyListeners(final MonthIndex updatedMonth)

@@ -23,7 +23,7 @@ class MenuBarBuilder
     private final AppService appService;
     private final BooleanProperty stoppedWorkingForToday;
 
-    MenuBarBuilder(UiActions actions, AppService appService, BooleanProperty stoppedWorkingForToday)
+    MenuBarBuilder(final UiActions actions, final AppService appService, final BooleanProperty stoppedWorkingForToday)
     {
         this.actions = actions;
         this.appService = appService;
@@ -32,7 +32,7 @@ class MenuBarBuilder
 
     public MenuBar build()
     {
-        LOG.info("Creating menu bar");
+        LOG.trace("Creating menu bar");
         final MenuBar menuBar = new MenuBar();
         final Menu menuFile = menu("_File", "menu_file");
         final Menu menuCalculations = menu("_Working hours", "menu_working_hours");
@@ -73,7 +73,7 @@ class MenuBarBuilder
         return new SeparatorMenuItem();
     }
 
-    private Menu menu(String label, String id)
+    private Menu menu(final String label, final String id)
     {
         final Menu menu = new Menu(label);
         menu.setId(id);
@@ -91,12 +91,12 @@ class MenuBarBuilder
         return menuItem;
     }
 
-    private MenuItem menuItem(String label, String id, Runnable action)
+    private MenuItem menuItem(final String label, final String id, final Runnable action)
     {
         return menuItem(label, id, event -> action.run());
     }
 
-    private MenuItem menuItem(String label, String id, EventHandler<ActionEvent> action)
+    private MenuItem menuItem(final String label, final String id, final EventHandler<ActionEvent> action)
     {
         final MenuItem menuItem = new MenuItem(label);
         menuItem.setId(id);

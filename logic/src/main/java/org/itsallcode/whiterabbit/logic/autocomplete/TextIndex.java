@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.logic.autocomplete;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,17 +22,17 @@ class TextIndex implements AutocompleteEntrySupplier
     private final SortedSet<String> lowerCaseValues;
     private final Map<String, Long> lowerCaseFrequency;
 
-    private TextIndex(Map<String, List<String>> lowerCaseIndex, SortedSet<String> lowerCaseValues,
-            Map<String, Long> lowerCaseFrequency)
+    private TextIndex(final Map<String, List<String>> lowerCaseIndex, final SortedSet<String> lowerCaseValues,
+            final Map<String, Long> lowerCaseFrequency)
     {
         this.lowerCaseIndex = lowerCaseIndex;
         this.lowerCaseValues = lowerCaseValues;
         this.lowerCaseFrequency = lowerCaseFrequency;
     }
 
-    static TextIndex build(Collection<String> entries)
+    static TextIndex build(final Collection<String> entries)
     {
-        final List<String> uniqueEntries = entries.stream().distinct().collect(toList());
+        final List<String> uniqueEntries = entries.stream().distinct().toList();
 
         final Map<String, List<String>> lowerCaseIndex = uniqueEntries.stream()
                 .collect(groupingBy(String::toLowerCase));
@@ -47,7 +46,7 @@ class TextIndex implements AutocompleteEntrySupplier
     }
 
     @Override
-    public List<AutocompleteProposal> getEntries(String searchText)
+    public List<AutocompleteProposal> getEntries(final String searchText)
     {
         if (searchText == null)
         {
@@ -62,7 +61,8 @@ class TextIndex implements AutocompleteEntrySupplier
         return createProposals(lowerCaseMatches, searchText);
     }
 
-    private List<AutocompleteProposal> createProposals(SortedSet<String> lowerCaseMatches, String searchText)
+    private List<AutocompleteProposal> createProposals(final SortedSet<String> lowerCaseMatches,
+            final String searchText)
     {
         return lowerCaseMatches.stream()
                 .map(lowerCaseIndex::get)
@@ -70,10 +70,10 @@ class TextIndex implements AutocompleteEntrySupplier
                 .map(proposedText -> createProposal(searchText, proposedText))
                 .sorted()
                 .limit(MAX_RESULTS)
-                .collect(toList());
+                .toList();
     }
 
-    private AutocompleteProposal createProposal(String searchText, String proposedText)
+    private AutocompleteProposal createProposal(final String searchText, final String proposedText)
     {
         final int matchPositionStart = proposedText.toLowerCase().indexOf(searchText.toLowerCase());
         final long priority = lowerCaseFrequency.getOrDefault(proposedText.toLowerCase(), 0L);
