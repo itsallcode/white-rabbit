@@ -69,10 +69,12 @@ Restart WhiteRabbit after changing the configuration file.
   * We recommend to configure this when starting to use WhiteRabbit.
 * `mandatory_break`: mandatory break per day (default: 45 minutes). Format: see [below](#duration-format). Caution: This setting will also affect the past, i.e. the overtime of **all** days will be re-calculated.
   * We recommend to configure this when starting to use WhiteRabbit.
+* `reduce_mandatory_break_by_interruption`: Reduce the mandatory break by entered interruption (`true` or `false`, default: `false`). If this is `true`, the mandatory break will be set to zero when the interruption is longer than the mandatory break.
+  * We recommend to configure this when starting to use WhiteRabbit.
 
 #### Duration format
 
-Enter duration values in the format used by [Duration.parse()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)). Examples:
+Enter duration values in the format used by [Duration.parse()](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)). Examples:
 
 * `PT5H`: 5 hours
 * `PT5H30M`: 5 hours and 30 minutes

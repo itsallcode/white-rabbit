@@ -115,6 +115,27 @@ class ConfigFileTest
     }
 
     @Test
+    void reduceMandatoryBreakByInterruption_returnsDefault()
+    {
+        when(propertiesMock.getProperty("reduce_mandatory_break_by_interruption")).thenReturn(null);
+        assertThat(configFile.reduceMandatoryBreakByInterruption()).isFalse();
+    }
+
+    @Test
+    void reduceMandatoryBreakByInterruption_returnsCustomValue()
+    {
+        when(propertiesMock.getProperty("reduce_mandatory_break_by_interruption")).thenReturn("true");
+        assertThat(configFile.reduceMandatoryBreakByInterruption()).isTrue();
+    }
+
+    @Test
+    void reduceMandatoryBreakByInterruption_invalidValue()
+    {
+        when(propertiesMock.getProperty("reduce_mandatory_break_by_interruption")).thenReturn("invalid");
+        assertThat(configFile.reduceMandatoryBreakByInterruption()).isFalse();
+    }
+
+    @Test
     void getLocale_returnsDefault()
     {
         when(propertiesMock.getProperty("locale")).thenReturn(null);

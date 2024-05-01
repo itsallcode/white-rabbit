@@ -13,6 +13,7 @@ public class TestingConfig implements Config
     private final Locale locale;
     private final Duration currentHoursPerDay;
     private final Duration mandatoryBreak;
+    private final boolean reduceMandatoryBreakByInterruption;
 
     private TestingConfig(final Builder builder)
     {
@@ -20,6 +21,7 @@ public class TestingConfig implements Config
         this.locale = builder.locale;
         this.currentHoursPerDay = builder.currentHoursPerDay;
         this.mandatoryBreak = builder.mandatoryBreak;
+        this.reduceMandatoryBreakByInterruption = builder.reduceMandatoryBreakByInterruption;
     }
 
     @Override
@@ -44,6 +46,12 @@ public class TestingConfig implements Config
     public Optional<Duration> getMandatoryBreak()
     {
         return Optional.ofNullable(mandatoryBreak);
+    }
+
+    @Override
+    public boolean reduceMandatoryBreakByInterruption()
+    {
+        return reduceMandatoryBreakByInterruption;
     }
 
     @Override
@@ -77,7 +85,8 @@ public class TestingConfig implements Config
 
     public static final class Builder
     {
-        public Duration mandatoryBreak;
+        private boolean reduceMandatoryBreakByInterruption = false;
+        private Duration mandatoryBreak;
         private Path dataDir;
         private Locale locale;
         private Duration currentHoursPerDay;
@@ -107,6 +116,12 @@ public class TestingConfig implements Config
         public Builder withMandatoryBreak(final Duration mandatoryBreak)
         {
             this.mandatoryBreak = mandatoryBreak;
+            return this;
+        }
+
+        public Builder withReduceMandatoryBreakByInterruption(final boolean reduceMandatoryBreakByInterruption)
+        {
+            this.reduceMandatoryBreakByInterruption = reduceMandatoryBreakByInterruption;
             return this;
         }
 

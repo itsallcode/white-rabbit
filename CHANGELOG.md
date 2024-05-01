@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.10.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/12?closed=1)
 
-## [1.9.0] - 2022-??-??
+## [1.9.0] - 2024-??-??
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/11?closed=1)
 
@@ -22,7 +22,8 @@ This release requires Java 21.
 
 ### New Features
 
-* [#273](https://github.com/itsallcode/white-rabbit/pull/273): Added buttons to monthly report for jumping to the previous/next month
+* [#273](https://github.com/itsallcode/white-rabbit/pull/273): Added buttons to monthly report for jumping to the previous/next month.
+* [#276](https://github.com/itsallcode/white-rabbit/pull/276): Added config option `reduce_mandatory_break_by_interruption`.
 
 ### Bugfixes
 

@@ -18,7 +18,6 @@ public class ContractTermsService
         this.config = config;
     }
 
-
     public Duration getMandatoryBreak(final DayRecord day)
     {
         if (!day.getType().isWorkDay())
@@ -28,7 +27,15 @@ public class ContractTermsService
         final Duration workingTime = day.getRawWorkingTime().minus(day.getInterruption());
         if (workingTime.compareTo(MIN_WORKING_TIME_WITHOUT_BREAK) > 0)
         {
-            return getMandatoryBreak();
+            Duration mandatoryBreak = getMandatoryBreak();
+            if (config.reduceMandatoryBreakByInterruption())
+            {
+                mandatoryBreak = mandatoryBreak.minus(day.getInterruption());
+            }
+            if (mandatoryBreak.isPositive())
+            {
+                return mandatoryBreak;
+            }
         }
         return Duration.ZERO;
     }

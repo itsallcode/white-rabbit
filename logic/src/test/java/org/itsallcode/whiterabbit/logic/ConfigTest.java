@@ -60,6 +60,12 @@ class ConfigTest
         }
 
         @Override
+        public boolean reduceMandatoryBreakByInterruption()
+        {
+            return false;
+        }
+
+        @Override
         public boolean allowMultipleInstances()
         {
             return false;

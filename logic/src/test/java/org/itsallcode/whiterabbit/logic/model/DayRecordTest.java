@@ -16,6 +16,8 @@ import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 import org.itsallcode.whiterabbit.logic.storage.data.JsonModelFactory;
 import org.itsallcode.whiterabbit.logic.test.TestingConfig;
+import org.itsallcode.whiterabbit.logic.test.TestingConfig.Builder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,6 +29,13 @@ class DayRecordTest
     @Mock
     private ProjectService projectServiceMock;
     private final ModelFactory modelFactory = new JsonModelFactory();
+    private Builder configBuilder;
+
+    @BeforeEach
+    void createDefaultConfig()
+    {
+        configBuilder = TestingConfig.builder();
+    }
 
     @Test
     void mandatoryWorkingTimeIsZeroOnWeekend()
@@ -116,6 +125,30 @@ class DayRecordTest
     void testMandatoryBreakConsidersInterruptionLessThan6hours()
     {
         assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofHours(3),
+                Duration.ZERO);
+    }
+
+    @Test
+    void testMandatoryBreakReducedByInterruption()
+    {
+        configBuilder.withReduceMandatoryBreakByInterruption(true);
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(18, 0), Duration.ofMinutes(10),
+                Duration.ofMinutes(35));
+    }
+
+    @Test
+    void testMandatoryBreakNotReducedByInterruptionWhenWorkingLessThan6h()
+    {
+        configBuilder.withReduceMandatoryBreakByInterruption(true);
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(13, 0), Duration.ofMinutes(10),
+                Duration.ZERO);
+    }
+
+    @Test
+    void testMandatoryBreakZeroForLongerInterruption()
+    {
+        configBuilder.withReduceMandatoryBreakByInterruption(true);
+        assertMandatoryBreak(LocalDate.of(2018, 10, 1), LocalTime.of(8, 0), LocalTime.of(18, 0), Duration.ofMinutes(50),
                 Duration.ZERO);
     }
 
@@ -507,17 +540,17 @@ class DayRecordTest
         assertNonDummyDay(day);
     }
 
-    private void assertDummyDay(DayRecord day)
+    private void assertDummyDay(final DayRecord day)
     {
         assertThat(day.isDummyDay()).as("dummy").isTrue();
     }
 
-    private void assertNonDummyDay(DayRecord day)
+    private void assertNonDummyDay(final DayRecord day)
     {
         assertThat(day.isDummyDay()).as("dummy").isFalse();
     }
 
-    private MonthIndex month(LocalDate date, Duration overtimePreviousMonth, DayData... days)
+    private MonthIndex month(final LocalDate date, final Duration overtimePreviousMonth, final DayData... days)
     {
         final MonthData jsonMonth = modelFactory.createMonthData();
         jsonMonth.setDays(asList(days));
@@ -527,59 +560,63 @@ class DayRecordTest
         return MonthIndex.create(contractTerms(), projectServiceMock, modelFactory, jsonMonth);
     }
 
-    private void assertOvertime(LocalDate date, LocalTime begin, LocalTime end, Duration expectedOvertime)
+    private void assertOvertime(final LocalDate date, final LocalTime begin, final LocalTime end,
+            final Duration expectedOvertime)
     {
         final DayRecord day = createDay(date, begin, end, null, null);
         assertThat(day.getOvertime()).as("overtime").isEqualTo(expectedOvertime);
     }
 
-    private void assertMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration expectedDuration)
+    private void assertMandatoryBreak(final LocalDate date, final LocalTime begin, final LocalTime end,
+            final Duration expectedDuration)
     {
         assertMandatoryBreak(date, begin, end, Duration.ZERO, expectedDuration);
     }
 
-    private void assertMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration interruption,
-            Duration expectedDuration)
+    private void assertMandatoryBreak(final LocalDate date, final LocalTime begin, final LocalTime end,
+            final Duration interruption,
+            final Duration expectedDuration)
     {
         assertThat(getMandatoryBreak(date, begin, end, interruption)).as("mandatory break").isEqualTo(expectedDuration);
     }
 
-    private void assertMandatoryWorkingTime(LocalDate date, LocalTime begin, LocalTime end,
-            Duration expectedMandatoryWorkingTime)
+    private void assertMandatoryWorkingTime(final LocalDate date, final LocalTime begin, final LocalTime end,
+            final Duration expectedMandatoryWorkingTime)
     {
         assertThat(getMandatoryWorkingTime(date, begin, end)).as("mandatory working time")
                 .isEqualTo(expectedMandatoryWorkingTime);
     }
 
-    private Duration getMandatoryWorkingTime(LocalDate date, LocalTime begin, LocalTime end)
+    private Duration getMandatoryWorkingTime(final LocalDate date, final LocalTime begin, final LocalTime end)
     {
         final DayRecord day = createDay(date, begin, end, null, null);
         return day.getMandatoryWorkingTime();
     }
 
-    private Duration getMandatoryBreak(LocalDate date, LocalTime begin, LocalTime end, Duration interruption)
+    private Duration getMandatoryBreak(final LocalDate date, final LocalTime begin, final LocalTime end,
+            final Duration interruption)
     {
         final DayRecord day = createDay(date, begin, end, null, interruption);
         return day.getMandatoryBreak();
     }
 
-    private void assertWorkingDay(LocalDate date, boolean expected)
+    private void assertWorkingDay(final LocalDate date, final boolean expected)
     {
         assertThat(createDay(date).getType().isWorkDay()).isEqualTo(expected);
     }
 
-    private void assertType(LocalDate date, DayType expected)
+    private void assertType(final LocalDate date, final DayType expected)
     {
         final DayRecord day = createDay(date);
         assertDayType(day, expected);
     }
 
-    private void assertDayType(DayRecord day, DayType expected)
+    private void assertDayType(final DayRecord day, final DayType expected)
     {
         assertThat(day.getType()).isEqualTo(expected);
     }
 
-    private DayRecord createDay(LocalDate date)
+    private DayRecord createDay(final LocalDate date)
     {
         return createDay(date, null, null);
     }
@@ -589,29 +626,32 @@ class DayRecordTest
         return createDummyDay(LocalDate.of(2021, 7, 20));
     }
 
-    private DayRecord createDummyDay(LocalDate date)
+    private DayRecord createDummyDay(final LocalDate date)
     {
         return createDay(date);
     }
 
-    private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end)
+    private DayRecord createDay(final LocalDate date, final LocalTime begin, final LocalTime end)
     {
         return createDay(date, begin, end, null, null);
     }
 
-    private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end, DayType type, Duration interruption)
+    private DayRecord createDay(final LocalDate date, final LocalTime begin, final LocalTime end, final DayType type,
+            final Duration interruption)
     {
         return createDay(date, begin, end, type, interruption, null);
     }
 
-    private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end, DayType type, Duration interruption,
-            DayRecord previousDay)
+    private DayRecord createDay(final LocalDate date, final LocalTime begin, final LocalTime end, final DayType type,
+            final Duration interruption,
+            final DayRecord previousDay)
     {
         return createDay(date, begin, end, type, interruption, previousDay, null);
     }
 
-    private DayRecord createDay(LocalDate date, LocalTime begin, LocalTime end, DayType type, Duration interruption,
-            DayRecord previousDay, MonthIndex month)
+    private DayRecord createDay(final LocalDate date, final LocalTime begin, final LocalTime end, final DayType type,
+            final Duration interruption,
+            final DayRecord previousDay, final MonthIndex month)
     {
         final DayData day = modelFactory.createDayData();
         day.setBegin(begin);
@@ -628,7 +668,7 @@ class DayRecordTest
         return new DayRecord(null, DayData, null, null, projectServiceMock, modelFactory);
     }
 
-    private DayRecord dayRecord(DayData day, DayRecord previousDay, MonthIndex month)
+    private DayRecord dayRecord(final DayData day, final DayRecord previousDay, final MonthIndex month)
     {
         final ContractTermsService contractTerms = contractTerms();
         return new DayRecord(contractTerms, day, previousDay, month, projectServiceMock, modelFactory);
@@ -636,6 +676,6 @@ class DayRecordTest
 
     private ContractTermsService contractTerms()
     {
-        return new ContractTermsService(TestingConfig.builder().build());
+        return new ContractTermsService(configBuilder.build());
     }
 }

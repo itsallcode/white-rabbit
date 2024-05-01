@@ -21,6 +21,8 @@ public interface Config
 
     Optional<Duration> getMandatoryBreak();
 
+    boolean reduceMandatoryBreakByInterruption();
+
     default Path getProjectFile()
     {
         return getDataDir().resolve(PROJECTS_JSON);
