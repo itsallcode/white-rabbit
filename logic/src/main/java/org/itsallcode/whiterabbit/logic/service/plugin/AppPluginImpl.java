@@ -12,7 +12,7 @@ import org.itsallcode.whiterabbit.api.PluginConfiguration;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
-class AppPluginImpl implements AppPlugin
+final class AppPluginImpl implements AppPlugin
 {
     private static final Logger LOG = LogManager.getLogger(AppPluginImpl.class);
 
@@ -70,6 +70,7 @@ class AppPluginImpl implements AppPlugin
         }
     }
 
+    @Override
     public <T extends PluginFeature> Optional<T> getFeature(final Class<T> featureType)
     {
         return plugin.getFeature(featureType);

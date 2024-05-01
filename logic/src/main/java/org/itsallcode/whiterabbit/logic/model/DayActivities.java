@@ -136,6 +136,7 @@ public class DayActivities
         return dayRecord.getWorkingTime().minus(allocatedDuration);
     }
 
+    @SuppressWarnings("java:S1142") // More than 3 returns required for logging
     public boolean isValidAllocation()
     {
         final List<ActivityData> remainderActivities = getActivities()

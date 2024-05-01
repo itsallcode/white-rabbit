@@ -21,12 +21,13 @@ import org.itsallcode.whiterabbit.api.model.MonthData;
 import org.itsallcode.whiterabbit.logic.service.contract.ContractTermsService;
 import org.itsallcode.whiterabbit.logic.service.project.ProjectService;
 
-public class MonthIndex
+public final class MonthIndex
 {
     private final ModelFactory modelFactory;
     private final MonthData monthRecord;
     private final Map<LocalDate, DayRecord> days;
 
+    @SuppressWarnings("java:S2384") // Storing a copy of "days" is required here
     private MonthIndex(final ModelFactory modelFactory, final MonthData monthRecord,
             final Map<LocalDate, DayRecord> days)
     {

@@ -15,7 +15,7 @@ import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class TextIndex implements AutocompleteEntrySupplier
+final class TextIndex implements AutocompleteEntrySupplier
 {
     private static final Logger LOG = LogManager.getLogger(TextIndex.class);
     private static final int MAX_RESULTS = 10;

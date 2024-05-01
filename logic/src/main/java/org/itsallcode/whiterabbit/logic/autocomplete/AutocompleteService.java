@@ -111,7 +111,7 @@ public class AutocompleteService
         return mostFrequentlyUsedProject;
     }
 
-    private static class CachingAutocompleter implements AutocompleteEntrySupplier
+    private static final class CachingAutocompleter implements AutocompleteEntrySupplier
     {
         private TextIndex index;
         private final Supplier<List<String>> availableTextSupplier;

@@ -117,7 +117,7 @@ public class DayRecordTable
         }
     }
 
-    private boolean otherMonthSelected(final MonthIndex previousMonth, final MonthIndex month)
+    private static boolean otherMonthSelected(final MonthIndex previousMonth, final MonthIndex month)
     {
         return previousMonth != null
                 && !month.getYearMonth().equals(previousMonth.getYearMonth());
