@@ -91,10 +91,15 @@ nexusStaging {
     password = getOptionalProperty("ossrhPassword")
 }
 
+def launcher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(javaVersion)
+}
+
 sonarqube {
     properties {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.organization", "itsallcode"
+        property "sonar.java.jdkHome", launcher.map { it.metadata.installationPath }
     }
 }
 
