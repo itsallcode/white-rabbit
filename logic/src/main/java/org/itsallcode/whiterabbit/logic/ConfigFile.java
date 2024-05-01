@@ -80,6 +80,12 @@ class ConfigFile implements Config
     }
 
     @Override
+    public boolean reduceMandatoryBreakByInterruption()
+    {
+        return getOptionalValue("reduce_mandatory_break_by_interruption").map(Boolean::valueOf).orElse(false);
+    }
+
+    @Override
     public boolean allowMultipleInstances()
     {
         return getOptionalValue("allow_multiple_instances").map(Boolean::valueOf).orElse(false);
