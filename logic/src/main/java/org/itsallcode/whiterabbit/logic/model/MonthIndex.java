@@ -27,15 +27,16 @@ public class MonthIndex
     private final MonthData monthRecord;
     private final Map<LocalDate, DayRecord> days;
 
-    private MonthIndex(ModelFactory modelFactory, MonthData monthRecord, Map<LocalDate, DayRecord> days)
+    private MonthIndex(final ModelFactory modelFactory, final MonthData monthRecord,
+            final Map<LocalDate, DayRecord> days)
     {
         this.modelFactory = Objects.requireNonNull(modelFactory, "modelFactory");
         this.monthRecord = monthRecord;
         this.days = days;
     }
 
-    public static MonthIndex create(ContractTermsService contractTerms, ProjectService projectService,
-            ModelFactory modelFactory, MonthData monthRecord)
+    public static MonthIndex create(final ContractTermsService contractTerms, final ProjectService projectService,
+            final ModelFactory modelFactory, final MonthData monthRecord)
     {
         final Map<LocalDate, DayData> jsonDays = monthRecord.getDays().stream()
                 .collect(toMap(DayData::getDate, Function.identity()));
@@ -58,7 +59,8 @@ public class MonthIndex
         return monthIndex;
     }
 
-    private static DayData createDummyDay(LocalDate date, ContractTermsService contractTerms, ModelFactory modelFactory)
+    private static DayData createDummyDay(final LocalDate date, final ContractTermsService contractTerms,
+            final ModelFactory modelFactory)
     {
         final DayData day = modelFactory.createDayData();
         day.setDate(date);
@@ -75,12 +77,12 @@ public class MonthIndex
         return YearMonth.of(monthRecord.getYear(), monthRecord.getMonth());
     }
 
-    public DayRecord getDay(LocalDate date)
+    public DayRecord getDay(final LocalDate date)
     {
         return days.get(date);
     }
 
-    public void put(DayRecord day)
+    public void put(final DayRecord day)
     {
         this.days.put(day.getDate(), day);
     }
@@ -111,7 +113,7 @@ public class MonthIndex
                 .sorted(Comparator.comparing(DayRecord::getDate));
     }
 
-    public void setOvertimePreviousMonth(Duration overtimePreviousMonth)
+    public void setOvertimePreviousMonth(final Duration overtimePreviousMonth)
     {
         monthRecord.setOvertimePreviousMonth(overtimePreviousMonth);
     }

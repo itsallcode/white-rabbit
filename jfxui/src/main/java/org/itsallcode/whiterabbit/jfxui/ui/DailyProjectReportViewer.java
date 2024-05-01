@@ -103,7 +103,7 @@ public class DailyProjectReportViewer
         final TreeItem<ReportRow> root = new TreeItem<>();
 
         root.getChildren().addAll(report.getDays().stream()
-                .map(this::createDayTreeItem)
+                .map(DailyProjectReportViewer::createDayTreeItem)
                 .toList());
 
         final TreeTableView<ReportRow> treeTable = new TreeTableView<>(root);
@@ -125,7 +125,7 @@ public class DailyProjectReportViewer
         return treeTable;
     }
 
-    private TreeItem<ReportRow> createDayTreeItem(final ProjectReportDay day)
+    private static TreeItem<ReportRow> createDayTreeItem(final ProjectReportDay day)
     {
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);

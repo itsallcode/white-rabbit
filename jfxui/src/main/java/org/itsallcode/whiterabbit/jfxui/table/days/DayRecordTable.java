@@ -103,14 +103,11 @@ public class DayRecordTable
 
     private void updateSelectedRow(final MonthIndex previousMonth, final MonthIndex month)
     {
-        final boolean isCurrentMonth = month.getYearMonth().equals(clockService.getCurrentYearMonth());
-        final boolean otherMonthSelected = previousMonth != null
-                && !month.getYearMonth().equals(previousMonth.getYearMonth());
-        if (!otherMonthSelected)
+        if (!otherMonthSelected(previousMonth, month))
         {
             return;
         }
-        if (isCurrentMonth)
+        if (isCurrentMonth(month))
         {
             selectRow(clockService.getCurrentDate());
         }
@@ -118,6 +115,17 @@ public class DayRecordTable
         {
             table.getSelectionModel().clearSelection();
         }
+    }
+
+    private boolean otherMonthSelected(final MonthIndex previousMonth, final MonthIndex month)
+    {
+        return previousMonth != null
+                && !month.getYearMonth().equals(previousMonth.getYearMonth());
+    }
+
+    private boolean isCurrentMonth(final MonthIndex month)
+    {
+        return month.getYearMonth().equals(clockService.getCurrentYearMonth());
     }
 
     @SuppressWarnings("java:S110") // Deep inheritance tree required by JavaFx

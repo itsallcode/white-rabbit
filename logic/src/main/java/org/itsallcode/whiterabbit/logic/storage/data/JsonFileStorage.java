@@ -96,7 +96,7 @@ public class JsonFileStorage implements MonthDataStorage
         }
     }
 
-    private void createDirectory(final Path dir)
+    private static void createDirectory(final Path dir)
     {
         if (dir.toFile().isDirectory())
         {

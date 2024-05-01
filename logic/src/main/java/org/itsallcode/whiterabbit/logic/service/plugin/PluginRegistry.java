@@ -48,7 +48,7 @@ class PluginRegistry
                 .collect(toMap(AppPluginImpl::getId, Function.identity(), preferExternalJars()));
     }
 
-    private BinaryOperator<AppPluginImpl> preferExternalJars()
+    private static BinaryOperator<AppPluginImpl> preferExternalJars()
     {
         return (a, b) -> {
             LOG.warn("Found two plugins with same ID '{}':\n- {}\n- {}", a.getId(), a, b);

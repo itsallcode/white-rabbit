@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.UnaryOperator;
 
 import org.itsallcode.whiterabbit.logic.service.AppService;
@@ -65,7 +66,7 @@ public class InterruptionPresetFeature
         final String verb = interruption.isNegative() ? "Subtract" : "Add";
         final MenuItem menuItem = new MenuItem(
                 verb + " interruption of " + appService.formatter().format(interruption.abs()));
-        menuItem.setId(verb.toLowerCase() + "-interruption-preset-" + interruption.toString());
+        menuItem.setId(verb.toLowerCase(Locale.ENGLISH) + "-interruption-preset-" + interruption.toString());
         menuItem.setOnAction(event -> addInterruptionForToday(interruption));
         return menuItem;
     }
@@ -83,7 +84,6 @@ public class InterruptionPresetFeature
 
         private DurationInputDialog()
         {
-            final DialogPane dialogPane = getDialogPane();
             final int maxValue = (int) Duration.ofHours(8).toMinutes();
 
             spinner = new Spinner<>(0, maxValue, 0, 5);
@@ -117,6 +117,7 @@ public class InterruptionPresetFeature
             GridPane.setHgrow(spinner, Priority.ALWAYS);
             GridPane.setFillWidth(spinner, true);
 
+            final DialogPane dialogPane = getDialogPane();
             label = createContentLabel(dialogPane.getContentText());
             label.setPrefWidth(Region.USE_COMPUTED_SIZE);
             label.textProperty().bind(dialogPane.contentTextProperty());

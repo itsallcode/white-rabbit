@@ -87,7 +87,7 @@ public class AutoCompleteTextField extends TextField
         return item;
     }
 
-    private List<Text> highlightMatch(final AutocompleteProposal result)
+    private static List<Text> highlightMatch(final AutocompleteProposal result)
     {
         final int matchPositionStart = result.getMatchPositionStart();
         final List<Text> textParts = new ArrayList<>();

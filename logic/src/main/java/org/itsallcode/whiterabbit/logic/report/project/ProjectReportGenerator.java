@@ -40,7 +40,7 @@ public class ProjectReportGenerator
                                 .filter(activity -> activity.getProject() != null)
                                 .collect(groupingBy(Activity::getProject))
                                 .values().stream()
-                                .map(this::aggregateProject)
+                                .map(ProjectReportGenerator::aggregateProject)
                                 .toList();
 
                 return new ProjectReportImpl(month, reportDays, reportProjects);
@@ -53,7 +53,7 @@ public class ProjectReportGenerator
                                 .filter(activity -> activity.getProject() != null)
                                 .collect(groupingBy(this::activityProject))
                                 .values().stream()
-                                .map(this::aggregateProject)
+                                .map(ProjectReportGenerator::aggregateProject)
                                 .toList();
 
                 return new DayImpl(dayRecord.getDate(), dayRecord.getType(), dayRecord.getComment(), projects);
@@ -64,7 +64,7 @@ public class ProjectReportGenerator
                 return activity.getProject().getProjectId();
         }
 
-        private ProjectReportActivity aggregateProject(final List<Activity> projectActivites)
+        private static ProjectReportActivity aggregateProject(final List<Activity> projectActivites)
         {
                 final Duration totalWorkingTime = projectActivites.stream()
                                 .filter(activity -> activity.getDuration() != null)

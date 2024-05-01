@@ -64,11 +64,11 @@ public class PluginManagerViewer
     private List<PluginTableEntry> getAllPlugins()
     {
         return pluginManager.getAllPlugins().stream()
-                .map(this::createTableEntry)
+                .map(PluginManagerViewer::createTableEntry)
                 .toList();
     }
 
-    private PluginTableEntry createTableEntry(final AppPlugin plugin)
+    private static PluginTableEntry createTableEntry(final AppPlugin plugin)
     {
         return new PluginTableEntry(plugin);
     }

@@ -293,7 +293,7 @@ public class JavaFxApp extends Application
             LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
                     interruption);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
-            final InterruptionDetectedDecision decision = evaluateButton(selectedButton);
+            final InterruptionDetectedDecision decision = evaluateButton(selectedButton.orElse(null));
             LOG.info("User clicked button {} -> {}", selectedButton, decision);
             return decision;
         }
@@ -313,24 +313,21 @@ public class JavaFxApp extends Application
             return alert;
         }
 
-        private InterruptionDetectedDecision evaluateButton(final Optional<ButtonType> selectedButton)
+        private InterruptionDetectedDecision evaluateButton(final ButtonType selectedButton)
         {
-            if (isButton(selectedButton, ButtonData.FINISH) && !state.stoppedWorkingForToday.get())
+            if (selectedButton == null)
+            {
+                return InterruptionDetectedDecision.SKIP_INTERRUPTION;
+            }
+            if (selectedButton.getButtonData() == ButtonData.FINISH && !state.stoppedWorkingForToday.get())
             {
                 return InterruptionDetectedDecision.STOP_WORKING_FOR_TODAY;
             }
-            if (isButton(selectedButton, ButtonData.YES))
+            if (selectedButton.getButtonData() == ButtonData.YES)
             {
                 return InterruptionDetectedDecision.ADD_INTERRUPTION;
             }
             return InterruptionDetectedDecision.SKIP_INTERRUPTION;
-        }
-
-        private boolean isButton(final Optional<ButtonType> button, final ButtonData data)
-        {
-            return button.map(ButtonType::getButtonData)
-                    .filter(d -> d == data)
-                    .isPresent();
         }
 
         @Override

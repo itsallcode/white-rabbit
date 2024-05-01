@@ -92,7 +92,7 @@ abstract class JavaFxAppUiTestBase
 
     protected void doStart(final Stage stage, final ProjectConfig projectConfig)
     {
-        LOG.info("Starting application using stage {}", stage);
+        LOG.debug("Starting application using stage {}", stage);
 
         timeUtil = TimeUtil.start(initialTime);
         final TestDirProvider testDirProvider = TestDirProvider.create(tempDir);
@@ -107,14 +107,14 @@ abstract class JavaFxAppUiTestBase
         this.javaFxApp.start(stage);
 
         timeUtil.captureScheduledRunnables();
-        LOG.info("Application startup finished");
+        LOG.debug("Application startup finished");
     }
 
     protected void doStop()
     {
-        LOG.info("Preparing application shutdown");
+        LOG.debug("Preparing application shutdown");
         this.javaFxApp.prepareShutdown();
-        LOG.info("Application shutdown done");
+        LOG.debug("Application shutdown done");
     }
 
     private void prepareConfiguration(final ProjectConfig projectConfig, final WorkingDirProvider testDirProvider)

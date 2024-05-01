@@ -68,12 +68,12 @@ class MenuBarBuilder
         return menuBar;
     }
 
-    private SeparatorMenuItem separatorItem()
+    private static SeparatorMenuItem separatorItem()
     {
         return new SeparatorMenuItem();
     }
 
-    private Menu menu(final String label, final String id)
+    private static Menu menu(final String label, final String id)
     {
         final Menu menu = new Menu(label);
         menu.setId(id);
@@ -91,12 +91,12 @@ class MenuBarBuilder
         return menuItem;
     }
 
-    private MenuItem menuItem(final String label, final String id, final Runnable action)
+    private static MenuItem menuItem(final String label, final String id, final Runnable action)
     {
         return menuItem(label, id, event -> action.run());
     }
 
-    private MenuItem menuItem(final String label, final String id, final EventHandler<ActionEvent> action)
+    private static MenuItem menuItem(final String label, final String id, final EventHandler<ActionEvent> action)
     {
         final MenuItem menuItem = new MenuItem(label);
         menuItem.setId(id);

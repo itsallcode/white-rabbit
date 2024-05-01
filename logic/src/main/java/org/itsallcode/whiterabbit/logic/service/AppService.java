@@ -109,7 +109,8 @@ public class AppService implements Closeable
                 projectService, holidayService);
 
         final ClockService clockService = new ClockService(clock);
-        final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService);
+        final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService,
+                config.getLocale());
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);

@@ -66,7 +66,7 @@ public class YearlyProjectReportViewer
         return treeTable;
     }
 
-    private ReportRow createRow(final int year, final ProjectReportActivity project)
+    private static ReportRow createRow(final int year, final ProjectReportActivity project)
     {
         return new ReportRow(year, project);
     }

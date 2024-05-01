@@ -14,6 +14,7 @@ import java.time.Month;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -43,7 +44,7 @@ class AutocompleteServiceTest
     @BeforeEach
     void setUp()
     {
-        autocompleteService = new AutocompleteService(storageMock, clockServiceMock);
+        autocompleteService = new AutocompleteService(storageMock, clockServiceMock, Locale.ENGLISH);
     }
 
     @Test
