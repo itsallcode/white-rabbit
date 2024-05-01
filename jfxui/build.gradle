@@ -154,7 +154,7 @@ tasks.jpackage {
 
     appName = "WhiteRabbit"
     vendor = '"It\'s all code"'
-    copyright = '"Copyright (C) 2021 Christoph Pirkl <christoph at users.sourceforge.net>"'
+    copyright = '"Copyright (C) 2024 Christoph Pirkl <christoph at users.sourceforge.net>"'
     licenseFile = "${rootProject.rootDir}/LICENSE"
     appDescription = '"A time recording tool"'
     icon = "${projectDir}/src/main/resources/icon.png"
