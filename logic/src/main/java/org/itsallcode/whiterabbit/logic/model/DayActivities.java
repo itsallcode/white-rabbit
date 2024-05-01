@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.model;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.util.ArrayList;

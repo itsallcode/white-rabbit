@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.storage.data;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,21 +31,22 @@ public class JsonFileStorage implements MonthDataStorage
 
     // Made protected in order to allow tests in other packages to mock this
     // class.
-    protected JsonFileStorage(Jsonb jsonb, DateToFileMapper dateToFileMapper, ModelFactory modelFactory)
+    protected JsonFileStorage(final Jsonb jsonb, final DateToFileMapper dateToFileMapper,
+            final ModelFactory modelFactory)
     {
         this.jsonb = jsonb;
         this.dateToFileMapper = dateToFileMapper;
         this.modelFactory = modelFactory;
     }
 
-    public static MonthDataStorage create(Path dataDir)
+    public static MonthDataStorage create(final Path dataDir)
     {
         final Jsonb jsonb = new JsonbFactory().create();
         return new JsonFileStorage(jsonb, new DateToFileMapper(dataDir), new JsonModelFactory());
     }
 
     @Override
-    public Optional<MonthData> load(YearMonth date)
+    public Optional<MonthData> load(final YearMonth date)
     {
         final Path file = dateToFileMapper.getPathForDate(date);
         if (file.toFile().exists())
@@ -66,7 +66,7 @@ public class JsonFileStorage implements MonthDataStorage
 
     // Made protected in order to allow tests in other packages to mock this
     // class.
-    protected JsonMonth loadFromFile(Path file)
+    protected MonthData loadFromFile(final Path file)
     {
         LOG.trace("Reading file {}", file);
         try (InputStream stream = Files.newInputStream(file))
@@ -80,7 +80,7 @@ public class JsonFileStorage implements MonthDataStorage
     }
 
     @Override
-    public void store(YearMonth yearMonth, MonthData monthRecord)
+    public void store(final YearMonth yearMonth, final MonthData monthRecord)
     {
         final Path file = dateToFileMapper.getPathForDate(yearMonth);
         LOG.trace("Write month {} to file {}", yearMonth, file);
@@ -96,7 +96,7 @@ public class JsonFileStorage implements MonthDataStorage
         }
     }
 
-    private void createDirectory(Path dir)
+    private void createDirectory(final Path dir)
     {
         if (dir.toFile().isDirectory())
         {
@@ -124,7 +124,7 @@ public class JsonFileStorage implements MonthDataStorage
         return dateToFileMapper.getAllFiles()
                 .filter(file -> !file.getFileName().toString().equals(Config.PROJECTS_JSON))
                 .map(this::loadFromFile)
-                .sorted(comparing(JsonMonth::getYear).thenComparing(JsonMonth::getMonth))
+                .sorted(comparing(MonthData::getYear).thenComparing(MonthData::getMonth))
                 .toList();
     }
 

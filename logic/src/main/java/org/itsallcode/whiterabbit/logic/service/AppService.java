@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.Closeable;
 import java.time.Clock;
 import java.time.Duration;

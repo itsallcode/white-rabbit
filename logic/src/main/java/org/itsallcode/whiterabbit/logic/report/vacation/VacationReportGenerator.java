@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.logic.report.vacation;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.time.Year;

@@ -1,6 +1,5 @@
 package org.itsallcode.whiterabbit.logic.model;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.time.Duration;

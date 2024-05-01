@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 

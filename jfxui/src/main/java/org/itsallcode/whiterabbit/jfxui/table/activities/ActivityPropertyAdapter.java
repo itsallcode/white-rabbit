@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.table.activities;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.Duration;
 import java.util.List;
 

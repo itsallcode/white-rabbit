@@ -64,7 +64,7 @@ public class ProjectReportGenerator
                 return activity.getProject().getProjectId();
         }
 
-        private ProjectReportImpl.ProjectActivityImpl aggregateProject(final List<Activity> projectActivites)
+        private ProjectReportActivity aggregateProject(final List<Activity> projectActivites)
         {
                 final Duration totalWorkingTime = projectActivites.stream()
                                 .filter(activity -> activity.getDuration() != null)

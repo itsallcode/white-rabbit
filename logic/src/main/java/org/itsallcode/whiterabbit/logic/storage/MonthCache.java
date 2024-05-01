@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;

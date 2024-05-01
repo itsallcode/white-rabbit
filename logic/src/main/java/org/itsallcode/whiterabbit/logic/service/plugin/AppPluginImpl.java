@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
-import static java.util.stream.Collectors.toList;
-
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
