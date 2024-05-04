@@ -1,16 +1,20 @@
 package org.itsallcode.whiterabbit.logic.autocomplete;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.itsallcode.whiterabbit.logic.model.Activity;
@@ -40,7 +44,7 @@ class AutocompleteServiceTest
     @BeforeEach
     void setUp()
     {
-        autocompleteService = new AutocompleteService(storageMock, clockServiceMock);
+        autocompleteService = new AutocompleteService(storageMock, clockServiceMock, Locale.ENGLISH);
     }
 
     @Test
@@ -151,12 +155,12 @@ class AutocompleteServiceTest
 
     private List<DayRecord> createDayRecordsWithActivityComments(final String... comments)
     {
-        return Arrays.stream(comments).map(this::createDayRecordWithActivityComment).collect(toList());
+        return Arrays.stream(comments).map(this::createDayRecordWithActivityComment).toList();
     }
 
     private List<DayRecord> createDayRecordsWithActivityProjects(final String... projectIds)
     {
-        return Arrays.stream(projectIds).map(this::createDayRecordWithProject).collect(toList());
+        return Arrays.stream(projectIds).map(this::createDayRecordWithProject).toList();
     }
 
     private DayRecord createDayRecordWithProject(final String projectId)
@@ -185,7 +189,7 @@ class AutocompleteServiceTest
 
     private List<DayRecord> dayRecordsWithComments(final String... comments)
     {
-        return Arrays.stream(comments).map(this::createDayRecord).collect(toList());
+        return Arrays.stream(comments).map(this::createDayRecord).toList();
     }
 
     private DayRecord createDayRecord(final String comment)

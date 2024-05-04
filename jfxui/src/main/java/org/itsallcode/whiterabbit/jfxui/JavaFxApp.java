@@ -2,7 +2,11 @@ package org.itsallcode.whiterabbit.jfxui;
 
 import java.lang.ProcessHandle.Info;
 import java.nio.file.Paths;
-import java.time.*;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,8 +21,13 @@ import org.itsallcode.whiterabbit.jfxui.systemmenu.DesktopIntegration;
 import org.itsallcode.whiterabbit.jfxui.ui.AppUi;
 import org.itsallcode.whiterabbit.jfxui.ui.InterruptionDialog;
 import org.itsallcode.whiterabbit.jfxui.uistate.UiStateService;
-import org.itsallcode.whiterabbit.logic.*;
-import org.itsallcode.whiterabbit.logic.model.*;
+import org.itsallcode.whiterabbit.logic.Config;
+import org.itsallcode.whiterabbit.logic.ConfigLoader;
+import org.itsallcode.whiterabbit.logic.DefaultWorkingDirProvider;
+import org.itsallcode.whiterabbit.logic.WorkingDirProvider;
+import org.itsallcode.whiterabbit.logic.model.Activity;
+import org.itsallcode.whiterabbit.logic.model.DayRecord;
+import org.itsallcode.whiterabbit.logic.model.MonthIndex;
 import org.itsallcode.whiterabbit.logic.service.AppService;
 import org.itsallcode.whiterabbit.logic.service.AppServiceCallback;
 import org.itsallcode.whiterabbit.logic.service.singleinstance.OtherInstance;
@@ -56,7 +65,8 @@ public class JavaFxApp extends Application
         this(new DefaultWorkingDirProvider(), Clock.systemDefaultZone(), new ScheduledThreadPoolExecutor(1));
     }
 
-    JavaFxApp(WorkingDirProvider workingDirProvider, Clock clock, ScheduledExecutorService executorService)
+    JavaFxApp(final WorkingDirProvider workingDirProvider, final Clock clock,
+            final ScheduledExecutorService executorService)
     {
         this.workingDirProvider = workingDirProvider;
         this.clock = clock;
@@ -70,14 +80,14 @@ public class JavaFxApp extends Application
         {
             doInitialize();
         }
-        catch (final Exception e)
+        catch (final RuntimeException e)
         {
             stop();
             throw e;
         }
     }
 
-    private void notifyPreloaderProgress(Type notificationType)
+    private void notifyPreloaderProgress(final Type notificationType)
     {
         notifyPreloader(new ProgressPreloaderNotification(this, notificationType));
     }
@@ -113,16 +123,16 @@ public class JavaFxApp extends Application
     }
 
     @Override
-    public void start(Stage primaryStage)
+    public void start(final Stage primaryStage)
     {
         this.primaryStage = primaryStage;
         state.setPrimaryStage(primaryStage);
-        LOG.info("Starting UI");
+        LOG.trace("Starting UI");
         doStart(primaryStage);
         notifyPreloaderProgress(Type.STARTUP_FINISHED);
     }
 
-    private void doStart(Stage primaryStage)
+    private void doStart(final Stage primaryStage)
     {
         this.ui = new AppUi.Builder(this, actions, appService, primaryStage, state).build();
 
@@ -193,7 +203,8 @@ public class JavaFxApp extends Application
         appService.start();
     }
 
-    private void messageFromOtherInstanceReceived(String message, RunningInstanceCallback.ClientConnection client)
+    private void messageFromOtherInstanceReceived(final String message,
+            final RunningInstanceCallback.ClientConnection client)
     {
         if (MESSAGE_BRING_TO_FRONT.equals(message))
         {
@@ -218,12 +229,10 @@ public class JavaFxApp extends Application
         Platform.runLater(() -> {
             if (primaryStage.isShowing())
             {
-                LOG.debug("Request focus");
                 primaryStage.requestFocus();
             }
             else
             {
-                LOG.debug("Show primary stage");
                 primaryStage.show();
             }
         });
@@ -268,26 +277,26 @@ public class JavaFxApp extends Application
     private final class AppServiceCallbackImplementation implements AppServiceCallback
     {
         @Override
-        public InterruptionDetectedDecision automaticInterruptionDetected(LocalTime startOfInterruption,
-                Duration interruption)
+        public InterruptionDetectedDecision automaticInterruptionDetected(final LocalTime startOfInterruption,
+                final Duration interruption)
         {
             return JavaFxUtil
                     .runOnFxApplicationThread(() -> showAutomaticInterruptionDialog(startOfInterruption, interruption));
         }
 
-        private InterruptionDetectedDecision showAutomaticInterruptionDialog(LocalTime startOfInterruption,
-                Duration interruption)
+        private InterruptionDetectedDecision showAutomaticInterruptionDialog(final LocalTime startOfInterruption,
+                final Duration interruption)
         {
             final Alert alert = createAlertDialog(startOfInterruption, interruption);
             LOG.info("Showing automatic interruption alert starting at {} for {}...", startOfInterruption,
                     interruption);
             final Optional<ButtonType> selectedButton = alert.showAndWait();
-            final InterruptionDetectedDecision decision = evaluateButton(selectedButton);
+            final InterruptionDetectedDecision decision = evaluateButton(selectedButton.orElse(null));
             LOG.info("User clicked button {} -> {}", selectedButton, decision);
             return decision;
         }
 
-        private Alert createAlertDialog(LocalTime startOfInterruption, Duration interruption)
+        private Alert createAlertDialog(final LocalTime startOfInterruption, final Duration interruption)
         {
             final Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Interruption detected");
@@ -302,51 +311,51 @@ public class JavaFxApp extends Application
             return alert;
         }
 
-        private InterruptionDetectedDecision evaluateButton(final Optional<ButtonType> selectedButton)
+        private InterruptionDetectedDecision evaluateButton(final ButtonType selectedButton)
         {
-            if (isButton(selectedButton, ButtonData.FINISH) && !state.stoppedWorkingForToday.get())
+            if (selectedButton == null)
+            {
+                return InterruptionDetectedDecision.SKIP_INTERRUPTION;
+            }
+            if (selectedButton.getButtonData() == ButtonData.FINISH && !state.stoppedWorkingForToday.get())
             {
                 return InterruptionDetectedDecision.STOP_WORKING_FOR_TODAY;
             }
-            if (isButton(selectedButton, ButtonData.YES))
+            if (selectedButton.getButtonData() == ButtonData.YES)
             {
                 return InterruptionDetectedDecision.ADD_INTERRUPTION;
             }
             return InterruptionDetectedDecision.SKIP_INTERRUPTION;
         }
 
-        private boolean isButton(Optional<ButtonType> button, ButtonData data)
-        {
-            return button.map(ButtonType::getButtonData)
-                    .filter(d -> d == data)
-                    .isPresent();
-        }
-
         @Override
-        public void recordUpdated(DayRecord day)
+        public void recordUpdated(final DayRecord day)
         {
             final YearMonth month = YearMonth.from(day.getDate());
-            JavaFxUtil.runOnFxApplicationThread(() -> {
-                ensureMonthAvailable(month);
-                if (state.currentMonth.get().getYearMonth().equals(month))
-                {
-                    state.currentMonth.setValue(day.getMonth());
-                    if (daySelected(day))
-                    {
-                        ui.updateActivities(day);
-                    }
-                }
-            });
+            JavaFxUtil.runOnFxApplicationThread(() -> recordUpdated(day, month));
         }
 
-        private boolean daySelected(DayRecord dayRecord)
+        private void recordUpdated(final DayRecord day, final YearMonth month)
+        {
+            ensureMonthAvailable(month);
+            if (state.currentMonth.get().getYearMonth().equals(month))
+            {
+                state.currentMonth.setValue(day.getMonth());
+                if (daySelected(day))
+                {
+                    ui.updateActivities(day);
+                }
+            }
+        }
+
+        private boolean daySelected(final DayRecord dayRecord)
         {
             final Optional<DayRecord> selectedDay = state.getSelectedDay();
             return selectedDay.isPresent() && selectedDay.get().getDate().equals(dayRecord.getDate());
         }
 
         @Override
-        public void exceptionOccurred(Exception e)
+        public void exceptionOccurred(final Exception e)
         {
             final String message = "An error occured: " + e.getClass() + ": " + e.getMessage();
             LOG.error(message, e);
@@ -354,7 +363,7 @@ public class JavaFxApp extends Application
         }
 
         @Override
-        public void workStoppedForToday(boolean stopWorking)
+        public void workStoppedForToday(final boolean stopWorking)
         {
             JavaFxUtil.runOnFxApplicationThread(() -> state.stoppedWorkingForToday.setValue(stopWorking));
         }

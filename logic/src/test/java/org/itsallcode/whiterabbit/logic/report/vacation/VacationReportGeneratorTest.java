@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.report.vacation;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -241,7 +240,7 @@ class VacationReportGeneratorTest
         assertThat(secondMonth.getUsedVacationDayCount()).isEqualTo(1);
     }
 
-    private MonthIndex month(int year, Month month, LocalDate... vacationDays)
+    private MonthIndex month(final int year, final Month month, final LocalDate... vacationDays)
     {
         final MonthIndex monthData = mock(MonthIndex.class);
         when(monthData.getYearMonth()).thenReturn(YearMonth.of(year, month));
@@ -250,10 +249,10 @@ class VacationReportGeneratorTest
         return monthData;
     }
 
-    private void simulateMonths(MonthIndex... months)
+    private void simulateMonths(final MonthIndex... months)
     {
         final List<YearMonth> availableDataYearMonth = Arrays.stream(months).map(MonthIndex::getYearMonth)
-                .collect(toList());
+                .toList();
         when(storageMock.getAvailableDataMonths()).thenReturn(availableDataYearMonth);
 
         for (final MonthIndex monthIndex : months)

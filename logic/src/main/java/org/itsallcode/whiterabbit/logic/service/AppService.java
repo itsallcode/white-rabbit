@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.Closeable;
 import java.time.Clock;
 import java.time.Duration;
@@ -111,7 +109,8 @@ public class AppService implements Closeable
                 projectService, holidayService);
 
         final ClockService clockService = new ClockService(clock);
-        final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService);
+        final AutocompleteService autocompleteService = new AutocompleteService(storage, clockService,
+                config.getLocale());
         final SchedulingService schedulingService = new SchedulingService(clockService, scheduledExecutor);
         final DelegatingAppServiceCallback appServiceCallback = new DelegatingAppServiceCallback();
         final WorkingTimeService workingTimeService = new WorkingTimeService(storage, clockService, appServiceCallback);
@@ -183,7 +182,7 @@ public class AppService implements Closeable
     {
         final List<MonthIndex> months = storage.loadAll().getMonths().stream()
                 .sorted(Comparator.comparing(MonthIndex::getYearMonth)) //
-                .collect(toList());
+                .toList();
         Duration totalOvertime = Duration.ZERO;
         for (final MonthIndex month : months)
         {

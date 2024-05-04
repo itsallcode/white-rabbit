@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ class PluginRegistry
     private Map<String, AppPluginImpl> plugins = new HashMap<>();
     private final Config config;
 
-    PluginRegistry(Config config)
+    PluginRegistry(final Config config)
     {
         this.config = config;
     }
@@ -49,7 +48,7 @@ class PluginRegistry
                 .collect(toMap(AppPluginImpl::getId, Function.identity(), preferExternalJars()));
     }
 
-    private BinaryOperator<AppPluginImpl> preferExternalJars()
+    private static BinaryOperator<AppPluginImpl> preferExternalJars()
     {
         return (a, b) -> {
             LOG.warn("Found two plugins with same ID '{}':\n- {}\n- {}", a.getId(), a, b);
@@ -71,12 +70,12 @@ class PluginRegistry
         return loadPlugins(PluginOrigin.forCurrentClassPath());
     }
 
-    private Stream<AppPluginImpl> loadPlugins(Path jar)
+    private Stream<AppPluginImpl> loadPlugins(final Path jar)
     {
         return loadPlugins(PluginOrigin.forJar(jar));
     }
 
-    private Stream<AppPluginImpl> loadPlugins(PluginOrigin origin)
+    private Stream<AppPluginImpl> loadPlugins(final PluginOrigin origin)
     {
         final ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, origin.getClassLoader());
         return serviceLoader.stream()
@@ -88,24 +87,24 @@ class PluginRegistry
         final Path pluginDir = config.getPluginDir();
         if (pluginDir == null || !Files.exists(pluginDir))
         {
-            LOG.info("Plugin directory {} does not exist", pluginDir);
+            LOG.debug("Plugin directory {} does not exist", pluginDir);
             return emptyList();
         }
-        LOG.info("Searching plugin jars in {}", pluginDir);
+        LOG.debug("Searching plugin jars in {}", pluginDir);
         try (Stream<Path> stream = Files.list(pluginDir))
         {
             return stream.filter(file -> file.getFileName().toString().endsWith(".jar"))
-                    .collect(toList());
+                    .toList();
         }
         catch (final IOException e)
         {
-            throw new UncheckedIOException("Error listing plugins in " + pluginDir, e);
+            throw new UncheckedIOException("Error listing plugins in '" + pluginDir + "'", e);
         }
     }
 
-    private Optional<AppPluginImpl> loadPlugin(Provider<Plugin> provider, PluginOrigin origin)
+    private Optional<AppPluginImpl> loadPlugin(final Provider<Plugin> provider, final PluginOrigin origin)
     {
-        LOG.info("Loading plugin {} using {}", provider.type(), origin);
+        LOG.debug("Loading plugin {} using {}", provider.type().getName(), origin);
         try
         {
             final Plugin pluginInstance = provider.get();
@@ -115,7 +114,7 @@ class PluginRegistry
         }
         catch (final RuntimeException e)
         {
-            LOG.warn("Error loading plugin {} using {}", provider.type(), origin, e);
+            LOG.warn("Error loading plugin {} using {}", provider.type().getName(), origin, e);
             return Optional.empty();
         }
     }
@@ -125,7 +124,7 @@ class PluginRegistry
         return plugins.values();
     }
 
-    AppPluginImpl getPlugin(String id)
+    AppPluginImpl getPlugin(final String id)
     {
         final AppPluginImpl plugin = plugins.get(id);
         if (plugin == null)

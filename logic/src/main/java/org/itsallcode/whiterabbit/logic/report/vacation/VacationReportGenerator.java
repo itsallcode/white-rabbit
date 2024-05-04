@@ -3,7 +3,6 @@ package org.itsallcode.whiterabbit.logic.report.vacation;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.time.Year;
@@ -24,13 +23,13 @@ public class VacationReportGenerator
     private final Storage storage;
     private final AvailableVacationCalculator availableVacationCalculator;
 
-    VacationReportGenerator(Storage storage, AvailableVacationCalculator availableVacationCalculator)
+    VacationReportGenerator(final Storage storage, final AvailableVacationCalculator availableVacationCalculator)
     {
         this.storage = storage;
         this.availableVacationCalculator = availableVacationCalculator;
     }
 
-    public VacationReportGenerator(Storage storage)
+    public VacationReportGenerator(final Storage storage)
     {
         this(storage, new AvailableVacationCalculator());
     }
@@ -51,7 +50,7 @@ public class VacationReportGenerator
         final Map<Year, Long> workingMonthCountByYear = availableDataYearMonth.stream() //
                 .map(Year::from) //
                 .collect(groupingBy(Function.identity(), counting()));
-        final List<Year> years = workingMonthCountByYear.keySet().stream().sorted().collect(toList());
+        final List<Year> years = workingMonthCountByYear.keySet().stream().sorted().toList();
 
         private List<VacationYear> vacationDaysPerYear()
         {
@@ -66,7 +65,7 @@ public class VacationReportGenerator
             return vacationYears;
         }
 
-        private VacationYear calculateVacation(final Year year, VacationYear previousYear)
+        private VacationYear calculateVacation(final Year year, final VacationYear previousYear)
         {
             final int daysRemainingFromPreviousYear = previousYear != null ? previousYear.getDaysRemaining() : 0;
             return new VacationYear(year, vacationDaysCount(year), availableVacation(year),
@@ -96,10 +95,10 @@ public class VacationReportGenerator
             return monthData.values().stream() //
                     .sorted(comparing(MonthIndex::getYearMonth)) //
                     .map(this::calculateMonthVacation) //
-                    .collect(toList());
+                    .toList();
         }
 
-        private VacationMonth calculateMonthVacation(MonthIndex month)
+        private VacationMonth calculateMonthVacation(final MonthIndex month)
         {
             return new VacationMonth(month.getYearMonth(), month.getVacationDays());
         }

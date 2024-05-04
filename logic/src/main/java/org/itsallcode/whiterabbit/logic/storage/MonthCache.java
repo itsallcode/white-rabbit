@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ class MonthCache
                 .filter(month -> !month.getYearMonth().isBefore(oldestYearMonth))
                 .flatMap(MonthIndex::getSortedDays)
                 .filter(day -> !day.getDate().isBefore(maxAge))
-                .collect(toList());
+                .toList();
     }
 
     private void notifyListeners(final MonthIndex updatedMonth)

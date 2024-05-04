@@ -3,6 +3,7 @@ package org.itsallcode.whiterabbit.logic.autocomplete;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -13,12 +14,12 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 class TextIndexTest
 {
-
     @ParameterizedTest(name = "[{index}] available values {0}, search text ''{1}''")
     @ArgumentsSource(AutocompleterArgumentsProvider.class)
-    void autocompleter(List<String> availableEntries, String searchText, List<String> expectedResult)
+    void autocompleter(final List<String> availableEntries, final String searchText, final List<String> expectedResult)
     {
-        final List<AutocompleteProposal> entries = TextIndex.build(availableEntries).getEntries(searchText);
+        final List<AutocompleteProposal> entries = TextIndex.build(availableEntries, Locale.ENGLISH)
+                .getEntries(searchText);
         assertThat(entries)
                 .as("autocomplete for available values " + availableEntries + " and search text '" + searchText + "'")
                 .extracting(AutocompleteProposal::getText)
@@ -28,7 +29,7 @@ class TextIndexTest
     private static class AutocompleterArgumentsProvider implements ArgumentsProvider
     {
         @Override
-        public Stream<Arguments> provideArguments(ExtensionContext context)
+        public Stream<Arguments> provideArguments(final ExtensionContext context)
         {
             return Stream.of(
                     Arguments.of(List.of(), "text", List.of()),

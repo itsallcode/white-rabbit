@@ -1,21 +1,29 @@
 package org.itsallcode.whiterabbit.jfxui.feature;
 
-import static java.util.stream.Collectors.toList;
-
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.Duration;
 import java.util.List;
-import java.util.function.UnaryOperator;
+import java.util.Locale;
 
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.util.converter.IntegerStringConverter;
 
 public class InterruptionPresetFeature
@@ -50,7 +58,7 @@ public class InterruptionPresetFeature
                 .mapToLong(Integer::longValue)
                 .mapToObj(Duration::ofMinutes)
                 .map(this::createMenuitem)
-                .collect(toList());
+                .toList();
     }
 
     private MenuItem createMenuitem(final Duration interruption)
@@ -58,7 +66,7 @@ public class InterruptionPresetFeature
         final String verb = interruption.isNegative() ? "Subtract" : "Add";
         final MenuItem menuItem = new MenuItem(
                 verb + " interruption of " + appService.formatter().format(interruption.abs()));
-        menuItem.setId(verb.toLowerCase() + "-interruption-preset-" + interruption.toString());
+        menuItem.setId(verb.toLowerCase(Locale.ENGLISH) + "-interruption-preset-" + interruption.toString());
         menuItem.setOnAction(event -> addInterruptionForToday(interruption));
         return menuItem;
     }
@@ -68,7 +76,7 @@ public class InterruptionPresetFeature
         appService.addInterruption(appService.getClock().getCurrentDate(), interruption);
     }
 
-    private static class DurationInputDialog extends Dialog<Duration>
+    private static final class DurationInputDialog extends Dialog<Duration>
     {
         private final GridPane grid;
         private final Label label;
@@ -76,7 +84,6 @@ public class InterruptionPresetFeature
 
         private DurationInputDialog()
         {
-            final DialogPane dialogPane = getDialogPane();
             final int maxValue = (int) Duration.ofHours(8).toMinutes();
 
             spinner = new Spinner<>(0, maxValue, 0, 5);
@@ -85,31 +92,14 @@ public class InterruptionPresetFeature
             spinner.setEditable(true);
 
             final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-            final UnaryOperator<TextFormatter.Change> filter = change -> {
-                if (change.isContentChange())
-                {
-                    final String newText = change.getControlNewText();
-                    if (newText.isEmpty())
-                    {
-                        return change;
-                    }
-                    final ParsePosition parsePosition = new ParsePosition(0);
-                    numberFormat.parse(newText, parsePosition);
-                    if (parsePosition.getIndex() == 0 ||
-                            parsePosition.getIndex() < newText.length())
-                    {
-                        return null;
-                    }
-                }
-                return change;
-            };
             final TextFormatter<Integer> intFormatter = new TextFormatter<>(
-                    new IntegerStringConverter(), 0, filter);
+                    new IntegerStringConverter(), 0, change -> removeInvalidNumber(numberFormat, change));
             spinner.getEditor().setTextFormatter(intFormatter);
 
             GridPane.setHgrow(spinner, Priority.ALWAYS);
             GridPane.setFillWidth(spinner, true);
 
+            final DialogPane dialogPane = getDialogPane();
             label = createContentLabel(dialogPane.getContentText());
             label.setPrefWidth(Region.USE_COMPUTED_SIZE);
             label.textProperty().bind(dialogPane.contentTextProperty());
@@ -139,6 +129,31 @@ public class InterruptionPresetFeature
                 }
                 return Duration.ofMinutes(value);
             });
+        }
+
+        private static Change removeInvalidNumber(final NumberFormat numberFormat, final Change change)
+        {
+            if (change.isContentChange())
+            {
+                final String newText = change.getControlNewText();
+                if (newText.isEmpty())
+                {
+                    return change;
+                }
+                if (parsingFails(numberFormat, newText))
+                {
+                    return null;
+                }
+            }
+            return change;
+        }
+
+        private static boolean parsingFails(final NumberFormat numberFormat, final String text)
+        {
+            final ParsePosition parsePosition = new ParsePosition(0);
+            numberFormat.parse(text, parsePosition);
+            return parsePosition.getIndex() == 0 ||
+                    parsePosition.getIndex() < text.length();
         }
 
         private static Label createContentLabel(final String text)

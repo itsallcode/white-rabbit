@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.util.List;
@@ -50,7 +49,7 @@ public class YearlyProjectReportViewer
     {
         final ObservableList<ReportRow> rows = FXCollections.observableList(
                 report.getProjects().stream()
-                        .map(project -> createRow(report.getMonth().getYear(), project)).collect(toList()));
+                        .map(project -> createRow(report.getMonth().getYear(), project)).toList());
         final TableView<ReportRow> treeTable = new TableView<>(rows);
         treeTable.getColumns().addAll(List.of(
                 UiWidget.readOnlyColumn("year", "Year",
@@ -67,12 +66,12 @@ public class YearlyProjectReportViewer
         return treeTable;
     }
 
-    private ReportRow createRow(final int year, final ProjectReportActivity project)
+    private static ReportRow createRow(final int year, final ProjectReportActivity project)
     {
         return new ReportRow(year, project);
     }
 
-    public static class ReportRow
+    public static final class ReportRow
     {
         private final int year;
         private final ProjectReportActivity project;

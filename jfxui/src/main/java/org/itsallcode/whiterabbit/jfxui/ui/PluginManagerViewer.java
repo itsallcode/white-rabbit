@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
@@ -28,7 +27,8 @@ public class PluginManagerViewer
     private final UiStateService uiState;
     private Stage stage;
 
-    public PluginManagerViewer(Stage primaryStage, UiStateService uiState, PluginManager pluginManager)
+    public PluginManagerViewer(final Stage primaryStage, final UiStateService uiState,
+            final PluginManager pluginManager)
     {
         this.primaryStage = primaryStage;
         this.pluginManager = pluginManager;
@@ -64,11 +64,11 @@ public class PluginManagerViewer
     private List<PluginTableEntry> getAllPlugins()
     {
         return pluginManager.getAllPlugins().stream()
-                .map(this::createTableEntry)
-                .collect(toList());
+                .map(PluginManagerViewer::createTableEntry)
+                .toList();
     }
 
-    private PluginTableEntry createTableEntry(AppPlugin plugin)
+    private static PluginTableEntry createTableEntry(final AppPlugin plugin)
     {
         return new PluginTableEntry(plugin);
     }
@@ -96,7 +96,7 @@ public class PluginManagerViewer
     {
         private final AppPlugin plugin;
 
-        PluginTableEntry(AppPlugin plugin)
+        PluginTableEntry(final AppPlugin plugin)
         {
             this.plugin = plugin;
         }

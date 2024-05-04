@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.logic.report.project;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.time.YearMonth;
@@ -30,10 +29,10 @@ public class ProjectReportGenerator
     public ProjectReport generateReport(final YearMonth month)
     {
         final List<DayRecord> sortedDays = storage.loadMonth(month)
-                .map(MonthIndex::getSortedDays).orElse(Stream.empty()).collect(toList());
+                .map(MonthIndex::getSortedDays).orElse(Stream.empty()).toList();
 
         final List<ProjectReportDay> reportDays = sortedDays.stream()
-                .map(this::generateDayReport)
+                .map(ProjectReportGenerator::generateDayReport)
                 .toList();
 
         final List<ProjectReportActivity> reportProjects = sortedDays.stream()
@@ -41,31 +40,31 @@ public class ProjectReportGenerator
                 .filter(activity -> activity.getProject() != null)
                 .collect(groupingBy(Activity::getProject))
                 .values().stream()
-                .map(this::aggregateProject)
-                .collect(toList());
+                .map(ProjectReportGenerator::aggregateProject)
+                .toList();
 
         return new ProjectReportImpl(month, reportDays, reportProjects);
     }
 
-    private ProjectReportDay generateDayReport(final DayRecord dayRecord)
+    private static ProjectReportDay generateDayReport(final DayRecord dayRecord)
     {
         final List<ProjectReportActivity> projects = dayRecord.activities()
                 .getAll().stream()
                 .filter(activity -> activity.getProject() != null)
-                .collect(groupingBy(this::activityProject))
+                .collect(groupingBy(ProjectReportGenerator::activityProject))
                 .values().stream()
-                .map(this::aggregateProject)
-                .collect(toList());
+                .map(ProjectReportGenerator::aggregateProject)
+                .toList();
 
         return new DayImpl(dayRecord.getDate(), dayRecord.getType(), dayRecord.getComment(), projects);
     }
 
-    private String activityProject(final Activity activity)
+    private static String activityProject(final Activity activity)
     {
         return activity.getProject().getProjectId();
     }
 
-    private ProjectReportImpl.ProjectActivityImpl aggregateProject(final List<Activity> projectActivites)
+    private static ProjectReportActivity aggregateProject(final List<Activity> projectActivites)
     {
         final Duration totalWorkingTime = projectActivites.stream()
                 .filter(activity -> activity.getDuration() != null)

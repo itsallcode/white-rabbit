@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.table.days;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -52,9 +50,9 @@ public class DayRecordTable
 
     private final ClockService clockService;
 
-    public DayRecordTable(SimpleObjectProperty<DayRecord> selectedDay,
-            ObjectProperty<MonthIndex> currentMonth, EditListener<DayRecord> editListener,
-            AppService appService)
+    public DayRecordTable(final SimpleObjectProperty<DayRecord> selectedDay,
+            final ObjectProperty<MonthIndex> currentMonth, final EditListener<DayRecord> editListener,
+            final AppService appService)
     {
         this.editListener = editListener;
         this.formatterService = appService.formatter();
@@ -73,9 +71,9 @@ public class DayRecordTable
         }
     }
 
-    private void currentMonthChanged(MonthIndex previousMonth, MonthIndex month)
+    private void currentMonthChanged(final MonthIndex previousMonth, final MonthIndex month)
     {
-        final List<DayRecord> sortedDays = month.getSortedDays().collect(toList());
+        final List<DayRecord> sortedDays = month.getSortedDays().toList();
         JavaFxUtil.runOnFxApplicationThread(() -> {
             LOG.trace("Current month changed from {} to {}. Updating {} days.",
                     previousMonth != null ? previousMonth.getYearMonth() : null, month.getYearMonth(),
@@ -103,16 +101,13 @@ public class DayRecordTable
         }
     }
 
-    private void updateSelectedRow(MonthIndex previousMonth, MonthIndex month)
+    private void updateSelectedRow(final MonthIndex previousMonth, final MonthIndex month)
     {
-        final boolean isCurrentMonth = month.getYearMonth().equals(clockService.getCurrentYearMonth());
-        final boolean otherMonthSelected = previousMonth != null
-                && !month.getYearMonth().equals(previousMonth.getYearMonth());
-        if (!otherMonthSelected)
+        if (!otherMonthSelected(previousMonth, month))
         {
             return;
         }
-        if (isCurrentMonth)
+        if (isCurrentMonth(month))
         {
             selectRow(clockService.getCurrentDate());
         }
@@ -120,6 +115,17 @@ public class DayRecordTable
         {
             table.getSelectionModel().clearSelection();
         }
+    }
+
+    private static boolean otherMonthSelected(final MonthIndex previousMonth, final MonthIndex month)
+    {
+        return previousMonth != null
+                && !month.getYearMonth().equals(previousMonth.getYearMonth());
+    }
+
+    private boolean isCurrentMonth(final MonthIndex month)
+    {
+        return month.getYearMonth().equals(clockService.getCurrentYearMonth());
     }
 
     @SuppressWarnings("java:S110") // Deep inheritance tree required by JavaFx
@@ -144,35 +150,11 @@ public class DayRecordTable
                     }
                 });
 
-        table.setRowFactory(param -> new TableRow<DayRecordPropertyAdapter>()
-        {
-            @Override
-            public void updateIndex(int newIndex)
-            {
-                if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
-                {
-                    final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
-                    LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
-                            dayRecord.date.get());
-                    dayRecord.setTableRow(this);
-                }
-                super.updateIndex(newIndex);
-            }
-
-            @Override
-            protected void updateItem(DayRecordPropertyAdapter item, boolean empty)
-            {
-                super.updateItem(item, empty);
-                if (item != null)
-                {
-                    item.setTableRow(this);
-                }
-            }
-        });
+        table.setRowFactory(param -> new DayRecordTableRow(dayRecords));
         return table;
     }
 
-    public void selectRow(LocalDate date)
+    public void selectRow(final LocalDate date)
     {
         Objects.requireNonNull(table, "Table not yet initialized");
         final int row = date.getDayOfMonth() - 1;
@@ -191,7 +173,7 @@ public class DayRecordTable
         final StringConverter<Duration> durationConverter = new DurationStringConverter(formatterService);
         final StringConverter<LocalTime> localTimeConverter = new CustomLocalTimeStringConverter(
                 formatterService.getLocale());
-        final TableColumn<DayRecordPropertyAdapter, org.itsallcode.whiterabbit.api.model.DayType> dayTypeCol = UiWidget
+        final TableColumn<DayRecordPropertyAdapter, DayType> dayTypeCol = UiWidget
                 .column("day-type", "Type",
                         param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                         data -> data.getValue().dayType);
@@ -228,5 +210,40 @@ public class DayRecordTable
 
         return List.of(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
+    }
+
+    private static final class DayRecordTableRow extends TableRow<DayRecordPropertyAdapter>
+    {
+        private final ObservableList<DayRecordPropertyAdapter> dayRecords;
+
+        // Storing a copy of "dayRecords" is required here
+        @SuppressWarnings("java:S2384")
+        private DayRecordTableRow(final ObservableList<DayRecordPropertyAdapter> dayRecords)
+        {
+            this.dayRecords = dayRecords;
+        }
+
+        @Override
+        public void updateIndex(final int newIndex)
+        {
+            if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
+            {
+                final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
+                LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
+                        dayRecord.date.get());
+                dayRecord.setTableRow(this);
+            }
+            super.updateIndex(newIndex);
+        }
+
+        @Override
+        protected void updateItem(final DayRecordPropertyAdapter item, final boolean empty)
+        {
+            super.updateItem(item, empty);
+            if (item != null)
+            {
+                item.setTableRow(this);
+            }
+        }
     }
 }

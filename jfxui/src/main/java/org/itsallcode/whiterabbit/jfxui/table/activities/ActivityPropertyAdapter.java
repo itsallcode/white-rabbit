@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.table.activities;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.Duration;
 import java.util.List;
 
@@ -59,6 +57,6 @@ public final class ActivityPropertyAdapter extends RecordPropertyAdapter<Activit
     {
         return activities.stream()
                 .map(a -> wrap(editListener, a))
-                .collect(toList());
+                .toList();
     }
 }

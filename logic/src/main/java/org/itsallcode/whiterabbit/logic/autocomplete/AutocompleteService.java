@@ -1,11 +1,13 @@
 package org.itsallcode.whiterabbit.logic.autocomplete;
 
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,15 +32,16 @@ public class AutocompleteService
     private final CachingStorage storage;
     private final ClockService clockService;
 
-    private final CachingAutocompleter dayCommentAutocompleter = new CachingAutocompleter(this::getDayComments);
-    private final CachingAutocompleter activityCommentAutocompleter = new CachingAutocompleter(
-            this::getActivityComments);
+    private final CachingAutocompleter dayCommentAutocompleter;
+    private final CachingAutocompleter activityCommentAutocompleter;
 
-    public AutocompleteService(final CachingStorage storage, final ClockService clockService)
+    public AutocompleteService(final CachingStorage storage, final ClockService clockService, final Locale locale)
     {
-        this.storage = storage;
         this.clockService = clockService;
-        storage.addCacheInvalidationListener(this::invalidateCache);
+        this.dayCommentAutocompleter = new CachingAutocompleter(this::getDayComments, locale);
+        this.activityCommentAutocompleter = new CachingAutocompleter(this::getActivityComments, locale);
+        this.storage = storage;
+        this.storage.addCacheInvalidationListener(this::invalidateCache);
     }
 
     private void invalidateCache(final MonthIndex updatedMonth)
@@ -63,7 +66,7 @@ public class AutocompleteService
                 .map(DayRecord::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .collect(toList());
+                .toList();
     }
 
     private List<String> getActivityComments()
@@ -72,7 +75,7 @@ public class AutocompleteService
                 .map(Activity::getComment)
                 .filter(Objects::nonNull)
                 .filter(comment -> !comment.isBlank())
-                .collect(toList());
+                .toList();
     }
 
     private Stream<Activity> getActivities()
@@ -93,7 +96,7 @@ public class AutocompleteService
     {
         final List<ProjectImpl> projects = getActivities().map(Activity::getProject)
                 .filter(Objects::nonNull)
-                .collect(toList());
+                .toList();
         final Map<String, List<ProjectImpl>> groupedProjects = projects.stream()
                 .collect(groupingBy(ProjectImpl::getProjectId));
         final Map<String, Long> frequencyMap = projects.stream()
@@ -108,14 +111,16 @@ public class AutocompleteService
         return mostFrequentlyUsedProject;
     }
 
-    private class CachingAutocompleter implements AutocompleteEntrySupplier
+    private static final class CachingAutocompleter implements AutocompleteEntrySupplier
     {
         private TextIndex index;
         private final Supplier<List<String>> availableTextSupplier;
+        private final Locale locale;
 
-        private CachingAutocompleter(final Supplier<List<String>> availableTextSupplier)
+        private CachingAutocompleter(final Supplier<List<String>> availableTextSupplier, final Locale locale)
         {
             this.availableTextSupplier = availableTextSupplier;
+            this.locale = locale;
         }
 
         private void invalidateCache()
@@ -128,7 +133,7 @@ public class AutocompleteService
         {
             if (index == null)
             {
-                index = TextIndex.build(availableTextSupplier.get());
+                index = TextIndex.build(availableTextSupplier.get(), locale);
             }
             return index.getEntries(prompt);
         }

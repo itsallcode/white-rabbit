@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.Duration;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -62,7 +60,7 @@ class MonthIndexStorage implements Storage
     {
         return new MultiMonthIndex(fileStorage.loadAll().stream()
                 .map(this::createMonthIndex)
-                .collect(toList()));
+                .toList());
     }
 
     @Override

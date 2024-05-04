@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.storage;
 
-import static java.util.stream.Collectors.toList;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -97,7 +95,7 @@ class CachingStorageImpl implements CachingStorage
         final YearMonth oldestYearMonth = YearMonth.from(maxAge);
         return delegateStorage.getAvailableDataMonths().stream()
                 .filter(month -> !month.isBefore(oldestYearMonth))
-                .collect(toList());
+                .toList();
     }
 
     @Override

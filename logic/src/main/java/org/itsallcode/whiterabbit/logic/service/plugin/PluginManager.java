@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.logic.service.plugin;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +14,12 @@ public class PluginManager
     private static final Logger LOG = LogManager.getLogger(PluginManager.class);
     private final PluginRegistry pluginRegistry;
 
-    PluginManager(PluginRegistry pluginRegistry)
+    PluginManager(final PluginRegistry pluginRegistry)
     {
         this.pluginRegistry = pluginRegistry;
     }
 
-    public static PluginManager create(Config config)
+    public static PluginManager create(final Config config)
     {
         final PluginRegistry pluginRegistry = new PluginRegistry(config);
         pluginRegistry.load();
@@ -29,20 +27,21 @@ public class PluginManager
         return new PluginManager(pluginRegistry);
     }
 
-    public <T extends PluginFeature> List<T> getAllFeatures(Class<T> featureType)
+    public <T extends PluginFeature> List<T> getAllFeatures(final Class<T> featureType)
     {
         return findPluginsSupporting(featureType).stream()
                 .map(plugin -> plugin.getFeature(featureType))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(toList());
+                .toList();
     }
 
-    public List<AppPlugin> findPluginsSupporting(Class<? extends PluginFeature> featureType)
+    public List<AppPlugin> findPluginsSupporting(final Class<? extends PluginFeature> featureType)
     {
         return pluginRegistry.getAllPlugins().stream()
                 .filter(plugin -> plugin.supports(featureType))
-                .collect(toList());
+                .map(AppPlugin.class::cast)
+                .toList();
     }
 
     @SuppressWarnings("java:S1452") // Use generic wildcard as return type.
@@ -51,7 +50,7 @@ public class PluginManager
         return pluginRegistry.getAllPlugins();
     }
 
-    public <T extends PluginFeature> Optional<T> getUniqueFeature(Class<T> featureType)
+    public <T extends PluginFeature> Optional<T> getUniqueFeature(final Class<T> featureType)
     {
         final List<AppPlugin> plugins = findPluginsSupporting(featureType);
         if (plugins.isEmpty())

@@ -1,7 +1,6 @@
 package org.itsallcode.whiterabbit.jfxui.ui;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -104,8 +103,8 @@ public class DailyProjectReportViewer
         final TreeItem<ReportRow> root = new TreeItem<>();
 
         root.getChildren().addAll(report.getDays().stream()
-                .map(this::createDayTreeItem)
-                .collect(toList()));
+                .map(DailyProjectReportViewer::createDayTreeItem)
+                .toList());
 
         final TreeTableView<ReportRow> treeTable = new TreeTableView<>(root);
         treeTable.getColumns().addAll(List.of(
@@ -126,7 +125,7 @@ public class DailyProjectReportViewer
         return treeTable;
     }
 
-    private TreeItem<ReportRow> createDayTreeItem(final ProjectReportDay day)
+    private static TreeItem<ReportRow> createDayTreeItem(final ProjectReportDay day)
     {
         final TreeItem<ReportRow> treeItem = new TreeItem<>(new ReportRow(day));
         treeItem.setExpanded(true);
@@ -134,11 +133,11 @@ public class DailyProjectReportViewer
                 day.getProjects().stream()
                         .map(project -> new ReportRow(day, project))
                         .map(TreeItem::new)
-                        .collect(toList()));
+                        .toList());
         return treeItem;
     }
 
-    public static class ReportRow
+    public static final class ReportRow
     {
         private final LocalDate date;
         private final DayType dayType;

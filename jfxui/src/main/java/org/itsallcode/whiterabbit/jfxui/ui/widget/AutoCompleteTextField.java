@@ -1,7 +1,5 @@
 package org.itsallcode.whiterabbit.jfxui.ui.widget;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class AutoCompleteTextField extends TextField
     private final AutocompleteEntrySupplier autocompleteEntriesSupplier;
     private final ContextMenu entriesPopup;
 
-    public AutoCompleteTextField(AutocompleteEntrySupplier autocompleteEntriesSupplier)
+    public AutoCompleteTextField(final AutocompleteEntrySupplier autocompleteEntriesSupplier)
     {
         this.autocompleteEntriesSupplier = autocompleteEntriesSupplier;
         entriesPopup = new ContextMenu();
@@ -68,11 +66,11 @@ public class AutoCompleteTextField extends TextField
         entriesPopup.getSkin().getNode().requestFocus();
     }
 
-    private void populatePopup(List<AutocompleteProposal> searchResult)
+    private void populatePopup(final List<AutocompleteProposal> searchResult)
     {
         final List<MenuItem> menuItems = searchResult.stream()
                 .map(this::createMenuItem)
-                .collect(toList());
+                .toList();
         entriesPopup.getItems().setAll(menuItems);
     }
 
@@ -89,7 +87,7 @@ public class AutoCompleteTextField extends TextField
         return item;
     }
 
-    private List<Text> highlightMatch(final AutocompleteProposal result)
+    private static List<Text> highlightMatch(final AutocompleteProposal result)
     {
         final int matchPositionStart = result.getMatchPositionStart();
         final List<Text> textParts = new ArrayList<>();
