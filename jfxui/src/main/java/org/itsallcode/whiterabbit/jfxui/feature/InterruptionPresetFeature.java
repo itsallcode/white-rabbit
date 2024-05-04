@@ -131,7 +131,7 @@ public class InterruptionPresetFeature
             });
         }
 
-        private Change removeInvalidNumber(final NumberFormat numberFormat, final Change change)
+        private static Change removeInvalidNumber(final NumberFormat numberFormat, final Change change)
         {
             if (change.isContentChange())
             {
