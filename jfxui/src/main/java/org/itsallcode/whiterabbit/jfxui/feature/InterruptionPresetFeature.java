@@ -5,7 +5,6 @@ import java.text.ParsePosition;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.UnaryOperator;
 
 import org.itsallcode.whiterabbit.logic.service.AppService;
 
@@ -21,6 +20,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -91,8 +91,9 @@ public class InterruptionPresetFeature
             spinner.setMaxWidth(Double.MAX_VALUE);
             spinner.setEditable(true);
 
+            final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
             final TextFormatter<Integer> intFormatter = new TextFormatter<>(
-                    new IntegerStringConverter(), 0, removeInvalidNumber());
+                    new IntegerStringConverter(), 0, change -> removeInvalidNumber(numberFormat, change));
             spinner.getEditor().setTextFormatter(intFormatter);
 
             GridPane.setHgrow(spinner, Priority.ALWAYS);
@@ -130,27 +131,24 @@ public class InterruptionPresetFeature
             });
         }
 
-        private UnaryOperator<TextFormatter.Change> removeInvalidNumber()
+        private Change removeInvalidNumber(final NumberFormat numberFormat, final Change change)
         {
-            final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-            return change -> {
-                if (change.isContentChange())
+            if (change.isContentChange())
+            {
+                final String newText = change.getControlNewText();
+                if (newText.isEmpty())
                 {
-                    final String newText = change.getControlNewText();
-                    if (newText.isEmpty())
-                    {
-                        return change;
-                    }
-                    if (parsingFails(numberFormat, newText))
-                    {
-                        return null;
-                    }
+                    return change;
                 }
-                return change;
-            };
+                if (parsingFails(numberFormat, newText))
+                {
+                    return null;
+                }
+            }
+            return change;
         }
 
-        private boolean parsingFails(final NumberFormat numberFormat, final String text)
+        private static boolean parsingFails(final NumberFormat numberFormat, final String text)
         {
             final ParsePosition parsePosition = new ParsePosition(0);
             numberFormat.parse(text, parsePosition);

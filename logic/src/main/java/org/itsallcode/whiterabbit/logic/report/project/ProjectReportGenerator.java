@@ -32,7 +32,7 @@ public class ProjectReportGenerator
                 .map(MonthIndex::getSortedDays).orElse(Stream.empty()).toList();
 
         final List<ProjectReportDay> reportDays = sortedDays.stream()
-                .map(this::generateDayReport)
+                .map(ProjectReportGenerator::generateDayReport)
                 .toList();
 
         final List<ProjectReportActivity> reportProjects = sortedDays.stream()
@@ -46,7 +46,7 @@ public class ProjectReportGenerator
         return new ProjectReportImpl(month, reportDays, reportProjects);
     }
 
-    private ProjectReportDay generateDayReport(final DayRecord dayRecord)
+    private static ProjectReportDay generateDayReport(final DayRecord dayRecord)
     {
         final List<ProjectReportActivity> projects = dayRecord.activities()
                 .getAll().stream()

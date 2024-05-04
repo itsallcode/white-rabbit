@@ -216,6 +216,8 @@ public class DayRecordTable
     {
         private final ObservableList<DayRecordPropertyAdapter> dayRecords;
 
+        // Storing a copy of "dayRecords" is required here
+        @SuppressWarnings("java:S2384")
         private DayRecordTableRow(final ObservableList<DayRecordPropertyAdapter> dayRecords)
         {
             this.dayRecords = dayRecords;
