@@ -150,31 +150,7 @@ public class DayRecordTable
                     }
                 });
 
-        table.setRowFactory(param -> new TableRow<DayRecordPropertyAdapter>()
-        {
-            @Override
-            public void updateIndex(final int newIndex)
-            {
-                if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
-                {
-                    final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
-                    LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
-                            dayRecord.date.get());
-                    dayRecord.setTableRow(this);
-                }
-                super.updateIndex(newIndex);
-            }
-
-            @Override
-            protected void updateItem(final DayRecordPropertyAdapter item, final boolean empty)
-            {
-                super.updateItem(item, empty);
-                if (item != null)
-                {
-                    item.setTableRow(this);
-                }
-            }
-        });
+        table.setRowFactory(param -> new DayRecordTableRow(dayRecords));
         return table;
     }
 
@@ -197,7 +173,7 @@ public class DayRecordTable
         final StringConverter<Duration> durationConverter = new DurationStringConverter(formatterService);
         final StringConverter<LocalTime> localTimeConverter = new CustomLocalTimeStringConverter(
                 formatterService.getLocale());
-        final TableColumn<DayRecordPropertyAdapter, org.itsallcode.whiterabbit.api.model.DayType> dayTypeCol = UiWidget
+        final TableColumn<DayRecordPropertyAdapter, DayType> dayTypeCol = UiWidget
                 .column("day-type", "Type",
                         param -> new ChoiceBoxTableCell<>(new DayTypeStringConverter(), DayType.values()),
                         data -> data.getValue().dayType);
@@ -234,5 +210,38 @@ public class DayRecordTable
 
         return List.of(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
+    }
+
+    private static final class DayRecordTableRow extends TableRow<DayRecordPropertyAdapter>
+    {
+        private final ObservableList<DayRecordPropertyAdapter> dayRecords;
+
+        private DayRecordTableRow(final ObservableList<DayRecordPropertyAdapter> dayRecords)
+        {
+            this.dayRecords = dayRecords;
+        }
+
+        @Override
+        public void updateIndex(final int newIndex)
+        {
+            if (newIndex != getIndex() && newIndex >= 0 && newIndex < dayRecords.size())
+            {
+                final DayRecordPropertyAdapter dayRecord = dayRecords.get(newIndex);
+                LOG.trace("Row index changed from {} to {}: update day {}", getIndex(), newIndex,
+                        dayRecord.date.get());
+                dayRecord.setTableRow(this);
+            }
+            super.updateIndex(newIndex);
+        }
+
+        @Override
+        protected void updateItem(final DayRecordPropertyAdapter item, final boolean empty)
+        {
+            super.updateItem(item, empty);
+            if (item != null)
+            {
+                item.setTableRow(this);
+            }
+        }
     }
 }

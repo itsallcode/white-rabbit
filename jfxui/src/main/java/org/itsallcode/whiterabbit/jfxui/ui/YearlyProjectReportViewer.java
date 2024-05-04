@@ -71,7 +71,7 @@ public class YearlyProjectReportViewer
         return new ReportRow(year, project);
     }
 
-    public final static class ReportRow
+    public static final class ReportRow
     {
         private final int year;
         private final ProjectReportActivity project;

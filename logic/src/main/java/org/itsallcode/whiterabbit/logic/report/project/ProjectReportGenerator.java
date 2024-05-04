@@ -51,7 +51,7 @@ public class ProjectReportGenerator
         final List<ProjectReportActivity> projects = dayRecord.activities()
                 .getAll().stream()
                 .filter(activity -> activity.getProject() != null)
-                .collect(groupingBy(this::activityProject))
+                .collect(groupingBy(ProjectReportGenerator::activityProject))
                 .values().stream()
                 .map(ProjectReportGenerator::aggregateProject)
                 .toList();
@@ -59,7 +59,7 @@ public class ProjectReportGenerator
         return new DayImpl(dayRecord.getDate(), dayRecord.getType(), dayRecord.getComment(), projects);
     }
 
-    private String activityProject(final Activity activity)
+    private static String activityProject(final Activity activity)
     {
         return activity.getProject().getProjectId();
     }

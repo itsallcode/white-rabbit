@@ -137,7 +137,7 @@ public class DailyProjectReportViewer
         return treeItem;
     }
 
-    public static class ReportRow
+    public static final class ReportRow
     {
         private final LocalDate date;
         private final DayType dayType;

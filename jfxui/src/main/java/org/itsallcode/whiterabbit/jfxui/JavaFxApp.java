@@ -229,12 +229,10 @@ public class JavaFxApp extends Application
         Platform.runLater(() -> {
             if (primaryStage.isShowing())
             {
-                LOG.debug("Request focus");
                 primaryStage.requestFocus();
             }
             else
             {
-                LOG.debug("Show primary stage");
                 primaryStage.show();
             }
         });
@@ -334,17 +332,20 @@ public class JavaFxApp extends Application
         public void recordUpdated(final DayRecord day)
         {
             final YearMonth month = YearMonth.from(day.getDate());
-            JavaFxUtil.runOnFxApplicationThread(() -> {
-                ensureMonthAvailable(month);
-                if (state.currentMonth.get().getYearMonth().equals(month))
+            JavaFxUtil.runOnFxApplicationThread(() -> recordUpdated(day, month));
+        }
+
+        private void recordUpdated(final DayRecord day, final YearMonth month)
+        {
+            ensureMonthAvailable(month);
+            if (state.currentMonth.get().getYearMonth().equals(month))
+            {
+                state.currentMonth.setValue(day.getMonth());
+                if (daySelected(day))
                 {
-                    state.currentMonth.setValue(day.getMonth());
-                    if (daySelected(day))
-                    {
-                        ui.updateActivities(day);
-                    }
+                    ui.updateActivities(day);
                 }
-            });
+            }
         }
 
         private boolean daySelected(final DayRecord dayRecord)

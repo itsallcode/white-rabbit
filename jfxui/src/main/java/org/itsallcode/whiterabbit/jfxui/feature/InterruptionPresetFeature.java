@@ -76,7 +76,7 @@ public class InterruptionPresetFeature
         appService.addInterruption(appService.getClock().getCurrentDate(), interruption);
     }
 
-    private static class DurationInputDialog extends Dialog<Duration>
+    private static final class DurationInputDialog extends Dialog<Duration>
     {
         private final GridPane grid;
         private final Label label;
@@ -91,27 +91,8 @@ public class InterruptionPresetFeature
             spinner.setMaxWidth(Double.MAX_VALUE);
             spinner.setEditable(true);
 
-            final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-            final UnaryOperator<TextFormatter.Change> filter = change -> {
-                if (change.isContentChange())
-                {
-                    final String newText = change.getControlNewText();
-                    if (newText.isEmpty())
-                    {
-                        return change;
-                    }
-                    final ParsePosition parsePosition = new ParsePosition(0);
-                    numberFormat.parse(newText, parsePosition);
-                    if (parsePosition.getIndex() == 0 ||
-                            parsePosition.getIndex() < newText.length())
-                    {
-                        return null;
-                    }
-                }
-                return change;
-            };
             final TextFormatter<Integer> intFormatter = new TextFormatter<>(
-                    new IntegerStringConverter(), 0, filter);
+                    new IntegerStringConverter(), 0, removeInvalidNumber());
             spinner.getEditor().setTextFormatter(intFormatter);
 
             GridPane.setHgrow(spinner, Priority.ALWAYS);
@@ -147,6 +128,34 @@ public class InterruptionPresetFeature
                 }
                 return Duration.ofMinutes(value);
             });
+        }
+
+        private UnaryOperator<TextFormatter.Change> removeInvalidNumber()
+        {
+            final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
+            return change -> {
+                if (change.isContentChange())
+                {
+                    final String newText = change.getControlNewText();
+                    if (newText.isEmpty())
+                    {
+                        return change;
+                    }
+                    if (parsingFails(numberFormat, newText))
+                    {
+                        return null;
+                    }
+                }
+                return change;
+            };
+        }
+
+        private boolean parsingFails(final NumberFormat numberFormat, final String text)
+        {
+            final ParsePosition parsePosition = new ParsePosition(0);
+            numberFormat.parse(text, parsePosition);
+            return parsePosition.getIndex() == 0 ||
+                    parsePosition.getIndex() < text.length();
         }
 
         private static Label createContentLabel(final String text)
