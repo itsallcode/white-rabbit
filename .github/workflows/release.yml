@@ -1,0 +1,100 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      skip-maven-central:
+        description: "Skip deployment to Maven Central"
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: "bash"
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: false
+    permissions:
+      contents: write # Required for creating GitHub release
+      actions: read # Required for checking build status
+    steps:
+      - name: Checkout the repository
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Set up Maven Central Repository
+        id: configure-maven-central-credentials
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Fail if not running on main branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.setFailed('Not running on main branch, github.ref is ${{ github.ref }}. Please start this workflow only on main')
+
+      - name: Check CI build of this commit succeeded
+        id: check-ci-build-status
+        run: |
+          echo "Commit SHA: $COMMIT_SHA"
+          gh run list --workflow ci-build.yml --branch main --event push --commit $COMMIT_SHA
+          ci_build_status=$(gh run list --workflow ci-build.yml --branch main --event push --commit $COMMIT_SHA --json conclusion --template '{{range .}}{{.conclusion}}{{"\n"}}{{end}}')
+          echo "CI build status at commit $COMMIT_SHA was '$ci_build_status'"
+          if [[ "$ci_build_status" != "success" ]]; then
+            gh run list --workflow ci-build.yml --commit $COMMIT_SHA >> $GITHUB_STEP_SUMMARY
+            echo "Status of CI build for commit $COMMIT_SHA was '$ci_build_status', expected 'success'" >> $GITHUB_STEP_SUMMARY
+            cat $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+      - name: Build project
+        run: ./gradlew clean build --warning-mode all
+
+      - name: Publish to Central Repository
+        if: ${{ ! inputs.skip-maven-central }}
+        run: ./gradlew publish closeAndReleaseRepository --info --warning-mode all
+        env:
+            ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
+            ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_PASSWORD }}
+            ORG_GRADLE_PROJECT_signingKey: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+            ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+
+      - name: Create GitHub Release
+        run: |
+          echo "### GitHub Release" >> "$GITHUB_STEP_SUMMARY"
+          IFS=$'\n' artifacts_array=($ARTIFACTS)
+          echo "#### Attaching Release Artifacts" >> "$GITHUB_STEP_SUMMARY"
+          for file in "${artifacts_array[@]}";
+          do
+              echo "Attaching artifact '$file'"
+              echo "* \`$file\`" >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          release_url=$(gh release create --latest --title "$TITLE" --notes "$NOTES" --target main $TAG "${artifacts_array[@]}")
+          echo "Created release $TAG with title '$TITLE' at $release_url ✅" >> "$GITHUB_STEP_SUMMARY"
+          echo "release-url=$release_url" >> "$GITHUB_OUTPUT"
+
+          # [impl->dsn~release-workflow.create-golang-tags~1]
+          echo "#### Creating Additional Tags" >> "$GITHUB_STEP_SUMMARY"
+          IFS=$'\n' tags_array=($ADDITIONAL_TAGS)
+          for tag in "${tags_array[@]}";
+          do
+              echo "Creating tag '$tag'"
+              git tag "$tag"
+              git push origin "$tag"
+              echo "* \`$tag\`" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+          git fetch --tags origin
+        env:
+          GH_TOKEN: ${{ github.token }}
