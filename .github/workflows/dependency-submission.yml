@@ -1,13 +1,12 @@
 name: Dependency Submission
 
 on:
+  # Only runs on main branch
   push:
-    branches: [ main ]
-  pull_request:         # Temporary for testing
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write # Required for dependency submission
 
 jobs:
   dependency-submission:
