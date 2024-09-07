@@ -64,7 +64,7 @@ Run a single test:
 Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and add it to the `PATH`.
 
 ```sh
-./gradlew jpackage --info -PreleaseVersion=x.y.z
+./gradlew jpackage --info
 ```
 
 ## Deployment
@@ -90,7 +90,7 @@ Add the following to your `~/.gradle/gradle.properties`:
 2. Run the following command:
 
     ```sh
-    ./gradlew clean build publish closeAndReleaseRepository --info -PreleaseVersion=<version>
+    ./gradlew clean build publish closeAndReleaseRepository --info
     ```
 
     The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar`. Snapshots will be available at [oss.sonatype.org](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).

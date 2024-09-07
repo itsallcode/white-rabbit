@@ -10,14 +10,7 @@ plugins {
     id "org.gradle.crypto.checksum" version "1.4.0" apply false
 }
 
-def getProjectVersion() {
-    if(project.hasProperty("releaseVersion")) {
-        return project.property("releaseVersion")
-    }
-    return "1.9.0"
-}
-
-version = getProjectVersion()
+version = "1.9.0"
 group = "org.itsallcode.whiterabbit"
 
 def javaVersion = project.hasProperty('javaVersion') ? project.getProperty('javaVersion') : 21
