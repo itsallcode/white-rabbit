@@ -98,10 +98,6 @@ task run(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     workingDir = rootProject.projectDir
 }
 
-task runJfxui(dependsOn: run, group: 'run') {
-    // deprecated
-}
-
 sourceSets {
     uiTest {
         compileClasspath += sourceSets.main.output
