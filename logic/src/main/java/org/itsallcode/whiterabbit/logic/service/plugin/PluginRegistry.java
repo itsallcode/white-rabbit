@@ -24,7 +24,7 @@ import org.itsallcode.whiterabbit.api.Plugin;
 import org.itsallcode.whiterabbit.logic.Config;
 import org.itsallcode.whiterabbit.logic.service.plugin.origin.PluginOrigin;
 
-class PluginRegistry
+class PluginRegistry implements AutoCloseable
 {
     private static final Logger LOG = LogManager.getLogger(PluginRegistry.class);
 
@@ -144,6 +144,7 @@ class PluginRegistry
         plugins.values().forEach(AppPluginImpl::close);
     }
 
+    @Override
     public void close()
     {
         closeAllPlugins();
