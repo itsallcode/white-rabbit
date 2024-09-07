@@ -85,11 +85,6 @@ jobs:
       run: |
         ./gradlew jpackage --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
 
-    - name: Stop Gradle Daemon
-      run: |
-        ./gradlew -status
-        ./gradlew -stop
-
     - name: Archive native package for ${{ runner.os }}
       uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
