@@ -57,7 +57,9 @@ jobs:
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         name: executable-jar
-        path: jfxui/build/libs/white-rabbit-fx-*.jar
+        path: |
+          jfxui/build/libs/white-rabbit-fx-*.jar
+          jfxui/build/libs-checksums/*
         if-no-files-found: error
 
     - name: Archive test reports for ${{ matrix.os }} using Java ${{ matrix.java }}
@@ -79,7 +81,7 @@ jobs:
     - name: Build native package for ${{ runner.os }} using Java ${{ matrix.java }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
-        ./gradlew jpackage createChecksums --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
+        ./gradlew jpackage --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
 
     - name: Stop Gradle Daemon
       run: |
@@ -98,15 +100,9 @@ jobs:
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
         name: packages-${{ runner.os }}
-        path: jfxui/build/jpackage-dist/*
-
-    - name: Archive checksums for ${{ runner.os }}
-      uses: actions/upload-artifact@v4
-      if: ${{ env.DEFAULT_JAVA == matrix.java }}
-      with:
-        name: checksums-${{ runner.os }}
-        path: jfxui/build/generatedChecksums/*
-
+        path: |
+          jfxui/build/jpackage-dist/*
+          jfxui/build/jpackage-checksums/*
 
   build:
     needs: matrix-build
