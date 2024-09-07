@@ -13,12 +13,16 @@ project_version=$(./gradlew properties --console=plain --quiet | grep "^version:
 readonly project_version
 echo "Read project version '$project_version' from Gradle project"
 
+release_artifacts=$(find build/release-artifacts -type f)
+readonly release_artifacts
 readonly title="Release $project_version"
 readonly tag="$project_version"
 echo "Creating release:"
-echo "Git tag : $tag"
-echo "Title   : $title"
+echo "Git tag  : $tag"
+echo "Title    : $title"
+echo "Artifacts: $release_artifacts"
 
-release_url=$(gh release create --draft --latest --title "$title" --target main "$tag")
+# shellcheck disable=SC2086
+release_url=$(gh release create --draft --latest --title "$title" --target main "$tag" $release_artifacts)
 readonly release_url
 echo "Release URL: $release_url"

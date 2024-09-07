@@ -9,8 +9,57 @@ on:
         default: false
 
 jobs:
+
+  build-native-packages:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+    env:
+      DEFAULT_OS: 'ubuntu-latest'
+    runs-on: ${{ matrix.os }}
+    permissions:
+        contents: read
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: ./gradlew build jpackage --info --warning-mode all -PskipFlakyTests=true
+
+      - name: Archive executable JAR
+        uses: actions/upload-artifact@v4
+        if: ${{ env.DEFAULT_OS == matrix.os }}
+        with:
+          name: executable-jar
+          retention-days: 5
+          if-no-files-found: error
+          path: |
+            jfxui/build/libs/white-rabbit-fx-*.jar
+            jfxui/build/libs-checksums/*
+
+      - name: Archive native package for ${{ runner.os }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-package-${{ runner.os }}
+          retention-days: 5
+          if-no-files-found: error
+          path: |
+            jfxui/build/jpackage-dist/*
+            jfxui/build/jpackage-checksums/*
+
   release:
     runs-on: ubuntu-latest
+    needs: build-native-packages
     defaults:
       run:
         shell: "bash"
@@ -22,10 +71,8 @@ jobs:
       actions: read # Required for checking build status
     steps:
       - name: Checkout the repository
-        id: checkout
         uses: actions/checkout@v4
-      - name: Set up Maven Central Repository
-        id: configure-maven-central-credentials
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
@@ -41,25 +88,6 @@ jobs:
           script: |
             core.setFailed('Not running on main branch, github.ref is ${{ github.ref }}. Please start this workflow only on main')
 
-      - name: Check CI build of this commit succeeded
-        id: check-ci-build-status
-        run: |
-          echo "Commit SHA: $COMMIT_SHA"
-          gh run list --workflow ci-build.yml --branch main --event push --commit $COMMIT_SHA
-          ci_build_status=$(gh run list --workflow ci-build.yml --branch main --event push --commit $COMMIT_SHA --json conclusion --template '{{range .}}{{.conclusion}}{{"\n"}}{{end}}')
-          echo "CI build status at commit $COMMIT_SHA was '$ci_build_status'"
-          if [[ "$ci_build_status" != "success" ]]; then
-            gh run list --workflow ci-build.yml --commit $COMMIT_SHA >> $GITHUB_STEP_SUMMARY
-            echo "Status of CI build for commit $COMMIT_SHA was '$ci_build_status', expected 'success'" >> $GITHUB_STEP_SUMMARY
-            cat $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
-        env:
-          COMMIT_SHA: ${{ github.sha }}
-          GH_TOKEN: ${{ github.token }}
-      - name: Build project
-        run: ./gradlew clean build --warning-mode all
-
       - name: Publish to Central Repository
         if: ${{ ! inputs.skip-maven-central }}
         run: ./gradlew publish closeAndReleaseRepository --info --warning-mode all
@@ -69,32 +97,17 @@ jobs:
             ORG_GRADLE_PROJECT_signingKey: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
             ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
 
-      - name: Create GitHub Release
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build/release-artifacts
+
+      - name: List artifacts
         run: |
-          echo "### GitHub Release" >> "$GITHUB_STEP_SUMMARY"
-          IFS=$'\n' artifacts_array=($ARTIFACTS)
-          echo "#### Attaching Release Artifacts" >> "$GITHUB_STEP_SUMMARY"
-          for file in "${artifacts_array[@]}";
-          do
-              echo "Attaching artifact '$file'"
-              echo "* \`$file\`" >> "$GITHUB_STEP_SUMMARY"
-          done
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          release_url=$(gh release create --latest --title "$TITLE" --notes "$NOTES" --target main $TAG "${artifacts_array[@]}")
-          echo "Created release $TAG with title '$TITLE' at $release_url ✅" >> "$GITHUB_STEP_SUMMARY"
-          echo "release-url=$release_url" >> "$GITHUB_OUTPUT"
+          find build/release-artifacts -type f
+          ls -lh build/release-artifacts
 
-          # [impl->dsn~release-workflow.create-golang-tags~1]
-          echo "#### Creating Additional Tags" >> "$GITHUB_STEP_SUMMARY"
-          IFS=$'\n' tags_array=($ADDITIONAL_TAGS)
-          for tag in "${tags_array[@]}";
-          do
-              echo "Creating tag '$tag'"
-              git tag "$tag"
-              git push origin "$tag"
-              echo "* \`$tag\`" >> "$GITHUB_STEP_SUMMARY"
-          done
-
-          git fetch --tags origin
+      - name: Create GitHub Release
+        run: ./.github/workflows/github_release.sh
         env:
           GH_TOKEN: ${{ github.token }}
