@@ -16,7 +16,7 @@ echo "Read project version '$project_version' from Gradle project"
 release_artifacts=$(find build/release-artifacts -type f)
 readonly release_artifacts
 readonly title="Release $project_version"
-readonly tag="$project_version"
+readonly tag="v$project_version"
 echo "Creating release:"
 echo "Git tag  : $tag"
 echo "Title    : $title"
