@@ -1,0 +1,113 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      skip-maven-central:
+        description: "Skip deployment to Maven Central"
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+
+  build-native-packages:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+    env:
+      DEFAULT_OS: 'ubuntu-latest'
+    runs-on: ${{ matrix.os }}
+    permissions:
+        contents: read
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: ./gradlew build jpackage --info --warning-mode all -PskipFlakyTests=true
+
+      - name: Archive executable JAR
+        uses: actions/upload-artifact@v4
+        if: ${{ env.DEFAULT_OS == matrix.os }}
+        with:
+          name: executable-jar
+          retention-days: 5
+          if-no-files-found: error
+          path: |
+            jfxui/build/libs/white-rabbit-fx-*.jar
+            jfxui/build/libs-checksums/*
+
+      - name: Archive native package for ${{ runner.os }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-package-${{ runner.os }}
+          retention-days: 5
+          if-no-files-found: error
+          path: |
+            jfxui/build/jpackage-dist/*
+            jfxui/build/jpackage-checksums/*
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build-native-packages
+    defaults:
+      run:
+        shell: "bash"
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: false
+    permissions:
+      contents: write # Required for creating GitHub release
+      actions: read # Required for checking build status
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+#      - name: Fail if not running on main branch
+#        if: ${{ github.ref != 'refs/heads/main' }}
+#        uses: actions/github-script@v7
+#        with:
+#          script: |
+#            core.setFailed('Not running on main branch, github.ref is ${{ github.ref }}. Please start this workflow only on main')
+
+#      - name: Publish to Central Repository
+#        if: ${{ ! inputs.skip-maven-central }}
+#        run: ./gradlew publish closeAndReleaseRepository --info --warning-mode all
+#        env:
+#            ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
+#            ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_PASSWORD }}
+#            ORG_GRADLE_PROJECT_signingKey: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+#            ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build/release-artifacts
+
+      - name: List artifacts
+        run: |
+          find build/release-artifacts -type f
+          ls -lh build/release-artifacts
+
+      - name: Create GitHub Release
+        run: ./.github/workflows/github_release.sh
+        env:
+          GH_TOKEN: ${{ github.token }}

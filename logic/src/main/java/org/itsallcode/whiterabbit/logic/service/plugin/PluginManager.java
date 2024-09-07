@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.itsallcode.whiterabbit.api.features.PluginFeature;
 import org.itsallcode.whiterabbit.logic.Config;
 
-public class PluginManager
+public class PluginManager implements AutoCloseable
 {
     private static final Logger LOG = LogManager.getLogger(PluginManager.class);
     private final PluginRegistry pluginRegistry;
@@ -65,6 +65,7 @@ public class PluginManager
         return plugins.get(0).getFeature(featureType);
     }
 
+    @Override
     public void close()
     {
         pluginRegistry.close();

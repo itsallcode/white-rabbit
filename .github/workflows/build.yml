@@ -36,9 +36,9 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
-        cache: 'gradle'
 
-    - uses: gradle/wrapper-validation-action@v2
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
 
     - name: Cache SonarQube packages
       uses: actions/cache@v4
@@ -57,7 +57,10 @@ jobs:
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         name: executable-jar
-        path: jfxui/build/libs/white-rabbit-fx-*.jar
+        retention-days: 5
+        path: |
+          jfxui/build/libs/white-rabbit-fx-*.jar
+          jfxui/build/libs-checksums/*
         if-no-files-found: error
 
     - name: Archive test reports for ${{ matrix.os }} using Java ${{ matrix.java }}
@@ -65,6 +68,7 @@ jobs:
       if: ${{ always() }}
       with:
         name: test-reports-${{ matrix.os }}-java-${{ matrix.java }}
+        retention-days: 5
         path: "**/build/reports/tests/*/**"
         if-no-files-found: error
   
@@ -79,34 +83,23 @@ jobs:
     - name: Build native package for ${{ runner.os }} using Java ${{ matrix.java }}
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       run: |
-        ./gradlew jpackage createChecksums --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
+        ./gradlew jpackage --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
 
     - name: Stop Gradle Daemon
       run: |
         ./gradlew -status
         ./gradlew -stop
 
-    - name: Archive test reports for ${{ runner.os }}
-      uses: actions/upload-artifact@v4
-      if: ${{ always() }}
-      with:
-        name: test-reports-${{ runner.os }}
-        path: "**/build/reports/tests/*/**"
-
     - name: Archive native package for ${{ runner.os }}
       uses: actions/upload-artifact@v4
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
         name: packages-${{ runner.os }}
-        path: jfxui/build/jpackage-dist/*
-
-    - name: Archive checksums for ${{ runner.os }}
-      uses: actions/upload-artifact@v4
-      if: ${{ env.DEFAULT_JAVA == matrix.java }}
-      with:
-        name: checksums-${{ runner.os }}
-        path: jfxui/build/generatedChecksums/*
-
+        retention-days: 5
+        path: |
+          jfxui/build/jpackage-dist/*
+          jfxui/build/jpackage-checksums/*
+        if-no-files-found: error
 
   build:
     needs: matrix-build

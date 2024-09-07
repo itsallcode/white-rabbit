@@ -34,6 +34,17 @@ shadowJar {
     archiveVersion.set(project.version.toString())
 }
 
+task createSha512ChecksumExecutableJar(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.shadowJar]) {
+    files = files(tasks.shadowJar.outputs.files)
+    outputDir = new File(project.buildDir, "libs-checksums")
+    algorithm = org.gradle.crypto.checksum.Checksum.Algorithm.SHA512
+    appendFileNameToChecksum = true
+}
+
+tasks.shadowJar.configure {
+    finalizedBy createSha512ChecksumExecutableJar
+}
+
 ext {
     mainClass = 'org.itsallcode.whiterabbit.jfxui.App'
 }
@@ -96,10 +107,6 @@ task run(type: JavaExec, dependsOn: shadowJar, group: 'run') {
     classpath = shadowJar.outputs.files
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
-}
-
-task runJfxui(dependsOn: run, group: 'run') {
-    // deprecated
 }
 
 sourceSets {
@@ -182,10 +189,15 @@ tasks.jpackage {
     }
 }
 
-task createChecksums(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.jpackage, tasks.shadowJar]) {
-    files = files(tasks.shadowJar.outputs.files, fileTree(tasks.jpackage.destination) {
+task createSha512ChecksumsNativePackage(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.shadowJar]) {
+    files = files(fileTree(tasks.jpackage.destination) {
         include '*'
     })
-    outputDir = new File(project.buildDir, "generatedChecksums")
+    outputDir = new File(project.buildDir, "jpackage-checksums")
     algorithm = org.gradle.crypto.checksum.Checksum.Algorithm.SHA512
+    appendFileNameToChecksum = true
+}
+
+tasks.jpackage.configure {
+    finalizedBy createSha512ChecksumsNativePackage
 }
