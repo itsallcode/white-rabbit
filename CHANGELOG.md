@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.10.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/12?closed=1)
 
-## [1.9.0] - 2024-??-??
+## [1.9.0] - 2024-09-08
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.9.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/11?closed=1)
 
@@ -41,6 +41,11 @@ This release requires Java 21.
   * UI-Tests run only in non-headless mode due to restrictions with the latest JavaFX version, see #261
 * [#132](https://github.com/itsallcode/white-rabbit/issues/132): Fix display of negative zero duration
 * [#272](https://github.com/itsallcode/white-rabbit/pull/272): Fix startup under Linux
+
+### Refactoring
+
+* [#280](https://github.com/itsallcode/white-rabbit/pull/280) & [#281](https://github.com/itsallcode/white-rabbit/pull/281): Upgrade dependencies and enable automatic release
+* [#278](https://github.com/itsallcode/white-rabbit/pull/278): Code cleanup
 
 ## [1.8.0] - 2022-01-22
 

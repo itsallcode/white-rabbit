@@ -66,35 +66,21 @@ Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and 
 ```sh
 ./gradlew jpackage --info
 ```
+### Creating a Release
 
-## Deployment
+#### Preparations
 
-This will build WhiteRabbit and publish the plugin api to Maven Central.
+1. Checkout the `main` branch, create a new branch.
+2. Update version number in `build.gradle` and `README.md`.
+3. Add changes in new version to `CHANGELOG.md`.
+4. Commit and push changes.
+5. Create a new pull request, have it reviewed and merged to `main`.
 
-### Initial setup
+#### Perform the Release
 
-Add the following to your `~/.gradle/gradle.properties`:
-
-    ```properties
-    ossrhUsername=<your maven central username>
-    ossrhPassword=<your maven central passwort>
-
-    signing.keyId=<gpg key id (last 8 chars)>
-    signing.password=<gpg key password>
-    signing.secretKeyRingFile=<path to secret keyring file>
-    ```
-
-### <a name="build_and_deploy"></a>Build and deploy
-
-1. Make sure the [Changelog](../CHANGELOG.md) is updated
-2. Run the following command:
-
-    ```sh
-    ./gradlew clean build publish closeAndReleaseRepository --info
-    ```
-
-    The release will be written to `jfxui/build/libs/white-rabbit-fx-<version>.jar`. Snapshots will be available at [oss.sonatype.org](https://oss.sonatype.org/content/repositories/snapshots/org/itsallcode/whiterabbit/).
-
-3. Create a new [release](https://github.com/itsallcode/white-rabbit/releases) in GitHub and attach the built jar.
-4. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
-5. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
+1. Start the release workflow
+  * Run command `gh workflow run release.yml --repo itsallcode/white-rabbit --ref main`
+  * or go to [GitHub Actions](https://github.com/itsallcode/white-rabbit/actions/workflows/release.yml) and start the `release.yml` workflow on branch `main`.
+2. Update title and description of the newly created [GitHub release](https://github.com/itsallcode/white-rabbit/releases).
+3. Close the [milestone](https://github.com/itsallcode/white-rabbit/milestones) in GitHub.
+4. After some time the release will be available at [Maven Central](https://repo1.maven.org/maven2/org/itsallcode/whiterabbit/).
