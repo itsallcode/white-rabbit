@@ -104,3 +104,12 @@ tasks.named("dependencyUpdates").configure {
     isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)
   }
 }
+
+nexusPublishing {
+    packageGroup = project.group
+    repositories {
+        sonatype {
+            stagingProfileId = "546ea6ce74787e"
+        }
+    }
+}

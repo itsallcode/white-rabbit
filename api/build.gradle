@@ -54,14 +54,5 @@ signing {
     def signingKey = findProperty("signingKey")
     def signingPassword = findProperty("signingPassword")
     useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.mavenJava
-}
-
-nexusPublishing {
-    packageGroup = project.group
-    repositories {
-        sonatype {
-            stagingProfileId = "546ea6ce74787e"
-        }
-    }
+    sign(publishing.publications["mavenJava"])
 }
