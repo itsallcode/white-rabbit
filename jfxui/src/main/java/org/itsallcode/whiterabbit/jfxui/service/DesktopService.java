@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 public interface DesktopService
 {
+
     static DesktopService create()
     {
         final Logger log = LogManager.getLogger(DesktopService.class);

@@ -24,10 +24,10 @@ public class SplashScreenLoader extends Preloader
 {
     private static final Logger LOG = LogManager.getLogger(SplashScreenLoader.class);
 
-    private Stage splashScreen;
+    private Stage splashScreen = null;
 
     @Override
-    public void start(Stage stage)
+    public void start(final Stage stage)
     {
         splashScreen = stage;
         splashScreen.initStyle(StageStyle.UNDECORATED);
@@ -49,7 +49,7 @@ public class SplashScreenLoader extends Preloader
         return new Scene(root, 300, 300);
     }
 
-    private Image loadImage(String resourceName)
+    private Image loadImage(final String resourceName)
     {
         try (InputStream iconStream = getClass().getResourceAsStream(resourceName))
         {
@@ -62,11 +62,10 @@ public class SplashScreenLoader extends Preloader
     }
 
     @Override
-    public void handleApplicationNotification(PreloaderNotification notification)
+    public void handleApplicationNotification(final PreloaderNotification notification)
     {
-        if (notification instanceof ProgressPreloaderNotification)
+        if (notification instanceof final ProgressPreloaderNotification progressNotification)
         {
-            final ProgressPreloaderNotification progressNotification = (ProgressPreloaderNotification) notification;
             LOG.debug("Preloader application notification: {}", progressNotification.getNotificationType());
             if (progressNotification.getNotificationType() == Type.STARTUP_FINISHED)
             {
@@ -81,7 +80,7 @@ public class SplashScreenLoader extends Preloader
     }
 
     @Override
-    public boolean handleErrorNotification(ErrorNotification info)
+    public boolean handleErrorNotification(final ErrorNotification info)
     {
         splashScreen.hide();
         final Alert alert = createAlert(info);
@@ -89,7 +88,7 @@ public class SplashScreenLoader extends Preloader
         return false;
     }
 
-    private Alert createAlert(ErrorNotification info)
+    private static Alert createAlert(final ErrorNotification info)
     {
         final Throwable exception = info.getCause();
         if (exception instanceof OtherInstanceAlreadyRunningException)
@@ -97,7 +96,7 @@ public class SplashScreenLoader extends Preloader
             final String message = "Another instance of WhiteRabbit is already running.\n\n" + exception.getMessage();
             return new Alert(AlertType.WARNING, message, ButtonType.OK);
         }
-        final String location = info.getLocation() != null ? info.getLocation() + "\n" : "";
+        final String location = info.getLocation() != null ? (info.getLocation() + "\n") : "";
         final String message = "Error during initialization: " + location + info.getDetails() + "\n" + exception;
         LOG.error(message, exception);
         return new Alert(AlertType.ERROR, message, ButtonType.OK);

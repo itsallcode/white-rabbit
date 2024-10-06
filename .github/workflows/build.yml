@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         java: [21]
-        os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-latest', 'windows-latest'] # 'macos-latest' not supported at the moment
     env:
       DEFAULT_JAVA: 21
       DEFAULT_OS: 'ubuntu-latest'
@@ -59,8 +59,8 @@ jobs:
         name: executable-jar
         retention-days: 5
         path: |
-          jfxui/build/libs/white-rabbit-fx-*.jar
-          jfxui/build/libs-checksums/*
+          product/build/libs/white-rabbit-fx-*.jar
+          product/build/libs-checksums/*
         if-no-files-found: error
 
     - name: Archive test reports for ${{ matrix.os }} using Java ${{ matrix.java }}
@@ -92,8 +92,8 @@ jobs:
         name: packages-${{ runner.os }}
         retention-days: 5
         path: |
-          jfxui/build/jpackage-dist/*
-          jfxui/build/jpackage-checksums/*
+          product/build/jpackage-dist/*
+          product/build/jpackage-checksums/*
         if-no-files-found: error
 
   build:

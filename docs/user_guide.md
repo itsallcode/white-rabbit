@@ -137,47 +137,7 @@ WhiteRabbit logs to stdout and to `$data/logs/white-rabbit.log` where `$data` is
 
 ## <a name="plugins"></a>Using Plugins
 
-The default plugins pmsmart, holidays-calculator and csv are already included in the download packages. To install third-party plugins, copy them to `$HOME/.whiterabbit/plugins/`.
-
-### <a name="pmsmart"></a>Using the PM-Smart Exporter Plugin
-
-#### Requirements for Using the PM-Smart Exporter Plugin
-
-* Microsoft Edge browser with password-less access to pm-smart
-
-#### Setup and usage
-
-1. Create a project configuration as described [above](#project_config). Make sure to use the same IDs for `costCarrier` as in pm-smart.
-1. Add the base URL of your pm-smart server to the configuration file:
-
-    ```properties
-    pmsmart.baseurl = http://my-pmsmart.example.com
-    ```
-
-1. In pm-smart open the week view ("Wochenansicht") and add favorites for all projects you use. The export will only work for projects added as favorite.
-1. Start the export in WhiteRabbit:
-
-    1. Select the month that you want to export
-    1. Select menu Reports > Project report
-    1. Click button "Export to pmsmart"
-
-#### Optional configuration settings
-
-Optionally you can configure pmsmart plugin to skip transfer of a comment for each activity.
-
-For each activity in WhiteRabbit you can enter a comment. By default pmsmart plugin transfers these comment to pm-smart. As the web ui is quite slow, transfer of comments can take a while. If you want to speed-up pm-smart export by skipping transfer of comments you can add an optional property to WhiteRabbit configuration file:
-
-```properties
-pmsmart.transfer.comments = false
-```
-
-Optionally you can configure pmsmart plugin to clear durations for all other projects, not matching any activity recorded in WhiteRabbit.
-
-For each day pm-smart plugin by default transfers the durations of all activities entered into WhiteRabbit. If pm-smart contains durations for other projects then pm-smart plugin does not overwrite these. This will especially happen if users export their time recordings for a particular month multiple times and change the selection of activities in between. In order to ensure consistent data in pm-smart you can add an optional property to WhiteRabbit configuration file:
-
-```properties
-pmsmart.clear_other_projects = true
-```
+The default plugins `holidays-calculator` and `csv` are already included in the download packages. To install third-party plugins, copy them to `$HOME/.whiterabbit/plugins/`.
 
 ### <a name="holidays_calculator"></a>Using the Holidays Calculator Plugin
 

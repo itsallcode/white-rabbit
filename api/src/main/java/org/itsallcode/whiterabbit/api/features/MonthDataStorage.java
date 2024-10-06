@@ -59,7 +59,7 @@ public interface MonthDataStorage extends PluginFeature
     /**
      * A {@link ModelFactory} allows creating new instances of the data model.
      */
-    public interface ModelFactory
+    interface ModelFactory
     {
         /**
          * Create a new {@link MonthData} instance.

@@ -4,7 +4,7 @@ import org.itsallcode.whiterabbit.jfxui.UiActions;
 
 public interface DesktopIntegration
 {
-    public static DesktopIntegration getInstance()
+    static DesktopIntegration getInstance()
     {
         return StaticInstanceHolder.getInstance();
     }

@@ -1,0 +1,170 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+    id 'org.panteleyev.jpackageplugin'
+    id 'org.gradle.crypto.checksum'
+}
+
+dependencies {
+    runtimeOnly project(':jfxui')
+    runtimeOnly project(':plugins').subprojects
+}
+
+shadowJar {
+    mergeServiceFiles()
+    archiveBaseName.set('white-rabbit-fx')
+    archiveClassifier.set(null)
+    archiveVersion.set(project.version.toString())
+}
+
+task createSha512ChecksumExecutableJar(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.shadowJar]) {
+    files = files(tasks.shadowJar.outputs.files)
+    outputDir = new File(project.buildDir, "libs-checksums")
+    algorithm = org.gradle.crypto.checksum.Checksum.Algorithm.SHA512
+    appendFileNameToChecksum = true
+}
+
+tasks.shadowJar.configure {
+    finalizedBy createSha512ChecksumExecutableJar
+}
+
+ext {
+    mainClass = project(':jfxui').ext.mainClass
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': project.mainClass
+    }
+}
+
+build.dependsOn shadowJar
+
+def jPackageDir = "$buildDir/jpackage-jars"
+
+task runProduct(type: JavaExec, dependsOn: [shadowJar], group: 'run') {
+    group = "run"
+    classpath = shadowJar.outputs.files
+    mainClass = project.mainClass
+    workingDir = rootProject.projectDir
+}
+
+task runWithPlugins(type: JavaExec, group: 'run') {
+    group = "run"
+    mainClass = project.mainClass
+    workingDir = rootProject.projectDir
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+def getUnwantedPlatforms = {
+    OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+    if(os.isLinux()) {
+        return ["mac", "win"]
+    }
+    if(os.isWindows()) {
+        return ["mac", "linux"]
+    }
+    if(os.isMacOsX()) {
+        return ["linux", "win"]
+    }
+}
+
+task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
+    def unwantedPlatforms = getUnwantedPlatforms()
+    from(configurations.runtimeClasspath.filter { file -> 
+        unwantedPlatforms.every { platform -> !file.name.endsWith("-${platform}.jar") }
+    }).into jPackageDir
+    from(tasks.jar.outputs.files).into jPackageDir
+}
+
+sourceSets {
+    uiTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    uiTestImplementation.extendsFrom testImplementation
+    uiTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+task uiTest(type: Test, group: 'verification') {
+    description = 'Runs integration tests.'
+
+    useJUnitPlatform {
+        if(project.hasProperty('skipFlakyTests') && project.property('skipFlakyTests') == 'true') {
+            excludeTags 'FLAKY'
+        }
+    }
+
+    forkEvery 5
+    jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:+EnableDynamicAgentLoading'
+
+    if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
+        systemProperty 'java.awt.headless', 'true'
+        systemProperty 'testfx.headless', 'true'
+        systemProperty 'testfx.robot', 'glass'
+        systemProperty 'glass.platform', 'Monocle'
+        systemProperty 'monocle.platform', 'Headless'
+    }
+
+    systemProperty 'testfx.launch.timeout', '60000'
+    systemProperty 'testfx.setup.timeout', '30000'
+
+    testClassesDirs = sourceSets.uiTest.output.classesDirs
+    classpath = sourceSets.uiTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn uiTest
+
+tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jacoco/*.exec")
+
+tasks.jpackage {
+    dependsOn("copyJPackageDependencies")
+
+    input = jPackageDir
+    destination = "$buildDir/jpackage-dist"
+
+    appName = "WhiteRabbit"
+    vendor = '"It\'s all code"'
+    copyright = '"Copyright (C) 2024 Christoph Pirkl <christoph at users.sourceforge.net>"'
+    licenseFile = "${rootProject.rootDir}/LICENSE"
+    appDescription = '"A time recording tool"'
+    icon = "${project(':jfxui').projectDir}/src/main/resources/icon.png"
+
+    mainJar = tasks.jar.archiveFileName.get()
+    mainClass = project.mainClass
+
+    verbose = false
+    arguments = []
+    javaOptions = ["-Dfile.encoding=UTF-8"]
+    additionalParameters = ["--about-url", "https://github.com/itsallcode/white-rabbit/blob/main/README.md"]
+    windows {
+        winConsole = false
+        winPerUserInstall = true
+        winMenu = true
+        winMenuGroup = "Time Recording"
+        winShortcut = true
+        icon = "${projectDir}/src/main/resources/icon.ico"
+    }
+
+    mac {
+        macPackageIdentifier = "org.itsallcode.white-rabbit"
+        macPackageName = "WhiteRabbit"
+        icon = "${projectDir}/src/main/resources/icon.icns"
+    }
+}
+
+task createSha512ChecksumsNativePackage(type: org.gradle.crypto.checksum.Checksum, dependsOn: [tasks.shadowJar]) {
+    files = files(fileTree(tasks.jpackage.destination) {
+        include '*'
+    })
+    outputDir = new File(project.buildDir, "jpackage-checksums")
+    algorithm = org.gradle.crypto.checksum.Checksum.Algorithm.SHA512
+    appendFileNameToChecksum = true
+}
+
+tasks.jpackage.configure {
+    finalizedBy createSha512ChecksumsNativePackage
+}

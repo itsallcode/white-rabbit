@@ -14,13 +14,13 @@ class RealDesktopService implements DesktopService
     private static final Logger LOG = LogManager.getLogger(RealDesktopService.class);
     private final Desktop desktop;
 
-    RealDesktopService(Desktop desktop)
+    RealDesktopService(final Desktop desktop)
     {
         this.desktop = desktop;
     }
 
     @Override
-    public void open(Path file)
+    public void open(final Path file)
     {
         SwingUtil.invokeInAwtEventQueue(() -> {
             LOG.info("Opening file {} with default application", file);

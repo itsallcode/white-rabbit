@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import javafx.application.Platform;
 
-public class JavaFxUtil
+public final class JavaFxUtil
 {
     private JavaFxUtil()
     {
