@@ -7,13 +7,13 @@ import javafx.util.StringConverter;
 public class DayTypeStringConverter extends StringConverter<DayType>
 {
     @Override
-    public String toString(DayType object)
+    public String toString(final DayType object)
     {
         return object != null ? object.name() : null;
     }
 
     @Override
-    public DayType fromString(String string)
+    public DayType fromString(final String string)
     {
         return DayType.valueOf(string);
     }

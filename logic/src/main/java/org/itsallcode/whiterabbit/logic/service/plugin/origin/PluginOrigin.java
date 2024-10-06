@@ -28,7 +28,7 @@ public abstract class PluginOrigin implements AppPluginOrigin
 
     private static ClassLoader getBaseClassLoader()
     {
-        return PluginOrigin.class.getClassLoader();
+        return Thread.currentThread().getContextClassLoader();
     }
 
     private static ClassLoader createClassLoader(final Path jar)

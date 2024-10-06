@@ -33,7 +33,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class UiActions
+public final class UiActions
 {
     private static final Logger LOG = LogManager.getLogger(UiActions.class);
 
@@ -95,7 +95,7 @@ public class UiActions
         openFileWithDefaultProgram(directory);
     }
 
-    private void createDir(final Path directory)
+    private static void createDir(final Path directory)
     {
         try
         {
@@ -195,14 +195,14 @@ public class UiActions
         return "White Rabbit version " + properties.getVersion() + " (" + properties.getBuildDate() + ")";
     }
 
-    private String formatSystemPropertyValues(final Map<String, String> properties)
+    private static String formatSystemPropertyValues(final Map<String, String> properties)
     {
         return properties.entrySet().stream() //
                 .map(entry -> entry.getKey() + ": " + System.getProperty(entry.getValue())) //
                 .collect(joining("\n"));
     }
 
-    private Map<String, String> getProperties()
+    private static Map<String, String> getProperties()
     {
         final Map<String, String> properties = new LinkedHashMap<>();
         properties.put("Java Vendor", "java.vendor");
