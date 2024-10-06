@@ -8,6 +8,7 @@ include 'logic'
 include 'jfxui'
 
 include 'api'
+include 'product'
 include 'plugins'
 include 'plugins:demo'
 include 'plugins:holiday-calculator'

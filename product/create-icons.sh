@@ -7,7 +7,7 @@ set -o pipefail
 # See https://www.codingforentrepreneurs.com/blog/create-icns-icons-for-macos-apps/
 
 base_dir="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-icon="$base_dir/src/main/resources/icon.png"
+icon="$base_dir/../jfxui/src/main/resources/icon.png"
 output_icons="$base_dir/src/main/resources/icon.icns"
 
 iconset_dir="$base_dir/build/icon.iconset"
