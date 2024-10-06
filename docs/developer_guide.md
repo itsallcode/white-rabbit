@@ -20,7 +20,7 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 # To skip unit and ui-tests, run
 ./gradlew build installPlugins -x test -x uiTest
 # Run
-java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
+java -jar product/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 
 # Build and run, loading plugins from $HOME/.whiterabbit/plugins/
 ./gradlew run
