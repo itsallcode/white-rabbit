@@ -4,7 +4,7 @@ import java.awt.Desktop;
 
 import org.itsallcode.whiterabbit.jfxui.OsCheck;
 
-class StaticInstanceHolder
+final class StaticInstanceHolder
 {
     private static DesktopIntegration instance;
 
@@ -26,7 +26,7 @@ class StaticInstanceHolder
     {
         private final OsCheck osCheck;
 
-        InstanceFactory(OsCheck osCheck)
+        InstanceFactory(final OsCheck osCheck)
         {
             this.osCheck = osCheck;
         }

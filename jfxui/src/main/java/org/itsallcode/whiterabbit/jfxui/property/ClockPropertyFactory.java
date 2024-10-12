@@ -14,7 +14,7 @@ import org.itsallcode.whiterabbit.logic.service.scheduling.Trigger;
 
 import javafx.beans.property.SimpleObjectProperty;
 
-public class ClockPropertyFactory
+public final class ClockPropertyFactory
 {
     private static final Logger LOG = LogManager.getLogger(ClockPropertyFactory.class);
 

@@ -9,14 +9,14 @@ public class DelegatingChangeListener<T> implements ChangeListener<T>
     private final ChangeListener<T> delegate;
     private final BooleanProperty currentlyUpdating;
 
-    public DelegatingChangeListener(ChangeListener<T> delegate, BooleanProperty currentlyUpdating)
+    public DelegatingChangeListener(final ChangeListener<T> delegate, final BooleanProperty currentlyUpdating)
     {
         this.delegate = delegate;
         this.currentlyUpdating = currentlyUpdating;
     }
 
     @Override
-    public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue)
+    public void changed(final ObservableValue<? extends T> observable, final T oldValue, final T newValue)
     {
         if (!currentlyUpdating.get())
         {

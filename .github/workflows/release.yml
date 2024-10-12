@@ -52,8 +52,8 @@ jobs:
           retention-days: 5
           if-no-files-found: error
           path: |
-            jfxui/build/libs/white-rabbit-fx-*.jar
-            jfxui/build/libs-checksums/*
+            product/build/libs/white-rabbit-fx-*.jar
+            product/build/libs-checksums/*
 
       - name: Archive native package for ${{ runner.os }}
         uses: actions/upload-artifact@v4
@@ -62,8 +62,8 @@ jobs:
           retention-days: 5
           if-no-files-found: error
           path: |
-            jfxui/build/jpackage-dist/*
-            jfxui/build/jpackage-checksums/*
+            product/build/jpackage-dist/*
+            product/build/jpackage-checksums/*
 
   release:
     runs-on: ubuntu-latest

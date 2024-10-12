@@ -20,7 +20,7 @@ public enum DayType
 
     private final boolean workDay;
 
-    private DayType(final boolean workDay)
+    DayType(final boolean workDay)
     {
         this.workDay = workDay;
     }

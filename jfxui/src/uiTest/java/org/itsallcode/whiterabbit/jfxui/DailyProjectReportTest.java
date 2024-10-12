@@ -50,7 +50,7 @@ class DailyProjectReportTest extends JavaFxAppUiTestBase
     {
         time().tickSeparateMinutes(2);
         final DailyProjectReportWindow report = app().openDailyProjectReport();
-        report.assertExportButtons("Export to demo", "Export to pmsmart");
+        report.assertExportButtons("Export to demo", "Export to csv");
         report.closeViaEscKey();
     }
 
@@ -72,7 +72,7 @@ class DailyProjectReportTest extends JavaFxAppUiTestBase
 
     @Override
     @Start
-    void start(Stage stage)
+    void start(final Stage stage)
     {
         setLocale(Locale.GERMANY);
         setInitialTime(Instant.parse("2007-12-03T10:15:30.20Z"));

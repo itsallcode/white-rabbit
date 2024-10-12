@@ -20,7 +20,7 @@ echo "data = $HOME/time-recording-data/" > $HOME/.whiterabbit.properties
 # To skip unit and ui-tests, run
 ./gradlew build installPlugins -x test -x uiTest
 # Run
-java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
+java -jar product/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 
 # Build and run, loading plugins from $HOME/.whiterabbit/plugins/
 ./gradlew run
@@ -28,6 +28,9 @@ java -jar jfxui/build/libs/white-rabbit-fx-<version>[-SNAPSHOT].jar
 # Build and run including plugins. Useful when developing plugins.
 # Make sure to remove unwanted plugins from $HOME/.whiterabbit/plugins/
 ./gradlew runWithPlugins
+
+# Build and run the shadowJar of the final product.
+./gradlew runProduct
 ```
 
 ### Running Tests
@@ -66,6 +69,7 @@ Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and 
 ```sh
 ./gradlew jpackage --info
 ```
+
 ### Creating a Release
 
 #### Preparations
