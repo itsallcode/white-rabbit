@@ -24,7 +24,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Fail if not running on main branch
         if: ${{ github.ref != 'refs/heads/main' }}
@@ -78,7 +78,7 @@ jobs:
       contents: write # Required for creating GitHub release
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
