@@ -53,7 +53,7 @@ jobs:
         ./gradlew build --info --warning-mode=summary -PskipFlakyTests=true -PjavaVersion=${{ matrix.java }}
 
     - name: Archive executable JAR
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         name: executable-jar
@@ -64,7 +64,7 @@ jobs:
         if-no-files-found: error
 
     - name: Archive test reports for ${{ matrix.os }} using Java ${{ matrix.java }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: ${{ always() }}
       with:
         name: test-reports-${{ matrix.os }}-java-${{ matrix.java }}
@@ -86,7 +86,7 @@ jobs:
         ./gradlew jpackage --info --warning-mode=summary -PjavaVersion=${{ matrix.java }}
 
     - name: Archive native package for ${{ runner.os }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: ${{ env.DEFAULT_JAVA == matrix.java }}
       with:
         name: packages-${{ runner.os }}
