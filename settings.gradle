@@ -26,7 +26,7 @@ dependencyResolutionManagement {
             version('javafx', '24-ea+5')
 
             library('junitParams', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junitJupiter')
-            library('assertj', 'org.assertj:assertj-core:3.26.3')
+            library('assertj', 'org.assertj:assertj-core:3.27.7')
             library('junitPioneer', 'org.junit-pioneer:junit-pioneer:2.2.0')
             library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:3.16.2')
             library('tostringverifier', 'com.jparams:to-string-verifier:1.4.8')
