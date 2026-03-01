@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew build jpackage --info --warning-mode all -PskipFlakyTests=true
 
       - name: Archive executable JAR
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ env.DEFAULT_OS == matrix.os }}
         with:
           name: executable-jar
@@ -56,7 +56,7 @@ jobs:
             product/build/libs-checksums/*
 
       - name: Archive native package for ${{ runner.os }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: native-package-${{ runner.os }}
           retention-days: 5
