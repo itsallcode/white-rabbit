@@ -10,10 +10,10 @@ jobs:
   matrix-build:
     strategy:
       matrix:
-        java: [21]
+        java: [25]
         os: ['ubuntu-latest', 'windows-latest'] # 'macos-latest' not supported at the moment
     env:
-      DEFAULT_JAVA: 21
+      DEFAULT_JAVA: 25
       DEFAULT_OS: 'ubuntu-latest'
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.java }}

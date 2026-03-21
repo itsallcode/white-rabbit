@@ -14,7 +14,7 @@ plugins {
 version = "1.9.0"
 group = "org.itsallcode.whiterabbit"
 
-def javaVersion = project.hasProperty('javaVersion') ? project.getProperty('javaVersion') : 21
+def javaVersion = project.hasProperty('javaVersion') ? project.getProperty('javaVersion') : 25
 
 subprojects {
     group = rootProject.group

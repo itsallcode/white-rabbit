@@ -20,15 +20,15 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            version('junitJupiter', '5.11.0')
-            version('mockito', '5.13.0')
-            version('log4j', '2.24.0')
-            version('javafx', '24-ea+5')
+            version('junitJupiter', '6.0.3')
+            version('mockito', '5.23.0')
+            version('log4j', '2.25.3')
+            version('javafx', '27-ea+8')
 
             library('junitParams', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junitJupiter')
             library('assertj', 'org.assertj:assertj-core:3.27.7')
-            library('junitPioneer', 'org.junit-pioneer:junit-pioneer:2.2.0')
-            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:3.16.2')
+            library('junitPioneer', 'org.junit-pioneer:junit-pioneer:2.3.0')
+            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:4.4.1')
             library('tostringverifier', 'com.jparams:to-string-verifier:1.4.8')
             library('hamcrest', 'org.hamcrest:hamcrest:3.0')
             library('mockito', 'org.mockito', 'mockito-core').versionRef('mockito')
@@ -41,8 +41,8 @@ dependencyResolutionManagement {
             library('jsonBindApi', 'jakarta.json.bind:jakarta.json.bind-api:3.0.1')
             library('yasson', 'org.eclipse:yasson:3.0.4')
 
-            library('jdtAnnotations', 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.3.0')
-            library('jansi', 'org.fusesource.jansi:jansi:2.4.1')
+            library('jdtAnnotations', 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.4.100')
+            library('jansi', 'org.fusesource.jansi:jansi:2.4.2')
             library('log4j.api', 'org.apache.logging.log4j', 'log4j-api').versionRef('log4j')
             library('log4j.core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
             library('log4j.jul', 'org.apache.logging.log4j', 'log4j-jul').versionRef('log4j')
