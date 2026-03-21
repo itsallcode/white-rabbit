@@ -43,7 +43,7 @@ task uiTest(type: Test, group: 'verification') {
         }
     }
 
-    forkEvery 5
+    forkEvery = 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:+EnableDynamicAgentLoading'
 
     if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {

@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow'
+    id 'com.gradleup.shadow'
     id 'org.panteleyev.jpackageplugin'
     id 'org.gradle.crypto.checksum'
 }
@@ -97,7 +97,7 @@ task uiTest(type: Test, group: 'verification') {
         }
     }
 
-    forkEvery 5
+    forkEvery = 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:+EnableDynamicAgentLoading'
 
     if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
@@ -123,15 +123,15 @@ tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jaco
 tasks.jpackage {
     dependsOn("copyJPackageDependencies")
 
-    input = jPackageDir
-    destination = "$buildDir/jpackage-dist"
+    input = layout.buildDirectory.dir(jPackageDir)
+    destination = layout.buildDirectory.dir("$buildDir/jpackage-dist")
 
     appName = "WhiteRabbit"
     vendor = '"It\'s all code"'
     copyright = '"Copyright (C) 2024 Christoph Pirkl <christoph at users.sourceforge.net>"'
-    licenseFile = "${rootProject.rootDir}/LICENSE"
+    licenseFile = layout.buildDirectory.file("${rootProject.rootDir}/LICENSE")
     appDescription = '"A time recording tool"'
-    icon = "${project(':jfxui').projectDir}/src/main/resources/icon.png"
+    icon = layout.buildDirectory.file("${project(':jfxui').projectDir}/src/main/resources/icon.png")
 
     mainJar = tasks.jar.archiveFileName.get()
     mainClass = project.mainClass
@@ -146,13 +146,13 @@ tasks.jpackage {
         winMenu = true
         winMenuGroup = "Time Recording"
         winShortcut = true
-        icon = "${projectDir}/src/main/resources/icon.ico"
+        icon = layout.buildDirectory.file("${projectDir}/src/main/resources/icon.ico")
     }
 
     mac {
         macPackageIdentifier = "org.itsallcode.white-rabbit"
         macPackageName = "WhiteRabbit"
-        icon = "${projectDir}/src/main/resources/icon.icns"
+        icon = layout.buildDirectory.file("${projectDir}/src/main/resources/icon.icns")
     }
 }
 
