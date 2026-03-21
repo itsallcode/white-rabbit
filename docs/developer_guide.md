@@ -59,7 +59,7 @@ Run a single test:
 ### Check that dependencies are up-to-date
 
 ```sh
-./gradlew dependencyUpdates
+./gradlew dependencyUpdates --no-parallel
 ```
 
 ### <a name="build_native_package"></a>Build Native Packages
