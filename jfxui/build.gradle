@@ -46,7 +46,12 @@ task uiTest(type: Test, group: 'verification') {
     forkEvery = 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:+EnableDynamicAgentLoading'
 
-    if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
+    def isMacOs = org.gradle.internal.os.OperatingSystem.current().isMacOsX()
+    def headlessUiTestsEnabled = project.hasProperty("uiTestsHeadless")
+            ? project.property("uiTestsHeadless") != "false"
+            : !isMacOs
+
+    if(headlessUiTestsEnabled) {
         systemProperty 'java.awt.headless', 'true'
         systemProperty 'testfx.headless', 'true'
         systemProperty 'testfx.robot', 'glass'
