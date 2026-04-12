@@ -1,7 +1,30 @@
+def getCurrentJavaFxPlatform = {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if(os.isWindows()) {
+        return 'win'
+    }
+    if(os.isLinux()) {
+        return 'linux'
+    }
+    if(os.isMacOsX()) {
+        def architecture = System.getProperty('os.arch').toLowerCase(java.util.Locale.ROOT)
+        return architecture.contains('aarch64') || architecture.contains('arm64') ? 'mac-aarch64' : 'mac'
+    }
+    throw new GradleException("Unsupported operating system for JavaFX: ${os}")
+}
+
+def filterCurrentJavaFxRuntimeClasspath = { classpath ->
+    def currentPlatform = getCurrentJavaFxPlatform()
+    classpath.filter { file ->
+        (!(file.name ==~ /javafx-(base|graphics|controls)-.+-(win|linux|mac|mac-aarch64)\.jar/)
+                || file.name.endsWith("-${currentPlatform}.jar"))
+    }
+}
+
 dependencies {
     implementation project(':logic')
     def javaFxVersion = libs.versions.javafx.get()
-    ['win', 'mac', 'linux'].forEach {platform ->
+    ['win', 'mac', 'mac-aarch64', 'linux'].forEach {platform ->
         implementation "org.openjfx:javafx-base:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-graphics:$javaFxVersion:$platform"
         implementation "org.openjfx:javafx-controls:$javaFxVersion:$platform"
@@ -63,7 +86,7 @@ task uiTest(type: Test, group: 'verification') {
     systemProperty 'testfx.setup.timeout', '30000'
 
     testClassesDirs = sourceSets.uiTest.output.classesDirs
-    classpath = sourceSets.uiTest.runtimeClasspath
+    classpath = filterCurrentJavaFxRuntimeClasspath(sourceSets.uiTest.runtimeClasspath)
     shouldRunAfter test
 }
 
@@ -78,5 +101,5 @@ ext {
 task run(type: JavaExec, group: 'run') {
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
-    classpath = sourceSets.main.runtimeClasspath
+    classpath = filterCurrentJavaFxRuntimeClasspath(sourceSets.main.runtimeClasspath)
 }
