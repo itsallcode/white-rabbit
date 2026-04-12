@@ -3,7 +3,7 @@
 
 ## Install WhiteRabbit as Executable JAR
 
-Precondition: Install Java Runtime Environment (JRE) 21, e.g. from [Adoptium / Eclipse Temurin](https://adoptium.net/).
+Precondition: Install Java Runtime Environment (JRE) 25, e.g. from [Adoptium / Eclipse Temurin](https://adoptium.net/).
 
 1. Download the `.jar` file from the latest [release](https://github.com/itsallcode/white-rabbit/releases)
 2. Launch it by
@@ -74,7 +74,7 @@ Restart WhiteRabbit after changing the configuration file.
 
 #### Duration format
 
-Enter duration values in the format used by [Duration.parse()](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)). Examples:
+Enter duration values in the format used by [Duration.parse()](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)). Examples:
 
 * `PT5H`: 5 hours
 * `PT5H30M`: 5 hours and 30 minutes

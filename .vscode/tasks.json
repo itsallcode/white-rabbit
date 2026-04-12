@@ -6,7 +6,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "JAVA_HOME=$JAVA11_HOME ./gradlew.bat build",
+            "command": "JAVA_HOME=$JAVA25_HOME ./gradlew build",
             "group": {
                 "kind": "build",
                 "isDefault": true
