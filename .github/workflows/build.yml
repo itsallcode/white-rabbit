@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         java: [25]
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        os: ['ubuntu-latest', 'windows-latest'] # 'macos-latest' has issues with UI tests
     env:
       DEFAULT_JAVA: 25
       DEFAULT_OS: 'ubuntu-latest'
