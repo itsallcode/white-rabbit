@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         java: [25]
-        os: ['ubuntu-latest', 'windows-latest'] # 'macos-latest' not supported at the moment
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     env:
       DEFAULT_JAVA: 25
       DEFAULT_OS: 'ubuntu-latest'
