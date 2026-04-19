@@ -37,15 +37,15 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
-          java-version: 21
+          java-version: 25
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
       - name: Build
         run: ./gradlew build jpackage --info --warning-mode all -PskipFlakyTests=true
 
       - name: Archive executable JAR
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ env.DEFAULT_OS == matrix.os }}
         with:
           name: executable-jar
@@ -56,7 +56,7 @@ jobs:
             product/build/libs-checksums/*
 
       - name: Archive native package for ${{ runner.os }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: native-package-${{ runner.os }}
           retention-days: 5
@@ -83,10 +83,10 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
-          java-version: 21
+          java-version: 25
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Fail if not running on main branch
         if: ${{ github.ref != 'refs/heads/main' }}
@@ -105,7 +105,7 @@ jobs:
             ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
 
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: build/release-artifacts
 
