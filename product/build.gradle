@@ -1,7 +1,30 @@
 plugins {
-    id 'com.github.johnrengelman.shadow'
+    id 'com.gradleup.shadow'
     id 'org.panteleyev.jpackageplugin'
     id 'org.gradle.crypto.checksum'
+}
+
+def getCurrentJavaFxPlatform = {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if(os.isWindows()) {
+        return 'win'
+    }
+    if(os.isLinux()) {
+        return 'linux'
+    }
+    if(os.isMacOsX()) {
+        def architecture = System.getProperty('os.arch').toLowerCase(java.util.Locale.ROOT)
+        return architecture.contains('aarch64') || architecture.contains('arm64') ? 'mac-aarch64' : 'mac'
+    }
+    throw new GradleException("Unsupported operating system for JavaFX: ${os}")
+}
+
+def filterCurrentJavaFxRuntimeClasspath = { classpath ->
+    def currentPlatform = getCurrentJavaFxPlatform()
+    classpath.filter { file ->
+        (!(file.name ==~ /javafx-(base|graphics|controls)-.+-(win|linux|mac|mac-aarch64)\.jar/)
+                || file.name.endsWith("-${currentPlatform}.jar"))
+    }
 }
 
 dependencies {
@@ -52,27 +75,11 @@ task runWithPlugins(type: JavaExec, group: 'run') {
     group = "run"
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-def getUnwantedPlatforms = {
-    OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
-    if(os.isLinux()) {
-        return ["mac", "win"]
-    }
-    if(os.isWindows()) {
-        return ["mac", "linux"]
-    }
-    if(os.isMacOsX()) {
-        return ["linux", "win"]
-    }
+    classpath = filterCurrentJavaFxRuntimeClasspath(sourceSets.main.runtimeClasspath)
 }
 
 task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
-    def unwantedPlatforms = getUnwantedPlatforms()
-    from(configurations.runtimeClasspath.filter { file -> 
-        unwantedPlatforms.every { platform -> !file.name.endsWith("-${platform}.jar") }
-    }).into jPackageDir
+    from(filterCurrentJavaFxRuntimeClasspath(configurations.runtimeClasspath)).into jPackageDir
     from(tasks.jar.outputs.files).into jPackageDir
 }
 
@@ -97,7 +104,7 @@ task uiTest(type: Test, group: 'verification') {
         }
     }
 
-    forkEvery 5
+    forkEvery = 5
     jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:+EnableDynamicAgentLoading'
 
     if(!project.hasProperty("uiTestsHeadless") || project.property("uiTestsHeadless") != "false") {
@@ -112,7 +119,7 @@ task uiTest(type: Test, group: 'verification') {
     systemProperty 'testfx.setup.timeout', '30000'
 
     testClassesDirs = sourceSets.uiTest.output.classesDirs
-    classpath = sourceSets.uiTest.runtimeClasspath
+    classpath = filterCurrentJavaFxRuntimeClasspath(sourceSets.uiTest.runtimeClasspath)
     shouldRunAfter test
 }
 
@@ -123,15 +130,15 @@ tasks["jacocoTestReport"].executionData fileTree(project.buildDir).include("jaco
 tasks.jpackage {
     dependsOn("copyJPackageDependencies")
 
-    input = jPackageDir
-    destination = "$buildDir/jpackage-dist"
+    input = layout.buildDirectory.dir(jPackageDir)
+    destination = layout.buildDirectory.dir("$buildDir/jpackage-dist")
 
     appName = "WhiteRabbit"
     vendor = '"It\'s all code"'
     copyright = '"Copyright (C) 2024 Christoph Pirkl <christoph at users.sourceforge.net>"'
-    licenseFile = "${rootProject.rootDir}/LICENSE"
+    licenseFile = layout.buildDirectory.file("${rootProject.rootDir}/LICENSE")
     appDescription = '"A time recording tool"'
-    icon = "${project(':jfxui').projectDir}/src/main/resources/icon.png"
+    icon = layout.buildDirectory.file("${project(':jfxui').projectDir}/src/main/resources/icon.png")
 
     mainJar = tasks.jar.archiveFileName.get()
     mainClass = project.mainClass
@@ -146,13 +153,13 @@ tasks.jpackage {
         winMenu = true
         winMenuGroup = "Time Recording"
         winShortcut = true
-        icon = "${projectDir}/src/main/resources/icon.ico"
+        icon = layout.buildDirectory.file("${projectDir}/src/main/resources/icon.ico")
     }
 
     mac {
         macPackageIdentifier = "org.itsallcode.white-rabbit"
         macPackageName = "WhiteRabbit"
-        icon = "${projectDir}/src/main/resources/icon.icns"
+        icon = layout.buildDirectory.file("${projectDir}/src/main/resources/icon.icns")
     }
 }
 

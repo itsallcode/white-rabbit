@@ -39,6 +39,9 @@ import javafx.util.converter.DefaultStringConverter;
 public class DayRecordTable
 {
     private static final Logger LOG = LogManager.getLogger(DayRecordTable.class);
+    private static final double COL_WIDTH_MEDIUM = 70;
+    private static final double COL_WIDTH_SMALL = 55;
+    private static final double COL_WIDTH_COMMENT = 220;
 
     private final ObservableList<DayRecordPropertyAdapter> dayRecords = FXCollections.observableArrayList();
     private final EditListener<DayRecord> editListener;
@@ -207,6 +210,17 @@ public class DayRecordTable
                 param -> new PersistOnFocusLossTextFieldTableCell<>(new DefaultStringConverter(),
                         () -> new AutoCompleteTextField(autocompleteService.dayCommentAutocompleter())),
                 data -> data.getValue().comment);
+
+        dateCol.setPrefWidth(COL_WIDTH_MEDIUM);
+        dayTypeCol.setPrefWidth(COL_WIDTH_MEDIUM);
+        beginCol.setPrefWidth(COL_WIDTH_SMALL);
+        endCol.setPrefWidth(COL_WIDTH_SMALL);
+        breakCol.setPrefWidth(COL_WIDTH_SMALL);
+        interruptionCol.setPrefWidth(COL_WIDTH_SMALL);
+        workingTimeCol.setPrefWidth(COL_WIDTH_SMALL);
+        overTimeCol.setPrefWidth(COL_WIDTH_SMALL);
+        totalOvertimeCol.setPrefWidth(COL_WIDTH_SMALL);
+        commentCol.setPrefWidth(COL_WIDTH_COMMENT);
 
         return List.of(dateCol, dayTypeCol, beginCol, endCol, breakCol, interruptionCol, workingTimeCol, overTimeCol,
                 totalOvertimeCol, commentCol);
