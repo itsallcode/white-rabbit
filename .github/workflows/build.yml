@@ -111,7 +111,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v6
     - name: Ossindex
-      run: ./gradlew ossIndexAudit --warning-mode all --info
+      run: ./gradlew ossIndexAudit --no-parallel --warning-mode all --info
       env:
         ORG_GRADLE_PROJECT_ossIndexUsername: ${{ secrets.OSSINDEX_USERNAME }}
         ORG_GRADLE_PROJECT_ossIndexToken: ${{ secrets.OSSINDEX_TOKEN }}
