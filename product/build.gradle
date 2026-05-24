@@ -29,7 +29,9 @@ def filterCurrentJavaFxRuntimeClasspath = { classpath ->
 
 dependencies {
     runtimeOnly project(':jfxui')
-    runtimeOnly project(':plugins').subprojects
+    rootProject.project(':plugins').subprojects.each { pluginProject ->
+        runtimeOnly project(pluginProject.path)
+    }
 }
 
 shadowJar {
