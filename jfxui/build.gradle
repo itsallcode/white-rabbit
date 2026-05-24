@@ -97,4 +97,5 @@ task run(type: JavaExec, group: 'run') {
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
     classpath = filterCurrentJavaFxRuntimeClasspath(sourceSets.main.runtimeClasspath)
+    jvmArguments = ['--enable-native-access=ALL-UNNAMED']
 }

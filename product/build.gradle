@@ -71,6 +71,7 @@ task runProduct(type: JavaExec, dependsOn: [shadowJar], group: 'run') {
     classpath = shadowJar.outputs.files
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
+    jvmArguments = ['--enable-native-access=ALL-UNNAMED']
 }
 
 task runWithPlugins(type: JavaExec, group: 'run') {
@@ -78,6 +79,7 @@ task runWithPlugins(type: JavaExec, group: 'run') {
     mainClass = project.mainClass
     workingDir = rootProject.projectDir
     classpath = filterCurrentJavaFxRuntimeClasspath(sourceSets.main.runtimeClasspath)
+    jvmArguments = ['--enable-native-access=ALL-UNNAMED']
 }
 
 task copyJPackageDependencies(type: Copy, dependsOn: ["jar"]) {
