@@ -58,9 +58,20 @@ Run a single test:
 
 ### Check that dependencies are up-to-date
 
-```sh
-./gradlew dependencyUpdates --no-parallel
+Configure Sonatype Guide credentials in `~/.gradle/gradle.properties`:
+
+```properties
+ossIndexUsername = email@example.com
+ossIndexToken = sonatype_pat_abc123
 ```
+
+Then run
+
+```sh
+./gradlew ossIndexAudit --no-parallel --info
+```
+
+### Check for Vulnerable Dependencies
 
 ### <a name="build_native_package"></a>Build Native Packages
 

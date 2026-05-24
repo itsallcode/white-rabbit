@@ -8,6 +8,7 @@ plugins {
     id "org.panteleyev.jpackageplugin" version "2.0.1" apply false
     id "org.gradle.crypto.checksum" version "1.4.0" apply false
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
+    id 'org.sonatype.gradle.plugins.scan' version '3.1.5'
 }
 
 version = "1.10.0"
@@ -105,4 +106,15 @@ nexusPublishing {
             nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
         }
     }
+}
+
+ossIndexAudit {
+  if(project.hasProperty("ossIndexUsername") && project.hasProperty("ossIndexToken")) {
+    username = findProperty("ossIndexUsername")
+    password = findProperty("ossIndexToken")
+  }
+  allConfigurations = false
+  useCache = true
+  excludeVulnerabilityIds = []
+  printBanner = false
 }
