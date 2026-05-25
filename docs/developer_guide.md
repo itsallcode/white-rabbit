@@ -62,6 +62,21 @@ Run a single test:
 ./gradlew dependencyUpdates --no-parallel
 ```
 
+### Check for Vulnerable Dependencies
+
+Configure Sonatype Guide credentials in `~/.gradle/gradle.properties`:
+
+```properties
+ossIndexUsername = email@example.com
+ossIndexToken = sonatype_pat_abc123
+```
+
+Then run
+
+```sh
+./gradlew ossIndexAudit --no-parallel --info
+```
+
 ### <a name="build_native_package"></a>Build Native Packages
 
 Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and add it to the `PATH`.

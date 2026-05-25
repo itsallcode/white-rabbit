@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Fail if not running on main branch
         if: ${{ github.ref != 'refs/heads/main' }}
@@ -79,6 +81,8 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: true
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
@@ -99,8 +103,8 @@ jobs:
         if: ${{ ! inputs.skip-maven-central }}
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --info --warning-mode all
         env:
-            ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
-            ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_PASSWORD }}
+            ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_PORTAL_USERNAME }}
+            ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PORTAL_TOKEN }}
             ORG_GRADLE_PROJECT_signingKey: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
             ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
 

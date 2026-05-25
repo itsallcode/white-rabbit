@@ -20,15 +20,15 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            version('junitJupiter', '6.0.3')
+            version('junitJupiter', '6.1.0')
             version('mockito', '5.23.0')
-            version('log4j', '2.25.4')
-            version('javafx', '27-ea+12')
+            version('log4j', '2.26.0')
+            version('javafx', '27-ea+17')
 
             library('junitParams', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junitJupiter')
             library('assertj', 'org.assertj:assertj-core:3.27.7')
             library('junitPioneer', 'org.junit-pioneer:junit-pioneer:2.3.0')
-            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:4.4.2')
+            library('equalsverifier', 'nl.jqno.equalsverifier:equalsverifier:4.5')
             library('tostringverifier', 'com.jparams:to-string-verifier:1.4.8')
             library('hamcrest', 'org.hamcrest:hamcrest:3.0')
             library('mockito', 'org.mockito', 'mockito-core').versionRef('mockito')
@@ -48,7 +48,7 @@ dependencyResolutionManagement {
             library('log4j.jul', 'org.apache.logging.log4j', 'log4j-jul').versionRef('log4j')
             library('log4j.slf4j', 'org.apache.logging.log4j', 'log4j-slf4j-impl').versionRef('log4j')
 
-            library('holidaycalculator', 'org.itsallcode:holiday-calculator:0.2.1')
+            library('holidaycalculator', 'org.itsallcode:holiday-calculator:0.2.2')
         }
     }
 }
