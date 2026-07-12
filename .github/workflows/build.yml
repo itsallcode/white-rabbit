@@ -10,7 +10,7 @@ jobs:
   matrix-build:
     strategy:
       matrix:
-        java: [25]
+        java: [25, 26]
         os: ['ubuntu-latest', 'windows-latest'] # 'macos-latest' has issues with UI tests
     env:
       DEFAULT_JAVA: 25
@@ -28,7 +28,7 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
         persist-credentials: false
@@ -42,7 +42,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v6
 
     - name: Cache SonarQube packages
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       if: ${{ env.DEFAULT_JAVA == matrix.java && env.DEFAULT_OS == matrix.os }}
       with:
         path: ~/.sonar/cache
@@ -100,8 +100,10 @@ jobs:
 
   ossindex:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         persist-credentials: false
     - uses: actions/setup-java@v5

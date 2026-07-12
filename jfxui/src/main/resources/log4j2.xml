@@ -2,7 +2,7 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout charset="UTF-8" noConsoleNoAnsi="true"
+            <PatternLayout charset="UTF-8"
                 pattern="%date{HH:mm:ss.SSS} [%thread] %highlight{%-5level} %logger{1.} - %message%n" />
         </Console>
         <RollingFile name="File" fileName="${sys:user.home}/.whiterabbit/logs/white-rabbit.log"

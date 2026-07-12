@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.11.0] - unreleased
 
+See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.11.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/13?closed=1)
+
+* Upgrade dependencies (PR [#309](https://github.com/itsallcode/white-rabbit/pull/309))
+  * Removed jansi due to vulnerability CVE-2026-8484
+
 ## [1.10.0] - 2026-05-25
 
 See [Release](https://github.com/itsallcode/white-rabbit/releases/tag/v1.10.0) / [Milestone](https://github.com/itsallcode/white-rabbit/milestone/12?closed=1)
