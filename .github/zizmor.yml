@@ -1,0 +1,9 @@
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        "actions/*": ref-pin
+        "gradle/actions/setup-gradle": ref-pin
+        "gradle/actions/dependency-submission": ref-pin
+        "github/codeql-action/*": ref-pin
+        "*": hash-pin
