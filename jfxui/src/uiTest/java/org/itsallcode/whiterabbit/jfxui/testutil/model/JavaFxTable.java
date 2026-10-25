@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -147,10 +146,10 @@ public class JavaFxTable<T>
                     .as("Pseudo classes of row " + rowIndex + " with name " + expectedClass).isEmpty();
         }
 
-        private Stream<PseudoClass> getPseudoClass(final String pseudoClassName)
+        private List<PseudoClass> getPseudoClass(final String pseudoClassName)
         {
-            return tableRow().getPseudoClassStates().stream()
-                    .filter(pseudoClass -> pseudoClass.getPseudoClassName().equals(pseudoClassName));
+            return JavaFxUtil.runOnFxApplicationThread(() -> tableRow().getPseudoClassStates().stream()
+                    .filter(pseudoClass -> pseudoClass.getPseudoClassName().equals(pseudoClassName)).toList());
         }
 
         public JavaFxTable<T>.JavaFxTableRow click()
