@@ -64,13 +64,13 @@ jobs:
           product/build/libs-checksums/*
         if-no-files-found: error
 
-    - name: Archive test reports for ${{ matrix.os }} using Java ${{ matrix.java }}
+    - name: Archive reports for ${{ matrix.os }} using Java ${{ matrix.java }}
       uses: actions/upload-artifact@v7
       if: ${{ always() }}
       with:
         name: test-reports-${{ matrix.os }}-java-${{ matrix.java }}
         retention-days: 5
-        path: "**/build/reports/tests/*/**"
+        path: "**/build/reports/*/**"
         if-no-files-found: error
   
     - name: Sonar analysis
