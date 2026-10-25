@@ -85,6 +85,15 @@ Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and 
 ./gradlew jpackage --info
 ```
 
+### Running GitHub Actions Linter
+
+```sh
+# Run linter
+zizmor . --gh-token=$(gh auth token)
+# Automatically fix issues
+zizmor . --gh-token=$(gh auth token) --fix=all
+```
+
 ### Creating a Release
 
 #### Preparations
