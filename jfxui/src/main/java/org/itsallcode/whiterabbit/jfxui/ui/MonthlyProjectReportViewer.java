@@ -47,9 +47,9 @@ public class MonthlyProjectReportViewer
     {
         final TableView<ReportRow> treeTable = createTreeTable();
         updateTable(treeTable);
-        final Node previousMonthButton = UiWidget.button("prev-month-button", "< Previous Month",
+        final Node previousMonthButton = UiWidget.button("monthly-report-prev-month-button", "< Previous Month",
                 e -> gotoMonth(treeTable, -1));
-        final Node nextMonthButton = UiWidget.button("next-month-button", "Next Month >",
+        final Node nextMonthButton = UiWidget.button("monthly-report-next-month-button", "Next Month >",
                 e -> gotoMonth(treeTable, +1));
         reportWindow.show(treeTable, previousMonthButton, nextMonthButton);
         uiState.register(treeTable);

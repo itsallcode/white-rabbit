@@ -59,7 +59,7 @@ Run a single test:
 ### Check that dependencies are up-to-date
 
 ```sh
-./gradlew dependencyUpdates --no-parallel
+./gradlew dependencyUpdates
 ```
 
 ### Check for Vulnerable Dependencies
@@ -83,6 +83,15 @@ Precondition for Windows: Install the [WiX Toolset](https://wixtoolset.org) and 
 
 ```sh
 ./gradlew jpackage --info
+```
+
+### Running GitHub Actions Linter
+
+```sh
+# Run linter
+zizmor . --gh-token=$(gh auth token)
+# Automatically fix issues
+zizmor . --gh-token=$(gh auth token) --fix=all
 ```
 
 ### Creating a Release

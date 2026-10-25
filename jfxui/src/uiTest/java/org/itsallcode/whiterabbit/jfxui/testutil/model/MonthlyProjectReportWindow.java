@@ -44,18 +44,18 @@ public class MonthlyProjectReportWindow
 
     public void gotoPreviousMonth()
     {
-        robot.clickOn("#prev-month-button");
+        robot.clickOn("#monthly-report-prev-month-button");
     }
 
     public void gotoNextMonth()
     {
-        robot.clickOn("#next-month-button");
+        robot.clickOn("#monthly-report-next-month-button");
     }
 
     public MonthlyProjectReportWindow assertWindowTitle(final String expectedTitle)
     {
-        final String title = ((Stage) window).getTitle();
-        TestUtil.retryAssertion(Duration.ofSeconds(5), () -> assertThat(title).isEqualTo(expectedTitle));
+        TestUtil.retryAssertion(Duration.ofSeconds(5),
+                () -> assertThat(((Stage) window).getTitle()).isEqualTo(expectedTitle));
         return this;
     }
 

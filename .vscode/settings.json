@@ -5,6 +5,7 @@
         "source.fixAll": "explicit"
     },
     "java.codeGeneration.useBlocks": true,
+    // Too many false positives
     "java.compile.nullAnalysis.mode": "disabled",
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.test.config": {
