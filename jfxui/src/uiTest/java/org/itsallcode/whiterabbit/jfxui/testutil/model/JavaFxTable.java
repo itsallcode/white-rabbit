@@ -35,7 +35,8 @@ public class JavaFxTable<T>
 
     static <T> JavaFxTable<T> find(final FxRobot robot, final String query, final Class<T> rowType)
     {
-        return new JavaFxTable<>(robot, robot.lookup(query).queryTableView());
+        final TableView<T> table = JavaFxUtil.runOnFxApplicationThread(() -> robot.lookup(query).queryTableView());
+        return new JavaFxTable<>(robot, table);
     }
 
     public JavaFxTableRow row(final int rowIndex)
