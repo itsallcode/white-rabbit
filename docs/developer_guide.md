@@ -59,7 +59,7 @@ Run a single test:
 ### Check that dependencies are up-to-date
 
 ```sh
-./gradlew dependencyUpdates --no-parallel
+./gradlew dependencyUpdates
 ```
 
 ### Check for Vulnerable Dependencies
